@@ -7,14 +7,14 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 // Exportation de la configuration Webpack
 module.exports = {
 	// Entrée de l'application
-	entry: "./srcs/index.jsx",
+	entry: "./srcs/index.tsx",
 
 	// Configuration des loaders pour traiter différents types de fichiers
 	module: {
 		rules: [
-			// Règle pour traiter les fichiers JS et JSX
+			// Règle pour traiter les fichiers TS et TSX
 			{
-				test: /\.(js|jsx)$/,
+				test: /\.(ts|tsx)$/,
 				exclude: /node_modules/,
 				use: ["babel-loader"],
 			},
@@ -28,7 +28,10 @@ module.exports = {
 
 	// Configuration des extensions de fichiers à résoudre
 	resolve: {
-		extensions: [".jsx", ".js"],
+		extensions: [".wasm", ".ts", ".tsx", ".mjs", ".cjs", ".js", ".json"],
+		alias: {
+			'html-entities': path.resolve(__dirname, 'node_modules/html-entities')
+		},
 	},
 
 	// Configuration du plugin HtmlWebpackPlugin
