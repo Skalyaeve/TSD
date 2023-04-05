@@ -1,0 +1,48 @@
+1. Initialisation du fichier 'package.json' via 'npm init' (Node Package Manager):
+	- Ce fichier contient les métadonnées du projet: nom, version, licence, dépendances, scripts de démarrage/test, ...
+	- Permet entre autres d'installer les dépendances de notre projet depuis n'importe quelle machine via 'npm install'.
+
+
+2. Installation des packages 'react' et 'react-dom' via 'npm install --save react react-dom':
+	- L'option '--save' enregistre les packages dans le fichier 'package.json', ainsi, la section "dependencies" est ajoutée au fichier 'package.json', cette section définit les dépendances de production ET développement du projet.
+	- Le fichier 'package-lock.json' est créé, ce dernier définit plus précisément les versions des dépendances du projet.
+	- Le dossier 'node_modules' est créé, il contient les packages nécessaires au projet, ce dernier peut-être entièrement recréé via 'npm install' grâce à nos fichiers JSON.
+	- Le package 'react' est une bibliothèque JavaScript servant à la création d'interfaces utilisateur réactives et dynamiques pour les applications web.
+	- Le package 'react-dom' est une bibliothèque complémentaire à React qui fournit des fonctionnalités spécifiques au DOM (Document Object Model) pour permettre à React de manipuler l'interface utilisateur de manière efficace.
+	- Les modules nécessaires à React sont également ajoutés à notre dossier 'node_modules'.
+
+
+3. Installation des packages 'react-router-dom', 'webpack', 'webpack-cli', 'webpack-dev-server', 'babel-loader', '@babel/core', '@babel/preset-env', '@babel/preset-react', 'html-webpack-plugin', 'css-loader' et 'style-loader':
+	- La section "devDependencies" est ajoutée au fichier 'package.json', cette section définit les dépendances de développement du projet.
+	- 'react-router-dom' sert à définir nos routes (URI-->Location).
+	- 'webpack' permet de regrouper tous les fichiers JavaScript, CSS, images, etc. d'une application web dans un seul fichier bundle.
+	- 'webpack-cli' est le Command Line Interface de webpack.
+	- 'webpack-dev-server' permet de créer un environnement de développement local.
+	- 'babel-loader' permet de traduire le code JavaScript moderne (ES6, ES7, etc.) en code JavaScript compatible avec les anciens navigateurs.
+	- '@babel/core' est le module principal de Babel, il fournit les fonctionnalités principales pour la traduction de code JavaScript.
+	- '@babel/preset-env' permet à Babel de déterminer automatiquement quels éléments du code doivent être transpilés pour fonctionner correctement dans les navigateurs spécifiés.
+	- '@babel/preset-react' permet à Babel de traduire le code JSX (utilisé par React) en code JavaScript.
+	- 'html-webpack-plugin' permet à Webpack de génèrer automatiquement des fichiers HTML de base.
+	- 'css-loader' permet à Webpack de charger et traduire le CSS.
+	- 'style-loader' permet à Webpack d'ajouter du CSS au HTML.
+	- Les modules nécessaires à Webpack et Babel sont également ajoutés à notre dossier 'node_modules'.
+
+
+4. Installation des packages 'jest', '@testing-library/react' et '@testing-library/jest-dom':
+	- 'jest' est un framework de test JavaScript qui permet de tester du code JavaScript et React.
+	- '@testing-library/react' est une bibliothèque qui fournit des utilitaires pour tester les composants React.
+	- '@testing-library/jest-dom' est une bibliothèque qui fournit des utilitaires pour les assertions DOM. (vérifier que les résultats d'un test sont conformes aux attentes)
+	- Le but ici est d'effectuer les tests unitaires et d'intégrations pour chaque composant React.
+
+
+5. Création des fichiers de configuration 'webpack.config.js', '.babelrc' et '.babelrc-jest':
+	- 'webpack.config.js' est utilisé pour configurer la génération du bundle et le serveur de développement Webpack.
+	- '.babelrc' est utilisé pour configurer les options de traduction du code JSX par Babel.
+	- '.babelrc-jest' est utilisé pour configurer les options de traduction du code JSX par Jest.
+
+
+6. Création des fichiers source du site web:
+	- 'srcs/index.html' est un fichier html template pour Webpack.
+	- 'srcs/index.css' est le CSS général du site.
+	- 'srcs/index.js' est le point d'entrer du bundle qui sera créer par Webpack.
+	- 'srcs/components/*' contient les composants React à inclure dans 'srcs/index.js'
