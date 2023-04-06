@@ -1,34 +1,30 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useState } from 'react';
+
+// declare type ContentType = 'infoContent' | 'inventoryContent' | 'historyContent';
 
 const Profile = () => {
 	const [activeContent, setActiveContent] = useState("infoContent");
-	const displayInfo = () => {
-		setActiveContent("infoContent");
-	};
-	const displayInventory = () => {
-		setActiveContent("inventoryContent");
-	};
-	const displayHistory = () => {
-		setActiveContent("historyContent");
-	};
+
+	const changeDisplay = useMemo(() => (content) => () => {
+		setActiveContent(content);
+	}, []);
+
+	const SubComponent = useMemo(() => {
+		if (activeContent === 'infoContent') return <div id="infoContent">Infos</div>
+		else if (activeContent === 'inventoryContent') return <div id="inventoryContent">Inventory</div>
+		else return <div id="historyContent">History</div>
+	}, [activeContent]);
+
 	return (
-		<div id="profile" name="middle-content">
+		<div id="profile" data-data-name="middle-content">
 			<div id="profileContentArea">
-				{activeContent === 'infoContent' && (
-					<div id="infoContent">Infos</div>
-				)}
-				{activeContent === 'inventoryContent' && (
-					<div id="inventoryContent">Inventory</div>
-				)}
-				{activeContent === 'historyContent' && (
-					<div id="historyContent">History</div>
-				)}
+				{SubComponent}
 			</div>
 			<div id="profileNavArea">
-				<div id="infoBar" name="profileNavBar" onClick={displayInfo}>[ Infos ]</div>
-				<div id="invBar" name="profileNavBar" onClick={displayInventory}>[ Inventory ]</div>
-				<div id="histBar" name="profileNavBar" onClick={displayHistory}>[ History ]</div>
+				<div id="infoBar" data-data-name="profileNavBar" onClick={changeDisplay('infoContent')}>[ Infos ]</div>
+				<div id="invBar" data-data-name="profileNavBar" onClick={changeDisplay('inventoryContent')}>[ Inventory ]</div>
+				<div id="histBar" data-data-name="profileNavBar" onClick={changeDisplay('historyContent')}>[ History ]</div>
 			</div>
 		</div>
 	);

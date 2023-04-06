@@ -1,0 +1,158 @@
+/*---------------------------------
+#1 Background
+#2 Elements
+#3 Form
+#4 Position
+#5 Padding / Margin
+#6 Extra
+---------------------------------*/
+@import "profile.css";
+
+/*------TAGS---------------------*/
+body {
+	background-color: black;
+	background-position: center;
+
+	color: white;
+	font-family: serif;
+	font-size: 23px;
+
+	margin: 0;
+}
+
+a {
+	color: white;
+	text-decoration: none;
+}
+
+div {
+	position: absolute;
+}
+
+/*------ID------------------------*/
+#main {
+	width: 100%;
+	height: 100%;
+	min-width: 1024px;
+	min-height: 768px;
+}
+
+#header {
+	display: flex;
+	flex-direction: column;
+
+	width: 15%;
+	height: 30%;
+
+	box-sizing: border-box;
+	border: 1px solid rgb(255, 0, 0);
+}
+
+#header a {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	width: 100%;
+	height: 100%;
+
+	box-sizing: border-box;
+	border: 1px solid rgb(155, 0, 0);
+}
+
+#matchmaking {
+	display: flex;
+
+	width: 15%;
+	height: 70%;
+
+	top: 30%;
+
+	box-sizing: border-box;
+	border: 1px solid rgb(60, 255, 0);
+}
+
+#matchmaking-core {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	width: 100%;
+	height: 90%;
+
+	top: 0%;
+
+	box-sizing: border-box;
+	border: 1px solid rgb(32, 138, 0);
+}
+
+#site-label {
+	font-size: 18px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	width: 100%;
+	height: 10%;
+
+	top: 90%;
+
+	box-sizing: border-box;
+	border: 1px solid rgb(20, 85, 0);
+}
+
+#chat {
+	width: 300px;
+	height: 500px;
+	border-top-right-radius: 10px;
+	border-bottom-left-radius: 10px;
+
+	bottom: 120px;
+	right: 23px;
+}
+
+#chatButton {
+	font-size: 18px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	width: 90px;
+	height: 90px;
+	border-radius: 100%;
+
+	bottom: -100px;
+	right: 0px;
+
+	box-sizing: border-box;
+	border: 1px solid rgb(0, 110, 255);
+}
+
+#chatContent {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	width: 100%;
+	height: 100%;
+	border-top-right-radius: 10px;
+	border-bottom-left-radius: 10px;
+
+	box-sizing: border-box;
+	border: 1px solid rgb(0, 153, 173);
+}
+
+/*------NAME----------------------*/
+[data-data-name="middle-content"] {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+
+	width: 85%;
+	height: 100%;
+
+	left: 15%;
+
+	box-sizing: border-box;
+	border: 1px solid white;
+}

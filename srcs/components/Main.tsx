@@ -12,9 +12,6 @@ import NotFound from './NotFound';
 const Main = () => {
 	return (
 		<Router>
-			<Header />
-			<Matchmaking />
-			<Chat />
 			<Routes>
 				<Route path="/" element={<Home />} />
 				<Route path="/profile" element={<Profile />} />
@@ -22,6 +19,9 @@ const Main = () => {
 				<Route path="/leaderboard" element={<Leaderboard />} />
 				<Route path="*" element={<NotFound />} />
 			</Routes>
+			<Header />
+			<Matchmaking />
+			<Chat />
 		</Router>
 	);
 };

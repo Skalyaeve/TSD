@@ -6,7 +6,6 @@ const Header = () => {
 			<a href="/">[ Home ]</a>
 			<a href="/profile">[ Profile ]</a>
 			<a href="/leaderboard">[ Leaderboard ]</a>
-			<div id="header-label">Powered by TSD</div>
 		</div>
 	);
 };

@@ -1,0 +1,55 @@
+/*------ID------------------------*/
+#profileContentArea {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+
+	width: 100%;
+    height: 100%;
+
+	box-sizing: border-box;
+	border: 1px solid rgb(255, 255, 0);
+}
+
+#profileNavArea {
+	display: flex;
+
+	height: 7%;
+	width: 60%;
+	border-top-left-radius: 10px;
+	border-top-right-radius: 10px;
+	
+	bottom: 0%;
+	
+	box-sizing: border-box;
+	border: 1px solid rgb(153, 153, 0);
+}
+
+#infoBar {
+	border-top-left-radius: 10px;
+
+	left: 0%;
+}
+
+#invBar {
+	left: 33.33%;
+}
+
+#histBar {
+	border-top-right-radius: 10px;
+
+	left: 66.66%;
+}
+
+/*------NAME----------------------*/
+[data-data-name="profileNavBar"] {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+
+	height: 100%;
+	width: 33.33%;
+
+	box-sizing: border-box;
+	border: 1px solid rgb(83, 83, 0);
+}
