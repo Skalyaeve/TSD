@@ -1,20 +1,27 @@
 import React, { useState } from 'react';
 
-const Chat = () => {
-	const [activeContent, setActiveContent] = useState("closed");
-	const switchChat = () => {
-		if (activeContent === 'open')
-			setActiveContent("closed");
-		else
-			setActiveContent("open");
-	}
+// Types
+function Chat() {
+	// Variables
+	const [state, setState] = useState("hidden");
+
+	// Modifieurs
+	const switchStat = () => {
+		setState(state === "open" ? "hidden" : "open");
+	};
+
+	// Retour
 	return (
-		<div id="chat">
-			{activeContent === 'open' &&
-				(<div id="chatContent">Content</div>)}
-			{activeContent === 'closed' &&
-				(<div></div>)}
-			<div id="chatButton" onClick={switchChat}>[ CHAT ]</div>
+		<div className="chat">
+
+			<div className={`chat__content ${state === "hidden" ? "chat__content--hidden" : ""}`}>
+				Content
+			</div>
+
+			<div className="chat__button" onClick={switchStat}>
+				[ CHAT ]
+			</div>
+
 		</div>
 	);
 };

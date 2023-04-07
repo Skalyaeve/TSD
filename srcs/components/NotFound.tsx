@@ -1,8 +1,17 @@
 import React from 'react';
 
-const NotFound = () => {
+function NotFound() {
+	// Variables
+
+	// Modifieurs
+
+	// Retour
 	return (
-		<div data-class="errors" data-name="middle-content">[404] Not Found</div>
+		<main className="error main__content">
+
+			404 Not Foooound
+
+		</main>
 	);
 };
 export default NotFound;

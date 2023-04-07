@@ -1,7 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Header from './Header';
-import Matchmaking from './Matchmaking';
 import Chat from './Chat';
 import Home from './Home';
 import Profile from './Profile';
@@ -9,9 +8,15 @@ import Party from './Party';
 import Leaderboard from './Leaderboard';
 import NotFound from './NotFound';
 
-const Main = () => {
+function Main() {
+	// Variables
+
+	// Modifieurs
+
+	// Retour
 	return (
 		<Router>
+
 			<Routes>
 				<Route path="/" element={<Home />} />
 				<Route path="/profile" element={<Profile />} />
@@ -19,9 +24,10 @@ const Main = () => {
 				<Route path="/leaderboard" element={<Leaderboard />} />
 				<Route path="*" element={<NotFound />} />
 			</Routes>
+
 			<Header />
-			<Matchmaking />
 			<Chat />
+
 		</Router>
 	);
 };

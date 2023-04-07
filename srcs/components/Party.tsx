@@ -1,8 +1,17 @@
 import React from 'react';
 
-const Party = () => {
+function Party() {
+	// Variables
+
+	// Modifieurs
+
+	// Retour
 	return (
-		<div id="party" data-name="middle-content">Party</div>
+		<main className="party main__content">
+
+			Party
+
+		</main>
 	);
 };
 export default Party;

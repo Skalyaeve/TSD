@@ -1,32 +1,58 @@
-import React, { useMemo } from 'react';
-import { useState } from 'react';
+import React, { useState } from "react";
 
-// declare type ContentType = 'infoContent' | 'inventoryContent' | 'historyContent';
+// Types
+type ContentType = "infos" | "inventory" | "history";
 
-const Profile = () => {
-	const [activeContent, setActiveContent] = useState("infoContent");
+function Profile() {
+	// Variables
+	const [activeContent, setActiveContent] = useState<ContentType>("infos");
 
-	const changeDisplay = useMemo(() => (content) => () => {
-		setActiveContent(content);
-	}, []);
+	const contentMap: Record<ContentType, JSX.Element> = {
+		infos: <div className="profile__content__infos">
 
-	const SubComponent = useMemo(() => {
-		if (activeContent === 'infoContent') return <div id="infoContent">Infos</div>
-		else if (activeContent === 'inventoryContent') return <div id="inventoryContent">Inventory</div>
-		else return <div id="historyContent">History</div>
-	}, [activeContent]);
+			Infos
 
-	return (
-		<div id="profile" data-data-name="middle-content">
-			<div id="profileContentArea">
-				{SubComponent}
-			</div>
-			<div id="profileNavArea">
-				<div id="infoBar" data-data-name="profileNavBar" onClick={changeDisplay('infoContent')}>[ Infos ]</div>
-				<div id="invBar" data-data-name="profileNavBar" onClick={changeDisplay('inventoryContent')}>[ Inventory ]</div>
-				<div id="histBar" data-data-name="profileNavBar" onClick={changeDisplay('historyContent')}>[ History ]</div>
-			</div>
+		</div>,
+
+		inventory: <div className="profile__content__inv">
+
+			Inventory
+
+		</div>,
+
+		history: <div className="profile__content__hist">
+
+			History
+
 		</div>
+	};
+
+	// Modifieurs
+	const changeDisplay = (content: ContentType) => {
+		setActiveContent(content);
+	};
+
+	// Retour
+	return (
+		<main className="profile main__content">
+
+			<div className="profile__content">
+				{contentMap[activeContent]}
+			</div>
+
+			<nav className="profile__navBar">
+				<div className="profile__navBar__infos" onClick={() => changeDisplay("infos")}>
+					[ infos ]
+				</div>
+				<div className="profile__navBar__inv" onClick={() => changeDisplay("inventory")}>
+					[ inventory ]
+				</div>
+				<div className="profile__navBar__hist" onClick={() => changeDisplay("history")}>
+					[ history ]
+				</div>
+			</nav>
+
+		</main>
 	);
-};
+}
 export default Profile;

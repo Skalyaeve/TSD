@@ -1,8 +1,17 @@
 import React from 'react';
 
-const Leaderboard = () => {
+function Leaderboard() {
+	// Variables
+
+	// Modifieurs
+
+	// Retour
 	return (
-		<div id="leaderboard" data-name="middle-content">Leaderboard</div>
+		<main className="leaderboard main__content">
+
+			Leaderboard
+
+		</main>
 	);
 };
 export default Leaderboard;

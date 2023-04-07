@@ -1,14 +1,37 @@
 /*---------------------------------
+Methodology BEM (Block, Element, Modifier)
+
+Block: Un composant indépendant
+ex: Un bouton, une barre de navigation, un en-tête...
+ex: ".header {}"
+ex: ".button {}"
+
+Element: Une partie d'un Block qui a un sens uniquement dans le contexte de ce Block.
+ex: ".header__logo {}"
+ex: ".button__icon {}"
+
+Modifier: Une variation ou un état d'un Block ou d'un élément. 
+ex: ".button--large {}"
+ex: ".header__logo--hidden {}"
+---------------------------------*/
+
+/*---------------------------------
 #1 Background
 #2 Elements
 #3 Form
 #4 Position
 #5 Padding / Margin
-#6 Extra
 ---------------------------------*/
 @import "profile.css";
 
-/*------TAGS---------------------*/
+/*------TAG----------------------*/
+* {
+	box-sizing: border-box;
+
+	margin: 0;
+	padding: 0;
+}
+
 body {
 	background-color: black;
 	background-position: center;
@@ -16,8 +39,6 @@ body {
 	color: white;
 	font-family: serif;
 	font-size: 23px;
-
-	margin: 0;
 }
 
 a {
@@ -25,134 +46,141 @@ a {
 	text-decoration: none;
 }
 
-div {
-	position: absolute;
-}
-
-/*------ID------------------------*/
+/*------ID-----------------------*/
 #main {
-	width: 100%;
-	height: 100%;
+	display: grid;
+	grid-template-columns: 250px auto;
+	grid-template-rows: 1fr;
+	grid-gap: 10px;
+
+	width: 100vw;
+	height: 100vh;
 	min-width: 1024px;
 	min-height: 768px;
+
+	position: relative;
 }
 
-#header {
+/*------CLASS--------------------*/
+.main__content {
+	border: 1px solid rgb(255, 255, 255);
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+
+	width: 100%;
+	height: 100%;
+
+	grid-column: 1 / -1;
+	grid-row: 1 / -1;
+}
+
+.header--longer {
+	grid-column: 1 / 1;
+	grid-row: 1 / -1;
+
+	margin: 10px;
+}
+
+.header {
 	display: flex;
 	flex-direction: column;
 
-	width: 15%;
-	height: 30%;
-
-	box-sizing: border-box;
-	border: 1px solid rgb(255, 0, 0);
+	width: 100%;
 }
 
-#header a {
+.header * {
+	border: 1px solid rgb(172, 0, 0);
 	display: flex;
-	align-items: center;
 	justify-content: center;
+	align-items: center;
 
 	width: 100%;
-	height: 100%;
-
-	box-sizing: border-box;
-	border: 1px solid rgb(155, 0, 0);
+	height: 80px;
 }
 
-#matchmaking {
-	display: flex;
-
-	width: 15%;
-	height: 70%;
-
-	top: 30%;
-
-	box-sizing: border-box;
-	border: 1px solid rgb(60, 255, 0);
+.header__first {
+	border-top-left-radius: 5px;
+	border-top-right-radius: 5px;
 }
 
-#matchmaking-core {
+.header__backLink {
+	height: 40px;
+}
+
+.matchMaker__button {
+	border: none;
+}
+
+.matchMaker__button--off {
+	border-bottom-left-radius: 5px;
+	border-bottom-right-radius: 5px;
+}
+
+.matchMaker__button--on {
+	border-bottom: none;
+}
+
+.matchMaker__launcher {
+	border: 1px solid rgb(172, 0, 0);
+	border-top: none;
 	display: flex;
-	align-items: center;
 	justify-content: center;
+	align-items: center;
 
 	width: 100%;
-	height: 90%;
-
-	top: 0%;
-
-	box-sizing: border-box;
-	border: 1px solid rgb(32, 138, 0);
+	height: 450px;
+	border-bottom-left-radius: 5px;
+	border-bottom-right-radius: 5px;
 }
 
-#site-label {
-	font-size: 18px;
+.matchMaker__launcher--hidden {
+	display: none;
+}
+
+.chat {
 	display: flex;
+	flex-direction: column;
+	justify-content: flex-end;
+	align-items: flex-end;
+
+	width: 400px;
+	height: 700px;
+
+	position: absolute;
+	bottom: 15px;
+	right: 15px;
+}
+
+.chat__content {
+	border: 1px solid rgb(0, 87, 201);
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-end;
 	align-items: center;
-	justify-content: center;
 
 	width: 100%;
-	height: 10%;
+	height: 83.5%;
+	border-top-right-radius: 5px;
+	border-bottom-left-radius: 5px;
 
-	top: 90%;
-
-	box-sizing: border-box;
-	border: 1px solid rgb(20, 85, 0);
+	margin-bottom: 15px;
+	padding: 10px;
 }
 
-#chat {
-	width: 300px;
-	height: 500px;
-	border-top-right-radius: 10px;
-	border-bottom-left-radius: 10px;
-
-	bottom: 120px;
-	right: 23px;
+.chat__content--hidden {
+	display: none;
 }
 
-#chatButton {
-	font-size: 18px;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-
-	width: 90px;
-	height: 90px;
-	border-radius: 100%;
-
-	bottom: -100px;
-	right: 0px;
-
-	box-sizing: border-box;
-	border: 1px solid rgb(0, 110, 255);
-}
-
-#chatContent {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-
-	width: 100%;
-	height: 100%;
-	border-top-right-radius: 10px;
-	border-bottom-left-radius: 10px;
-
-	box-sizing: border-box;
-	border: 1px solid rgb(0, 153, 173);
-}
-
-/*------NAME----------------------*/
-[data-data-name="middle-content"] {
+.chat__button {
+	border: 1px solid rgb(0, 48, 207);
 	display: flex;
 	justify-content: center;
 	align-items: center;
+	font-size: 20px;
 
-	width: 85%;
-	height: 100%;
-
-	left: 15%;
-
-	box-sizing: border-box;
-	border: 1px solid white;
+	width: 25%;
+	height: 14%;
+	border-radius: 50%;
 }
