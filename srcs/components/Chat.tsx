@@ -1,14 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState } from 'react'
 
 // Types
 function Chat() {
 	// Variables
-	const [state, setState] = useState("hidden");
+	const [state, setState] = useState("hidden")
 
 	// Modifieurs
 	const switchStat = () => {
-		setState(state === "open" ? "hidden" : "open");
-	};
+		setState(state === "open" ? "hidden" : "open")
+	}
 
 	// Retour
 	return (
@@ -18,11 +18,11 @@ function Chat() {
 				Content
 			</div>
 
-			<div className="chat__button" onClick={switchStat}>
+			<div className={`chat__button ${state === "hidden" ? "" : "chat__button--expended"}`} onClick={switchStat}>
 				[ CHAT ]
 			</div>
 
 		</div>
-	);
-};
-export default Chat;
+	)
+}
+export default Chat

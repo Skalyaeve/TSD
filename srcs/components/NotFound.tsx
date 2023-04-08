@@ -1,4 +1,4 @@
-import React from 'react';
+import React from 'react'
 
 function NotFound() {
 	// Variables
@@ -12,6 +12,6 @@ function NotFound() {
 			404 Not Foooound
 
 		</main>
-	);
-};
-export default NotFound;
+	)
+}
+export default NotFound

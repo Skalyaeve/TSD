@@ -1,4 +1,4 @@
-import React from 'react';
+import React from 'react'
 
 function Party() {
 	// Variables
@@ -12,6 +12,6 @@ function Party() {
 			Party
 
 		</main>
-	);
-};
-export default Party;
+	)
+}
+export default Party

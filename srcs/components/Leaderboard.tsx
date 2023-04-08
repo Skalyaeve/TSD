@@ -1,4 +1,4 @@
-import React from 'react';
+import React from 'react'
 
 function Leaderboard() {
 	// Variables
@@ -12,6 +12,6 @@ function Leaderboard() {
 			Leaderboard
 
 		</main>
-	);
-};
-export default Leaderboard;
+	)
+}
+export default Leaderboard

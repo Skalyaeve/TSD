@@ -1,83 +1,62 @@
-import React, { useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import React, { useState } from 'react'
+import { useLocation, Link } from 'react-router-dom'
 
-function Header() {
+interface HeaderProps {
+	disconnect: () => void;
+}
+
+function Header({ disconnect }: HeaderProps) {
 	// Variables
-	const location = useLocation();
-	const [matchMakerState, setmatchMakerState] = useState("hidden");
+	const location = useLocation()
 
 	// Modifieurs
-	const switchStat = () => {
-		setmatchMakerState(matchMakerState === "searching" ? "hidden" : "searching");
-	}
-
 	const renderHomeLinks = () => (
 		<>
-			<a className="header__first" href="/profile">[ PROFIL ]</a>
-			<a href="/leaderboard">[ LEADERBOARD ]</a>
+			<div className="header__first header__backLink logout__button" onClick={disconnect}>[ OUT ]</div>
+			<Link to="/profile">[ PROFIL ]</Link>
+			<Link className="header__last" to="/leaderboard">[ LEADERBOARD ]</Link>
 		</>
-	);
+	)
 	const renderProfileLinks = () => (
 		<>
-			<a className="header__first header__backLink" href="/">[ BACK ]</a>
-			<a href="/">[ STATS ]</a>
-			<a href="/">[ CHARACTERS ]</a>
-			<a href="/">[ FRIENDS ]</a>
+			<Link className="header__first header__backLink" to="/">[ BACK ]</Link>
+			<Link to="/profile">[ STATS ]</Link>
+			<Link to="/profile/characters">[ CHARACTERS ]</Link>
+			<Link className="header__last" to="/profile/friends">[ FRIENDS ]</Link>
 		</>
-	);
+	)
 	const renderLeaderboardLinks = () => (
 		<>
-			<a className="header__first header__backLink" href="/">[ BACK ]</a>
+			<Link className="header__first header__last header__backLink" to="/">[ BACK ]</Link>
 		</>
-	);
+	)
 	const render404 = () => (
 		<>
-			<a className="header__first" href="/">[ HOME ]</a>
-			<a href="/profile">[ PROFIL ]</a>
-			<a href="/leaderboard">[ LEADERBOARD ]</a>
+			<Link className="header__first" to="/">[ HOME ]</Link>
+			<Link to="/profile">[ PROFIL ]</Link>
+			<Link className="header__last" to="/leaderboard">[ LEADERBOARD ]</Link>
 		</>
-	);
-	const renderPartyLinks = () => <></>;
+	)
+	const renderPartyLinks = () => <></>
 
-	const getRenderLinks = (path: string) => {
-		const renderLinksMap: { [key: string]: () => JSX.Element; } = {
+	const getRender = (path: string) => {
+		const renderLinksMap: { [key: string]: () => JSX.Element } = {
 			'/': renderHomeLinks,
 			'/profile': renderProfileLinks,
+			'/profile/friends': renderProfileLinks,
+			'/profile/characters': renderProfileLinks,
 			'/leaderboard': renderLeaderboardLinks,
 			'/party': renderPartyLinks,
-			'404': render404,
-		};
-		return renderLinksMap[path] ? renderLinksMap[path]() : renderLinksMap['404']();
-	};
-
-
-	const renderMatchMakerButton = () => (
-		<div
-			className={`matchMaker__button`}
-			onClick={switchStat}
-		>
-			{matchMakerState === "hidden" ? (
-				<div className={"matchMaker__button--off"}>[ PLAY ]</div>
-			) : (
-				<div className={"matchMaker__button--on"}>[ STOP ]</div>
-			)}
-		</div>
-	);
+			'404': render404
+		}
+		return renderLinksMap[path] ? renderLinksMap[path]() : renderLinksMap['404']()
+	}
 
 	// Retour
 	return (
-		<div className="header--longer">
-			<header className="header">
-				{getRenderLinks(location.pathname)}
-				{location.pathname !== "/party" && renderMatchMakerButton()}
-			</header>
-
-			<div className="matchMaker">
-				<div className={`matchMaker__launcher ${matchMakerState === "hidden" ? "matchMaker__launcher--hidden" : ""}`}>
-					00:00
-				</div>
-			</div>
-		</div>
-	);
-};
-export default Header;
+		<header className="header">
+			{getRender(location.pathname)}
+		</header>
+	)
+}
+export default Header

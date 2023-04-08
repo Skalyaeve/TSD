@@ -1,58 +1,41 @@
-import React, { useState } from "react";
-
-// Types
-type ContentType = "infos" | "inventory" | "history";
+import React, { useState } from "react"
+import { useLocation } from 'react-router-dom'
 
 function Profile() {
 	// Variables
-	const [activeContent, setActiveContent] = useState<ContentType>("infos");
-
-	const contentMap: Record<ContentType, JSX.Element> = {
-		infos: <div className="profile__content__infos">
-
-			Infos
-
-		</div>,
-
-		inventory: <div className="profile__content__inv">
-
-			Inventory
-
-		</div>,
-
-		history: <div className="profile__content__hist">
-
-			History
-
-		</div>
-	};
+	const location = useLocation()
 
 	// Modifieurs
-	const changeDisplay = (content: ContentType) => {
-		setActiveContent(content);
-	};
+	const rendeFriends = () => (
+		<div className="profile__friends">
+			Friends
+		</div>
+	)
+	const renderCharacters = () => (
+		<div className="profile__characters">
+			Characters
+		</div>
+	)
+	const renderStats = () => (
+		<div className="profile__stats">
+			Stats
+		</div>
+	)
+
+	const getRender = (path: string) => {
+		const renderLinksMap: { [key: string]: () => JSX.Element } = {
+			'/profile/friends': rendeFriends,
+			'/profile/characters': renderCharacters,
+			'/profile': renderStats
+		}
+		return renderLinksMap[path] ? renderLinksMap[path]() : renderLinksMap['404']()
+	}
 
 	// Retour
 	return (
 		<main className="profile main__content">
-
-			<div className="profile__content">
-				{contentMap[activeContent]}
-			</div>
-
-			<nav className="profile__navBar">
-				<div className="profile__navBar__infos" onClick={() => changeDisplay("infos")}>
-					[ infos ]
-				</div>
-				<div className="profile__navBar__inv" onClick={() => changeDisplay("inventory")}>
-					[ inventory ]
-				</div>
-				<div className="profile__navBar__hist" onClick={() => changeDisplay("history")}>
-					[ history ]
-				</div>
-			</nav>
-
+			{getRender(location.pathname)}
 		</main>
-	);
+	)
 }
-export default Profile;
+export default Profile

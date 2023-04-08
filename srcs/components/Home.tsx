@@ -1,4 +1,4 @@
-import React from 'react';
+import React from 'react'
 
 function Home() {
 	// Variables
@@ -12,6 +12,6 @@ function Home() {
 			Home
 
 		</main>
-	);
-};
-export default Home;
+	)
+}
+export default Home
