@@ -98,10 +98,10 @@ a {
 	flex-direction: column;
 
 	width: 100%;
-	height: 400px;
+	height: 100%;
 
 	grid-column: 1 / 1;
-	grid-row: 1 / -1;
+	grid-row: 1 / 2;
 
 	padding: 10px;
 }
@@ -113,7 +113,7 @@ a {
 	align-items: center;
 
 	width: 100%;
-	height: 80px;
+	height: 75px;
 }
 
 .header__first {
@@ -139,11 +139,11 @@ a {
 	border-radius: 5px;
 
 	grid-column: 1 / 1;
-	grid-row: 1 / -1;
+	grid-row: 2 / -1;
 	align-self: flex-end;
 
 	padding: 10px;
-	margin-bottom: 85px;
+	margin-bottom: 80px;
 }
 
 .chat__content {
@@ -186,11 +186,11 @@ a {
 	flex-direction: column-reverse;
 
 	width: 100%;
-	height: 100px;
+	height: 95px;
 	border-radius: 5px;
 
 	grid-column: 1 / 1;
-	grid-row: 1 / -1;
+	grid-row: 2 / -1;
 	align-self: flex-end;
 
 	padding: 10px;
