@@ -1,0 +1,17 @@
+{
+	"extends": "stylelint-config-standard",
+	"rules": {
+		"selector-class-pattern": "^[a-zA-Z]+(?:__[a-zA-Z]+)*(?:--[a-zA-Z]+)*$",
+		"length-zero-no-unit": null,
+		"indentation": "tab",
+		"number-leading-zero": "always",
+		"selector-max-id": 1,
+		"max-nesting-depth": 3,
+		"no-duplicate-selectors": true,
+		"property-no-unknown": true,
+		"shorthand-property-no-redundant-values": true,
+		"declaration-block-no-duplicate-properties": true,
+		"color-named": "never",
+		"color-function-notation": null
+	}
+}

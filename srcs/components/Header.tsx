@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { useLocation, Link } from 'react-router-dom'
 
 interface HeaderProps {
@@ -12,7 +12,7 @@ function Header({ disconnect }: HeaderProps) {
 	// Modifieurs
 	const renderHomeLinks = () => (
 		<>
-			<div className="header__first header__backLink logout__button" onClick={disconnect}>[ OUT ]</div>
+			<div className="header__first header__backLink logout__button" onClick={disconnect}>[ LOGOUT ]</div>
 			<Link to="/profile">[ PROFIL ]</Link>
 			<Link className="header__last" to="/leaderboard">[ LEADERBOARD ]</Link>
 		</>

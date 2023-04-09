@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 
-// Types
 function Chat() {
 	// Variables
 	const [state, setState] = useState("hidden")
