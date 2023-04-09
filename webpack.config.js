@@ -16,12 +16,12 @@ module.exports = {
 			{
 				test: /\.(ts|tsx)$/,
 				exclude: /node_modules/,
-				use: ["babel-loader"],
+				use: ["babel-loader"]
 			},
 			// Règle pour traiter les fichiers CSS
 			{
 				test: /\.css$/,
-				use: ["style-loader", "css-loader"],
+				use: ["style-loader", "css-loader"]
 			},
 		],
 	},
@@ -29,9 +29,6 @@ module.exports = {
 	// Configuration des extensions de fichiers à résoudre
 	resolve: {
 		extensions: [".wasm", ".ts", ".tsx", ".mjs", ".cjs", ".js", ".json"],
-		alias: {
-			'html-entities': path.resolve(__dirname, 'node_modules/html-entities')
-		},
 	},
 
 	// Configuration du plugin HtmlWebpackPlugin
@@ -39,7 +36,7 @@ module.exports = {
 		new HtmlWebpackPlugin({
 			template: "./srcs/index.html",
 			filename: "index.html",
-			inject: "body",
+			inject: "body"
 		}),
 	],
 
@@ -47,10 +44,9 @@ module.exports = {
 	devServer: {
 		// Configuration du répertoire contenant les fichiers statiques
 		static: {
-			directory: path.join(__dirname, './srcs/resources/'),
+			directory: path.join(__dirname, './srcs/resources/')
 		},
 		// Activation de la fonctionnalité de rechargement en direct
 		hot: true,
-		historyApiFallback: true,
 	},
 };
