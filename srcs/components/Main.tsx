@@ -1,10 +1,10 @@
 import React, { useState } from 'react'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
-import Header from './Header'
+import NavBar from './NavBar'
 import Matchmaker from './Matchmaker'
 import Chat from './Chat'
 import Home from './Home'
-import Profile from './Profile'
+import Profil from './Profil'
 import Party from './Party'
 import Leaderboard from './Leaderboard'
 import NotFound from './NotFound'
@@ -37,19 +37,21 @@ function Main() {
 			) : (
 				<Router>
 
-					<Header disconnect={disconnect} />
-					<Chat />
-					<Matchmaker />
-
 					<Routes>
 						<Route path="/" element={<Home />} />
-						<Route path="/profile" element={<Profile />} />
-						<Route path="/profile/friends" element={<Profile />} />
-						<Route path="/profile/characters" element={<Profile />} />
+						<Route path="/profil" element={<Profil />} />
+						<Route path="/profil/friends" element={<Profil />} />
+						<Route path="/profil/characters" element={<Profil />} />
 						<Route path="/party" element={<Party />} />
 						<Route path="/leaderboard" element={<Leaderboard />} />
 						<Route path="*" element={<NotFound />} />
 					</Routes>
+
+					<div className="header">
+						<NavBar disconnect={disconnect} />
+						<Chat />
+						<Matchmaker />
+					</div>
 
 				</Router>
 			)}

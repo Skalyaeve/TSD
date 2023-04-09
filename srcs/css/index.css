@@ -3,16 +3,16 @@ Methodology BEM (Block, Element, Modifier)
 
 Block: Un composant indépendant
 ex: Un bouton, une barre de navigation, un en-tête...
-ex: ".header {}"
+ex: ".navbBar {}"
 ex: ".button {}"
 
 Element: Une partie d'un Block qui a un sens uniquement dans le contexte de ce Block.
-ex: ".header__logo {}"
+ex: ".navbBar__logo {}"
 ex: ".button__icon {}"
 
 Modifier: Une variation ou un état d'un Block ou d'un élément. 
 ex: ".button--large {}"
-ex: ".header__logo--hidden {}"
+ex: ".navbBar__logo--hidden {}"
 --------------------------------- */
 
 /* ---------------------------------
@@ -22,7 +22,8 @@ ex: ".header__logo--hidden {}"
 #4 Margin - Padding
 --------------------------------- */
 
-@import url("profile.css");
+@import url("NavBar.css");
+@import url("Chat.css");
 
 /* ------TAG---------------------- */
 
@@ -56,8 +57,7 @@ a {
 	/* #1 Elements */
 	display: grid;
 	grid-template-columns: 275px auto;
-	grid-template-rows: 300px auto;
-	position: relative;
+	grid-template-rows: 1fr;
 
 	/* #2 Form */
 	width: 100vw;
@@ -95,10 +95,6 @@ a {
 	align-items: center;
 	justify-content: center;
 
-	/* #2 Form */
-	width: 100%;
-	height: 100%;
-
 	/* #3 Position */
 	grid-column: 2 / -1;
 	grid-row: 1 / -1;
@@ -108,117 +104,24 @@ a {
 }
 
 .header {
-	/* #2 Form */
-	width: 100%;
-	height: 100%;
+	/* #1 Elements */
+	display: grid;
+	grid-template-columns: 1fr;
+	grid-template-rows: 280px auto 120px;
+	/* Rows: (boxHeight * (maxNavBar) + boxHeight / 2) | auto | (boxHeight * 1.5) */
 
 	/* #3 Position */
 	grid-column: 1 / 1;
-	grid-row: 1 / 2;
-
-	/* #4 Margin - Padding */
-	padding: 10px;
-}
-
-.header * {
-	/* #1 Elements */
-	border: 1px solid rgb(172, 0, 0);
-	display: flex;
-	align-items: center;
-	justify-content: center;
-
-	/* #2 Form */
-	width: 100%;
-	height: 75px;
-}
-
-.header__first {
-	/* #2 Form */
-	border-top-left-radius: 5px;
-	border-top-right-radius: 5px;
-}
-
-.header__last {
-	/* #2 Form */
-	border-bottom-left-radius: 5px;
-	border-bottom-right-radius: 5px;
-}
-
-.header__backLink {
-	/* #2 Form */
-	height: 45px;
-}
-
-.chat {
-	/* #1 Elements */
-	display: flex;
-	flex-direction: column-reverse;
-
-	/* #2 Form */
-	width: 100%;
-	height: 524px;
-
-	/* #3 Position */
-	grid-column: 1 / 1;
-	grid-row: 2 / -1;
-	align-self: flex-end;
-
-	/* #4 Margin - Padding */
-	margin-bottom: 80px;
-	padding: 10px;
-}
-
-.chat__content {
-	/* #1 Elements */
-	border: 1px solid rgb(0, 153, 8);
-	display: flex;
-	align-items: center;
-	justify-content: center;
-
-	/* #2 Form */
-	width: 100%;
-	height: 100%;
-	border-bottom-left-radius: 5px;
-	border-bottom-right-radius: 5px;
-}
-
-.chat__content--hidden {
-	/* #1 Elements */
-	display: none;
-}
-
-.chat__button {
-	/* #1 Elements */
-	border: 1px solid rgb(0, 153, 8);
-	display: flex;
-	align-items: center;
-	justify-content: center;
-
-	/* #2 Form */
-	width: 100%;
-	height: 45px;
-	border-radius: 5px;
-}
-
-.chat__button--expended {
-	/* #1 Elements */
-	border-bottom: none;
-
-	/* #2 Form */
-	border-bottom-left-radius: 0px;
-	border-bottom-right-radius: 0px;
+	grid-row: 1 / -1;
 }
 
 .matchmaker {
 	/* #2 Form */
-	width: 100%;
-	height: 95px;
 	border-radius: 5px;
 
 	/* #3 Position */
-	grid-column: 1 / 1;
-	grid-row: 2 / -1;
-	align-self: flex-end;
+	grid-column: 1 / -1;
+	grid-row: 3 / -1;
 
 	/* #4 Margin - Padding */
 	padding: 10px;
