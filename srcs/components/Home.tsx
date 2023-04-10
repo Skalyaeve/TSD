@@ -7,10 +7,8 @@ function Home() {
 
 	// Retour
 	return (
-		<main className="home main__content">
-
+		<main className='home main__content'>
 			Home
-
 		</main>
 	)
 }

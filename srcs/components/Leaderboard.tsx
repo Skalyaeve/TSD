@@ -7,10 +7,8 @@ function Leaderboard() {
 
 	// Retour
 	return (
-		<main className="leaderboard main__content">
-
+		<main className='leaderboard main__content'>
 			Leaderboard
-
 		</main>
 	)
 }

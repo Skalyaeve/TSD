@@ -63,3 +63,8 @@ ex: ".navbBar__logo--hidden {}"
 	/* #2 Form */
 	height: 45px;
 }
+
+.navBar__button--pressed {
+	/* #1 Elements */
+	background-color: rgba(124, 44, 44, 0.3);
+}

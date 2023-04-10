@@ -87,6 +87,10 @@ a {
 	transform: translate(-50%, -50%);
 }
 
+.login__button--pressed {
+	background-color: rgb(255, 255, 255, 0.3);
+}
+
 .main__content {
 	/* #1 Elements */
 	border: 1px solid rgb(255, 255, 255);
@@ -138,4 +142,8 @@ a {
 	width: 100%;
 	height: 100%;
 	border-radius: 5px;
+}
+
+.matchmaker__button--pressed {
+	background-color: rgba(36, 81, 230, 0.355);
 }

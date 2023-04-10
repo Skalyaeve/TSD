@@ -7,10 +7,8 @@ function NotFound() {
 
 	// Retour
 	return (
-		<main className="error main__content">
-
+		<main className='error main__content'>
 			404 Not Foooound
-
 		</main>
 	)
 }
