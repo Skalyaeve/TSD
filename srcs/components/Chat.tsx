@@ -1,6 +1,4 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react'
-import { DndProvider } from 'react-dnd';
-import { HTML5Backend } from 'react-dnd-html5-backend';
 import DragDrop from './DragDrop.tsx';
 
 function Chat() {
@@ -16,8 +14,9 @@ function Chat() {
 	const [roomSettings, setRoomSettings] = useState('closed')
 	const [roomSettingsPos, setRoomSettingsPos] = useState({ left: '100%' })
 	const [roomBox, setRoomBox] = useState([
-		{ id: 1, text: '#1' },
-		{ id: 2, text: '...' }
+		{ id: 1, text: '[ #1 ]' },
+		{ id: 2, text: '[ #2 ]' },
+		{ id: 3, text: '[ #3 ]' }
 	]);
 
 	// Modifieurs
@@ -30,12 +29,16 @@ function Chat() {
 			chatElement.setAttribute('style', `width: ${275}px`);
 		}
 	}
-	/*const moveBox = useCallback((draggedId: number, droppedId: number) => {
-		console.log('test MoveBox useCallback(' + draggedId + ',' + droppedId + ')')
+	const moveBox = useCallback((draggedId: number, droppedId: number) => {
+		const draggedIndex = roomBox.findIndex((item) => item.id === draggedId);
+		const droppedIndex = roomBox.findIndex((item) => item.id === droppedId);
+
+		const newItems = [...roomBox];
+		newItems.splice(draggedIndex, 1);
+		newItems.splice(droppedIndex, 0, roomBox[draggedIndex]);
+
+		setRoomBox(newItems);
 	}, [roomBox]);
-						{roomBox.map((box) => (
-							<DragDrop key={box.id} {...box} moveItem={moveBox} />
-						))}*/
 	const switchRoomSettings = () => {
 		setRoomSettings(roomSettings === 'open' ? 'closed' : 'open')
 	}
@@ -83,9 +86,9 @@ function Chat() {
 				<div className={`chat__content ${chat === 'closed' ? 'chat__content--hidden' : ''}`}>
 
 					<div className='chat__rooms'>
-						<div>[ #1 ]</div>
-						<div>[ #2 ]</div>
-						<div>[ #3 ]</div>
+						{roomBox.map((box) => (
+							<DragDrop key={box.id} {...box} moveItem={moveBox} />
+						))}
 					</div>
 					<div className={`chat__newRoom ${addRoomButton === 'pressed' ? 'chat__newRoom--pressed' : ''}`}
 						onMouseDown={() => setAddRoomButton('pressed')}
