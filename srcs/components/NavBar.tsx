@@ -1,125 +1,151 @@
 import React, { useState } from 'react'
-import { useLocation, Link } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
+import { newBox } from './utils.tsx'
 
 interface NavBarProps {
 	disconnect: () => void
 }
 
 function NavBar({ disconnect }: NavBarProps) {
-	// Variables
+	// Valeurs
 	const location = useLocation()
+	const [boxPressed, setBoxPressed] = useState(0)
 
-	const [backButton, setBackButton] = useState("released")
-	const [logoutButton, setLogoutButton] = useState("released")
+	const isPressed = (id: integer) => (boxPressed === id ? 'navBar__box--pressed' : '')
+	const backLink = 'navbBar__backLink'
+	const firstLink = 'navbBar__first'
+	const lastLink = 'navbBar__last'
 
-	const [homeButton, setHomeButton] = useState("released")
-	const [profilButton, setProfilButton] = useState("released")
-	const [leaderboardButton, setLeaderboardButton] = useState("released")
+	const logoutBoxName = `${isPressed(1)} ${backLink} ${firstLink}`
+	const backBoxName = `${isPressed(2)} ${backLink} ${firstLink}`
 
-	const [statsButton, setStatsButton] = useState("released")
-	const [charactersButton, setCharactersButton] = useState("released")
-	const [friendsButton, setFriendsButton] = useState("released")
+	const homeBoxName = `${isPressed(3)}`
+	const profilBoxName = `${isPressed(4)}`
+	const leaderBoxName = `${isPressed(5)} ${lastLink}`
+
+	const statsBoxName = `${isPressed(6)}`
+	const charactersBoxName = `${isPressed(7)}`
+	const friendsBoxName = `${isPressed(8)} ${lastLink}`
+
+	const logoutBox = (name: string) => (
+		newBox({
+			className: name,
+			to: undefined,
+			onMouseDown: () => setBoxPressed(1),
+			onMouseUp: () => { setBoxPressed(0); disconnect() },
+			content: '[ LOGOUT ]'
+		})
+	)
+	const backBox = (name: string) => (
+		newBox({
+			className: name,
+			to: '/',
+			onMouseDown: () => setBoxPressed(2),
+			onMouseUp: () => setBoxPressed(0),
+			content: '[ BACK ]'
+		})
+	)
+	const homeBox = (name: string) => (
+		newBox({
+			className: name,
+			to: '/',
+			onMouseDown: () => setBoxPressed(3),
+			onMouseUp: () => setBoxPressed(0),
+			content: '[ HOME ]'
+		})
+	)
+	const profilBox = (name: string) => (
+		newBox({
+			className: name,
+			to: '/profil',
+			onMouseDown: () => setBoxPressed(4),
+			onMouseUp: () => setBoxPressed(0),
+			content: '[ PROFIL ]'
+		})
+	)
+	const leaderBox = (name: string) => (
+		newBox({
+			className: name,
+			to: '/leaderboard',
+			onMouseDown: () => setBoxPressed(5),
+			onMouseUp: () => setBoxPressed(0),
+			content: '[ LEADER ]'
+		})
+	)
+	const statsBox = (name: string) => (
+		newBox({
+			className: name,
+			to: '/profil',
+			onMouseDown: () => setBoxPressed(6),
+			onMouseUp: () => setBoxPressed(0),
+			content: '[ STATS ]'
+		})
+	)
+	const charactersBox = (name: string) => (
+		newBox({
+			className: name,
+			to: '/profil/characters',
+			onMouseDown: () => setBoxPressed(7),
+			onMouseUp: () => setBoxPressed(0),
+			content: '[ CHARACTERS ]'
+		})
+	)
+	const friendsBox = (name: string) => (
+		newBox({
+			className: name,
+			to: '/profil/friends',
+			onMouseDown: () => setBoxPressed(8),
+			onMouseUp: () => setBoxPressed(0),
+			content: '[ FRIENDS ]'
+		})
+	)
 
 	// Modifieurs
-	const renderHomeLinks = () => (
+	const renderFromHome = () => (
 		<>
-			<div className={`navbBar__first navbBar__backLink logout__button ${logoutButton === "pressed" ? "navBar__button--pressed" : ""}`}
-				onMouseDown={() => setLogoutButton("pressed")}
-				onMouseUp={() => { setLogoutButton("released"); disconnect() }}>
-				[ LOGOUT ]
-			</div>
-			<Link className={`${profilButton === "pressed" ? "navBar__button--pressed" : ""}`}
-				onMouseDown={() => setProfilButton("pressed")}
-				onMouseUp={() => setProfilButton("released")}
-				to='/profil' >
-				[ PROFIL ]
-			</Link>
-			<Link className={`navbBar__last ${leaderboardButton === "pressed" ? "navBar__button--pressed" : ""}`}
-				onMouseDown={() => setLeaderboardButton("pressed")}
-				onMouseUp={() => setLeaderboardButton("released")}
-				to='/leaderboard'>
-				[ LEADERBOARD ]
-			</Link>
+			{logoutBox(logoutBoxName)}
+			{profilBox(profilBoxName)}
+			{leaderBox(leaderBoxName)}
 		</>
 	)
-	const renderProfilLinks = () => (
+	const renderFromProfil = () => (
 		<>
-			<Link className={`navbBar__first navbBar__backLink ${backButton === "pressed" ? "navBar__button--pressed" : ""}`}
-				onMouseDown={() => setBackButton("pressed")}
-				onMouseUp={() => setBackButton("released")}
-				to='/'>
-				[ BACK ]
-			</Link>
-			<Link className={`${statsButton === "pressed" ? "navBar__button--pressed" : ""}`}
-				onMouseDown={() => setStatsButton("pressed")}
-				onMouseUp={() => setStatsButton("released")}
-				to='/profil'>
-				[ STATS ]
-			</Link>
-			<Link className={`${charactersButton === "pressed" ? "navBar__button--pressed" : ""}`}
-				onMouseDown={() => setCharactersButton("pressed")}
-				onMouseUp={() => setCharactersButton("released")}
-				to='/profil/characters'>
-				[ CHARACTERS ]
-			</Link>
-			<Link className={`navbBar__last ${friendsButton === "pressed" ? "navBar__button--pressed" : ""}`}
-				onMouseDown={() => setFriendsButton("pressed")}
-				onMouseUp={() => setFriendsButton("released")}
-				to='/profil/friends'>
-				[ FRIENDS ]
-			</Link>
+			{backBox(backBoxName)}
+			{statsBox(statsBoxName)}
+			{charactersBox(charactersBoxName)}
+			{friendsBox(friendsBoxName)}
 		</>
 	)
-	const renderLeaderboardLinks = () => (
+	const renderFromLeader = () => (
 		<>
-			<Link className={`navbBar__first navbBar__last navbBar__backLink ${backButton === "pressed" ? "navBar__button--pressed" : ""}`}
-				onMouseDown={() => setBackButton("pressed")}
-				onMouseUp={() => setBackButton("released")}
-				to='/'>[ BACK ]
-			</Link>
+			{backBox(backBoxName + ' navbBar__last')}
 		</>
 	)
-	const render404 = () => (
+	const renderFrom404 = () => (
 		<>
-			<Link className={`navbBar__first ${homeButton === "pressed" ? "navBar__button--pressed" : ""}`}
-				onMouseDown={() => setHomeButton("pressed")}
-				onMouseUp={() => setHomeButton("released")}
-				to='/'>
-				[ HOME ]
-			</Link>
-			<Link className={`${profilButton === "pressed" ? "navBar__button--pressed" : ""}`}
-				onMouseDown={() => setProfilButton("pressed")}
-				onMouseUp={() => setProfilButton("released")}
-				to='/profil'>
-				[ PROFIL ]
-			</Link>
-			<Link className={`navbBar__last ${leaderboardButton === "pressed" ? "navBar__button--pressed" : ""}`}
-				onMouseDown={() => setLeaderboardButton("pressed")}
-				onMouseUp={() => setLeaderboardButton("released")}
-				to='/leaderboard'>
-				[ LEADERBOARD ]
-			</Link>
+			{logoutBox(logoutBoxName)}
+			{profilBox(profilBoxName)}
+			{leaderBox(leaderBoxName)}
+			{homeBox(homeBoxName)}
 		</>
 	)
-	const renderPartyLinks = () => <></>
-
-	const getRender = (path: string) => {
-		const renderLinksMap: { [key: string]: () => JSX.Element } = {
-			'/': renderHomeLinks,
-			'/profil': renderProfilLinks,
-			'/profil/friends': renderProfilLinks,
-			'/profil/characters': renderProfilLinks,
-			'/leaderboard': renderLeaderboardLinks,
-			'/party': renderPartyLinks,
-			'404': render404
+	const render = (path: string) => {
+		const linksMap: { [key: string]: () => JSX.Element } = {
+			'/': renderFromHome,
+			'/profil': renderFromProfil,
+			'/profil/friends': renderFromProfil,
+			'/profil/characters': renderFromProfil,
+			'/leaderboard': renderFromLeader,
+			'/party': () => <></>,
+			'404': renderFrom404
 		}
-		return renderLinksMap[path] ? renderLinksMap[path]() : renderLinksMap['404']()
+		return linksMap[path] ? linksMap[path]() : linksMap['404']()
 	}
 
 	// Retour
 	return (
 		<nav className='navbBar'>
-			{getRender(location.pathname)}
+			{render(location.pathname)}
 		</nav>
 	)
 }

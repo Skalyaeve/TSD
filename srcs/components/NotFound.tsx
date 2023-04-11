@@ -1,15 +1,15 @@
 import React from 'react'
 
 function NotFound() {
-	// Variables
+	// Valeurs
 
 	// Modifieurs
 
 	// Retour
 	return (
-		<main className='error main__content'>
+		<div className='error main__content'>
 			404 Not Foooound
-		</main>
+		</div>
 	)
 }
 export default NotFound

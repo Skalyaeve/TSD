@@ -1,15 +1,15 @@
 import React from 'react'
 
 function Leaderboard() {
-	// Variables
+	// Valeurs
 
 	// Modifieurs
 
 	// Retour
 	return (
-		<main className='leaderboard main__content'>
+		<div className='leaderboard main__content'>
 			Leaderboard
-		</main>
+		</div>
 	)
 }
 export default Leaderboard

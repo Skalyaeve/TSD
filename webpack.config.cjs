@@ -9,6 +9,24 @@ module.exports = {
 	// Entrée de l'application
 	entry: "./srcs/index.tsx",
 
+	module: {
+		rules: [
+			{
+				test: /\.(png|svg|jpg|jpeg|gif)$/i,
+				use: [
+					{
+						loader: 'file-loader',
+						options: {
+							name: '[name].[ext]',
+							outputPath: 'ressources/',
+							publicPath: 'ressources/',
+						},
+					},
+				],
+			},
+		],
+	},
+
 	// Configuration des loaders pour traiter différents types de fichiers
 	module: {
 		rules: [
@@ -40,6 +58,7 @@ module.exports = {
 		}),
 	],
 
+	// Permet aux navigateurs d'afficher des messages d'erreur de débogage plus précis
 	devtool: 'source-map',
 
 	// Configuration du serveur de développement de Webpack
@@ -54,6 +73,7 @@ module.exports = {
 		historyApiFallback: true
 	},
 
+	// Output de Webpack: JSX traduit en JS
 	output: {
 		path: path.resolve(__dirname, 'dist'),
 		filename: 'main.js',

@@ -1,12 +1,13 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react'
-import DragDrop from './DragDrop.tsx';
+import { DragDrop } from './utils.tsx';
 
 function Chat() {
-	// Variables
+	// Valeurs
 	const [chatButton, setChatButton] = useState('released')
 	const [chat, setChat] = useState('closed')
 	const [chatWidth, setChatWidth] = useState(0);
 	const [userList, setUserList] = useState('closed')
+	const [wispButton, setWispButton] = useState(0)
 
 	const chatRef = useRef<HTMLDivElement | null>(null)
 
@@ -104,38 +105,155 @@ function Chat() {
 						Content
 					</div>
 					<div className={`chat__userList ${userList === 'closed' ? 'chat__userList--hidden' : ''}`}>
-						<div>Connected:</div>
-						<div>[ #1 ]</div>
-						<div>[ #2 ]</div>
-						<div>[ #3 ]</div>
-						<div>[ #4 ]</div>
-						<div>[ #5 ]</div>
-						<div>[ #6 ]</div>
-						<div>[ #7 ]</div>
-						<div>[ #8 ]</div>
-						<div>[ #9 ]</div>
-						<div>[ #10 ]</div>
-						<div>[ #11 ]</div>
-						<div>[ #12 ]</div>
-						<div>[ #13 ]</div>
-						<div>[ #14 ]</div>
-						<div>[ #15 ]</div>
-					</div>
+						<div className='chat__userList__label'>Connected</div>
+						<div className='chat__user'
+							onMouseEnter={() => setWispButton(1)}
+							onMouseLeave={() => setWispButton(0)}>
+							<div className='chat__user__link'>
+								[ #1 ]
+							</div>
+							{wispButton == 1 && (<div className='chat__user__wisp'>
+								[ /w ]
+							</div>
+							)}
+						</div>
+						<div className='chat__user'
+							onMouseEnter={() => setWispButton(2)}
+							onMouseLeave={() => setWispButton(0)}>
+							<div className='chat__user__link'>
+								[ #2 ]
+							</div>
+							{wispButton == 2 && (<div className='chat__user__wisp'>
+								[ /w ]
+							</div>
+							)}
+						</div>
+						<div className='chat__user'
+							onMouseEnter={() => setWispButton(3)}
+							onMouseLeave={() => setWispButton(0)}>
+							<div className='chat__user__link'>
+								[ #3 ]
+							</div>
+							{wispButton == 3 && (<div className='chat__user__wisp'>
+								[ /w ]
+							</div>
+							)}
+						</div>
+						<div className='chat__user'
+							onMouseEnter={() => setWispButton(4)}
+							onMouseLeave={() => setWispButton(0)}>
+							<div className='chat__user__link'>
+								[ #4 ]
+							</div>
+							{wispButton == 4 && (<div className='chat__user__wisp'>
+								[ /w ]
+							</div>
+							)}
+						</div>
+						<div className='chat__user'
+							onMouseEnter={() => setWispButton(5)}
+							onMouseLeave={() => setWispButton(0)}>
+							<div className='chat__user__link'>
+								[ #5 ]
+							</div>
+							{wispButton == 5 && (<div className='chat__user__wisp'>
+								[ /w ]
+							</div>
+							)}
+						</div >
+						<div className='chat__user'
+							onMouseEnter={() => setWispButton(6)}
+							onMouseLeave={() => setWispButton(0)}>
+							<div className='chat__user__link'>
+								[ #6 ]
+							</div>
+							{wispButton == 6 && (<div className='chat__user__wisp'>
+								[ /w ]
+							</div>
+							)}
+						</div >
+						<div className='chat__user'
+							onMouseEnter={() => setWispButton(7)}
+							onMouseLeave={() => setWispButton(0)}>
+							<div className='chat__user__link'>
+								[ #7 ]
+							</div>
+							{wispButton == 7 && (<div className='chat__user__wisp'>
+								[ /w ]
+							</div>
+							)}
+						</div >
+						<div className='chat__user'
+							onMouseEnter={() => setWispButton(8)}
+							onMouseLeave={() => setWispButton(0)}>
+							<div className='chat__user__link'>
+								[ #8 ]
+							</div>
+							{wispButton == 8 && (<div className='chat__user__wisp'>
+								[ /w ]
+							</div>
+							)}
+						</div >
+						<div className='chat__user'
+							onMouseEnter={() => setWispButton(9)}
+							onMouseLeave={() => setWispButton(0)}>
+							<div className='chat__user__link'>
+								[ #9 ]
+							</div>
+							{wispButton == 9 && (<div className='chat__user__wisp'>
+								[ /w ]
+							</div>
+							)}
+						</div >
+						<div className='chat__user'
+							onMouseEnter={() => setWispButton(10)}
+							onMouseLeave={() => setWispButton(0)}>
+							<div className='chat__user__link'>
+								[ #10 ]
+							</div>
+							{wispButton == 10 && (<div className='chat__user__wisp'>
+								[ /w ]
+							</div>
+							)}
+						</div >
+						<div className='chat__user'
+							onMouseEnter={() => setWispButton(11)}
+							onMouseLeave={() => setWispButton(0)}>
+							<div className='chat__user__link'>
+								[ #11 ]
+							</div>
+							{wispButton == 11 && (<div className='chat__user__wisp'>
+								[ /w ]
+							</div>
+							)}
+						</div >
+						<div className='chat__user'
+							onMouseEnter={() => setWispButton(12)}
+							onMouseLeave={() => setWispButton(0)}>
+							<div className='chat__user__link'>
+								[ #12 ]
+							</div>
+							{wispButton == 12 && (<div className='chat__user__wisp'>
+								[ /w ]
+							</div>
+							)}
+						</div >
+					</div >
 
 					<input id='chat__input' name='chat__input' placeholder=' ...' />
 					<div className='chat__sendMsg'>
 						[OK]
 					</div>
 
-				</div>
+				</div >
 
 				<div className={`chat__button ${chat === 'open' ? 'chat__button--expended' : ''} ${chatButton === 'pressed' ? 'chat__button--pressed' : ''}`}
 					onMouseDown={() => setChatButton('pressed')}
 					onMouseUp={() => { setChatButton('released'); switchCtat(); }}>
 					[ CHAT ]
 				</div>
-			</div>
-		</div>
+			</div >
+		</div >
 	)
 }
 export default Chat

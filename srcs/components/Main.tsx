@@ -8,35 +8,44 @@ import Profil from './Profil.tsx'
 import Party from './Party.tsx'
 import Leaderboard from './Leaderboard.tsx'
 import NotFound from './NotFound.tsx'
+import { newBox } from './utils.tsx'
 
 function Main() {
-	// Variables
-	const [isAuthentified, setIsAuthenticated] = useState(() => {
-		const storedValue = localStorage.getItem('isAuthentified')
-		return storedValue === 'true' ? true : false
+	// Valeurs
+	const [boxPressed, setBoxPressed] = useState(0)
+	const [logged, setLoged] = useState(() => {
+		const value = localStorage.getItem('logged')
+		return value === '1' ? true : false
 	})
-	const [loginButton, setLoginButton] = useState("released")
+
+	const isPressed = (id: integer) => (boxPressed === id ? 'login__button--pressed' : '')
+	const loginBoxName = `${isPressed(1)} login__button`
+
+	const loginBox = (name: string) => (
+		newBox({
+			className: name,
+			to: undefined,
+			onMouseDown: () => setBoxPressed(1),
+			onMouseUp: () => { setBoxPressed(0); connect() },
+			content: '[ 42Auth ]'
+		})
+	)
 
 	// Modifieurs
 	const connect = () => {
-		setIsAuthenticated(true)
-		localStorage.setItem('isAuthentified', 'true')
+		setLoged(true)
+		localStorage.setItem('logged', '1')
 	}
-
 	const disconnect = () => {
-		setIsAuthenticated(false)
-		localStorage.setItem('isAuthentified', 'false')
+		setLoged(false)
+		localStorage.setItem('logged', '0')
 	}
 
 	// Retour
 	return (
 		<>
-			{!isAuthentified ? (
-				<div className={`login__button ${loginButton === "released" ? "" : "login__button--pressed"}`}
-					onMouseDown={() => setLoginButton("pressed")}
-					onMouseUp={() => { setLoginButton("released"); connect() }}>
-					[ 42Auth ]
-				</div>
+			{!logged ? (
+				loginBox(loginBoxName)
 			) : (
 				<Router>
 					<Routes>
@@ -49,11 +58,11 @@ function Main() {
 						<Route path='*' element={<NotFound />} />
 					</Routes>
 
-					<div className='header'>
+					<header className='header'>
 						<NavBar disconnect={disconnect} />
 						<Chat />
 						<Matchmaker />
-					</div>
+					</header>
 				</Router>
 			)}
 		</>

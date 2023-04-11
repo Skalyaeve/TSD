@@ -42,12 +42,21 @@ ex: ".navbBar__logo--hidden {}"
 .navbBar * {
 	/* #1 Elements */
 	border: 1px solid rgb(172, 0, 0);
+	border-top: none;
 	display: flex;
 	align-items: center;
 	justify-content: center;
 }
 
+.navbBar__backLink {
+	/* #2 Form */
+	height: 45px;
+}
+
 .navbBar__first {
+	/* #1 Elements */
+	border-top: 1px solid rgb(172, 0, 0);
+
 	/* #2 Form */
 	border-top-left-radius: 5px;
 	border-top-right-radius: 5px;
@@ -59,12 +68,7 @@ ex: ".navbBar__logo--hidden {}"
 	border-bottom-right-radius: 5px;
 }
 
-.navbBar__backLink {
-	/* #2 Form */
-	height: 45px;
-}
-
-.navBar__button--pressed {
+.navBar__box--pressed {
 	/* #1 Elements */
 	background-color: rgba(124, 44, 44, 0.3);
 }

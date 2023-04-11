@@ -2,7 +2,7 @@ import React from 'react'
 import { useLocation } from 'react-router-dom'
 
 function Profil() {
-	// Variables
+	// Valeurs
 	const location = useLocation()
 
 	// Modifieurs
@@ -27,14 +27,14 @@ function Profil() {
 			'/profil/characters': renderCharacters,
 			'/profil': renderStats
 		}
-		return renderLinksMap[path] ? renderLinksMap[path]() : renderLinksMap['404']()
+		return renderLinksMap[path]()
 	}
 
 	// Retour
 	return (
-		<main className='profil main__content'>
+		<div className='profil main__content'>
 			{getRender(location.pathname)}
-		</main>
+		</div>
 	)
 }
 export default Profil

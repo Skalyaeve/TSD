@@ -1,32 +1,54 @@
-import React, { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { newBox } from './utils.tsx'
 
 function Matchmaker() {
-	// Variables
+	// Valeurs
+	const navigate = useNavigate()
+	const [boxPressed, setBoxPressed] = useState(0)
+	const [matchmaking, setMatchmaking] = useState(false)
 	const [inGame, setInGame] = useState(() => {
-		const storedValue = localStorage.getItem('inGame')
-		return storedValue === 'true' ? true : false
+		const value = localStorage.getItem('inGame')
+		return value === '1' ? true : false
 	})
-	const [matchmaker, setMatchmaker] = useState('closed')
-	const [button, setButton] = useState('released')
-	const navigate = useNavigate();
+
+	const isPressed = (id: integer) => (boxPressed === id ? 'matchmaker__button--pressed' : '')
+	const matchmakerBoxName = `${isPressed(1)} matchmaker__button`
+
+	const matchmakerBox = (name: string) => (
+		newBox({
+			className: name,
+			to: undefined,
+			onMouseDown: () => setBoxPressed(1),
+			onMouseUp: () => { setBoxPressed(0); pressingButton() },
+			content: matchmaking === false ? (
+				inGame === false ? (
+					<>[ PLAY ]</>
+				) : (
+					<>[ EXIT ]</>
+				)
+			) : (
+				updateCount()
+			)
+		})
+	)
 
 	// Modifieurs
 	const enterGame = () => {
 		setInGame(true)
-		localStorage.setItem('inGame', 'true')
+		localStorage.setItem('inGame', '1')
 	}
 	const leaveGame = () => {
 		setInGame(false)
-		localStorage.setItem('inGame', 'false')
+		localStorage.setItem('inGame', '0')
 	}
 
-	const buttonPressed = () => {
-		if (matchmaker === 'closed') {
+	const pressingButton = () => {
+		if (matchmaking === false) {
 			if (inGame === false) {
-				setMatchmaker('open')
-				// Matchmaking
-				setMatchmaker('closed')
+				setMatchmaking(true)
+				// Matchmaking...
+				setMatchmaking(false)
 				enterGame()
 				navigate('/party')
 			}
@@ -36,25 +58,14 @@ function Matchmaker() {
 			}
 		}
 		else
-			setMatchmaker('closed')
+			setMatchmaking(false)
 	}
+	const updateCount = () => (<>[ 00:00 STOP ]</>)
 
 	// Retour
 	return (
 		<div className='matchmaker'>
-			<div className={`matchmaker__button ${button === "pressed" ? "matchmaker__button--pressed" : ""}`}
-				onMouseDown={() => setButton("pressed")}
-				onMouseUp={() => { setButton("released"); buttonPressed(); }}>
-				{matchmaker === 'closed' ? (
-					inGame === false ? (
-						<>[ PLAY ]</>
-					) : (
-						<>[ EXIT ]</>
-					)
-				) : (
-					<>[ 00:00 STOP ]</>
-				)}
-			</div>
+			{matchmakerBox(matchmakerBoxName)}
 		</div >
 	)
 }

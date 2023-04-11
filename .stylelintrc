@@ -1,6 +1,8 @@
 {
 	"extends": "stylelint-config-standard",
 	"rules": {
+		"alpha-value-notation": null,
+		"comment-empty-line-before": null,
 		"selector-class-pattern": "^[a-zA-Z]+(?:__[a-zA-Z]+)*(?:--[a-zA-Z]+)*$",
 		"length-zero-no-unit": null,
 		"indentation": "tab",

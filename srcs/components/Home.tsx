@@ -1,15 +1,15 @@
 import React from 'react'
 
 function Home() {
-	// Variables
+	// Valeurs
 
 	// Modifieurs
 
 	// Retour
 	return (
-		<main className='home main__content'>
+		<div className='home main__content'>
 			Home
-		</main>
+		</div>
 	)
 }
 export default Home
