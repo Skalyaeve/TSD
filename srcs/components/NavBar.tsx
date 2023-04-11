@@ -29,8 +29,8 @@ function NavBar({ disconnect }: NavBarProps) {
 
 	const logoutBox = (name: string) => (
 		newBox({
+			tag: 'div',
 			className: name,
-			to: undefined,
 			onMouseDown: () => setBoxPressed(1),
 			onMouseUp: () => { setBoxPressed(0); disconnect() },
 			content: '[ LOGOUT ]'
@@ -38,6 +38,7 @@ function NavBar({ disconnect }: NavBarProps) {
 	)
 	const backBox = (name: string) => (
 		newBox({
+			tag: 'Link',
 			className: name,
 			to: '/',
 			onMouseDown: () => setBoxPressed(2),
@@ -47,6 +48,7 @@ function NavBar({ disconnect }: NavBarProps) {
 	)
 	const homeBox = (name: string) => (
 		newBox({
+			tag: 'Link',
 			className: name,
 			to: '/',
 			onMouseDown: () => setBoxPressed(3),
@@ -56,6 +58,7 @@ function NavBar({ disconnect }: NavBarProps) {
 	)
 	const profilBox = (name: string) => (
 		newBox({
+			tag: 'Link',
 			className: name,
 			to: '/profil',
 			onMouseDown: () => setBoxPressed(4),
@@ -65,6 +68,7 @@ function NavBar({ disconnect }: NavBarProps) {
 	)
 	const leaderBox = (name: string) => (
 		newBox({
+			tag: 'Link',
 			className: name,
 			to: '/leaderboard',
 			onMouseDown: () => setBoxPressed(5),
@@ -74,6 +78,7 @@ function NavBar({ disconnect }: NavBarProps) {
 	)
 	const statsBox = (name: string) => (
 		newBox({
+			tag: 'Link',
 			className: name,
 			to: '/profil',
 			onMouseDown: () => setBoxPressed(6),
@@ -83,6 +88,7 @@ function NavBar({ disconnect }: NavBarProps) {
 	)
 	const charactersBox = (name: string) => (
 		newBox({
+			tag: 'Link',
 			className: name,
 			to: '/profil/characters',
 			onMouseDown: () => setBoxPressed(7),
@@ -92,6 +98,7 @@ function NavBar({ disconnect }: NavBarProps) {
 	)
 	const friendsBox = (name: string) => (
 		newBox({
+			tag: 'Link',
 			className: name,
 			to: '/profil/friends',
 			onMouseDown: () => setBoxPressed(8),
@@ -143,10 +150,6 @@ function NavBar({ disconnect }: NavBarProps) {
 	}
 
 	// Retour
-	return (
-		<nav className='navbBar'>
-			{render(location.pathname)}
-		</nav>
-	)
+	return <nav className='navbBar'>{render(location.pathname)}</nav>
 }
 export default NavBar

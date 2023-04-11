@@ -35,30 +35,56 @@ export function DragDrop({ id, text, moveItem }: DragDropProps) {
 
 // --Genere-un-bouton-------------------------->>
 interface newBoxProps {
-	className: string | undefined
-	to: string | undefined
-	onMouseDown: (() => void) | undefined
-	onMouseUp: (() => void) | undefined
-	content: any
+	tag: string
+	className?: string | undefined
+	to?: string | undefined
+	onMouseDown?: (() => void) | undefined
+	onMouseUp?: (() => void) | undefined
+	onMouseEnter?: (() => void) | undefined
+	onMouseLeave?: (() => void) | undefined
+	content?: any
 }
 
-export function newBox({ className, onMouseDown, onMouseUp, to, content }: newBoxProps) {
+export function newBox({
+	tag,
+	className,
+	to,
+	onMouseEnter,
+	onMouseLeave,
+	onMouseDown,
+	onMouseUp,
+	content
+}: newBoxProps) {
 	// Valeurs
-
-	// Modifieurs
-
-	// Retour
-	return (
-		<>
-			{to === undefined ? (
-				<div className={className} onMouseDown={onMouseDown} onMouseUp={onMouseUp}>
-					{content}
-				</div>
-			) : (
-				<Link className={className} to={to} onMouseDown={onMouseDown} onMouseUp={onMouseUp}>
+	const isDiv = () => (
+		<div className={className}
+			onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}
+			onMouseDown={onMouseDown} onMouseUp={onMouseUp}>
+			{content}
+		</div>
+	)
+	const isLink = () => {
+		if (to != undefined) {
+			return (
+				<Link className={className} to={to}
+					onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}
+					onMouseDown={onMouseDown} onMouseUp={onMouseUp}>
 					{content}
 				</Link>
-			)}
-		</>
-	)
+			);
+		}
+		return null;
+	}
+
+	// Modifieurs
+	const render = () => {
+		const linksMap: { [key: string]: () => JSX.Element | null } = {
+			'div': isDiv,
+			'Link': isLink
+		}
+		return linksMap[tag] ? linksMap[tag]() : linksMap['div']()
+	}
+
+	// Retour
+	return <>{render()}</>
 }

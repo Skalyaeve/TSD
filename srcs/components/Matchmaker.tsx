@@ -17,8 +17,8 @@ function Matchmaker() {
 
 	const matchmakerBox = (name: string) => (
 		newBox({
+			tag: 'div',
 			className: name,
-			to: undefined,
 			onMouseDown: () => setBoxPressed(1),
 			onMouseUp: () => { setBoxPressed(0); pressingButton() },
 			content: matchmaking === false ? (
@@ -63,10 +63,6 @@ function Matchmaker() {
 	const updateCount = () => (<>[ 00:00 STOP ]</>)
 
 	// Retour
-	return (
-		<div className='matchmaker'>
-			{matchmakerBox(matchmakerBoxName)}
-		</div >
-	)
+	return <div className='matchmaker'>{matchmakerBox(matchmakerBoxName)}</div >
 }
 export default Matchmaker

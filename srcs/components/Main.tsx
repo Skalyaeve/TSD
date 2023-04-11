@@ -23,8 +23,8 @@ function Main() {
 
 	const loginBox = (name: string) => (
 		newBox({
+			tag: 'div',
 			className: name,
-			to: undefined,
 			onMouseDown: () => setBoxPressed(1),
 			onMouseUp: () => { setBoxPressed(0); connect() },
 			content: '[ 42Auth ]'

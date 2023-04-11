@@ -1,17 +1,18 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react'
 import { DragDrop } from './utils.tsx';
+import { newBox } from './utils.tsx'
 
 function Chat() {
 	// Valeurs
-	const [chatButton, setChatButton] = useState('released')
+	const [boxPressed, setBoxPressed] = useState(0)
+	const [wispButton, setWispButton] = useState(0)
+
 	const [chat, setChat] = useState('closed')
 	const [chatWidth, setChatWidth] = useState(0);
 	const [userList, setUserList] = useState('closed')
-	const [wispButton, setWispButton] = useState(0)
 
 	const chatRef = useRef<HTMLDivElement | null>(null)
 
-	const [addRoomButton, setAddRoomButton] = useState('released')
 	const [roomSettings, setRoomSettings] = useState('closed')
 	const [roomSettingsPos, setRoomSettingsPos] = useState({ left: '100%' })
 	const [roomBox, setRoomBox] = useState([
@@ -20,6 +21,70 @@ function Chat() {
 		{ id: 3, text: '[ #3 ]' }
 	]);
 
+	const isPressed = (id: integer) => (boxPressed === id ? 'chat__button--pressed' : '')
+	const chatGateBoxName = `${isPressed(1)} ${chat === 'open' ? 'chat__gate--expended' : ''} chat__gate`
+	const newRoomBoxName = `${isPressed(2)} chat__newRoom`
+	const roomSettingsBoxName = `chat__roomSettings ${roomSettings === 'closed' ? 'chat__roomSettings--closed' : ''}`
+	const sendMsgBoxName = `${isPressed(3)} chat__sendMsg`
+
+	const chatGateBox = (name: string) => (
+		newBox({
+			tag: 'div',
+			className: name,
+			onMouseDown: () => setBoxPressed(1),
+			onMouseUp: () => { setBoxPressed(0); switchCtat() },
+			content: '[ CHAT ]'
+		})
+	)
+	const newRoomBox = (name: string) => (
+		newBox({
+			tag: 'div',
+			className: name,
+			onMouseDown: () => setBoxPressed(2),
+			onMouseUp: () => { setBoxPressed(0); switchRoomSettings() },
+			content: roomSettings === 'closed' ? (
+				<>[+]</>
+			) : (
+				<>[-]</>
+			)
+		})
+	)
+	const sendMsgBox = (name: string) => (
+		newBox({
+			tag: 'div',
+			className: name,
+			onMouseDown: () => setBoxPressed(3),
+			onMouseUp: () => setBoxPressed(0),
+			content: '[ OK ]'
+		})
+	)
+	const usrLinkBox = (name: string, id: integer) => (
+		newBox({
+			tag: 'div',
+			className: name,
+			content: `[ #${id} ]`
+		})
+	)
+	const usrWispBox = (name: string, id: integer) => (
+		newBox({
+			tag: 'div',
+			className: name,
+			content: '[ /w ]'
+		})
+	)
+	const chatUsrBox = (name: string, id: integer) => (
+		newBox({
+			tag: 'div',
+			className: name,
+			onMouseEnter: () => setWispButton(id),
+			onMouseLeave: () => setWispButton(0),
+			onMouseDown: () => setBoxPressed(3 + id),
+			onMouseUp: () => setBoxPressed(0),
+			content: `${usrLinkBox('chat__user__link', id)}
+			${wispButton === id && usrWispBox('chat__user__wisp', id)}`
+		})
+	)
+
 	// Modifieurs
 	const switchCtat = () => {
 		setChat(chat === 'open' ? 'closed' : 'open')
@@ -27,7 +92,7 @@ function Chat() {
 			setRoomSettings('closed')
 		if (chatRef.current) {
 			const chatElement = chatRef.current;
-			chatElement.setAttribute('style', `width: ${275}px`);
+			chatElement.setAttribute('style', `width: 275px`);
 		}
 	}
 	const moveBox = useCallback((draggedId: number, droppedId: number) => {
@@ -78,12 +143,9 @@ function Chat() {
 	// Retour
 	return (
 		<div className='chat--resize'>
-			<div className={`chat__roomSettings ${roomSettings === 'closed' ? 'chat__roomSettings--closed' : ''}`}
-				style={roomSettingsPos}>
-				Room Settings
-			</div>
-			<div className={`chat ${chat === 'closed' ? 'chat--noResize' : ''}`}
-				ref={chatRef}>
+			{chatGateBox(chatGateBoxName)}
+
+			<div className={`chat ${chat === 'closed' ? 'chat--noResize' : ''}`} ref={chatRef}>
 				<div className={`chat__content ${chat === 'closed' ? 'chat__content--hidden' : ''}`}>
 
 					<div className='chat__rooms'>
@@ -91,168 +153,35 @@ function Chat() {
 							<DragDrop key={box.id} {...box} moveItem={moveBox} />
 						))}
 					</div>
-					<div className={`chat__newRoom ${addRoomButton === 'pressed' ? 'chat__newRoom--pressed' : ''}`}
-						onMouseDown={() => setAddRoomButton('pressed')}
-						onMouseUp={() => { setAddRoomButton('released'); switchRoomSettings(); }}>
-						{roomSettings === 'closed' ? (
-							<>[+]</>
-						) : (
-							<>[-]</>
-						)}
-					</div>
+					{newRoomBox(newRoomBoxName)}
 
 					<div className={`chat__area ${userList === 'open' ? 'chat__area--shorten' : ''}`}>
 						Content
 					</div>
 					<div className={`chat__userList ${userList === 'closed' ? 'chat__userList--hidden' : ''}`}>
 						<div className='chat__userList__label'>Connected</div>
-						<div className='chat__user'
-							onMouseEnter={() => setWispButton(1)}
-							onMouseLeave={() => setWispButton(0)}>
-							<div className='chat__user__link'>
-								[ #1 ]
-							</div>
-							{wispButton == 1 && (<div className='chat__user__wisp'>
-								[ /w ]
-							</div>
-							)}
-						</div>
-						<div className='chat__user'
-							onMouseEnter={() => setWispButton(2)}
-							onMouseLeave={() => setWispButton(0)}>
-							<div className='chat__user__link'>
-								[ #2 ]
-							</div>
-							{wispButton == 2 && (<div className='chat__user__wisp'>
-								[ /w ]
-							</div>
-							)}
-						</div>
-						<div className='chat__user'
-							onMouseEnter={() => setWispButton(3)}
-							onMouseLeave={() => setWispButton(0)}>
-							<div className='chat__user__link'>
-								[ #3 ]
-							</div>
-							{wispButton == 3 && (<div className='chat__user__wisp'>
-								[ /w ]
-							</div>
-							)}
-						</div>
-						<div className='chat__user'
-							onMouseEnter={() => setWispButton(4)}
-							onMouseLeave={() => setWispButton(0)}>
-							<div className='chat__user__link'>
-								[ #4 ]
-							</div>
-							{wispButton == 4 && (<div className='chat__user__wisp'>
-								[ /w ]
-							</div>
-							)}
-						</div>
-						<div className='chat__user'
-							onMouseEnter={() => setWispButton(5)}
-							onMouseLeave={() => setWispButton(0)}>
-							<div className='chat__user__link'>
-								[ #5 ]
-							</div>
-							{wispButton == 5 && (<div className='chat__user__wisp'>
-								[ /w ]
-							</div>
-							)}
-						</div >
-						<div className='chat__user'
-							onMouseEnter={() => setWispButton(6)}
-							onMouseLeave={() => setWispButton(0)}>
-							<div className='chat__user__link'>
-								[ #6 ]
-							</div>
-							{wispButton == 6 && (<div className='chat__user__wisp'>
-								[ /w ]
-							</div>
-							)}
-						</div >
-						<div className='chat__user'
-							onMouseEnter={() => setWispButton(7)}
-							onMouseLeave={() => setWispButton(0)}>
-							<div className='chat__user__link'>
-								[ #7 ]
-							</div>
-							{wispButton == 7 && (<div className='chat__user__wisp'>
-								[ /w ]
-							</div>
-							)}
-						</div >
-						<div className='chat__user'
-							onMouseEnter={() => setWispButton(8)}
-							onMouseLeave={() => setWispButton(0)}>
-							<div className='chat__user__link'>
-								[ #8 ]
-							</div>
-							{wispButton == 8 && (<div className='chat__user__wisp'>
-								[ /w ]
-							</div>
-							)}
-						</div >
-						<div className='chat__user'
-							onMouseEnter={() => setWispButton(9)}
-							onMouseLeave={() => setWispButton(0)}>
-							<div className='chat__user__link'>
-								[ #9 ]
-							</div>
-							{wispButton == 9 && (<div className='chat__user__wisp'>
-								[ /w ]
-							</div>
-							)}
-						</div >
-						<div className='chat__user'
-							onMouseEnter={() => setWispButton(10)}
-							onMouseLeave={() => setWispButton(0)}>
-							<div className='chat__user__link'>
-								[ #10 ]
-							</div>
-							{wispButton == 10 && (<div className='chat__user__wisp'>
-								[ /w ]
-							</div>
-							)}
-						</div >
-						<div className='chat__user'
-							onMouseEnter={() => setWispButton(11)}
-							onMouseLeave={() => setWispButton(0)}>
-							<div className='chat__user__link'>
-								[ #11 ]
-							</div>
-							{wispButton == 11 && (<div className='chat__user__wisp'>
-								[ /w ]
-							</div>
-							)}
-						</div >
-						<div className='chat__user'
-							onMouseEnter={() => setWispButton(12)}
-							onMouseLeave={() => setWispButton(0)}>
-							<div className='chat__user__link'>
-								[ #12 ]
-							</div>
-							{wispButton == 12 && (<div className='chat__user__wisp'>
-								[ /w ]
-							</div>
-							)}
-						</div >
+						{chatUsrBox('chat__user', 1)}
+						{chatUsrBox('chat__user', 2)}
+						{chatUsrBox('chat__user', 3)}
+						{chatUsrBox('chat__user', 4)}
+						{chatUsrBox('chat__user', 5)}
+						{chatUsrBox('chat__user', 6)}
+						{chatUsrBox('chat__user', 7)}
+						{chatUsrBox('chat__user', 8)}
+						{chatUsrBox('chat__user', 9)}
+						{chatUsrBox('chat__user', 10)}
+						{chatUsrBox('chat__user', 11)}
+						{chatUsrBox('chat__user', 12)}
 					</div >
 
 					<input id='chat__input' name='chat__input' placeholder=' ...' />
-					<div className='chat__sendMsg'>
-						[OK]
-					</div>
+					{sendMsgBox(sendMsgBoxName)}
 
 				</div >
-
-				<div className={`chat__button ${chat === 'open' ? 'chat__button--expended' : ''} ${chatButton === 'pressed' ? 'chat__button--pressed' : ''}`}
-					onMouseDown={() => setChatButton('pressed')}
-					onMouseUp={() => { setChatButton('released'); switchCtat(); }}>
-					[ CHAT ]
-				</div>
 			</div >
+			<div className={roomSettingsBoxName} style={roomSettingsPos}>
+				Room Settings
+			</div>
 		</div >
 	)
 }

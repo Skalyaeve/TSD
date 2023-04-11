@@ -3,7 +3,7 @@
 			restart stop start down			\
 			clean fclean logs
 
-# ------BUILD+START-------------- #
+# ------BUILD-ALL+START---------- #
 dev:
 			docker-compose up -d dev
 prod:

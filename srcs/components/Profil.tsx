@@ -31,10 +31,6 @@ function Profil() {
 	}
 
 	// Retour
-	return (
-		<div className='profil main__content'>
-			{getRender(location.pathname)}
-		</div>
-	)
+	return <div className='profil main__content'>{getRender(location.pathname)}</div>
 }
 export default Profil
