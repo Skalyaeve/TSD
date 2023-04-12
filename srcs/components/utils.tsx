@@ -3,45 +3,45 @@ import { useDrag, useDrop } from 'react-dnd'
 import { Link } from 'react-router-dom'
 
 // --Manage-le-drag-drop----------------------->>
-interface DragDropProps {
-	id: number
-	text: string
+interface DragDropProps extends React.HTMLAttributes<HTMLDivElement> {
+	itemId: number
+	content: any
 	moveItem: (draggedId: number, droppedId: number) => void
 }
 interface Item {
 	id: number
 }
 
-export function DragDrop({ id, text, moveItem }: DragDropProps) {
+export function DragDrop({ itemId, content, moveItem, ...divParams }: DragDropProps) {
 	// Valeurs
-	const [, drag] = useDrag<Item, void, unknown>({
-		type: 'CHAT_ROOM_ITEM',
-		item: { id }
+	const [, drag] = useDrag<Item>({
+		type: 'item',
+		item: { id: itemId }
 	})
-	const [, drop] = useDrop<Item, void, unknown>({
-		accept: 'CHAT_ROOM_ITEM',
-		drop: (item) => moveItem(item.id, id)
+	const [, drop] = useDrop<Item>({
+		accept: 'item',
+		drop: (item) => moveItem(item.id, itemId)
 	})
 
 	// Modifieurs
 
 	// Retour
 	return (
-		<div ref={(node) => drag(drop(node))}>
-			{text}
-		</div>
+		<div ref={(node) => drag(drop(node))} {...divParams}>
+			{content}
+		</div >
 	)
 }
 
 // --Genere-un-bouton-------------------------->>
 interface newBoxProps {
 	tag: string
-	className?: string | undefined
-	to?: string | undefined
-	onMouseDown?: (() => void) | undefined
-	onMouseUp?: (() => void) | undefined
-	onMouseEnter?: (() => void) | undefined
-	onMouseLeave?: (() => void) | undefined
+	className?: string
+	to?: string
+	onMouseDown?: (() => void)
+	onMouseUp?: (() => void)
+	onMouseEnter?: (() => void)
+	onMouseLeave?: (() => void)
 	content?: any
 }
 
@@ -77,7 +77,7 @@ export function newBox({
 	}
 
 	// Modifieurs
-	const render = () => {
+	const render = function () {
 		const linksMap: { [key: string]: () => JSX.Element | null } = {
 			'div': isDiv,
 			'Link': isLink

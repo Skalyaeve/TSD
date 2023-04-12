@@ -11,7 +11,7 @@ function NavBar({ disconnect }: NavBarProps) {
 	const location = useLocation()
 	const [boxPressed, setBoxPressed] = useState(0)
 
-	const isPressed = (id: integer) => (boxPressed === id ? 'navBar__box--pressed' : '')
+	const isPressed = (id: number) => (boxPressed === id ? 'navBar__box--pressed' : '')
 	const backLink = 'navbBar__backLink'
 	const firstLink = 'navbBar__first'
 	const lastLink = 'navbBar__last'
@@ -46,6 +46,7 @@ function NavBar({ disconnect }: NavBarProps) {
 			content: '[ BACK ]'
 		})
 	)
+
 	const homeBox = (name: string) => (
 		newBox({
 			tag: 'Link',
@@ -76,6 +77,7 @@ function NavBar({ disconnect }: NavBarProps) {
 			content: '[ LEADER ]'
 		})
 	)
+
 	const statsBox = (name: string) => (
 		newBox({
 			tag: 'Link',
@@ -107,7 +109,6 @@ function NavBar({ disconnect }: NavBarProps) {
 		})
 	)
 
-	// Modifieurs
 	const renderFromHome = () => (
 		<>
 			{logoutBox(logoutBoxName)}
@@ -136,7 +137,9 @@ function NavBar({ disconnect }: NavBarProps) {
 			{homeBox(homeBoxName)}
 		</>
 	)
-	const render = (path: string) => {
+
+	// Modifieurs
+	const render = function (path: string) {
 		const linksMap: { [key: string]: () => JSX.Element } = {
 			'/': renderFromHome,
 			'/profil': renderFromProfil,

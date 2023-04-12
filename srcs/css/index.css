@@ -52,13 +52,19 @@ a {
 	text-decoration: none;
 }
 
+canvas {
+	/* #2 Form */
+	width: 100%;
+	height: 100%;
+}
+
 /* ------ID----------------------- */
 
 #main {
 	/* #1 Elements */
 	display: grid;
 	grid-template-columns: 275px auto;
-	grid-template-rows: 1fr;
+	grid-template-rows: 100vh;
 
 	/* #2 Form */
 	width: 100vw;

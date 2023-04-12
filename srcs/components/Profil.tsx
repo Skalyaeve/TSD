@@ -5,7 +5,6 @@ function Profil() {
 	// Valeurs
 	const location = useLocation()
 
-	// Modifieurs
 	const renderFriends = () => (
 		<div className='profil__friends'>
 			Friends
@@ -21,7 +20,9 @@ function Profil() {
 			Stats
 		</div>
 	)
-	const getRender = (path: string) => {
+
+	// Modifieurs
+	const getRender = function (path: string) {
 		const renderLinksMap: { [key: string]: () => JSX.Element } = {
 			'/profil/friends': renderFriends,
 			'/profil/characters': renderCharacters,

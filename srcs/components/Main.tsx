@@ -18,9 +18,9 @@ function Main() {
 		return value === '1' ? true : false
 	})
 
-	const isPressed = (id: integer) => (boxPressed === id ? 'login__button--pressed' : '')
-	const loginBoxName = `${isPressed(1)} login__button`
+	const isPressed = (id: number) => (boxPressed === id ? 'login__button--pressed' : '')
 
+	const loginBoxName = `${isPressed(1)} login__button`
 	const loginBox = (name: string) => (
 		newBox({
 			tag: 'div',
@@ -32,11 +32,11 @@ function Main() {
 	)
 
 	// Modifieurs
-	const connect = () => {
+	const connect = function () {
 		setLoged(true)
 		localStorage.setItem('logged', '1')
 	}
-	const disconnect = () => {
+	const disconnect = function () {
 		setLoged(false)
 		localStorage.setItem('logged', '0')
 	}

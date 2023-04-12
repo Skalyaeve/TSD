@@ -9,28 +9,10 @@ module.exports = {
 	// Entrée de l'application
 	entry: "./srcs/index.tsx",
 
-	module: {
-		rules: [
-			{
-				test: /\.(png|svg|jpg|jpeg|gif)$/i,
-				use: [
-					{
-						loader: 'file-loader',
-						options: {
-							name: '[name].[ext]',
-							outputPath: 'ressources/',
-							publicPath: 'ressources/',
-						},
-					},
-				],
-			},
-		],
-	},
-
 	// Configuration des loaders pour traiter différents types de fichiers
 	module: {
 		rules: [
-			// Règle pour traiter les fichiers TS et TSX
+			// Règle pour traiter les fichiers TSX
 			{
 				test: /\.(ts|tsx)$/,
 				exclude: /node_modules/,
@@ -40,6 +22,17 @@ module.exports = {
 			{
 				test: /\.css$/,
 				use: ["style-loader", "css-loader"]
+			},
+			// Règle pour traiter les images
+			{
+				test: /\.(png)$/i,
+				use: [{
+					loader: 'file-loader',
+					options: {
+						name: '[name].[ext]',
+						outputPath: 'dist/img',
+					},
+				},],
 			},
 		],
 	},

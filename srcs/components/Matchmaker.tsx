@@ -12,9 +12,9 @@ function Matchmaker() {
 		return value === '1' ? true : false
 	})
 
-	const isPressed = (id: integer) => (boxPressed === id ? 'matchmaker__button--pressed' : '')
-	const matchmakerBoxName = `${isPressed(1)} matchmaker__button`
+	const isPressed = (id: number) => (boxPressed === id ? 'matchmaker__button--pressed' : '')
 
+	const matchmakerBoxName = `${isPressed(1)} matchmaker__button`
 	const matchmakerBox = (name: string) => (
 		newBox({
 			tag: 'div',
@@ -34,16 +34,16 @@ function Matchmaker() {
 	)
 
 	// Modifieurs
-	const enterGame = () => {
+	const enterGame = function () {
 		setInGame(true)
 		localStorage.setItem('inGame', '1')
 	}
-	const leaveGame = () => {
+	const leaveGame = function () {
 		setInGame(false)
 		localStorage.setItem('inGame', '0')
 	}
 
-	const pressingButton = () => {
+	const pressingButton = function () {
 		if (matchmaking === false) {
 			if (inGame === false) {
 				setMatchmaking(true)
@@ -60,9 +60,11 @@ function Matchmaker() {
 		else
 			setMatchmaking(false)
 	}
-	const updateCount = () => (<>[ 00:00 STOP ]</>)
+	const updateCount = function () {
+		return <>[ 00:00 STOP ]</>
+	}
 
 	// Retour
-	return <div className='matchmaker'>{matchmakerBox(matchmakerBoxName)}</div >
+	return <div className='matchmaker'>{matchmakerBox(matchmakerBoxName)}</div>
 }
 export default Matchmaker
