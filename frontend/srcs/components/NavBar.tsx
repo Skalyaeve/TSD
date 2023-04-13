@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useLocation } from 'react-router-dom'
-import { newBox } from './utils.js'
+import { newBox } from './utils.tsx'
 
 interface NavBarProps {
 	disconnect: () => void

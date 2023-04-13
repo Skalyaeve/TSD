@@ -20,6 +20,6 @@
 	},
 	// Spécifie les fichiers à inclure dans la compilation
 	"include": [
-		"frontend/srcs"
+		"srcs"
 	]
 }

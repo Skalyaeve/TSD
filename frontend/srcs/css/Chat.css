@@ -95,11 +95,6 @@ ex: ".navbBar__logo--hidden {}"
 	border-bottom-right-radius: 5px;
 }
 
-.chat__content--hidden {
-	/* #1 Elements */
-	display: none;
-}
-
 .chat__rooms {
 	/* #1 Elements */
 	border-bottom: 1px solid rgb(0, 122, 6);
@@ -142,11 +137,6 @@ ex: ".navbBar__logo--hidden {}"
 	position: absolute;
 	top: 0%;
 	left: 0%;
-}
-
-.chat__setRoom--hidden {
-	/* #1 Elements */
-	display: none;
 }
 
 .chat__roomLink {
@@ -193,11 +183,6 @@ ex: ".navbBar__logo--hidden {}"
 	/* #3 Position */
 	position: absolute;
 	top: 53px;
-}
-
-.chat__roomSettings--closed {
-	/* #1 Elements */
-	display: none;
 }
 
 .chat__area {
@@ -297,11 +282,6 @@ ex: ".navbBar__logo--hidden {}"
 	/* #3 Position */
 	position: absolute;
 	right: 3%;
-}
-
-.chat__userList--hidden {
-	/* #1 Elements */
-	display: none;
 }
 
 .chat__content input {

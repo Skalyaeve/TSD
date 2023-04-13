@@ -1,5 +1,5 @@
 import React from 'react'
-import { useDrag, useDrop } from 'react-dnd'
+import { DragObjectFactory, useDrag, useDrop } from 'react-dnd'
 import { Link } from 'react-router-dom'
 
 // --Manage-le-drag-drop----------------------->>
@@ -11,7 +11,6 @@ interface DragDropProps extends React.HTMLAttributes<HTMLDivElement> {
 interface Item {
 	id: number
 }
-
 export function DragDrop({ itemId, content, moveItem, ...divParams }: DragDropProps) {
 	// Valeurs
 	const [, drag] = useDrag<Item>({
@@ -34,47 +33,15 @@ export function DragDrop({ itemId, content, moveItem, ...divParams }: DragDropPr
 }
 
 // --Genere-un-bouton-------------------------->>
-interface newBoxProps {
+interface newBoxProps extends React.HTMLAttributes<HTMLElement> {
 	tag: string
-	className?: string
-	to?: string
-	onMouseDown?: (() => void)
-	onMouseUp?: (() => void)
-	onMouseEnter?: (() => void)
-	onMouseLeave?: (() => void)
 	content?: any
+	to?: string
 }
-
-export function newBox({
-	tag,
-	className,
-	to,
-	onMouseEnter,
-	onMouseLeave,
-	onMouseDown,
-	onMouseUp,
-	content
-}: newBoxProps) {
+export function newBox({ tag, content, to, ...divParams }: newBoxProps) {
 	// Valeurs
-	const isDiv = () => (
-		<div className={className}
-			onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}
-			onMouseDown={onMouseDown} onMouseUp={onMouseUp}>
-			{content}
-		</div>
-	)
-	const isLink = () => {
-		if (to != undefined) {
-			return (
-				<Link className={className} to={to}
-					onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}
-					onMouseDown={onMouseDown} onMouseUp={onMouseUp}>
-					{content}
-				</Link>
-			);
-		}
-		return null;
-	}
+	const isDiv = () => <div {...divParams}>{content}</div>
+	const isLink = () => to ? <Link to={to} {...divParams}>{content}</Link> : <></>
 
 	// Modifieurs
 	const render = function () {
@@ -84,7 +51,7 @@ export function newBox({
 		}
 		return linksMap[tag] ? linksMap[tag]() : linksMap['div']()
 	}
-
+	console.log(`New Box:\n${content}`)
 	// Retour
 	return <>{render()}</>
 }

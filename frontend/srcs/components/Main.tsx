@@ -1,14 +1,14 @@
 import React, { useState } from 'react'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
-import NavBar from './NavBar.js'
-import Matchmaker from './Matchmaker.js'
-import Chat from './Chat.js'
-import Home from './Home.js'
-import Profil from './Profil.js'
-import Party from './Party.js'
-import Leaderboard from './Leaderboard.js'
-import NotFound from './NotFound.js'
-import { newBox } from './utils.js'
+import NavBar from './NavBar.tsx'
+import Matchmaker from './Matchmaker.tsx'
+import Chat from './Chat.tsx'
+import Home from './Home.tsx'
+import Profil from './Profil.tsx'
+import Party from './Party.tsx'
+import Leaderboard from './Leaderboard.tsx'
+import NotFound from './NotFound.tsx'
+import { newBox } from './utils.tsx'
 
 function Main() {
 	// Valeurs
