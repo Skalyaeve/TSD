@@ -1,0 +1,156 @@
+/* ---------------------------------
+Methodology BEM (Block, Element, Modifier)
+
+Block: Un composant indépendant
+ex: Un bouton, une barre de navigation, un en-tête...
+ex: ".navbBar {}"
+ex: ".button {}"
+
+Element: Une partie d'un Block qui a un sens uniquement dans le contexte de ce Block.
+ex: ".navbBar__logo {}"
+ex: ".button__icon {}"
+
+Modifier: Une variation ou un état d'un Block ou d'un élément. 
+ex: ".button--large {}"
+ex: ".navbBar__logo--hidden {}"
+--------------------------------- */
+
+/* ---------------------------------
+#1 Elements
+#2 Form
+#3 Position
+#4 Margin - Padding
+--------------------------------- */
+
+@import url("NavBar.css");
+@import url("Chat.css");
+@import url("Party.css");
+
+/* ------TAG---------------------- */
+
+* {
+	/* #1 Elements */
+	box-sizing: border-box;
+
+	/* #4 Margin - Padding */
+	margin: 0;
+	padding: 0;
+}
+
+body {
+	/* #1 Elements */
+	background-color: rgb(0, 0, 0);
+	background-position: center;
+	color: rgb(255, 255, 255);
+	font-family: system-ui;
+	font-size: 23px;
+}
+
+a {
+	/* #1 Elements */
+	color: rgb(255, 255, 255);
+	text-decoration: none;
+}
+
+canvas {
+	/* #2 Form */
+	width: 100%;
+	height: 100%;
+}
+
+/* ------ID----------------------- */
+
+#main {
+	/* #1 Elements */
+	display: grid;
+	grid-template-columns: 275px auto;
+	grid-template-rows: 100vh;
+
+	/* #2 Form */
+	width: 100vw;
+	height: 100vh;
+	min-width: 1024px;
+	min-height: 768px;
+}
+
+/* ------CLASS-------------------- */
+
+.login__button {
+	/* #1 Elements */
+	border: 1px solid rgb(255, 255, 255);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	/* #2 Form */
+	width: 300px;
+	height: 115px;
+	border-radius: 5px;
+
+	/* #3 Position */
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
+
+.login__button--pressed {
+	background-color: rgb(255, 255, 255, 0.3);
+}
+
+.main__content {
+	/* #1 Elements */
+	border: 1px solid rgb(255, 255, 255);
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+
+	/* #3 Position */
+	grid-column: 2 / -1;
+	grid-row: 1 / -1;
+
+	/* #4 Margin - Padding */
+	padding: 10px;
+}
+
+.header {
+	/* #1 Elements */
+	display: grid;
+	grid-template-columns: 1fr;
+	grid-template-rows: 280px auto 120px;
+	/* Rows: (boxHeight * (maxNavBar) + boxHeight / 2) | auto | (boxHeight * 1.5) */
+
+	/* #3 Position */
+	grid-column: 1 / 1;
+	grid-row: 1 / -1;
+}
+
+.matchmaker {
+	/* #2 Form */
+	border-radius: 5px;
+
+	/* #3 Position */
+	grid-column: 1 / -1;
+	grid-row: 3 / -1;
+
+	/* #4 Margin - Padding */
+	padding: 10px;
+}
+
+.matchmaker__button {
+	/* #1 Elements */
+	border: 1px solid rgb(36, 81, 230);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	/* #2 Form */
+	width: 100%;
+	height: 100%;
+	border-radius: 5px;
+}
+
+.matchmaker__button--pressed {
+	background-color: rgba(36, 81, 230, 0.355);
+}
