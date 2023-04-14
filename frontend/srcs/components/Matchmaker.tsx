@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { newBox } from './utils.tsx'
+import { NewBox } from './utils.tsx'
 
 function Matchmaker() {
 	// Valeurs
@@ -16,7 +16,7 @@ function Matchmaker() {
 
 	const matchmakerBoxName = `${isPressed(1)} matchmaker__button`
 	const matchmakerBox = (name: string) => (
-		newBox({
+		NewBox({
 			tag: 'div',
 			className: name,
 			onMouseDown: () => setBoxPressed(1),

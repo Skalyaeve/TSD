@@ -236,7 +236,7 @@ ex: ".navbBar__logo--hidden {}"
 	/* #2 Form */
 	flex-shrink: 0;
 	width: 100%;
-	height: 48px;
+	height: 47px;
 }
 
 .chat__user {

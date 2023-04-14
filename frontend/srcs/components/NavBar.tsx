@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useLocation } from 'react-router-dom'
-import { newBox } from './utils.tsx'
+import { NewBox } from './utils.tsx'
 
 interface NavBarProps {
 	disconnect: () => void
@@ -28,7 +28,7 @@ function NavBar({ disconnect }: NavBarProps) {
 	const friendsBoxName = `${isPressed(8)} ${lastLink}`
 
 	const logoutBox = (name: string) => (
-		newBox({
+		NewBox({
 			tag: 'div',
 			className: name,
 			onMouseDown: () => setBoxPressed(1),
@@ -37,7 +37,7 @@ function NavBar({ disconnect }: NavBarProps) {
 		})
 	)
 	const backBox = (name: string) => (
-		newBox({
+		NewBox({
 			tag: 'Link',
 			className: name,
 			to: '/',
@@ -48,7 +48,7 @@ function NavBar({ disconnect }: NavBarProps) {
 	)
 
 	const homeBox = (name: string) => (
-		newBox({
+		NewBox({
 			tag: 'Link',
 			className: name,
 			to: '/',
@@ -58,7 +58,7 @@ function NavBar({ disconnect }: NavBarProps) {
 		})
 	)
 	const profilBox = (name: string) => (
-		newBox({
+		NewBox({
 			tag: 'Link',
 			className: name,
 			to: '/profil',
@@ -68,7 +68,7 @@ function NavBar({ disconnect }: NavBarProps) {
 		})
 	)
 	const leaderBox = (name: string) => (
-		newBox({
+		NewBox({
 			tag: 'Link',
 			className: name,
 			to: '/leaderboard',
@@ -79,7 +79,7 @@ function NavBar({ disconnect }: NavBarProps) {
 	)
 
 	const statsBox = (name: string) => (
-		newBox({
+		NewBox({
 			tag: 'Link',
 			className: name,
 			to: '/profil',
@@ -89,7 +89,7 @@ function NavBar({ disconnect }: NavBarProps) {
 		})
 	)
 	const charactersBox = (name: string) => (
-		newBox({
+		NewBox({
 			tag: 'Link',
 			className: name,
 			to: '/profil/characters',
@@ -99,7 +99,7 @@ function NavBar({ disconnect }: NavBarProps) {
 		})
 	)
 	const friendsBox = (name: string) => (
-		newBox({
+		NewBox({
 			tag: 'Link',
 			className: name,
 			to: '/profil/friends',

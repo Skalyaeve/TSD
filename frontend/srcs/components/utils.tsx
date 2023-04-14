@@ -1,5 +1,5 @@
 import React from 'react'
-import { DragObjectFactory, useDrag, useDrop } from 'react-dnd'
+import { useDrag, useDrop } from 'react-dnd'
 import { Link } from 'react-router-dom'
 
 // --Manage-le-drag-drop----------------------->>
@@ -38,7 +38,7 @@ interface newBoxProps extends React.HTMLAttributes<HTMLElement> {
 	content?: any
 	to?: string
 }
-export function newBox({ tag, content, to, ...divParams }: newBoxProps) {
+export function NewBox({ tag, content, to, ...divParams }: newBoxProps) {
 	// Valeurs
 	const isDiv = () => <div {...divParams}>{content}</div>
 	const isLink = () => to ? <Link to={to} {...divParams}>{content}</Link> : <></>
@@ -51,6 +51,7 @@ export function newBox({ tag, content, to, ...divParams }: newBoxProps) {
 		}
 		return linksMap[tag] ? linksMap[tag]() : linksMap['div']()
 	}
+
 	console.log(`New Box:\n${content}`)
 	// Retour
 	return <>{render()}</>

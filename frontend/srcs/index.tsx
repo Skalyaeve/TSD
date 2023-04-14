@@ -6,13 +6,23 @@ import Main from './components/Main.tsx';
 import './css/index.css';
 
 const root = document.getElementById('main');
+const strictMode = true
 
 if (root) {
-	createRoot(root).render(
-		<DndProvider backend={HTML5Backend}>
-			<Main />
-		</DndProvider>
-	);
+	if (strictMode)
+		createRoot(root).render(
+			<DndProvider backend={HTML5Backend}>
+				<React.StrictMode>
+					<Main />
+				</React.StrictMode>
+			</DndProvider>
+		)
+	else
+		createRoot(root).render(
+			<DndProvider backend={HTML5Backend}>
+				<Main />
+			</DndProvider>
+		)
 } else {
 	console.error("createRoot(root).render(<Main />) failed");
 }

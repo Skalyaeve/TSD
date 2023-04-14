@@ -8,7 +8,7 @@ import Profil from './Profil.tsx'
 import Party from './Party.tsx'
 import Leaderboard from './Leaderboard.tsx'
 import NotFound from './NotFound.tsx'
-import { newBox } from './utils.tsx'
+import { NewBox } from './utils.tsx'
 
 function Main() {
 	// Valeurs
@@ -22,7 +22,7 @@ function Main() {
 
 	const loginBoxName = `${isPressed(1)} login__button`
 	const loginBox = (name: string) => (
-		newBox({
+		NewBox({
 			tag: 'div',
 			className: name,
 			onMouseDown: () => setBoxPressed(1),
