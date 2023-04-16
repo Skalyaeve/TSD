@@ -1,0 +1,133 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int       @id @default(autoincrement())
+	login		  String?		@unique
+  email     String   @unique
+	nickname  String		@unique
+  avatarURL String
+
+	requester	Friend[]	@relation("requester")
+	requestee	Friend[]	@relation("requestee")
+
+	blocker		Blocked[]	@relation("blocker")
+	blockee		Blocked[]	@relation("blockee")
+
+	owner		Channel[]
+
+	member		ChanMember[]
+
+	banned		ChanBan[]
+
+	chanSender	ChanMessage[]
+
+	privSender	PrivMessage[]	@relation("privSender")
+	privReceipt	PrivMessage[]	@relation("privReceipt")
+
+	player1		MatchHistory[]	@relation("player1")
+	player2		MatchHistory[]	@relation("player2")
+	winner		MatchHistory[]	@relation("winner")
+}
+
+model Friend {
+	requesterRef	User	@relation("requester", fields: [requester], references: [id])
+	requester		Int
+	requesteeRef	User	@relation("requestee", fields: [requestee], references: [id])
+	requestee		Int
+	status			Boolean	@default(false)
+
+	@@id([requester, requestee])
+}
+
+model Blocked {
+	blockerRef	User	@relation("blocker", fields: [blocker], references: [id])
+	blocker		Int
+	blockeeRef	User	@relation("blockee", fields: [blockee], references: [id])
+	blockee		Int
+
+	@@id([blocker, blockee])
+}
+
+model Channel {
+	id			Int			@id @default(autoincrement())
+	name		String  @unique
+	ownerRef	User		@relation(fields: [owner], references: [id])
+	owner		Int
+	type		ChanType	@default(PUBLIC)
+	passwd		String?
+
+	memChan		ChanMember[]
+	banChan		ChanBan[]
+	messChan	ChanMessage[]
+}
+
+model ChanMember {
+	chanRef		Channel		@relation(fields: [chanId], references: [id])
+	chanId		Int
+	memberRef	User			@relation(fields: [member], references: [id])
+	member		Int
+	isAdmin		Boolean		@default(false)
+	muteTime	DateTime	@default(now())
+
+	@@id([chanId, member])
+}
+
+model ChanBan {
+	chanRef		Channel	@relation(fields: [chanId], references: [id])
+	chanId		Int
+	bannedRef	User	@relation(fields: [bannedUser], references: [id])
+	bannedUser	Int
+
+	@@id([chanId, bannedUser])
+}
+
+model ChanMessage {
+	senderRef	User		@relation(fields: [sender], references: [id])
+	sender		Int
+	chanRef		Channel		@relation(fields: [chanId], references: [id])
+	chanId		Int
+	timeSent	DateTime	@default(now())
+	content		String
+
+	@@id([sender, chanId, timeSent])
+}
+
+model PrivMessage {
+	senderRef	User		@relation("privSender", fields: [sender], references: [id])
+	sender		Int
+	receiptRef	User		@relation("privReceipt", fields: [recipient], references: [id])
+	recipient	Int
+	timeSent	DateTime	@default(now())
+	content		String
+
+	@@id([sender, recipient, timeSent])
+}
+
+model MatchHistory {
+	id			Int			@id
+	player1Ref	User		@relation("player1", fields: [player1], references: [id])
+	player1		Int
+	player2Ref	User		@relation("player2", fields: [player2], references: [id])
+	player2		Int
+	timeStart	DateTime	@default(now())	
+	timeEnd		DateTime?
+	winnerRef	User?		@relation("winner", fields: [winner], references: [id])
+	winner		Int?
+}
+
+
+enum ChanType {
+	PUBLIC
+	PRIVATE
+	PROTECTED
+}
