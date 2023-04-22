@@ -334,9 +334,9 @@ const RoomUsers: React.FC = memo(() => {
 
 	return <div className='chat-roomUsers'>
 		<input
-			className='chat-usrSearchInput'
-			id={'chat-usrSearchInput'}
-			name={'chat-usrSearchInput'}
+			className='chat-usrSearch-input'
+			id={'chat-usrSearch-input'}
+			name={'chat-usrSearch-input'}
 			placeholder=' Connected users...'
 		/>
 		{renderBoxes}
@@ -481,7 +481,7 @@ const Chat: React.FC = memo(() => {
 				/>
 				{showUsers === true && <RoomUsers />}
 				<input
-					className='chat-mainAreaInput'
+					className='chat-mainArea-input'
 					id={'chat-input'}
 					name={'chat-input'}
 					placeholder=' ...'

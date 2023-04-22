@@ -101,7 +101,7 @@ ex: ".navBar-logo--pressed {}"
 	grid-row: 1 / 1;
 }
 
-.chat-mainAreaInput {
+.chat-mainArea-input {
 	/* #1 Elements */
 	border: 1px solid rgb(0, 122, 6);
 
@@ -173,7 +173,7 @@ ex: ".navBar-logo--pressed {}"
 	right: 0%;
 }
 
-.chat-usrSearchInput {
+.chat-usrSearch-input {
 	/* #1 Elements */
 	border-radius: 0;
 	border-bottom: 1px solid rgb(0, 122, 6);
