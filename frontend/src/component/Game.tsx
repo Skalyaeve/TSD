@@ -4,16 +4,16 @@ import Phaser from 'phaser'
 /* -------------------------ASSETS IMPORT------------------------- */
 
 // Images
-import sky__Img from '../resources/assets/sky.png'
-import ground__Img from '../resources/assets/platform.png'
-import basicBall__Img from '../resources/assets/basicBall.png'
-import energyBall__Img from '../resources/assets/energyBall.png'
+import sky__Img from '../resource/assets/sky.png'
+import ground__Img from '../resource/assets/platform.png'
+import basicBall__Img from '../resource/assets/basicBall.png'
+import energyBall__Img from '../resource/assets/energyBall.png'
 
 // Spritesheets
-import playerIdle__Sheet from '../resources/assets/playerSheet.png'
-import playerRun__Sheet from '../resources/assets/playerSheet.png'
-import mageIdle__Sheet from '../resources/assets/Mage/Idle.png'
-import mageRun__Sheet from '../resources/assets/Mage/Run.png'
+import playerIdle__Sheet from '../resource/assets/playerSheet.png'
+import playerRun__Sheet from '../resource/assets/playerSheet.png'
+import mageIdle__Sheet from '../resource/assets/Mage/Idle.png'
+import mageRun__Sheet from '../resource/assets/Mage/Run.png'
 
 /* -------------------------SCENE CLASS------------------------- */
 

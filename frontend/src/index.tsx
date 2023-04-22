@@ -3,7 +3,7 @@ import { BrowserRouter } from 'react-router-dom'
 import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
 import { createRoot } from 'react-dom/client'
-import Root from './components/Root.tsx'
+import Root from './component/Root.tsx'
 import './css/Root.css'
 
 const root = document.getElementById('root')
