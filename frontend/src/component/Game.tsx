@@ -1,5 +1,6 @@
 import React, { useLayoutEffect, useRef, useState } from 'react'
 import Phaser from 'phaser'
+import { io } from 'socket.io-client'
 
 /* -------------------------ASSETS IMPORT------------------------- */
 
@@ -458,12 +459,14 @@ function Party() {
 		}
 		window.addEventListener('resize', resizeGameDiv)
 		resizeGameDiv()
+		const socket = io('http://localhost:3001')
 		return () => {
 			if (game) {
 				game.destroy(true, false)
 				setGame(null)
 			}
 			window.removeEventListener('resize', resizeGameDiv)
+			socket.disconnect()
 		}
 	}, [])
 

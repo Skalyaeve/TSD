@@ -43,4 +43,4 @@ logs:
 
 # ------DEV-NODOCKER------------- #
 npm:
-			npm run dev
+			npm run start

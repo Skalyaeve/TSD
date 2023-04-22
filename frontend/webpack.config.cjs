@@ -4,6 +4,9 @@ const path = require('path');
 // Importation du plugin HtmlWebpackPlugin pour générer le fichier HTML
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 
+// Importation du proxy middleware pour forward le jeu webpack au serveur Node.js
+const { createProxyMiddleware } = require('http-proxy-middleware');
+
 // Exportation de la configuration Webpack
 module.exports = {
 	// Entrée de l'application
@@ -63,7 +66,14 @@ module.exports = {
 		// Activation de la fonctionnalité de rechargement en direct
 		hot: true,
 		// Permet de refresh nos pages (Ctrl+F5 ou bouton 'Actualiser')
-		historyApiFallback: true
+		historyApiFallback: true,
+		// Le proxi permettant de forward les requetes de webpack a Node.js
+		proxy: {
+			'/api': {
+				target: 'http://localhost:3001',
+				changeOrigin: true,
+			},
+		},
 	},
 
 	// Output de Webpack: JSX traduit en JS
