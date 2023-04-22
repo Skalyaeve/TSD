@@ -7,7 +7,7 @@ import Matchmaker from './Matchmaker.tsx'
 import Home from './Home.tsx'
 import Profil from './Profil.tsx'
 import Party from './Game.tsx'
-import Leaderboard from './Leaderboard.tsx'
+import Leader from './Leader.tsx'
 import ErrorPage from './ErrorPage.tsx'
 
 // --------ROOT------------------------------------------------------------ //
@@ -59,7 +59,7 @@ const Root: React.FC = () => {
 			<Route path='/' element={<Home />} />
 			<Route path='/profil/*' element={<Profil />} />
 			<Route path='/game' element={<Party />} />
-			<Route path='/leaderboard' element={<Leaderboard />} />
+			<Route path='/leaderboard' element={<Leader />} />
 			<Route path='*' element={<ErrorPage code={404} />} />
 		</Routes>
 

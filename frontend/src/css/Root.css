@@ -26,6 +26,7 @@ ex: ".navBar-logo--pressed {}"
 @import url("Chat.css");
 @import url("Matchmaker.css");
 @import url("Game.css");
+@import url("Leader.css");
 
 * {
 	/* #1 Elements */
@@ -124,9 +125,6 @@ input:focus {
 .main {
 	/* #1 Elements */
 	border: 1px solid rgb(255, 255, 255);
-	display: flex;
-	align-items: center;
-	justify-content: center;
 
 	/* #2 Form */
 	min-width: 749px;

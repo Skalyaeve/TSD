@@ -65,6 +65,9 @@ const Matchmaker: React.FC = memo(() => {
 		onMouseUp: toggleMatchmaking
 	}), [toggleMatchmaking])
 
+	// ----CLASSNAMES------------------------- //
+	const name = 'matchmaker'
+
 	// ----RENDER----------------------------- //
 	const btnContent = useMemo(() => {
 		if (!matchmaking) return (inGame ? <>[EXIT]</> : <>[PLAY]</>)
@@ -73,8 +76,8 @@ const Matchmaker: React.FC = memo(() => {
 
 	return <NewBox
 		tag='btn'
-		className='matchmaker'
-		nameIfPressed='matchmaker--pressed'
+		className={name}
+		nameIfPressed={`${name}--pressed`}
 		handlers={matchmakerBtnHdl}
 		content={btnContent}
 	/>
