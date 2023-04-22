@@ -7,7 +7,7 @@ import Root from './component/Root.tsx'
 import './css/Root.css'
 
 const root = document.getElementById('root')
-const strictMode = true
+const strictMode = false
 
 if (root) {
 	if (strictMode) createRoot(root).render(

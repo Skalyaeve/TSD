@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import React, { useLayoutEffect, useRef, useState } from 'react'
 import Phaser from 'phaser'
 
 /* -------------------------ASSETS IMPORT------------------------- */
@@ -460,7 +460,8 @@ function Party() {
 		resizeGameDiv()
 		return () => {
 			if (game) {
-				game.destroy(true)
+				game.destroy(true, false)
+				setGame(null)
 			}
 			window.removeEventListener('resize', resizeGameDiv)
 		}
