@@ -306,7 +306,7 @@ const RoomBox: React.FC<RoomBoxProps> = memo(({
 		content={<>
 			<NewBox
 				tag='btn'
-				className='chat-roomLinkBtn'
+				className='chat-usr-TEST'
 				nameIfPressed='chat-btn--pressed'
 				handlers={linkBtnHdl}
 				content={`[#${id}]`}
