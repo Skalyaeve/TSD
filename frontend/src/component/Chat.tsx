@@ -360,7 +360,7 @@ const RoomUser: React.FC<RoomUserProps> = memo(({ id }) => {
 		onMouseLeave={leaveUser}>
 		<NewBox
 			tag='btn'
-			className='chat-usrLinkBtn'
+			className='chat-chat-usr-linkBtn'
 			nameIfPressed='chat-btn--pressed'
 			content={`[#${id}]`}
 		/>
