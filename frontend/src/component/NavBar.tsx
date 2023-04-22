@@ -11,14 +11,19 @@ interface NavBarLinkProps {
 }
 const NavBarLink: React.FC<NavBarLinkProps> = memo(({
 	to, nameExt, content
-}) => <NewBox
+}) => {
+	// ----CLASSNAMES------------------------- //
+	const name = 'navBar-link'
+
+	// ----RENDER----------------------------- //
+	return <NewBox
 		tag='Link'
 		to={to}
-		className={`navBar-link${nameExt || ''}`}
-		nameIfPressed='navBar-link--pressed'
+		className={`${name}${nameExt || ''}`}
+		nameIfPressed={`${name}--pressed`}
 		content={content}
 	/>
-)
+})
 
 // --------NAVBAR---------------------------------------------------------- //
 interface NavBarProps {

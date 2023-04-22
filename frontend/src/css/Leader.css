@@ -1,0 +1,91 @@
+/* ---------------------------------
+Méthodologie B-E--M (Bloc, Elément, Modifieur)
+
+Block: Un composant indépendant
+ex: Un bouton, une barre de navigation, un en-tête...
+ex: ".navBar {}"
+ex: ".button {}"
+
+Element: Une partie d'un Block qui a un sens uniquement dans le contexte de ce Block.
+ex: ".navBar-logo {}"
+ex: ".button-icon {}"
+
+Modifier: Une variation ou un état d'un Block ou d'un élément. 
+ex: ".button--large {}"
+ex: ".navBar-logo--pressed {}"
+--------------------------------- */
+
+/* ---------------------------------
+#1 Elements
+#2 Form
+#3 Position
+#4 Margin - Padding
+--------------------------------- */
+
+.leader-head {
+	/* #1 Elements */
+	background-color: rgb(0, 0, 0);
+	border: 1px solid rgb(255, 239, 57);
+	border-bottom: none;
+	display: flex;
+	flex-direction: row;
+	align-items: flex-end;
+
+	/* #2 Form */
+	width: 100%;
+	height: 19%;
+
+	/* #4 Margin - Padding */
+	padding: 10px;
+}
+
+.leader-input {
+	/* #1 Elements */
+	border: 1px solid rgb(255, 239, 57);
+
+	/* #2 Form */
+	width: 250px;
+}
+
+.leader-input-btn {
+	/* #1 Elements */
+	border: 1px solid rgb(255, 239, 57);
+	font-size: 15px;
+
+	/* #2 Form */
+	width: 35px;
+	height: 30px;
+	border-radius: 5px;
+
+	/* #4 Margin - Padding */
+	margin-left: 5px;
+}
+
+.leader-body {
+	/* #1 Elements */
+	border: 1px solid rgb(255, 239, 57);
+
+	/* #2 Form */
+	width: 100%;
+	height: 81%;
+}
+
+.leader-boardHead {
+	/* #1 Elements */
+	border-bottom: 1px solid rgb(255, 239, 57);
+
+	/* #2 Form */
+	height: 45px;
+}
+
+.leader-usr {
+	/* #1 Elements */
+	border-bottom: 1px solid rgb(255, 239, 57);
+
+	/* #2 Form */
+	height: 34.9px;
+}
+
+.leader-btn--pressed {
+	background-color: rgb(255, 239, 57, 0.355);
+}

@@ -15,27 +15,49 @@ const RoomSettings: React.FC<RoomSettingsProps> = memo(({
 	// ----STATES----------------------------- //
 	const [addedCount, setAddedCount] = useState(10)
 	const [toAddCount, setToAddCount] = useState(7)
+	const [fromFriends, setFromFriends] = useState(true)
+
+	// ----HANDLERS--------------------------- //
+	const toggleFromFriends = useCallback(() => (
+		setFromFriends(fromFriends => !fromFriends)
+	), [])
+
+	const switchBtnHdl = useMemo(() => ({
+		onMouseUp: toggleFromFriends
+	}), [])
+
+	// ----CLASSNAMES------------------------- //
+	const name = 'chat-roomSet'
+	const btnName = `${name}-btn`
+	const mainInputName = `${name}-main-input`
+	const nameInputName = `${name}-name-input`
+	const pswInputName = `${name}-psw-input`
+	const searchInputName = `${name}-search-input`
+	const usersName = `${name}-users`
+	const usersAddedInputName = `${usersName}-added-input`
+	const usersToAddInputName = `${usersName}-toAdd-input`
+	const btnPressedName = 'chat-btn--pressed'
 
 	// ----RENDER----------------------------- //
 	const commitArea = useMemo(() => {
 		if (settingsOpen === 1)
 			return <NewBox
 				tag='btn'
-				className='chat-roomSet-create-saveBtn chat-roomSet-saveBtn'
-				nameIfPressed='chat-btn--pressed'
+				className={`${name}-create-btn ${btnName}`}
+				nameIfPressed={btnPressedName}
 				content='[CREATE]'
 			/>
 		else return <>
 			<NewBox
 				tag='btn'
-				className='chat-roomSet-update-saveBtn chat-roomSet-saveBtn'
-				nameIfPressed='chat-btn--pressed'
+				className={`${name}-update-btn ${btnName}`}
+				nameIfPressed={btnPressedName}
 				content='[SAVE]'
 			/>
 			<NewBox
 				tag='btn'
-				className='chat-roomSet-del-saveBtn chat-roomSet-saveBtn'
-				nameIfPressed='chat-btn--pressed'
+				className={`${name}-del-btn ${btnName}`}
+				nameIfPressed={btnPressedName}
 				content='[DELETE]'
 			/>
 		</>
@@ -46,41 +68,41 @@ const RoomSettings: React.FC<RoomSettingsProps> = memo(({
 			<RoomMembersSet
 				key={index + 1}
 				id={index + 1}
-				className='chat-roomSet-usr'
+				className={`${name}-usr`}
 				addedUsers={addedUsers}
 			/>
 		))
 	), [])
 
-	return <div className='chat-roomSet'
+	return <div className={name}
 		style={settingsPos}>
 		<input
-			className='chat-roomSet-name-input chat-roomSet-main-input'
-			id='chat-roomSet-name-input'
-			name='chat-roomSet-name-input'
+			className={`${nameInputName} ${mainInputName}`}
+			id={nameInputName}
+			name={nameInputName}
 			placeholder='Name'
 		/>
 		<input
-			className='chat-roomSet-psw-input chat-roomSet-main-input'
-			id='chat-roomSet-psw-input'
-			name='chat-roomSet-psw-input'
+			className={`${pswInputName} ${mainInputName}`}
+			id={pswInputName}
+			name={pswInputName}
 			placeholder='Password'
 		/>
-		<div className='chat-roomSet-users-added chat-roomSet-users'>
+		<div className={`${usersName}-added ${usersName}`}>
 			<input
-				className='chat-roomSet-users-input'
-				id={'chat-roomSet-users-added-input'}
-				name={'chat-roomSet-users-added-input'}
-				placeholder=' Added users...'
+				className={`${searchInputName}`}
+				id={usersAddedInputName}
+				name={usersAddedInputName}
+				placeholder={` ${addedCount} members`}
 			/>
 			{renderUserList(addedCount, true)}
 		</div>
-		<div className='chat-roomSet-users-toAdd chat-roomSet-users'>
+		<div className={`${usersName}-toAdd ${usersName}`}>
 			<input
-				className='chat-roomSet-users-input'
-				id={'chat-roomSet-users-toAdd-input'}
-				name={'chat-roomSet-users-toAdd-input'}
-				placeholder=' Friends...'
+				className={`${searchInputName}`}
+				id={usersToAddInputName}
+				name={usersToAddInputName}
+				placeholder={fromFriends ? ' Friends' : ' Global'}
 			/>
 			{renderUserList(toAddCount, false)}
 		</div>
@@ -99,6 +121,10 @@ const RoomMembersSet: React.FC<RoomMembersSetProps> = memo(({
 	// ----STATES----------------------------- //
 	const [showButton, setShowButton] = useState(false)
 
+	// ----CLASSNAMES------------------------- //
+	const btnName = `${className}-btn`
+	const btnPressedName = 'chat-btn--pressed'
+
 	// ----HANDLERS--------------------------- //
 	const enterUser = useCallback(() => setShowButton(true), [])
 	const leaveUser = useCallback(() => setShowButton(false), [])
@@ -108,42 +134,42 @@ const RoomMembersSet: React.FC<RoomMembersSetProps> = memo(({
 		if (!addedUsers)
 			return <NewBox
 				tag='btn'
-				className={`${className}-blocBtn`}
-				nameIfPressed='chat-btn--pressed'
+				className={btnName}
+				nameIfPressed={btnPressedName}
 				content='[/x]'
 			/>
 		else return <>
 			<NewBox
 				tag='btn'
-				className={`${className}-promoteBtn`}
-				nameIfPressed='chat-btn--pressed'
+				className={btnName}
+				nameIfPressed={btnPressedName}
 				content='[up]'
 			/>
 			<NewBox
 				tag='btn'
-				className={`${className}-muteBtn`}
-				nameIfPressed='chat-btn--pressed'
+				className={btnName}
+				nameIfPressed={btnPressedName}
 				content='[/m]'
 			/>
 			<NewBox
 				tag='btn'
-				className={`${className}-blocBtn`}
-				nameIfPressed='chat-btn--pressed'
+				className={btnName}
+				nameIfPressed={btnPressedName}
 				content='[/x]'
 			/>
 		</>
 	}, [])
 
-	return <div className='chat-roomSet-usr'
+	return <div className={className}
 		onMouseEnter={enterUser}
 		onMouseLeave={leaveUser}>
 		<NewBox
 			tag='btn'
-			className='chat-roomSet-usr-name'
-			nameIfPressed='chat-btn--pressed'
-			content={`#${id}`}
+			className={`${className}-link`}
+			nameIfPressed={btnPressedName}
+			content={`[#${id}]`}
 		/>
-		{showButton && <div className='chat-roomSet-usr-btns'>
+		{showButton && <div className={`${className}-btns`}>
 			{btnToAdd}
 		</div>}
 	</div>
@@ -230,7 +256,7 @@ const RoomBoxes: React.FC<RoomBoxesProps> = memo(({
 	return <>
 		<NewBox
 			tag='btn'
-			className='chat-newRoomBtn'
+			className='chat-newRoom-btn'
 			nameIfPressed='chat-btn--pressed'
 			handlers={newRoomBtnHdl}
 			content={newRoomContent}
@@ -294,10 +320,14 @@ const RoomBox: React.FC<RoomBoxProps> = memo(({
 		onMouseUp: roomSetUp
 	}), [roomSetUp])
 
+	// ----CLASSNAMES------------------------- //
+	const name = 'chat-room'
+	const btnPressedName = 'chat-btn--pressed'
+
 	// ----RENDER----------------------------- //
 	return <DragDrop
 		itemId={id}
-		className='chat-room'
+		className={name}
 		moveItem={moveItem}
 		onMouseEnter={showIt}
 		onMouseLeave={hideIt}
@@ -306,15 +336,15 @@ const RoomBox: React.FC<RoomBoxProps> = memo(({
 		content={<>
 			<NewBox
 				tag='btn'
-				className='chat-roomLinkBtn'
-				nameIfPressed='chat-btn--pressed'
+				className={`${name}-link`}
+				nameIfPressed={btnPressedName}
 				handlers={linkBtnHdl}
 				content={`[#${id}]`}
 			/>
 			{showRoomSet && <NewBox
 				tag='btn'
-				className='chat-setRoomBtn'
-				nameIfPressed='chat-btn--pressed'
+				className='chat-setRoom-btn'
+				nameIfPressed={btnPressedName}
 				handlers={setBtnHdl}
 				content='[*]'
 			/>}
@@ -327,17 +357,20 @@ const RoomUsers: React.FC = memo(() => {
 	// ----STATES----------------------------- //
 	const [userCount, setUserCount] = useState(11)
 
+	// ----CLASSNAMES------------------------- //
+	const name = 'chat-roomUsers'
+
 	// ----RENDER----------------------------- //
 	const renderBoxes = useMemo(() => Array.from({ length: userCount }, (_, index) => (
 		<RoomUser key={index + 1} id={index + 1} />
 	)), [userCount])
 
-	return <div className='chat-roomUsers'>
+	return <div className={name}>
 		<input
-			className='chat-usrSearch-input'
-			id={'chat-usrSearch-input'}
-			name={'chat-usrSearch-input'}
-			placeholder=' Connected users...'
+			className={`${name}-input`}
+			id={`${name}-input`}
+			name={`${name}-input`}
+			placeholder={` ${userCount} online`}
 		/>
 		{renderBoxes}
 	</div>
@@ -354,33 +387,38 @@ const RoomUser: React.FC<RoomUserProps> = memo(({ id }) => {
 	const enterUser = useCallback(() => setShowButton(true), [])
 	const leaveUser = useCallback(() => setShowButton(false), [])
 
+	// ----CLASSNAMES------------------------- //
+	const name = 'chat-roomUsr'
+	const btnName = `${name}-btn`
+	const btnPressedName = 'chat-btn--pressed'
+
 	// ----RENDER----------------------------- //
-	return <div className='chat-usr'
+	return <div className={name}
 		onMouseEnter={enterUser}
 		onMouseLeave={leaveUser}>
 		<NewBox
 			tag='btn'
-			className='chat-usrLinkBtn'
-			nameIfPressed='chat-btn--pressed'
+			className={`${name}-link`}
+			nameIfPressed={btnPressedName}
 			content={`[#${id}]`}
 		/>
-		{showButton && <div className='chat-usrActionBtns'>
+		{showButton && <div className={`${btnName}s`}>
 			<NewBox
 				tag='btn'
-				className='chat-usrFigthBtn'
-				nameIfPressed='chat-btn--pressed'
+				className={btnName}
+				nameIfPressed={btnPressedName}
 				content='[vs]'
 			/>
 			<NewBox
 				tag='btn'
-				className='chat-usrMsgBtn'
-				nameIfPressed='chat-btn--pressed'
+				className={btnName}
+				nameIfPressed={btnPressedName}
 				content='[/w]'
 			/>
 			<NewBox
 				tag='btn'
-				className='chat-usrBlockBtn'
-				nameIfPressed='chat-btn--pressed'
+				className={btnName}
+				nameIfPressed={btnPressedName}
 				content='[/x]'
 			/>
 		</div>}
@@ -393,12 +431,15 @@ interface TextAreaProps {
 	showUsers: boolean
 }
 const TextArea: React.FC<TextAreaProps> = memo(({ chatArea, showUsers }) => {
+	// ----CLASSNAMES------------------------- //
+	const name = 'chat-txtArea'
+
 	// ----RENDER----------------------------- //
 	const updateChatArea = <>
 		Content of chat #{chatArea}
 	</>
 
-	return <div className={`chat-txtArea${showUsers === true ? ' chat-txtArea--shorten' : ''}`}>
+	return <div className={`${name}${showUsers === true ? ` ${name}--shorten` : ''}`}>
 		{updateChatArea}
 	</div>
 })
@@ -465,11 +506,18 @@ const Chat: React.FC = memo(() => {
 		onMouseUp: toggleChatContent
 	}), [])
 
+	// ----CLASSNAMES------------------------- //
+	const name = 'chat'
+	const bodyName = `${name}-body`
+	const mainName = `${name}-main`
+	const mainInputName = `${mainName}-input`
+	const btnPressedName = `${name}-btn--pressed`
+
 	// ----RENDER----------------------------- //
-	return <div className='chat'>
-		<div className={`chat-body${chatOpenned === false ? ' chat-body--noResize' : ''}`}
+	return <div className={name}>
+		<div className={`${bodyName}${chatOpenned === false ? ` ${bodyName}--noResize` : ''}`}
 			ref={chatRef}>
-			{chatOpenned === true && <div className='chat-mainArea'>
+			{chatOpenned === true && <div className={mainName}>
 				<RoomBoxes
 					settingsOpen={settingsOpen}
 					setSettingsOpen={setSettingsOpen}
@@ -481,22 +529,22 @@ const Chat: React.FC = memo(() => {
 				/>
 				{showUsers === true && <RoomUsers />}
 				<input
-					className='chat-mainArea-input'
-					id={'chat-input'}
-					name={'chat-input'}
+					className={mainInputName}
+					id={mainInputName}
+					name={mainInputName}
 					placeholder=' ...'
 				/>
 				<NewBox
 					tag='btn'
-					className='chat-sendMsgBtn'
-					nameIfPressed='chat-btn--pressed'
+					className='chat-sendMsg-btn'
+					nameIfPressed={btnPressedName}
 					content='[OK]'
 				/>
 			</div>}
 			<NewBox
 				tag='btn'
-				className={`chat-mainBtn${chatOpenned === true ? ' chat-mainBtn--expended' : ''}`}
-				nameIfPressed='chat-btn--pressed'
+				className={`${mainName}-btn${chatOpenned === true ? ` ${mainName}-btn--expended` : ''}`}
+				nameIfPressed={btnPressedName}
 				handlers={mainBtnHdl}
 				content='[CHAT]'
 			/>
