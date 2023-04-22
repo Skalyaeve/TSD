@@ -2,7 +2,7 @@
 	"name": "ft_transcendance",
 	"version": "1.0.0",
 	"description": "Une fin, un début.",
-	"main": "./srcs/index.jsx",
+	"main": "./src/index.jsx",
 	"scripts": {
 		"dev": "webpack serve --mode=development",
 		"prod": "webpack --mode=production",

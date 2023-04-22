@@ -3,11 +3,10 @@
 	"rules": {
 		"alpha-value-notation": null,
 		"comment-empty-line-before": null,
-		"selector-class-pattern": "^[a-zA-Z]+(?:__[a-zA-Z]+)*(?:--[a-zA-Z]+)*$",
+		"selector-class-pattern": "^[a-zA-Z]+(?:-[a-zA-Z]+)*(?:--[a-zA-Z]+)*$",
 		"length-zero-no-unit": null,
 		"indentation": "tab",
 		"number-leading-zero": "always",
-		"selector-max-id": 1,
 		"max-nesting-depth": 3,
 		"no-duplicate-selectors": true,
 		"property-no-unknown": true,

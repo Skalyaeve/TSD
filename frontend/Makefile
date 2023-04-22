@@ -1,7 +1,7 @@
 .PHONY:		dev prod test					\
 			build-dev build-prod build-test	\
 			restart stop start down			\
-			clean fclean logs
+			clean fclean logs npm
 
 # ------BUILD-ALL+START---------- #
 dev:

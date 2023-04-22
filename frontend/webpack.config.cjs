@@ -7,7 +7,7 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 // Exportation de la configuration Webpack
 module.exports = {
 	// Entrée de l'application
-	entry: "./srcs/index.tsx",
+	entry: "./src/index.tsx",
 
 	// Configuration des loaders pour traiter différents types de fichiers
 	module: {
@@ -45,7 +45,7 @@ module.exports = {
 	// Configuration du plugin HtmlWebpackPlugin
 	plugins: [
 		new HtmlWebpackPlugin({
-			template: "./srcs/index.html",
+			template: "./src/index.html",
 			filename: "index.html",
 			inject: "body"
 		}),
@@ -58,7 +58,7 @@ module.exports = {
 	devServer: {
 		// Configuration du répertoire contenant les fichiers statiques
 		static: {
-			directory: path.join(__dirname, './srcs/resources/')
+			directory: path.join(__dirname, './src/resources/')
 		},
 		// Activation de la fonctionnalité de rechargement en direct
 		hot: true,

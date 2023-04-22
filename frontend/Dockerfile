@@ -4,13 +4,13 @@ RUN		apk update			\
 		&& apk add npm		\
 		&& apk add yarn		\
 		&& mkdir front		\
-		&& mkdir front/srcs	\
+		&& mkdir front/src	\
 		&& mkdir front/dist
 
 COPY	*.json	/front
 COPY	*.cjs	/front
 COPY	.babel*	/front
-COPY	srcs	/front/srcs
+COPY	src		/front/src
 COPY	dist	/front/dist
 
 WORKDIR	/front

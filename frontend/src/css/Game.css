@@ -1,18 +1,18 @@
 /* ---------------------------------
-Methodology BEM (Block, Element, Modifier)
+Méthodologie B-E--M (Bloc, Elément, Modifieur)
 
 Block: Un composant indépendant
 ex: Un bouton, une barre de navigation, un en-tête...
-ex: ".navbBar {}"
+ex: ".navBar {}"
 ex: ".button {}"
 
 Element: Une partie d'un Block qui a un sens uniquement dans le contexte de ce Block.
-ex: ".navbBar__logo {}"
-ex: ".button__icon {}"
+ex: ".navBar-logo {}"
+ex: ".button-icon {}"
 
 Modifier: Une variation ou un état d'un Block ou d'un élément. 
 ex: ".button--large {}"
-ex: ".navbBar__logo--hidden {}"
+ex: ".navBar-logo--pressed {}"
 --------------------------------- */
 
 /* ---------------------------------
@@ -23,3 +23,22 @@ ex: ".navbBar__logo--hidden {}"
 --------------------------------- */
 
 /* ------CLASS-------------------- */
+.game {
+	/* #1 Elements */
+	position: relative;
+}
+
+.game-canvas {
+	/* #1 Elements */
+	border: 1px solid rgb(255, 239, 57);
+
+	/* #2 Form */
+	min-width: 749px;
+	min-height: calc(749px / (16 / 9));
+
+	/* #3 Position */
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}

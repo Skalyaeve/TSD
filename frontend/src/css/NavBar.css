@@ -1,18 +1,18 @@
 /* ---------------------------------
-Methodology BEM (Block, Element, Modifier)
+Méthodologie B-E--M (Bloc, Elément, Modifieur)
 
 Block: Un composant indépendant
 ex: Un bouton, une barre de navigation, un en-tête...
-ex: ".navbBar {}"
+ex: ".navBar {}"
 ex: ".button {}"
 
 Element: Une partie d'un Block qui a un sens uniquement dans le contexte de ce Block.
-ex: ".navbBar__logo {}"
-ex: ".button__icon {}"
+ex: ".navBar-logo {}"
+ex: ".button-icon {}"
 
 Modifier: Une variation ou un état d'un Block ou d'un élément. 
 ex: ".button--large {}"
-ex: ".navbBar__logo--hidden {}"
+ex: ".navBar-logo--pressed {}"
 --------------------------------- */
 
 /* ---------------------------------
@@ -22,25 +22,20 @@ ex: ".navbBar__logo--hidden {}"
 #4 Margin - Padding
 --------------------------------- */
 
-/* ------CLASS-------------------- */
-
-.navbBar {
+.navBar {
 	/* #1 Elements */
 	display: grid;
 	grid-template-columns: 1fr;
 	grid-template-rows: 0.5fr 1fr 1fr 1fr;
 
 	/* #3 Position */
-	grid-column: 1 / -1;
+	grid-column: 1 / 1;
 	grid-row: 1 / 1;
-
-	/* #4 Margin - Padding */
-	padding: 10px;
-	padding-bottom: 0px;
 }
 
-.navbBar * {
+.navBar-link {
 	/* #1 Elements */
+	background-color: rgb(0, 0, 0);
 	border: 1px solid rgb(172, 0, 0);
 	border-top: none;
 	display: flex;
@@ -48,12 +43,12 @@ ex: ".navbBar__logo--hidden {}"
 	justify-content: center;
 }
 
-.navbBar__backLink {
+.navBar-link--back {
 	/* #2 Form */
 	height: 45px;
 }
 
-.navbBar__first {
+.navBar-link--first {
 	/* #1 Elements */
 	border-top: 1px solid rgb(172, 0, 0);
 
@@ -62,13 +57,13 @@ ex: ".navbBar__logo--hidden {}"
 	border-top-right-radius: 5px;
 }
 
-.navbBar__last {
+.navBar-link--last {
 	/* #2 Form */
 	border-bottom-left-radius: 5px;
 	border-bottom-right-radius: 5px;
 }
 
-.navBar__box--pressed {
+.navBar-link--pressed {
 	/* #1 Elements */
 	background-color: rgba(124, 44, 44, 0.3);
 }
