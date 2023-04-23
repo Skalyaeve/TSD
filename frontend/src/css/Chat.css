@@ -93,12 +93,12 @@ ex: ".navBar-logo--pressed {}"
 	/* #1 Elements */
 	border: 1px solid rgb(0, 122, 6);
 
+	/* #2 Form */
+	width: calc(100% - 10px);
+
 	/* #3 Position */
 	grid-column: 1 / 1;
 	grid-row: 3 / 3;
-
-	/* #2 Form */
-	width: calc(100% - 10px);
 
 	/* #4 Margin - Padding */
 	margin: 5px;
@@ -189,7 +189,7 @@ ex: ".navBar-logo--pressed {}"
 
 	/* #2 Form */
 	flex-shrink: 0;
-	height: 31.5px;
+	height: 33.4px;
 }
 
 .chat-roomUsr-link {
@@ -399,7 +399,7 @@ ex: ".navBar-logo--pressed {}"
 
 	/* #2 Form */
 	flex-shrink: 0;
-	height: 31.36px;
+	height: 31.45px;
 }
 
 .chat-roomSet-usr-link {

@@ -3,10 +3,10 @@ import { Routes, Route } from 'react-router-dom'
 import ErrorPage from './ErrorPage.tsx'
 
 // --------STATS----------------------------------------------------------- //
-const Stats: React.FC = memo(() => {
+const Infos: React.FC = memo(() => {
 	// ----RENDER----------------------------- //
-	return <main className='profil-stats main'>
-		Stats
+	return <main className='profil-infos main'>
+		Infos
 	</main>
 })
 
@@ -30,7 +30,7 @@ const Characters: React.FC = memo(() => {
 const Profil: React.FC = memo(() => {
 	// ----RENDER----------------------------- //
 	return <Routes>
-		<Route path='/' element={<Stats />} />
+		<Route path='/' element={<Infos />} />
 		<Route path='/friends' element={<Friends />} />
 		<Route path='/characters' element={<Characters />} />
 		<Route path='*' element={<ErrorPage code={404} />} />

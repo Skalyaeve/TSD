@@ -66,7 +66,7 @@ const NavBar: React.FC<NavBarProps> = memo(({ disconnect }) => {
 			content='[BACK]'
 		/>
 		<NavBarLink to='/profil'
-			content='[STATS]'
+			content='[INFOS]'
 		/>
 		<NavBarLink to={`/profil/friends`}
 			content='[FRIENDS]'

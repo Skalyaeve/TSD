@@ -28,12 +28,13 @@ ex: ".navBar-logo--pressed {}"
 	border: 1px solid rgb(255, 239, 57);
 	border-bottom: none;
 	display: flex;
-	flex-direction: row;
+	flex-direction: row-reverse;
 	align-items: flex-end;
+	position: relative;
 
 	/* #2 Form */
 	width: 100%;
-	height: 19%;
+	height: 20%;
 
 	/* #4 Margin - Padding */
 	padding: 10px;
@@ -47,7 +48,7 @@ ex: ".navBar-logo--pressed {}"
 	width: 250px;
 }
 
-.leader-input-btn {
+.leader-btn {
 	/* #1 Elements */
 	border: 1px solid rgb(255, 239, 57);
 	font-size: 15px;
@@ -56,9 +57,40 @@ ex: ".navBar-logo--pressed {}"
 	width: 35px;
 	height: 30px;
 	border-radius: 5px;
+}
+
+.leader-switch-btn {
+	/* #2 Form */
+	width: 125px;
+
+	/* #3 Position */
+	position: absolute;
+	left: 10px;
+}
+
+.leader-input-btn {
+	/* #4 Margin - Padding */
+	margin-left: 5px;
+	margin-right: 15px;
+}
+
+.leader-findTop-btn {
+	/* #2 Form */
+	width: 80px;
+}
+
+.leader-findMe-btn {
+	/* #2 Form */
+	width: 80px;
 
 	/* #4 Margin - Padding */
 	margin-left: 5px;
+	margin-right: 15px;
+}
+
+.leader-up-btn {
+	/* #4 Margin - Padding */
+	margin-right: 5px;
 }
 
 .leader-body {
@@ -67,23 +99,64 @@ ex: ".navBar-logo--pressed {}"
 
 	/* #2 Form */
 	width: 100%;
-	height: 81%;
+	height: 80%;
 }
 
 .leader-boardHead {
 	/* #1 Elements */
 	border-bottom: 1px solid rgb(255, 239, 57);
+	display: flex;
 
 	/* #2 Form */
-	height: 45px;
+	height: 6%;
+}
+
+.leader-col {
+	/* #1 Elements */
+	border: none;
+	border-right: 1px solid rgb(255, 239, 57);
+	font-size: 30px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	/* #2 Form */
+	width: 14%;
+	height: 100%;
+	border-radius: 0;
+}
+
+.leader-col-head {
+	/* #1 Elements */
+	font-size: 17px;
+}
+
+.leader-col-name {
+	/* #1 Elements */
+	width: 25%;
+}
+
+.leader-col-scored {
+	/* #1 Elements */
+	border-right: none;
+
+	/* #2 Form */
+	width: 19%;
+}
+
+.leader-col-name-link {
+	/* #2 Form */
+	font-size: 17px;
 }
 
 .leader-usr {
 	/* #1 Elements */
 	border-bottom: 1px solid rgb(255, 239, 57);
+	font-size: 17px;
+	display: flex;
 
 	/* #2 Form */
-	height: 34.9px;
+	height: 9.4%;
 }
 
 .leader-btn--pressed {

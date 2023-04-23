@@ -108,7 +108,7 @@ input:focus {
 	/* #1 Elements */
 	display: grid;
 	grid-template-columns: 1fr;
-	grid-template-rows: 280px auto 120px;
+	grid-template-rows: 280px auto 100px;
 
 	/* #2 Form */
 	min-width: 275px;
@@ -123,9 +123,6 @@ input:focus {
 }
 
 .main {
-	/* #1 Elements */
-	border: 1px solid rgb(255, 255, 255);
-
 	/* #2 Form */
 	min-width: 749px;
 	min-height: 768px;
@@ -136,4 +133,5 @@ input:focus {
 
 	/* #4 Margin - Padding */
 	padding: 10px;
+	padding-left: 0;
 }
