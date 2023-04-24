@@ -21,9 +21,13 @@ const UserStats: React.FC<UserStatsProps> = memo(({ id }) => {
 	return <div className={usrBoxName}>
 		<NewBox
 			tag='btn'
-			className={`${colName} ${colName}-name ${colName}-name-link ${btnName}`}
+			className={`${colName} ${colName}-name`}
 			nameIfPressed={`${btnName}--pressed`}
-			content={`[USER #${id}]`}
+			content={<>
+				<div className={`${usrBoxName}-rank`}>#{id}</div>
+				<div className={`${usrBoxName}-pic`}>PP</div>
+				<div className={`${usrBoxName}-link`}>[NAME]</div>
+			</>}
 		/>
 		{usrBox('matches', '0')}
 		{usrBox('wins', '0')}
@@ -63,7 +67,7 @@ const Board: React.FC = memo(() => {
 			{boardHeadBox('wins', '[WINS]')}
 			{boardHeadBox('loses', '[LOSES]')}
 			{boardHeadBox('ratio', '[RATIO]')}
-			{boardHeadBox('scored', '[SCORES]')}
+			{boardHeadBox('scored', '[SCORED]')}
 		</div>
 		{renderBoxes}
 	</div >

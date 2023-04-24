@@ -94,7 +94,7 @@ const RoomMembersSet: React.FC<RoomMembersSetProps> = memo(({ addedUsers }) => {
 			className={inputName}
 			id={`${inputName}${(addedUsers ? '-added' : '-toAdd')}`}
 			name={`${inputName}${(addedUsers ? '-added' : '-toAdd')}`}
-			placeholder={` ${count} ${(addedUsers ? 'friends' : 'members')}`}
+			placeholder={` ${count} ${(addedUsers ? 'members' : 'friends')}`}
 		/>
 		{renderUserList(count, addedUsers)}
 	</div>

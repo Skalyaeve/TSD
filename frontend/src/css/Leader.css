@@ -95,6 +95,7 @@ ex: ".navBar-logo--pressed {}"
 
 .leader-body {
 	/* #1 Elements */
+	background-color: rgb(0, 0, 0);
 	border: 1px solid rgb(255, 239, 57);
 
 	/* #2 Form */
@@ -132,8 +133,9 @@ ex: ".navBar-logo--pressed {}"
 }
 
 .leader-col-name {
-	/* #1 Elements */
+	/* #2 Form */
 	width: 25%;
+	min-width: 250px;
 }
 
 .leader-col-scored {
@@ -144,9 +146,33 @@ ex: ".navBar-logo--pressed {}"
 	width: 19%;
 }
 
-.leader-col-name-link {
+.leader-usr-rank {
+	/* #2 Form */
+	width: 60px;
+}
+
+.leader-usr-pic {
+	/* #1 Elements */
+	border: 1px solid rgb(255, 239, 57);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	/* #2 Form */
+	width: 50px;
+	height: 50px;
+}
+
+.leader-usr-link {
+	/* #1 Elements */
+	text-align: start;
+
 	/* #2 Form */
 	font-size: 17px;
+	width: calc(100% - 110px);
+
+	/* #4 Margin - Padding */
+	padding-left: 10px;
 }
 
 .leader-usr {
@@ -160,5 +186,6 @@ ex: ".navBar-logo--pressed {}"
 }
 
 .leader-btn--pressed {
+	/* #1 Elements */
 	background-color: rgb(255, 239, 57, 0.355);
 }

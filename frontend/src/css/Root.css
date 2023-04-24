@@ -25,8 +25,10 @@ ex: ".navBar-logo--pressed {}"
 @import url("NavBar.css");
 @import url("Chat.css");
 @import url("Matchmaker.css");
-@import url("Game.css");
+@import url("Home.css");
+@import url("Profile.css");
 @import url("Leader.css");
+@import url("Game.css");
 
 * {
 	/* #1 Elements */

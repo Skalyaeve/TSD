@@ -5,29 +5,29 @@ import ErrorPage from './ErrorPage.tsx'
 // --------STATS----------------------------------------------------------- //
 const Infos: React.FC = memo(() => {
 	// ----RENDER----------------------------- //
-	return <main className='profil-infos main'>
-		Infos
+	return <main className='profile-infos profile main'>
+		<div className='home-body'>Infos</div>
 	</main>
 })
 
 // --------FRIENDS--------------------------------------------------------- //
 const Friends: React.FC = memo(() => {
 	// ----RENDER----------------------------- //
-	return <main className='profil-friends main'>
-		Friends
+	return <main className='profile-friends profile main'>
+		<div className='home-body'>Friends</div>
 	</main>
 })
 
 // --------CHARACTERS------------------------------------------------------ //
 const Characters: React.FC = memo(() => {
 	// ----RENDER----------------------------- //
-	return <main className='profil-characters main'>
-		Characters
+	return <main className='profile-characters profile main'>
+		<div className='home-body'>Characters</div>
 	</main>
 })
 
-// --------PROFIL---------------------------------------------------------- //
-const Profil: React.FC = memo(() => {
+// --------PROFILE--------------------------------------------------------- //
+const Profile: React.FC = memo(() => {
 	// ----RENDER----------------------------- //
 	return <Routes>
 		<Route path='/' element={<Infos />} />
@@ -36,4 +36,4 @@ const Profil: React.FC = memo(() => {
 		<Route path='*' element={<ErrorPage code={404} />} />
 	</Routes>
 })
-export default Profil
+export default Profile

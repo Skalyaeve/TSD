@@ -5,7 +5,7 @@ import NavBar from './NavBar.tsx'
 import Chat from './Chat.tsx'
 import Matchmaker from './Matchmaker.tsx'
 import Home from './Home.tsx'
-import Profil from './Profil.tsx'
+import Profile from './Profile.tsx'
 import Party from './Game.tsx'
 import Leader from './Leader.tsx'
 import ErrorPage from './ErrorPage.tsx'
@@ -57,7 +57,7 @@ const Root: React.FC = () => {
 	) : (<>
 		<Routes>
 			<Route path='/' element={<Home />} />
-			<Route path='/profil/*' element={<Profil />} />
+			<Route path='/profile/*' element={<Profile />} />
 			<Route path='/game' element={<Party />} />
 			<Route path='/leaderboard' element={<Leader />} />
 			<Route path='*' element={<ErrorPage code={404} />} />

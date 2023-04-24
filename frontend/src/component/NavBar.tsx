@@ -53,8 +53,8 @@ const NavBar: React.FC<NavBarProps> = memo(({ disconnect }) => {
 
 	const fromHome = <nav className={name}>
 		{logoutBox}
-		<NavBarLink to='/profil'
-			content='[PROFIL]'
+		<NavBarLink to='/profile'
+			content='[PROFILE]'
 		/>
 		<NavBarLink to='/leaderboard' nameExt={lastLinkName}
 			content='[LEADER]'
@@ -65,13 +65,13 @@ const NavBar: React.FC<NavBarProps> = memo(({ disconnect }) => {
 		<NavBarLink to='/' nameExt={firstLinkName + backLinkName}
 			content='[BACK]'
 		/>
-		<NavBarLink to='/profil'
+		<NavBarLink to='/profile'
 			content='[INFOS]'
 		/>
-		<NavBarLink to={`/profil/friends`}
+		<NavBarLink to={`/profile/friends`}
 			content='[FRIENDS]'
 		/>
-		<NavBarLink to={`/profil/characters`} nameExt={lastLinkName}
+		<NavBarLink to={`/profile/characters`} nameExt={lastLinkName}
 			content='[CHARACTERS]'
 		/>
 	</nav>
@@ -84,7 +84,7 @@ const NavBar: React.FC<NavBarProps> = memo(({ disconnect }) => {
 
 	const from404 = <nav className={name}>
 		{logoutBox}
-		<NavBarLink to='/profil'
+		<NavBarLink to='/profile'
 			content='[PROFIL]'
 		/>
 		<NavBarLink to='/leaderboard'
@@ -97,7 +97,7 @@ const NavBar: React.FC<NavBarProps> = memo(({ disconnect }) => {
 
 	return <Routes>
 		<Route path='/' element={fromHome} />
-		<Route path='/profil/*' element={fromProfil} />
+		<Route path='/profile/*' element={fromProfil} />
 		<Route path='/leaderboard' element={fromLeader} />
 		<Route path='/game' element={<GameInfos />} />
 		<Route path='*' element={from404} />

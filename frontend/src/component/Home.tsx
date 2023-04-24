@@ -4,7 +4,7 @@ import React, { memo } from 'react'
 const Home: React.FC = memo(() => {
 	// ----RENDER----------------------------- //
 	return <main className='home main'>
-		Home
+		<div className='home-body'>HOME</div>
 	</main>
 })
 export default Home
