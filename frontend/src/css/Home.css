@@ -24,7 +24,6 @@ ex: ".navBar-logo--pressed {}"
 
 .home-body {
 	/* #1 Elements */
-	background-color: rgb(0, 0, 0);
 	border: 1px solid rgb(255, 239, 57);
 	display: flex;
 	align-items: center;

@@ -4,13 +4,12 @@ import { NewBox } from './utils.tsx'
 // --------USER------------------------------------------------------------ //
 interface UserStatsProps {
 	id: number
+	name: string
+	colName: string
 }
-const UserStats: React.FC<UserStatsProps> = memo(({ id }) => {
+const UserStats: React.FC<UserStatsProps> = memo(({ id, name, colName }) => {
 	// ----CLASSNAMES------------------------- //
-	const name = 'leader'
-	const usrBoxName = `${name}-usr`
-	const colName = `${name}-col`
-	const btnName = `${name}-btn`
+	const boxName = `${name}-usr`
 
 	// ----RENDER----------------------------- //
 	const usrBox = (nameExt: string, content: string) => <div
@@ -18,15 +17,15 @@ const UserStats: React.FC<UserStatsProps> = memo(({ id }) => {
 		{content}
 	</div>
 
-	return <div className={usrBoxName}>
+	return <div className={boxName}>
 		<NewBox
 			tag='btn'
 			className={`${colName} ${colName}-name`}
-			nameIfPressed={`${btnName}--pressed`}
+			nameIfPressed='leader-btn--pressed'
 			content={<>
-				<div className={`${usrBoxName}-rank`}>#{id}</div>
-				<div className={`${usrBoxName}-pic`}>PP</div>
-				<div className={`${usrBoxName}-link`}>[NAME]</div>
+				<div className={`${boxName}-rank`}>#{id}</div>
+				<div className={`${boxName}-pic`}>PP</div>
+				<div className={`${boxName}-link`}>[NAME]</div>
 			</>}
 		/>
 		{usrBox('matches', '0')}
@@ -38,19 +37,25 @@ const UserStats: React.FC<UserStatsProps> = memo(({ id }) => {
 })
 
 // --------BOARD----------------------------------------------------------- //
-const Board: React.FC = memo(() => {
+interface BoardProps {
+	name: string
+	btnName: string
+}
+const Board: React.FC<BoardProps> = memo(({ name, btnName }) => {
 	// ----STATES----------------------------- //
 	const [userCount, setUserCount] = useState(10)
 
 	// ----CLASSNAMES------------------------- //
-	const name = 'leader'
-	const bodyName = `${name}-body`
 	const colName = `${name}-col`
-	const btnName = `${name}-btn`
 
 	// ----RENDER----------------------------- //
 	const renderBoxes = useMemo(() => Array.from({ length: userCount }, (_, index) => (
-		<UserStats key={index + 1} id={index + 1} />
+		<UserStats
+			key={index + 1}
+			id={index + 1}
+			name={name}
+			colName={colName}
+		/>
 	)), [userCount])
 
 	const boardHeadBox = (nameExt: string, content: string) => <NewBox
@@ -60,7 +65,7 @@ const Board: React.FC = memo(() => {
 		content={content}
 	/>
 
-	return <div className={bodyName}>
+	return <div className={`${name}-body`}>
 		<div className={`${name}-boardHead`}>
 			<div className={`${colName} ${colName}-head ${colName}-name`}>NAME</div>
 			{boardHeadBox('matches', '[MATCHES]')}
@@ -75,16 +80,6 @@ const Board: React.FC = memo(() => {
 
 // --------LEADER---------------------------------------------------------- //
 const Leader: React.FC = memo(() => {
-	// ----STATES----------------------------- //
-	const [global, setGlobal] = useState(true)
-
-	// ----HANDLERS--------------------------- //
-	const toggleGlobal = useCallback(() => setGlobal(x => !x), [])
-
-	const switchBtnHdl = useMemo(() => ({
-		onMouseUp: toggleGlobal
-	}), [])
-
 	// ----CLASSNAMES------------------------- //
 	const name = 'leader'
 	const inputName = `${name}-input`
@@ -101,13 +96,6 @@ const Leader: React.FC = memo(() => {
 
 	return <main className={`${name} main`}>
 		<div className={`${name}-head`}>
-			<NewBox
-				tag='btn'
-				className={`${name}-switch-btn ${btnName}`}
-				nameIfPressed={btnPressedName}
-				handlers={switchBtnHdl}
-				content={(global ? '[FRIENDS]' : '[GLOBAL]')}
-			/>
 			{headBox('down', '[>>]')}
 			{headBox('up', '[<<]')}
 			{headBox('findMe', '[FIND ME]')}
@@ -120,7 +108,7 @@ const Leader: React.FC = memo(() => {
 				placeholder=' ...'
 			/>
 		</div>
-		<Board />
+		<Board name={name} btnName={btnName} />
 	</main >
 })
 export default Leader

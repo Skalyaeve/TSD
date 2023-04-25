@@ -490,11 +490,11 @@ const Chat: React.FC = memo(() => {
 			const element = chatRef.current
 			element.setAttribute('style', 'width: 255px')
 		}
-	}, [])
+	}, [chatOpenned])
 
 	const mainBtnHdl = useMemo(() => ({
 		onMouseUp: toggleChatContent
-	}), [])
+	}), [toggleChatContent])
 
 	// ----CLASSNAMES------------------------- //
 	const name = 'chat'

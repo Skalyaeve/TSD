@@ -56,7 +56,6 @@ button {
 
 input {
 	/* #1 Elements */
-	background-color: rgb(0, 0, 0);
 	border: none;
 	font-family: system-ui;
 	font-size: 18px;
@@ -71,9 +70,13 @@ input:focus {
 	outline: none;
 }
 
-.root {
+body * {
 	/* #1 Elements */
 	background-color: rgb(0, 0, 0);
+}
+
+.root {
+	/* #1 Elements */
 	display: grid;
 	grid-template-columns: 275px auto;
 	grid-template-rows: 100vh;

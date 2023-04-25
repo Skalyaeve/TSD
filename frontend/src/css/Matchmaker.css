@@ -25,7 +25,6 @@ ex: ".navBar-logo--pressed {}"
 /* ---MATMAKING------------------ */
 .matchmaker {
 	/* #1 Elements */
-	background-color: rgb(0, 0, 0);
 	border: 1px solid rgb(36, 81, 230);
 
 	/* #2 Form */
@@ -46,7 +45,6 @@ ex: ".navBar-logo--pressed {}"
 /* ---GAME-INFOS----------------- */
 .gameInfos {
 	/* #1 Elements */
-	background-color: rgb(0, 0, 0);
 	border: 1px solid rgb(172, 0, 0);
 	display: grid;
 	grid-template-columns: 1fr 1fr;
