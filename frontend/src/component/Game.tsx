@@ -1,14 +1,10 @@
-import React, { useLayoutEffect, useRef, useState } from 'react'
+import React, { useLayoutEffect, useRef, useState, Dispatch, SetStateAction, createContext, useContext } from 'react'
 import Phaser from 'phaser'
-import { io } from 'socket.io-client'
+import { Socket, io } from 'socket.io-client'
 
 /* -------------------------ASSETS IMPORT------------------------- */
 
 // Images
-import sky__Img from '../resource/assets/sky.png'
-import ground__Img from '../resource/assets/platform.png'
-import basicBall__Img from '../resource/assets/basicBall.png'
-import energyBall__Img from '../resource/assets/energyBall.png'
 
 // Spritesheets
 import playerIdle__Sheet from '../resource/assets/playerSheet.png'
@@ -16,44 +12,21 @@ import playerRun__Sheet from '../resource/assets/playerSheet.png'
 import mageIdle__Sheet from '../resource/assets/Mage/Idle.png'
 import mageRun__Sheet from '../resource/assets/Mage/Run.png'
 
-/* -------------------------SCENE CLASS------------------------- */
+/* -------------------------TYPING------------------------- */
 
 interface player {
+	id: string									// Player ID
 	xPos: number								// Player initial X position
 	yPos: number								// Player initial Y position
-	yDir: string								// Player actual X direction (left/right)
-	xDir: string								// Player actual Y direction (none/up/down)
+	xDir: string								// Player actual X direction (left/right)
+	yDir: string								// Player actual Y direction (none/up/down)
+	xMov: number								// Player last X movement
+	yMov: number								// Player last Y movement
 	lastMove: string							// Player last movement state (none/idle/run)
 	move: string								// Player actual movement state (idle/run)
 	skinId: number								// Player skin id in skins array
 	sprite?: Phaser.Physics.Arcade.Sprite 		// Player sprite
-	keyCodes: {									// Player key codes
-		up: number,								// Player UP key code
-		down: number,							// Player DOWN key code
-		left: number,							// Player LEFT key code
-		right: number							// Player RIGHT key code
-	}
-	keys?: {									// Player Phaser keys
-		up: Phaser.Input.Keyboard.Key,			// Player UP Phaser key
-		down: Phaser.Input.Keyboard.Key,		// Player DOWN Phaser key
-		left: Phaser.Input.Keyboard.Key,		// Player LEFT Phaser key
-		right: Phaser.Input.Keyboard.Key		// Player RIGHT Phaser key53019
-	}
 	colliders: Phaser.Physics.Arcade.Collider[]	// Player colliders
-	shape?: Phaser.Geom.Ellipse
-}
-
-interface ball {
-	xPos: number								// Ball start X position on scene creation
-	yPos: number								// Ball start Y position on scene creation
-	size: number								// Ball size
-	bounce: number								// Ball bounce ratio
-	impacts: number								// Ball actual number of impacts since creation
-	maxImpacts: number							// Ball max number of impact before max speed
-	sprite?: Phaser.Physics.Arcade.Sprite		// Ball sprite
-	spriteName: string							// Ball sprite name
-	image: string								// Ball image
-	shape?: Phaser.Geom.Circle
 }
 
 interface skin {
@@ -65,40 +38,63 @@ interface skin {
 	idleSheet: string							// Skin idle spritesheet
 }
 
-class MyScene extends Phaser.Scene {
+interface keys {								// Keyboard keys
+	up: Phaser.Input.Keyboard.Key				// UP key
+	down: Phaser.Input.Keyboard.Key				// DOWN key
+	left: Phaser.Input.Keyboard.Key				// LEFT key
+	right: Phaser.Input.Keyboard.Key			// RIGHT key
+}
 
-	/****** VARIABLES & CONSTRUCTION ******/
+/* -------------------------GAME INITIALISATION------------------------- */
 
-	// Deprecated - May return
-	private platforms?: Phaser.Physics.Arcade.StaticGroup
-	private background?: Phaser.GameObjects.Image
+function Party() {
 
-	// Scene elements
-	private canvasSize: number[] = [1920, 1080]
-	private score: number[] = [0, 0]
-	private scoreText?: Phaser.GameObjects.Text
-	private globalSpeed: number = 1000
+	/****** VARIABLES ******/
 
-	// Players
-	private players: player[] = []
+	// React variables
+	const gameRef = useRef<HTMLDivElement>(null)
+	const [game, setGame] = useState<Phaser.Game | null>(null)
 
-	// Ball
-	private balls: ball[] = []
+	// Constants
+	const headerPxSize: number = 275
+	const gameAspectRatio: number = 16 / 9
+	const canvasSize: number[] = [1920, 1080]
+	const globalSpeed: number = 1000
 
-	// Skins
-	private skins: skin[] = []
+	// Skin list
+	let skins: skin[] = []
 
-	// Constructor - Initialisation
-	constructor() {
-		super({ key: 'MyScene' })
-		this.skinsInitialisation()
-		this.playersInitialisation()
-		this.ballInitialisation()
+	// Score
+	let scoreText: Phaser.GameObjects.Text
+	let score: number[] = [0, 0]
+
+	// Player list
+	let players: player[] = []
+
+	// Player event queues
+	let creationQueue: player[] = []
+	let deletionQueue: player[] = []
+	let moveQueue: player[] = []
+
+	// Keyboard keys
+	let keys: keys
+
+	/****** SCENE PRELOADING ******/
+
+	// Initialise all keyboards keys
+	function keysInitialisation(scene: Phaser.Scene) {
+		if (scene.input.keyboard) {
+			keys = {
+				up: scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.W),
+				down: scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.A),
+				left: scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.S),
+				right: scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.D)
+			}
+		}
 	}
 
 	// Initialise all skins of the scene
-	skinsInitialisation() {
-		let skins: skin[] = this.skins
+	function skinsInitialisation(scene: Phaser.Scene) {
 		skins[0] = {
 			name: 'player',
 			nbFrames: 2,
@@ -115,313 +111,164 @@ class MyScene extends Phaser.Scene {
 			idleSheet: mageIdle__Sheet,
 			runSheet: mageRun__Sheet
 		}
-	}
-
-	// Initialise all players of the scene
-	playersInitialisation() {
-		let players: player[] = this.players
-		players[0] = {
-			xPos: 100,
-			yPos: 540,
-			xDir: 'right',
-			yDir: 'none',
-			lastMove: 'none',
-			move: 'idle',
-			skinId: 0,
-			keyCodes: {
-				up: Phaser.Input.Keyboard.KeyCodes.W,
-				down: Phaser.Input.Keyboard.KeyCodes.S,
-				left: Phaser.Input.Keyboard.KeyCodes.A,
-				right: Phaser.Input.Keyboard.KeyCodes.D
-			},
-			colliders: []
-		}
-		players[1] = {
-			xPos: 1820,
-			yPos: 540,
-			xDir: 'left',
-			yDir: 'none',
-			lastMove: 'none',
-			move: 'idle',
-			skinId: 0,
-			keyCodes: {
-				up: Phaser.Input.Keyboard.KeyCodes.UP,
-				down: Phaser.Input.Keyboard.KeyCodes.DOWN,
-				left: Phaser.Input.Keyboard.KeyCodes.LEFT,
-				right: Phaser.Input.Keyboard.KeyCodes.RIGHT
-			},
-			colliders: []
+		for (let skinId = 0; skinId < skins.length; skinId++) {
+			scene.load.spritesheet(skins[skinId].name + 'Idle', skins[skinId].idleSheet, { frameWidth: skins[skinId].xSize, frameHeight: skins[skinId].ySize })
+			scene.load.spritesheet(skins[skinId].name + 'Run', skins[skinId].runSheet, { frameWidth: skins[skinId].xSize, frameHeight: skins[skinId].ySize })
 		}
 	}
 
-	// Initialise all balls of the scene
-	ballInitialisation() {
-		let balls: ball[] = this.balls
-		balls[0] = {
-			xPos: 960,
-			yPos: 540,
-			size: 26,
-			bounce: 50,
-			impacts: 0,
-			maxImpacts: 15,
-			spriteName: 'ball',
-			image: basicBall__Img
-		}
-	}
-
-	/****** DEPRECATED - MAY RETURN ******/
-
-	// Set background for this scene 
-	setBackground(this: MyScene, objectName: string) {
-		this.background = this.add.image(this.canvasSize[0] / 2, this.canvasSize[1] / 2, objectName)
-		const xRatio: number = this.canvasSize[0] / this.background.width
-		const yRatio: number = this.canvasSize[1] / this.background.height
-		this.background.setScale(xRatio, yRatio)
-	}
-
-	// Set plaforms for this scene
-	setPlatforms(this: MyScene) {
-		this.platforms = this.physics.add.staticGroup()
-		//this.platforms.create(this.canvasSize[0] / 2, 1048, 'ground').setScale(5, 2).refreshBody()
-	}
-
-	/****** EVENT LISTENERS ******/
-
-	// Event listener for the ball touching left and right walls
-	onWorldCollision(this: MyScene, body: Phaser.Physics.Arcade.Body, up: boolean, down: boolean, left: boolean, right: boolean) {
-		if (up || down)
-			return
-		for (let ballId = 0; ballId < this.balls.length; ballId++)
-			this.balls[ballId].sprite?.destroy()
-		for (let playerId = 0; playerId < this.players.length; playerId++) {
-			for (let colliderId = 0; colliderId < this.players[playerId].colliders.length; colliderId++)
-				this.players[playerId].colliders[colliderId].destroy()
-			this.players[playerId].sprite?.destroy()
-		}
-		this.physics.world.removeAllListeners()
-		this.score[right ? 0 : 1] += 1
-		this.scoreText?.destroy()
-		this.playersInitialisation()
-		this.ballInitialisation()
-		this.create()
-	}
-
-	/****** SCENE CONSTRUCTION ******/
+	/****** SCENE CREATION ******/
 
 	// Create players for this scene
-	createPlayers(this: MyScene) {
-		for (let playerId = 0; playerId < this.players.length; playerId++) {
-			let player = this.players[playerId]
-			let newSprite = this.physics.add.sprite(player.xPos, player.yPos, this.skins[player.skinId].name + 'Idle')
-			if (this.skins[player.skinId].name == 'mage') {
-				newSprite.body.setSize(50, 52)
-				newSprite.body.setOffset(100, 114)
-				newSprite.setScale(2.5, 2.5).refreshBody()
-			}
-			newSprite.setBounce(1)
-			newSprite.setCollideWorldBounds(true)
-			newSprite.setImmovable(true)
-			if (player.xDir == 'left')
-				newSprite.setFlipX(true)
-			else if (player.xDir == 'right')
-				newSprite.setFlipX(false)
-			player.sprite = newSprite
+	function createPlayer(player: player, scene: Phaser.Scene) {
+		let newSprite = scene.physics.add.sprite(player.xPos, player.yPos, skins[player.skinId].name + 'Idle')
+		if (skins[player.skinId].name == 'mage') {
+			newSprite.body.setSize(50, 52)
+			newSprite.body.setOffset(100, 114)
+			newSprite.setScale(2.5, 2.5).refreshBody()
 		}
-	}
-
-	// Create balls for this scene
-	createBalls(this: MyScene) {
-		for (let ballId = 0; ballId < this.balls.length; ballId++) {
-			let ball = this.balls[ballId]
-			ball.sprite = this.physics.add.sprite(ball.xPos, ball.yPos, ball.spriteName)
-			ball.sprite.setBounce(1)
-			ball.sprite.setCircle(ball.size)
-			ball.sprite.setCollideWorldBounds(true)
-			if (ball.sprite)
-				if (ball.sprite.body instanceof Phaser.Physics.Arcade.Body)
-					ball.sprite.body.onWorldBounds = true
-		}
-	}
-
-	// Create colliders for this scene
-	createColliders(this: MyScene) {
-		this.physics.world.on('worldbounds', this.onWorldCollision, this)
-		for (let playerId = 0; playerId < this.players.length; playerId++) {
-			let playerSprite = this.players[playerId].sprite
-			for (let ballId = 0; ballId < this.balls.length; ballId++) {
-				let ball = this.balls[ballId]
-				if (playerSprite && ball.sprite) {
-					let sprite = ball.sprite
-					this.players[playerId].colliders[ballId] = this.physics.add.collider(playerSprite, ball.sprite,
-						() => {
-							if (sprite.body) {
-								let velocity: number = Math.sqrt(sprite.body.velocity.x * sprite.body.velocity.x + sprite.body.velocity.y * sprite.body.velocity.y)
-								if (!velocity)
-									return
-								let directionX: number = sprite.body.velocity.x / velocity
-								let directionY: number = sprite.body.velocity.y / velocity
-								velocity = this.globalSpeed + 1 + ball.bounce * ball.impacts
-								sprite.setVelocity(velocity * directionX, velocity * directionY)
-								ball.impacts += 1;
-								if (ball.impacts > ball.maxImpacts)
-									ball.impacts = ball.maxImpacts
-							}
-						},
-						undefined, this)
-				}
-			}
-		}
+		newSprite.setBounce(1)
+		newSprite.setCollideWorldBounds(true)
+		newSprite.setImmovable(true)
+		if (player.xDir == 'left')
+			newSprite.setFlipX(true)
+		else if (player.xDir == 'right')
+			newSprite.setFlipX(false)
+		player.sprite = newSprite
 	}
 
 	// Create animation for this scene
-	createAnims(this: MyScene) {
-		let skins: skin[] = this.skins
-		for (let playerId = 0; playerId < this.players.length; playerId++) {
-			let skinId: number = this.players[playerId].skinId
-			this.anims.create({
-				key: skins[skinId].name + 'IdleAnim',
-				frames: this.anims.generateFrameNumbers(skins[skinId].name + 'Idle', { start: 0, end: skins[skinId].nbFrames - 1 }),
-				frameRate: this.skins[skinId].nbFrames,
-				repeat: -1
-			})
-			this.anims.create({
-				key: skins[skinId].name + 'RunAnim',
-				frames: this.anims.generateFrameNumbers(skins[skinId].name + 'Run', { start: 0, end: skins[skinId].nbFrames - 1 }),
-				frameRate: skins[skinId].nbFrames,
-				repeat: -1
-			})
-		}
-		this.scoreText = this.add.text(890, 0, this.score[0] + ' - ' + this.score[1], { fontSize: '50px' })
-	}
-
-	// Load the keys used by players to move
-	loadKeyCodes(this: MyScene) {
-		for (let playerId = 0; playerId < this.players.length; playerId++) {
-			if (this.input.keyboard) {
-				this.players[playerId].keys = {
-					up: this.input.keyboard.addKey(this.players[playerId].keyCodes.up),
-					down: this.input.keyboard.addKey(this.players[playerId].keyCodes.down),
-					left: this.input.keyboard.addKey(this.players[playerId].keyCodes.left),
-					right: this.input.keyboard.addKey(this.players[playerId].keyCodes.right)
-				}
-			}
-		}
+	function createAnims(player: player, scene: Phaser.Scene) {
+		let skinId: number = player.skinId
+		scene.anims.create({
+			key: skins[skinId].name + 'IdleAnim',
+			frames: scene.anims.generateFrameNumbers(skins[skinId].name + 'Idle', { start: 0, end: skins[skinId].nbFrames - 1 }),
+			frameRate: skins[skinId].nbFrames,
+			repeat: -1
+		})
+		scene.anims.create({
+			key: skins[skinId].name + 'RunAnim',
+			frames: scene.anims.generateFrameNumbers(skins[skinId].name + 'Run', { start: 0, end: skins[skinId].nbFrames - 1 }),
+			frameRate: skins[skinId].nbFrames,
+			repeat: -1
+		})
 	}
 
 	/****** SCENE UPDATE ******/
 
-	// Check if all keyboards keys are released
-	allKeysUp(this: MyScene, playerId: number) {
-		let keys = this.players[playerId].keys
-		if (keys?.up.isUp && keys?.down.isUp && keys?.left.isUp && keys?.right.isUp)
-			return true
-		return false
+	/*function checkKeyInputs(scene: Phaser.Scene) {
+		if (allKeysUp(playerId)) {
+			player.move = 'idle'
+			player.yDir = 'none'
+			continue
+		}
+		else
+			player.move = 'run'
+		if (player.keys?.left.isDown)
+			player.xDir = 'left'
+		else if (player.keys?.right.isDown)
+			player.xDir = 'right'
+		else
+			player.xDir = 'none'
+		if (player.keys?.up.isDown)
+			player.yDir = 'up'
+		else if (player.keys?.down.isDown)
+			player.yDir = 'down'
+		else
+			player.yDir = 'none'
+	}*/
+
+	function checkNewPlayer(scene: Phaser.Scene) {
+		if (!creationQueue.length)
+			return
+		for (let queueId = 0; queueId < creationQueue.length; queueId++) {
+			players[players.length] = creationQueue[queueId]
+			createPlayer(players[players.length - 1], scene)
+			createAnims(players[players.length - 1], scene)
+		}
+		console.log("Creation queue is now empty")
+		creationQueue = []
 	}
 
-	// Check for keyboard inputs
-	checkKeyInputs(this: MyScene) {
-		for (let playerId = 0; playerId < this.players.length; playerId++) {
-			let player = this.players[playerId]
-			if (this.allKeysUp(playerId)) {
-				player.move = 'idle'
-				player.yDir = 'none'
-				continue
-			}
-			else
-				player.move = 'run'
-			if (player.keys?.left.isDown)
-				player.xDir = 'left'
-			else if (player.keys?.right.isDown)
-				player.xDir = 'right'
-			else
-				player.xDir = 'none'
-			if (player.keys?.up.isDown)
-				player.yDir = 'up'
-			else if (player.keys?.down.isDown)
-				player.yDir = 'down'
-			else
-				player.yDir = 'none'
+	function checkDisconnect(scene: Phaser.Scene) {
+		if (!deletionQueue.length)
+			return
+		for (let queueId = 0; queueId < deletionQueue.length; queueId++) {
+			deletionQueue[queueId].sprite?.destroy()
 		}
-	}
-
-	// Move player following moveState, xDirection and yDirection
-	movePlayers() {
-		for (let playerId = 0; playerId < this.players.length; playerId++) {
-			let player = this.players[playerId]
-			if (player.move == 'run') {
-				if (player.yDir == 'up')
-					player.sprite?.setVelocityY(-this.globalSpeed)
-				else if (player.yDir == 'down')
-					player.sprite?.setVelocityY(this.globalSpeed)
-				else
-					player.sprite?.setVelocityY(0)
-				if (player.xDir == 'left')
-					player.sprite?.setVelocityX(-this.globalSpeed)
-				else if (player.xDir == 'right')
-					player.sprite?.setVelocityX(this.globalSpeed)
-				else
-					player.sprite?.setVelocityX(0)
-			}
-			else {
-				player.sprite?.setVelocityX(0)
-				player.sprite?.setVelocityY(0)
-			}
-		}
+		console.log("Deletion queue is now empty")
+		deletionQueue = []
 	}
 
 	// Set player animations following moveState, xDirection and yDirection
-	setAnims() {
-		for (let playerId = 0; playerId < this.players.length; playerId++) {
-			let player = this.players[playerId]
-			if (player.move != player.lastMove) {
-				if (player.move == 'run')
-					player.sprite?.play(this.skins[player.skinId].name + 'RunAnim')
+	function setAnims() {
+		for (let playerId = 0; playerId < players.length; playerId++) {
+			if (players[playerId].move != players[playerId].lastMove) {
+				if (players[playerId].move == 'run')
+					players[playerId].sprite?.play(skins[players[playerId].skinId].name + 'RunAnim')
 				else
-					player.sprite?.play(this.skins[player.skinId].name + 'IdleAnim')
+					players[playerId].sprite?.play(skins[players[playerId].skinId].name + 'IdleAnim')
 			}
-			player.lastMove = player.move
+			players[playerId].lastMove = players[playerId].move
 		}
+	}
+
+	function checkMove(scene: Phaser.Scene) {
+		if (!moveQueue.length)
+			return
+		for (let queueId = 0; queueId < moveQueue.length; queueId++) {
+			let player = moveQueue[queueId]
+			if (player.sprite)
+				scene.physics.moveTo(player.sprite, player.xMov, player.yMov, 1, 1)
+		}
+		console.log("Move queue is now empty")
+		moveQueue = []
 	}
 
 	/****** OVERLOADED PHASER FUNCTIONS ******/
 
-	preload(this: MyScene) {
-		this.load.image('sky', sky__Img)
-		this.load.image('ground', ground__Img)
-		for (let ballId = 0; ballId < this.balls.length; ballId++)
-			this.load.image(this.balls[ballId].spriteName, this.balls[ballId].image)
-		for (let skinId = 0; skinId < this.skins.length; skinId++) {
-			let skin = this.skins[skinId]
-			this.load.spritesheet(skin.name + 'Idle', skin.idleSheet, { frameWidth: skin.xSize, frameHeight: skin.ySize })
-			this.load.spritesheet(skin.name + 'Run', skin.runSheet, { frameWidth: skin.xSize, frameHeight: skin.ySize })
+	function preload(this: Phaser.Scene) {
+		keysInitialisation(this)
+		skinsInitialisation(this)
+	}
+
+	function create(this: Phaser.Scene) {
+	}
+
+	function update(this: Phaser.Scene) {
+		//checkKeyInputs(this)
+		checkNewPlayer(this)
+		checkDisconnect(this)
+		checkMove(this)
+		setAnims()
+	}
+
+	// Create the game
+	const createGame = () => {
+		const config: Phaser.Types.Core.GameConfig = {
+			type: Phaser.AUTO,
+			width: 1920,
+			height: 1080,
+			physics: {
+				default: 'arcade',
+				arcade: {
+					gravity: { y: 0 },
+					debug: false,
+				},
+			},
+			scene: {
+				preload: preload,
+				create: create,
+				update: update,
+			},
+		}
+		if (gameRef.current) {
+			const newGame: Phaser.Game = new Phaser.Game({ ...config, parent: gameRef.current, })
+			setGame(newGame)
 		}
 	}
 
-	create(this: MyScene) {
-		//this.setBackground('sky')
-		//this.setPlatforms()
-		this.createBalls()
-		this.createPlayers()
-		this.createColliders()
-		this.createAnims()
-		this.loadKeyCodes()
-	}
-
-	update(this: MyScene) {
-		this.checkKeyInputs()
-		this.movePlayers()
-		this.setAnims()
-	}
-}
-
-/* -------------------------GAME INITIALISATION------------------------- */
-
-function Party() {
-	const gameRef = useRef<HTMLDivElement>(null)
-	const [game, setGame] = useState<Phaser.Game | null>(null)
-	const headerPxSize: number = 275
-	const gameAspectRatio: number = 16 / 9
-
+	// Resize game div on page resize
 	const resizeGameDiv = () => {
 		const gameDiv = gameRef.current
 		if (gameDiv) {
@@ -439,27 +286,53 @@ function Party() {
 		}
 	}
 
+	// Start socket comunication
+	const startSocket = () => {
+		const socket: Socket = io('http://localhost:3001')
+		// Update the players list with the received data (when connecting for the first time)
+		socket.on('currentPlayers', (playersList: player[]) => {
+			for (let queueId = 0; queueId < playersList.length; queueId++)
+				creationQueue[creationQueue.length] = playersList[queueId]
+			console.log("Added ", playersList.length, " players to the creation queue")
+		});
+		// Add the new player (external) to the players list
+		socket.on('newPlayer', (player: player) => {
+			creationQueue[creationQueue.length] = player
+			console.log("Added player to creation queue")
+		});
+		// Update the moved player's velocity in the players list
+		socket.on('playerMoved', (player: player) => {
+			moveQueue[moveQueue.length] = player
+			console.log("A player moved")
+		});
+		// Remove the disconnected player from the players list
+		socket.on('playerDisconnected', (playerId: string) => {
+			console.log("A player has disconnected")
+			for (let playerI = 0; playerI < players.length; playerI++) {
+				if (players[playerI].id == playerId) {
+					deletionQueue[deletionQueue.length] = players[playerI]
+					players = players.filter(player => player.id != playerId)
+					console.log("Player has been added to deletion queue and deleted from player list")
+				}
+			}
+		});
+		// Send player movements to the server
+		const sendPlayerMovement = (x: number, y: number) => {
+			socket.emit('playerMovement', { x, y });
+		};
+		return socket
+	}
+
 	useLayoutEffect(() => {
-		const config: Phaser.Types.Core.GameConfig = {
-			type: Phaser.AUTO,
-			width: 1920,
-			height: 1080,
-			physics: {
-				default: 'arcade',
-				arcade: {
-					gravity: { y: 0 },
-					debug: false,
-				},
-			},
-			scene: [MyScene],
-		}
-		if (gameRef.current) {
-			const newGame: Phaser.Game = new Phaser.Game({ ...config, parent: gameRef.current, })
-			setGame(newGame)
-		}
+
+		createGame()
+
 		window.addEventListener('resize', resizeGameDiv)
 		resizeGameDiv()
-		const socket = io('http://localhost:3001')
+
+		const socket = startSocket()
+
+		// Destruction
 		return () => {
 			if (game) {
 				game.destroy(true, false)
@@ -470,9 +343,11 @@ function Party() {
 		}
 	}, [])
 
-	return <main className="game main">
-		<div className='game-canvas' ref={gameRef}></div>
-	</main>
+	return (
+		<main className="game main">
+			<div className='game-canvas' ref={gameRef}></div>
+		</main>
+	)
 }
 
 export default Party
