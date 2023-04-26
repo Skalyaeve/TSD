@@ -91,9 +91,9 @@ function Party() {
 	function keysInitialisation(scene: Phaser.Scene) {
 		if (scene.input.keyboard) {
 			keys = {
-				up: scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.W),
+				up: scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.Z),
 				down: scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.S),
-				left: scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.A),
+				left: scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.Q),
 				right: scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.D)
 			}
 		}
@@ -180,8 +180,8 @@ function Party() {
 		socket.emit('playerMovement', { xMov, yMov })
 	}
 
-	const sendPlayerStop = () => {
-		socket.emit('playerStop')
+	const sendPlayerStop = (xMov: number, yMov: number) => {
+		socket.emit('playerStop', { xMov, yMov })
 	}
 
 	/****** SCENE UPDATE ******/
@@ -212,10 +212,10 @@ function Party() {
 			if (player.sprite) {
 				player.sprite.setVelocityX(endVelocityX)
 				player.sprite.setVelocityY(endVelocityY)
-				if (player.move == 'run' && player.lastMove == 'idle')
-					sendPlayerMovement(endVelocityX, endVelocityY)
-				if (player.move == 'idle' && player.lastMove == 'run')
-					sendPlayerStop()
+				if (player.move == 'run' && player.sprite.body)
+					sendPlayerMovement(player.sprite.body.x, player.sprite.body.y)
+				if (player.move == 'idle' && player.lastMove == 'run' && player.sprite.body)
+					sendPlayerMovement(player.sprite.body.x, player.sprite.body.y)
 			}
 		}
 	}
@@ -266,6 +266,10 @@ function Party() {
 			for (let playerId = 0; playerId < players.length; playerId++) {
 				if (players[playerId].id == moveQueue[queueId] && players[playerId].id != myId) {
 					players[playerId].sprite?.setPosition(players[playerId].xMov, players[playerId].yMov)
+					if (players[playerId].move == 'run' && players[playerId].lastMove == 'idle')
+						players[playerId].sprite?.play(skins[players[playerId].skinId].name + 'RunAnim')
+					else if (players[playerId].move == 'idle' && players[playerId].lastMove == 'run')
+						players[playerId].sprite?.play(skins[players[playerId].skinId].name + 'IdleAnim')
 					console.log("Moved player ", players[playerId].id, " xv: ", players[playerId].xMov, " yv: ", players[playerId].yMov)
 				}
 			}
@@ -365,6 +369,8 @@ function Party() {
 				if (players[playerId].id == player.id) {
 					players[playerId].xMov = player.xMov
 					players[playerId].yMov = player.yMov
+					players[playerId].lastMove = players[playerId].move
+					players[playerId].move = player.move
 					moveQueue[moveQueue.length] = players[playerId].id
 					break
 				}
@@ -377,6 +383,8 @@ function Party() {
 				if (players[playerId].id == player.id) {
 					players[playerId].xMov = player.xMov
 					players[playerId].yMov = player.yMov
+					players[playerId].lastMove = players[playerId].move
+					players[playerId].move = player.move
 					moveQueue[moveQueue.length] = players[playerId].id
 					break
 				}
