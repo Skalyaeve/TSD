@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react'
+import React, { useEffect } from 'react'
 import { Routes, Route, useLocation, useNavigate } from 'react-router-dom'
-import { NewBox } from './utils.tsx'
+import { NewBox, toggleOnUp } from './utils.tsx'
 import NavBar from './NavBar.tsx'
 import Chat from './Chat.tsx'
 import Matchmaker from './Matchmaker.tsx'
@@ -17,10 +17,7 @@ const Root: React.FC = () => {
 	const navigate = useNavigate()
 
 	// ----STATES----------------------------- //
-	const [logged, setLoged] = useState(() => {
-		const value = localStorage.getItem('logged')
-		return value === '1'
-	})
+	const [logged, toggleLoged] = toggleOnUp(localStorage.getItem('logged') === '1')
 
 	// ----EFFECTS---------------------------- //
 	useEffect(() => {
@@ -32,42 +29,31 @@ const Root: React.FC = () => {
 			navigate('/game')
 	}, [location.pathname])
 
-	// ----HANDLERS--------------------------- //
-	const connect = useCallback(() => {
-		setLoged(true)
-	}, [])
-
-	const disconnect = useCallback(() => {
-		setLoged(false)
-	}, [])
-
-	const loginBtnHdl = useMemo(() => ({
-		onMouseUp: connect
-	}), [])
-
 	// ----RENDER----------------------------- //
-	return <>{!logged ? (
+	return <>{!logged ?
 		<NewBox
 			tag='btn'
 			className='login'
 			nameIfPressed='login--pressed'
-			handlers={loginBtnHdl}
+			handlers={toggleLoged}
 			content='[42Auth]'
 		/>
-	) : (<>
-		<Routes>
-			<Route path='/' element={<Home />} />
-			<Route path='/profile/*' element={<Profile />} />
-			<Route path='/game' element={<Party />} />
-			<Route path='/leaderboard' element={<Leader />} />
-			<Route path='*' element={<ErrorPage code={404} />} />
-		</Routes>
+		:
+		<>
+			<header className='header'>
+				<NavBar toggleLoged={toggleLoged} />
+				<Chat />
+				<Matchmaker />
+			</header>
 
-		<header className='header'>
-			<NavBar disconnect={disconnect} />
-			<Chat />
-			<Matchmaker />
-		</header>
-	</>)}</>
+			<Routes>
+				<Route path='/' element={<Home />} />
+				<Route path='/profile/*' element={<Profile />} />
+				<Route path='/game' element={<Party />} />
+				<Route path='/leaderboard' element={<Leader />} />
+				<Route path='*' element={<ErrorPage code={404} />} />
+			</Routes>
+		</>
+	}</>
 }
 export default Root

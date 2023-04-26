@@ -1,4 +1,4 @@
-import React, { memo, useState, useEffect, useLayoutEffect, useMemo, useCallback, useRef } from 'react'
+import React, { memo, useMemo, useCallback, useState, useEffect, useLayoutEffect, useRef } from 'react'
 import { NewBox, DragDrop } from './utils.tsx'
 
 // --------ROOM-SETTINGS--------------------------------------------------- //
@@ -164,6 +164,7 @@ const RoomMember: React.FC<RoomMemberProps> = memo(({
 		</div>}
 	</div>
 })
+
 
 // --------ROOM-BOXES------------------------------------------------------ //
 interface RoomBoxesProps {
@@ -342,6 +343,7 @@ const RoomBox: React.FC<RoomBoxProps> = memo(({
 	/>
 })
 
+
 // --------USERS----------------------------------------------------------- //
 const RoomUsers: React.FC = memo(() => {
 	// ----STATES----------------------------- //
@@ -415,6 +417,7 @@ const RoomUser: React.FC<RoomUserProps> = memo(({ id }) => {
 	</div>
 })
 
+
 // --------TEXT-AREA------------------------------------------------------- //
 interface TextAreaProps {
 	chatArea: number
@@ -433,6 +436,7 @@ const TextArea: React.FC<TextAreaProps> = memo(({ chatArea, showUsers }) => {
 		{updateChatArea}
 	</div>
 })
+
 
 // --------CHAT------------------------------------------------------------ //
 const Chat: React.FC = memo(() => {

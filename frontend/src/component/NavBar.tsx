@@ -25,16 +25,12 @@ const NavBarLink: React.FC<NavBarLinkProps> = memo(({
 	/>
 })
 
+
 // --------NAVBAR---------------------------------------------------------- //
 interface NavBarProps {
-	disconnect: () => void
+	toggleLoged: React.HTMLAttributes<HTMLElement>
 }
-const NavBar: React.FC<NavBarProps> = memo(({ disconnect }) => {
-	// ----HANDLERS--------------------------- //
-	const logoutBtnHdl = useMemo(() => ({
-		onMouseUp: disconnect
-	}), [])
-
+const NavBar: React.FC<NavBarProps> = memo(({ toggleLoged }) => {
 	// ----CLASSNAMES------------------------- //
 	const name = 'navBar'
 	const linkName = `${name}-link`
@@ -43,15 +39,15 @@ const NavBar: React.FC<NavBarProps> = memo(({ disconnect }) => {
 	const lastLinkName = ` ${linkName}--last`
 
 	// ----RENDER----------------------------- //
-	const logoutBox = <NewBox
+	const logoutBox = useMemo(() => <NewBox
 		tag='btn'
 		className={`${linkName}${firstLinkName}${backLinkName}`}
 		nameIfPressed={`${linkName}--pressed`}
-		handlers={logoutBtnHdl}
+		handlers={toggleLoged}
 		content='[LOGOUT]'
-	/>
+	/>, [])
 
-	const fromHome = <nav className={name}>
+	const fromHome = useMemo(() => <nav className={name}>
 		{logoutBox}
 		<NavBarLink to='/profile'
 			content='[PROFILE]'
@@ -59,9 +55,9 @@ const NavBar: React.FC<NavBarProps> = memo(({ disconnect }) => {
 		<NavBarLink to='/leaderboard' nameExt={lastLinkName}
 			content='[LEADER]'
 		/>
-	</nav>
+	</nav>, [])
 
-	const fromProfil = <nav className={name}>
+	const fromProfil = useMemo(() => <nav className={name}>
 		<NavBarLink to='/' nameExt={firstLinkName + backLinkName}
 			content='[BACK]'
 		/>
@@ -74,15 +70,15 @@ const NavBar: React.FC<NavBarProps> = memo(({ disconnect }) => {
 		<NavBarLink to={`/profile/characters`} nameExt={lastLinkName}
 			content='[CHARACTERS]'
 		/>
-	</nav>
+	</nav>, [])
 
-	const fromLeader = <nav className={name}>
+	const fromLeader = useMemo(() => <nav className={name}>
 		<NavBarLink to='/' nameExt={firstLinkName + backLinkName + lastLinkName}
 			content='[BACK]'
 		/>
-	</nav>
+	</nav>, [])
 
-	const from404 = <nav className={name}>
+	const from404 = useMemo(() => <nav className={name}>
 		{logoutBox}
 		<NavBarLink to='/profile'
 			content='[PROFIL]'
@@ -93,7 +89,7 @@ const NavBar: React.FC<NavBarProps> = memo(({ disconnect }) => {
 		<NavBarLink to='/' nameExt={lastLinkName}
 			content='[HOME]'
 		/>
-	</nav>
+	</nav>, [])
 
 	return <Routes>
 		<Route path='/' element={fromHome} />

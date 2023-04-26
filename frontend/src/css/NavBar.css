@@ -22,15 +22,12 @@ ex: ".navBar-logo--pressed {}"
 #4 Margin - Padding
 --------------------------------- */
 
+/* ---NAVBAR--------------------- */
 .navBar {
 	/* #1 Elements */
 	display: grid;
 	grid-template-columns: 1fr;
 	grid-template-rows: 0.5fr 1fr 1fr 1fr;
-
-	/* #3 Position */
-	grid-column: 1 / 1;
-	grid-row: 1 / 1;
 }
 
 .navBar-link {

@@ -1,6 +1,60 @@
-import React, { memo, useState, useEffect, useMemo } from 'react'
+import React, { memo, useMemo, useCallback, useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useDrag, useDrop } from 'react-dnd'
+
+// --------USE-BOOL-------------------------------------------------------- //
+export const useToggle = (def: boolean): [boolean, () => void] => {
+	// ----STATES----------------------------- //
+	const [value, setValue] = useState(def)
+
+	// ----HANDLERS--------------------------- //
+	const valueToggler = useCallback(() => setValue(x => !x), [value])
+
+	// ----RETURN----------------------------- //
+	return [value, valueToggler]
+}
+export const toggleOnUp = (def: boolean): [boolean, React.HTMLAttributes<HTMLElement>] => {
+	// ----STATES----------------------------- //
+	const [value, valueToggler] = useToggle(def)
+
+	// ----HANDLERS--------------------------- //
+	const btnHdl = useMemo(() => ({
+		onMouseUp: valueToggler
+	}), [valueToggler])
+
+	// ----RETURN----------------------------- //
+	return [value, btnHdl]
+}
+export const toggleOnOver = (def: boolean): [boolean, React.HTMLAttributes<HTMLElement>] => {
+	// ----STATES----------------------------- //
+	const [value, valueToggler] = useToggle(def)
+
+	// ----HANDLERS--------------------------- //
+	const btnHdl = useMemo(() => ({
+		onMouseEnter: valueToggler,
+		onMouseLeave: valueToggler
+	}), [valueToggler])
+
+	// ----RETURN----------------------------- //
+	return [value, btnHdl]
+}
+
+
+// --------INPUT----------------------------------------------------------- //
+interface InputProps {
+	name: string
+	PH?: string
+}
+export const Input: React.FC<InputProps> = memo(({ name, PH = ' ...' }) => {
+	// ----RENDER----------------------------- //
+	return <input
+		className={name}
+		id={name}
+		name={name}
+		placeholder={PH}
+	/>
+})
+
 
 // --------TIMER----------------------------------------------------------- //
 export const Timer: React.FC = memo(() => {
@@ -24,6 +78,7 @@ export const Timer: React.FC = memo(() => {
 
 	return <>{formatTime(Math.floor(timer / 60))}:{formatTime(timer % 60)}</>
 })
+
 
 // --------DRAG-DROP------------------------------------------------------- //
 interface DragDropProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -54,6 +109,7 @@ export const DragDrop: React.FC<DragDropProps> = memo(({
 		{content}
 	</div >
 })
+
 
 // --------NEW-BOX--------------------------------------------------------- //
 interface NewBoxProps {
@@ -118,7 +174,6 @@ export const NewBox: React.FC<NewBoxProps> = memo(({
 
 	// ----RENDER----------------------------- //
 	const render = useMemo(() => {
-		console.log('[NEW BOX] ' + className)
 		if (tag === 'Link' && to) return (
 			<Link to={to} className={boxName} {...mergedHandlers}>
 				{content}

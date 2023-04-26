@@ -42,14 +42,10 @@ ex: ".navBar-logo--pressed {}"
 .profile-accountInfos {
 	/* #1 Elements */
 	border: 1px solid rgb(255, 239, 57);
-	border-bottom: none;
-	display: flex;
-	align-items: center;
-	justify-content: center;
 
 	/* #2 Form */
 	width: calc(40% - 10px);
-	height: calc(40% - 10px);
+	height: calc(40% - 20px);
 
 	/* #3 Position */
 	position: absolute;
@@ -57,12 +53,25 @@ ex: ".navBar-logo--pressed {}"
 	left: 0;
 }
 
-.profile-achievements {
+.profile-accountInfos-pic {
 	/* #1 Elements */
 	border: 1px solid rgb(255, 239, 57);
 	display: flex;
 	align-items: center;
 	justify-content: center;
+
+	/* #2 Form */
+	width: 150px;
+	height: 150px;
+
+	/* #4 Margin - Padding */
+	margin-top: 10px;
+	margin-left: 10px;
+}
+
+.profile-achievements {
+	/* #1 Elements */
+	border: 1px solid rgb(255, 239, 57);
 
 	/* #2 Form */
 	width: calc(40% - 10px);
@@ -74,16 +83,74 @@ ex: ".navBar-logo--pressed {}"
 	left: 0;
 }
 
-.profile-stats {
+.profile-achievements-count {
 	/* #1 Elements */
-	border: 1px solid rgb(255, 239, 57);
-	border-bottom: none;
+	border-bottom: 1px solid rgb(255, 239, 57);
 	display: flex;
 	align-items: center;
 	justify-content: center;
 
 	/* #2 Form */
-	width: 60%;
+	width: 100%;
+	height: 15%;
+}
+
+.profile-achievements-list {
+	/* #1 Elements */
+	display: grid;
+	grid-template-columns: 1fr 1fr 1fr;
+	grid-auto-rows: minmax(33.33%, auto);
+	align-items: center;
+	overflow-y: auto;
+
+	/* #2 Form */
+	width: 100%;
+	height: 85%;
+}
+
+.profile-achievement {
+	/* #1 Elements */
+	border: 1px solid rgb(255, 239, 57);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	/* #2 Form */
+	width: 80px;
+	height: 80px;
+
+	/* #3 Position */
+	justify-self: center;
+}
+
+.profile-achievement-tooltip {
+	/* #1 Elements */
+	border: 1px solid rgb(255, 239, 57);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	/* #2 Form */
+	height: 200px;
+	width: 300px;
+
+	/* #3 Position */
+	z-index: 1;
+	position: fixed;
+}
+
+.profile-stats {
+	/* #1 Elements */
+	border: 1px solid rgb(255, 239, 57);
+	border-bottom: none;
+	font-size: 24px;
+	text-align: center;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	/* #2 Form */
+	width: calc(60% - 10px);
 	height: calc(25% - 10px);
 
 	/* #3 Position */
@@ -95,18 +162,28 @@ ex: ".navBar-logo--pressed {}"
 .profile-history {
 	/* #1 Elements */
 	border: 1px solid rgb(255, 239, 57);
-	display: flex;
-	align-items: center;
-	justify-content: center;
+	overflow-y: auto;
 
 	/* #2 Form */
-	width: 60%;
+	width: calc(60% - 10px);
 	height: calc(75% - 10px);
 
 	/* #3 Position */
 	position: absolute;
 	bottom: 10px;
 	right: 10px;
+}
+
+.profile-history-match {
+	/* #1 Elements */
+	border-bottom: 1px solid rgb(255, 239, 57);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	/* #2 Form */
+	width: 100%;
+	height: 10%;
 }
 
 /* ---FRIENDS-------------------- */
@@ -139,7 +216,6 @@ ex: ".navBar-logo--pressed {}"
 .profile-friends-add-input-btn {
 	/* #2 Form */
 	width: 70px;
-	border-radius: 5px;
 }
 
 .profile-friends-list {
@@ -213,6 +289,9 @@ ex: ".navBar-logo--pressed {}"
 
 .profile-friend-search {
 	/* #1 Elements */
+	display: flex;
+	align-items: center;
+	justify-content: center;
 	font-size: 17px;
 
 	/* #2 Form */
@@ -221,8 +300,10 @@ ex: ".navBar-logo--pressed {}"
 }
 
 .profile-friend-search-btn {
-	/* #2 Form */
-	border-radius: 5px;
+	/* #1 Elements */
+	display: flex;
+	align-items: center;
+	justify-content: center;
 
 	/* #3 Position */
 	position: absolute;
@@ -278,6 +359,7 @@ ex: ".navBar-logo--pressed {}"
 
 .profile-friend-link {
 	/* #1 Elements */
+	background-color: transparent;
 	font-size: 17px;
 
 	/* #4 Margin - Padding */
@@ -300,16 +382,128 @@ ex: ".navBar-logo--pressed {}"
 	/* #1 Elements */
 	border: 1px solid rgb(255, 239, 57);
 	border-right: none;
-	display: flex;
+	display: grid;
+	grid-template-columns: 1fr 1fr 1fr;
+	grid-template-rows: 1fr 1fr 1fr;
 	align-items: center;
-	justify-content: center;
 
 	/* #2 Form */
 	width: 60%;
 	height: 100%;
 }
 
-.profile-characters-infos {
+.profile-character {
+	/* #1 Elements */
+	border: 1px solid rgb(255, 239, 57);
+
+	/* #2 Form */
+	width: 40%;
+	height: 100%;
+}
+
+.profile-characterBox {
+	/* #1 Elements */
+	border: 1px solid rgb(255, 239, 57);
+
+	/* #2 Form */
+	width: 145px;
+	height: 145px;
+
+	/* #3 Position */
+	justify-self: center;
+}
+
+.profile-character-skin {
+	/* #1 Elements */
+	border-bottom: 1px solid rgb(255, 239, 57);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	/* #2 Form */
+	height: 40%;
+}
+
+.profile-character-infos {
+	/* #1 Elements */
+	display: flex;
+	position: relative;
+
+	/* #2 Form */
+	height: 60%;
+}
+
+.profile-character-stats {
+	/* #1 Elements */
+	border-bottom: 1px solid rgb(255, 239, 57);
+	border-right: 1px solid rgb(255, 239, 57);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	/* #2 Form */
+	height: 60%;
+	width: 50%;
+
+	/* #3 Position */
+	position: absolute;
+}
+
+.profile-character-story {
+	/* #1 Elements */
+	border-bottom: 1px solid rgb(255, 239, 57);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	/* #2 Form */
+	height: 60%;
+	width: 50%;
+
+	/* #3 Position */
+	position: absolute;
+	right: 0;
+}
+
+.profile-character-spells {
+	/* #1 Elements */
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	grid-template-rows: 1fr;
+	align-items: center;
+
+	/* #2 Form */
+	height: 40%;
+	width: 100%;
+
+	/* #3 Position */
+	position: absolute;
+	bottom: 0;
+}
+
+.profile-character-spell-box {
+	/* #1 Elements */
+	background-color: transparent;
+	display: flex;
+	flex-direction: column-reverse;
+	align-items: flex-end;
+	position: relative;
+
+	/* #3 Position */
+	justify-self: center;
+}
+
+.profile-character-spell-box-A {
+	/* #4 Margin - Padding */
+	margin-left: 10px;
+}
+
+.profile-character-spell-box-B {
+	/* #4 Margin - Padding */
+	margin-right: 10px;
+}
+
+.profile-character-spell {
 	/* #1 Elements */
 	border: 1px solid rgb(255, 239, 57);
 	display: flex;
@@ -317,8 +511,25 @@ ex: ".navBar-logo--pressed {}"
 	justify-content: center;
 
 	/* #2 Form */
-	width: 40%;
-	height: 100%;
+	height: 125px;
+	width: 125px;
+}
+
+.profile-character-spell-tooltip {
+	/* #1 Elements */
+	border: 1px solid rgb(255, 239, 57);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	/* #2 Form */
+	height: 200px;
+	width: 300px;
+
+	/* #3 Position */
+	position: absolute;
+	right: 0;
+	bottom: 130px;
 }
 
 /* ---BTN-PRESSED---------------- */
