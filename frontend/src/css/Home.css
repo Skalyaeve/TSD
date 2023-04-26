@@ -22,6 +22,7 @@ ex: ".navBar-logo--pressed {}"
 #4 Margin - Padding
 --------------------------------- */
 
+/* ---HOME----------------------- */
 .home-body {
 	/* #1 Elements */
 	border: 1px solid rgb(255, 239, 57);
@@ -30,6 +31,5 @@ ex: ".navBar-logo--pressed {}"
 	justify-content: center;
 
 	/* #2 Form */
-	width: 100%;
 	height: 100%;
 }

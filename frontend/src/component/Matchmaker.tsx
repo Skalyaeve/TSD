@@ -1,4 +1,4 @@
-import React, { memo, useState, useEffect, useCallback, useMemo } from 'react'
+import React, { memo, useMemo, useCallback, useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { NewBox, Timer } from './utils.tsx'
 
@@ -22,6 +22,7 @@ export const GameInfos: React.FC = memo(() => {
 		<div className={`${gameInfo}-timer`}><Timer /></div>
 	</div>
 })
+
 
 // --------MATCHMAKER------------------------------------------------------ //
 const Matchmaker: React.FC = memo(() => {

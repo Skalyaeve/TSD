@@ -30,6 +30,7 @@ ex: ".navBar-logo--pressed {}"
 @import url("Leader.css");
 @import url("Game.css");
 
+/* ---TAGS----------------------- */
 * {
 	/* #1 Elements */
 	background-position: center;
@@ -50,8 +51,8 @@ a {
 
 button {
 	/* #1 Elements */
-	border: none;
 	background-color: transparent;
+	border: none;
 }
 
 input {
@@ -61,7 +62,6 @@ input {
 	font-size: 18px;
 
 	/* #2 Form */
-	border-radius: 5px;
 	height: 30px;
 }
 
@@ -75,11 +75,12 @@ body * {
 	background-color: rgb(0, 0, 0);
 }
 
+/* ---ROOT----------------------- */
 .root {
 	/* #1 Elements */
 	display: grid;
 	grid-template-columns: 275px auto;
-	grid-template-rows: 100vh;
+	grid-template-rows: 1fr;
 
 	/* #2 Form */
 	width: 100vw;
@@ -88,6 +89,7 @@ body * {
 	min-height: 768px;
 }
 
+/* ---LOGIN---------------------- */
 .login {
 	/* #1 Elements */
 	border: 1px solid rgb(255, 255, 255);
@@ -109,6 +111,7 @@ body * {
 	background-color: rgb(255, 255, 255, 0.3);
 }
 
+/* ---HEADER--------------------- */
 .header {
 	/* #1 Elements */
 	display: grid;
@@ -119,22 +122,15 @@ body * {
 	min-width: 275px;
 	min-height: 768px;
 
-	/* #3 Position */
-	grid-column: 1 / 1;
-	grid-row: 1 / 1;
-
 	/* #4 Margin - Padding */
 	padding: 10px;
 }
 
+/* ---MAIN-CONTENT--------------- */
 .main {
 	/* #2 Form */
 	min-width: 749px;
 	min-height: 768px;
-
-	/* #3 Position */
-	grid-column: 2 / 2;
-	grid-row: 1 / 1;
 
 	/* #4 Margin - Padding */
 	padding: 10px;

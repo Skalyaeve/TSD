@@ -22,6 +22,7 @@ ex: ".navBar-logo--pressed {}"
 #4 Margin - Padding
 --------------------------------- */
 
+/* ---LEADER--------------------- */
 .leader-head {
 	/* #1 Elements */
 	border: 1px solid rgb(255, 239, 57);
@@ -61,7 +62,6 @@ ex: ".navBar-logo--pressed {}"
 	/* #2 Form */
 	width: 35px;
 	height: 30px;
-	border-radius: 5px;
 }
 
 .leader-input-btn {
@@ -110,7 +110,6 @@ ex: ".navBar-logo--pressed {}"
 	/* #2 Form */
 	width: 14%;
 	height: 100%;
-	border-radius: 0;
 }
 
 .leader-col-head {
@@ -133,6 +132,9 @@ ex: ".navBar-logo--pressed {}"
 }
 
 .leader-usr-rank {
+	/* #1 Elements */
+	background-color: transparent;
+
 	/* #2 Form */
 	width: 60px;
 }
@@ -151,6 +153,7 @@ ex: ".navBar-logo--pressed {}"
 
 .leader-usr-link {
 	/* #1 Elements */
+	background-color: transparent;
 	text-align: start;
 
 	/* #2 Form */
