@@ -87,7 +87,7 @@ function Party() {
 	let skins: skin[] = []
 
 	// Initialise all skins of the scene
-	function skinsInitialisation() {
+	/*function skinsInitialisation() {
 		skins[0] = {
 			name: 'player',
 			nbFrames: 2,
@@ -104,7 +104,7 @@ function Party() {
 			idleSheet: mageIdle__Sheet,
 			runSheet: mageRun__Sheet
 		}
-	}
+	}*/
 
 	// Initialise all balls of the scene
 	function ballInitialisation() {
@@ -123,12 +123,12 @@ function Party() {
 	/****** DEPRECATED - MAY RETURN ******/
 
 	// Set background for this scene 
-	function setBackground(scene: Phaser.Scene, objectName: string) {
+	/*function setBackground(scene: Phaser.Scene, objectName: string) {
 		background = scene.add.image(canvasSize[0] / 2, canvasSize[1] / 2, objectName)
 		const xRatio: number = canvasSize[0] / background.width
 		const yRatio: number = canvasSize[1] / background.height
 		background.setScale(xRatio, yRatio)
-	}
+	}*/
 	/*
 		// Set plaforms for this scene
 		setPlatforms() {
@@ -137,7 +137,7 @@ function Party() {
 		}
 	*/
 	/****** EVENT LISTENERS ******/
-	/*
+	
 		// Event listener for the ball touching left and right walls
 		onWorldCollision(, body: Phaser.Physics.Arcade.Body, up: boolean, down: boolean, left: boolean, right: boolean) {
 			if (up || down)
@@ -156,11 +156,11 @@ function Party() {
 			ballInitialisation()
 			create()
 		}
-	*/
+	
 	/****** SCENE CONSTRUCTION ******/
 
 	// Create players for this scene
-	function createPlayer(scene: Phaser.Scene, player: player) {
+	/*function createPlayer(scene: Phaser.Scene, player: player) {
 		let newSprite = scene.physics.add.sprite(player.xPos, player.yPos, skins[player.skinId].name + 'Idle')
 		if (skins[player.skinId].name == 'mage') {
 			newSprite.body.setSize(50, 52)
@@ -175,16 +175,16 @@ function Party() {
 		else if (player.xDir == 'right')
 			newSprite.setFlipX(false)
 		player.sprite = newSprite
-	}
+	}*/
 
-	function checkNewPlayer(scene: Phaser.Scene) {
+	/*function checkNewPlayer(scene: Phaser.Scene) {
 		if (playerQueue.length == 0)
 			return
 		for (let queueId = 0; queueId < playerQueue.length; queueId++) {
 			createPlayer(scene, playerQueue[queueId])
 			createAnims(playerQueue[queueId], scene)
 		}
-	}
+	}*/
 
 	// Create balls for this scene
 	function createBalls(scene: Phaser.Scene) {
@@ -199,7 +199,7 @@ function Party() {
 					ball.sprite.body.onWorldBounds = true
 		}
 	}
-	/*
+	
 		// Create colliders for this scene
 		createColliders() {
 			physics.world.on('worldbounds', onWorldCollision, this)
@@ -229,9 +229,9 @@ function Party() {
 				}
 			}
 		}
-	*/
+	
 	// Create animation for this scene
-	function createAnims(player: player, scene: Phaser.Scene) {
+	/*function createAnims(player: player, scene: Phaser.Scene) {
 		let skinId: number = player.skinId
 		scene.anims.create({
 			key: skins[skinId].name + 'IdleAnim',
@@ -245,10 +245,10 @@ function Party() {
 			frameRate: skins[skinId].nbFrames,
 			repeat: -1
 		})
-	}
+	}*/
 
 	// Load the keys used by players to move
-	function loadKeyCodes(scene: Phaser.Scene) {
+	/*function loadKeyCodes(scene: Phaser.Scene) {
 		for (let playerId = 0; playerId < players.length; playerId++) {
 			if (scene.input.keyboard) {
 				players[playerId].keys = {
@@ -259,7 +259,7 @@ function Party() {
 				}
 			}
 		}
-	}
+	}*/
 
 	/****** SCENE UPDATE ******/
 
@@ -298,7 +298,7 @@ function Party() {
 	}*/
 
 	// Move player following moveState, xDirection and yDirection
-	function movePlayers() {
+	/*function movePlayers() {
 		for (let playerId = 0; playerId < players.length; playerId++) {
 			let player = players[playerId]
 			if (player.move == 'run') {
@@ -320,10 +320,10 @@ function Party() {
 				player.sprite?.setVelocityY(0)
 			}
 		}
-	}
+	}*/
 
 	// Set player animations following moveState, xDirection and yDirection
-	function setAnims() {
+	/*function setAnims() {
 		for (let playerId = 0; playerId < players.length; playerId++) {
 			if (players[playerId].move != players[playerId].lastMove) {
 				if (players[playerId].move == 'run')
@@ -333,13 +333,13 @@ function Party() {
 			}
 			players[playerId].lastMove = players[playerId].move
 		}
-	}
+	}*/
 
 	/****** OVERLOADED PHASER FUNCTIONS ******/
 
 	function preload(this: Phaser.Scene) {
-		/*this.load.image('sky', sky__Img)
-		load.image('ground', ground__Img)*/
+		this.load.image('sky', sky__Img)
+		load.image('ground', ground__Img)
 		for (let ballId = 0; ballId < balls.length; ballId++)
 			this.load.image(balls[ballId].spriteName, balls[ballId].image)
 		for (let skinId = 0; skinId < skins.length; skinId++) {
@@ -350,25 +350,25 @@ function Party() {
 	}
 
 	function create(this: Phaser.Scene) {
-		/*setBackground(this, 'sky')
-		setPlatforms()*/
-		/*createBalls()
+		setBackground(this, 'sky')
+		setPlatforms()
+		createBalls()
 		createPlayers()
 		createColliders()
 		createAnims()
-		loadKeyCodes()*/
+		loadKeyCodes()
 		skinsInitialisation()
 	}
 
 	function update(this: Phaser.Scene) {
 		checkNewPlayer(this)
-		/*checkKeyInputs()
-		movePlayers()*/
+		checkKeyInputs()
+		movePlayers()
 		setAnims()
 	}
 
 	// Create the game
-	const createGame = () => {
+	/*const createGame = () => {
 		const config: Phaser.Types.Core.GameConfig = {
 			type: Phaser.AUTO,
 			width: 1920,
@@ -390,10 +390,10 @@ function Party() {
 			const newGame: Phaser.Game = new Phaser.Game({ ...config, parent: gameRef.current, })
 			setGame(newGame)
 		}
-	}
+	}*/
 
 	// Resize game div on page resize
-	const resizeGameDiv = () => {
+	/*const resizeGameDiv = () => {
 		const gameDiv = gameRef.current
 		if (gameDiv) {
 			const innerWidth: number = window.innerWidth - headerPxSize
@@ -408,10 +408,10 @@ function Party() {
 				gameDiv.style.height = `${innerWidth / gameAspectRatio}px`
 			}
 		}
-	}
+	}*/
 
 	// Start socket comunication
-	const startSocket = () => {
+	/*const startSocket = () => {
 		const socket: Socket = io('http://localhost:3001')
 		// Update the players list with the received data (when connecting for the first time)
 		socket.on('currentPlayers', (playersList: player[]) => {
@@ -442,18 +442,18 @@ function Party() {
 			console.log("A player moved")
 		});
 		// Remove the disconnected player from the players list
-		/*socket.on('playerDisconnected', (playerId: string) => {
+		socket.on('playerDisconnected', (playerId: string) => {
 			setPlayers((prevPlayers) => prevPlayers.filter((p) => p.id !== playerId));
 			console.log("A player has disconnected")
-		});*/
+		});
 		// Send player movements to the server
 		const sendPlayerMovement = (xVelocity: number, yVelocity: number) => {
 			socket.emit('playerMovement', { xVelocity, yVelocity });
 		};
 		return socket
-	}
+	}*/
 
-	useLayoutEffect(() => {
+	/*useLayoutEffect(() => {
 
 		createGame()
 
@@ -477,7 +477,7 @@ function Party() {
 		<main className="game main">
 			<div className='game-canvas' ref={gameRef}></div>
 		</main>
-	)
+	)*/
 }
 
 export default Party

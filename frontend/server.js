@@ -71,16 +71,27 @@ io.on('connection', (socket) => {
 	// Send the current players list to the newly connected player
 	socket.emit('currentPlayers', Object.values(players));
 
+	// Send the player his own ID
+	socket.emit('ownID', `${socket.id}`)
+
 	// Notify all clients about the new player
 	socket.broadcast.emit('newPlayer', newPlayer);
 
-	// When the player moves, update their position and notify other clients
+	// When the player start moving, update its velocity and notify other clients
 	socket.on('playerMovement', (movementData) => {
-		players[socket.id].xMov = movementData.x;
-		players[socket.id].yMov = movementData.y;
+		players[socket.id].xMov = movementData.xMov;
+		players[socket.id].yMov = movementData.yMov;
 
 		socket.broadcast.emit('playerMoved', players[socket.id]);
 	});
+
+	// When the player stop moving, update its velocity and notify other clients
+	socket.on('playerStop', () => {
+		players[socket.id].xMov = 0
+		players[socket.id].yMov = 0
+
+		socket.broadcast.emit('playerStoped', players[socket.id])
+	})
 
 	// When the player disconnects, remove them from the players object and notify other clients
 	socket.on('disconnect', () => {

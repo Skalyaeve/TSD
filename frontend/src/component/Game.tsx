@@ -71,10 +71,16 @@ function Party() {
 	// Player list
 	let players: player[] = []
 
+	// Player own id
+	let myId: string
+
+	// Player socket
+	let socket: Socket
+
 	// Player event queues
 	let creationQueue: player[] = []
-	let deletionQueue: player[] = []
-	let moveQueue: player[] = []
+	let deletionQueue: string[] = []
+	let moveQueue: string[] = []
 
 	// Keyboard keys
 	let keys: keys
@@ -86,8 +92,8 @@ function Party() {
 		if (scene.input.keyboard) {
 			keys = {
 				up: scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.W),
-				down: scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.A),
-				left: scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.S),
+				down: scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.S),
+				left: scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.A),
 				right: scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.D)
 			}
 		}
@@ -120,81 +126,121 @@ function Party() {
 	/****** SCENE CREATION ******/
 
 	// Create players for this scene
-	function createPlayer(player: player, scene: Phaser.Scene) {
-		let newSprite = scene.physics.add.sprite(player.xPos, player.yPos, skins[player.skinId].name + 'Idle')
-		if (skins[player.skinId].name == 'mage') {
-			newSprite.body.setSize(50, 52)
-			newSprite.body.setOffset(100, 114)
-			newSprite.setScale(2.5, 2.5).refreshBody()
+	function createPlayer(playerId: string, scene: Phaser.Scene) {
+		let player: player | null = null
+		for (let playerI = 0; playerI < players.length; playerI++) {
+			if (players[playerI].id == playerId)
+				player = players[playerI]
 		}
-		newSprite.setBounce(1)
-		newSprite.setCollideWorldBounds(true)
-		newSprite.setImmovable(true)
-		if (player.xDir == 'left')
-			newSprite.setFlipX(true)
-		else if (player.xDir == 'right')
-			newSprite.setFlipX(false)
-		player.sprite = newSprite
+		if (player) {
+			let newSprite = scene.physics.add.sprite(player.xPos, player.yPos, skins[player.skinId].name + 'Idle')
+			if (skins[player.skinId].name == 'mage') {
+				newSprite.body.setSize(50, 52)
+				newSprite.body.setOffset(100, 114)
+				newSprite.setScale(2.5, 2.5).refreshBody()
+			}
+			newSprite.setBounce(1)
+			newSprite.setCollideWorldBounds(true)
+			newSprite.setImmovable(true)
+			if (player.xDir == 'left')
+				newSprite.setFlipX(true)
+			else if (player.xDir == 'right')
+				newSprite.setFlipX(false)
+			player.sprite = newSprite
+		}
 	}
 
 	// Create animation for this scene
-	function createAnims(player: player, scene: Phaser.Scene) {
-		let skinId: number = player.skinId
-		scene.anims.create({
-			key: skins[skinId].name + 'IdleAnim',
-			frames: scene.anims.generateFrameNumbers(skins[skinId].name + 'Idle', { start: 0, end: skins[skinId].nbFrames - 1 }),
-			frameRate: skins[skinId].nbFrames,
-			repeat: -1
-		})
-		scene.anims.create({
-			key: skins[skinId].name + 'RunAnim',
-			frames: scene.anims.generateFrameNumbers(skins[skinId].name + 'Run', { start: 0, end: skins[skinId].nbFrames - 1 }),
-			frameRate: skins[skinId].nbFrames,
-			repeat: -1
-		})
+	function createAnims(scene: Phaser.Scene) {
+		for (let skinId = 0; skinId < skins.length; skinId++) {
+			scene.anims.create({
+				key: skins[skinId].name + 'IdleAnim',
+				frames: scene.anims.generateFrameNumbers(skins[skinId].name + 'Idle', { start: 0, end: skins[skinId].nbFrames - 1 }),
+				frameRate: skins[skinId].nbFrames,
+				repeat: -1
+			})
+			scene.anims.create({
+				key: skins[skinId].name + 'RunAnim',
+				frames: scene.anims.generateFrameNumbers(skins[skinId].name + 'Run', { start: 0, end: skins[skinId].nbFrames - 1 }),
+				frameRate: skins[skinId].nbFrames,
+				repeat: -1
+			})
+		}
+	}
+
+	// Check if directional keys are pressed
+	function allKeysUp() {
+		if (keys.up.isUp && keys.down.isUp && keys.left.isUp && keys.right.isUp)
+			return true
+		return false
+	}
+
+	// Send player movements to the server
+	const sendPlayerMovement = (xMov: number, yMov: number) => {
+		socket.emit('playerMovement', { xMov, yMov })
+	}
+
+	const sendPlayerStop = () => {
+		socket.emit('playerStop')
 	}
 
 	/****** SCENE UPDATE ******/
 
-	/*function checkKeyInputs(scene: Phaser.Scene) {
-		if (allKeysUp(playerId)) {
-			player.move = 'idle'
-			player.yDir = 'none'
-			continue
+	function checkKeyInputs(scene: Phaser.Scene) {
+		let player: player | null = null
+		let endVelocityX: number = 0
+		let endVelocityY: number = 0
+		for (let playerI = 0; playerI < players.length; playerI++) {
+			if (players[playerI].id == myId) {
+				player = players[playerI]
+				break
+			}
 		}
-		else
-			player.move = 'run'
-		if (player.keys?.left.isDown)
-			player.xDir = 'left'
-		else if (player.keys?.right.isDown)
-			player.xDir = 'right'
-		else
-			player.xDir = 'none'
-		if (player.keys?.up.isDown)
-			player.yDir = 'up'
-		else if (player.keys?.down.isDown)
-			player.yDir = 'down'
-		else
-			player.yDir = 'none'
-	}*/
+		if (player) {
+			if (allKeysUp())
+				player.move = 'idle'
+			else
+				player.move = 'run'
+			if (keys.left.isDown)
+				endVelocityX += -globalSpeed
+			if (keys.right.isDown)
+				endVelocityX += globalSpeed
+			if (keys.up.isDown)
+				endVelocityY += -globalSpeed
+			if (keys.down.isDown)
+				endVelocityY += globalSpeed
+			if (player.sprite) {
+				player.sprite.setVelocityX(endVelocityX)
+				player.sprite.setVelocityY(endVelocityY)
+				if (player.move == 'run' && player.lastMove == 'idle')
+					sendPlayerMovement(endVelocityX, endVelocityY)
+				if (player.move == 'idle' && player.lastMove == 'run')
+					sendPlayerStop()
+			}
+		}
+	}
 
 	function checkNewPlayer(scene: Phaser.Scene) {
 		if (!creationQueue.length)
 			return
 		for (let queueId = 0; queueId < creationQueue.length; queueId++) {
 			players[players.length] = creationQueue[queueId]
-			createPlayer(players[players.length - 1], scene)
-			createAnims(players[players.length - 1], scene)
+			createPlayer(players[players.length - 1].id, scene)
 		}
 		console.log("Creation queue is now empty")
 		creationQueue = []
 	}
 
-	function checkDisconnect(scene: Phaser.Scene) {
+	function checkDisconnect() {
 		if (!deletionQueue.length)
 			return
 		for (let queueId = 0; queueId < deletionQueue.length; queueId++) {
-			deletionQueue[queueId].sprite?.destroy()
+			for (let playerId = 0; playerId < players.length; playerId++) {
+				if (players[playerId].id == deletionQueue[queueId]) {
+					players[playerId].sprite?.destroy()
+					break
+				}
+			}
 		}
 		console.log("Deletion queue is now empty")
 		deletionQueue = []
@@ -213,13 +259,16 @@ function Party() {
 		}
 	}
 
-	function checkMove(scene: Phaser.Scene) {
+	function checkMove() {
 		if (!moveQueue.length)
 			return
 		for (let queueId = 0; queueId < moveQueue.length; queueId++) {
-			let player = moveQueue[queueId]
-			if (player.sprite)
-				scene.physics.moveTo(player.sprite, player.xMov, player.yMov, 1, 1)
+			for (let playerId = 0; playerId < players.length; playerId++) {
+				if (players[playerId].id == moveQueue[queueId] && players[playerId].id != myId) {
+					players[playerId].sprite?.setPosition(players[playerId].xMov, players[playerId].yMov)
+					console.log("Moved player ", players[playerId].id, " xv: ", players[playerId].xMov, " yv: ", players[playerId].yMov)
+				}
+			}
 		}
 		console.log("Move queue is now empty")
 		moveQueue = []
@@ -233,13 +282,14 @@ function Party() {
 	}
 
 	function create(this: Phaser.Scene) {
+		createAnims(this)
 	}
 
 	function update(this: Phaser.Scene) {
-		//checkKeyInputs(this)
+		checkKeyInputs(this)
 		checkNewPlayer(this)
-		checkDisconnect(this)
-		checkMove(this)
+		checkDisconnect()
+		checkMove()
 		setAnims()
 	}
 
@@ -288,38 +338,57 @@ function Party() {
 
 	// Start socket comunication
 	const startSocket = () => {
-		const socket: Socket = io('http://localhost:3001')
+		socket = io('http://localhost:3001')
+
 		// Update the players list with the received data (when connecting for the first time)
 		socket.on('currentPlayers', (playersList: player[]) => {
 			for (let queueId = 0; queueId < playersList.length; queueId++)
 				creationQueue[creationQueue.length] = playersList[queueId]
 			console.log("Added ", playersList.length, " players to the creation queue")
 		});
-		// Add the new player (external) to the players list
+
+		// Get the player's own ID
+		socket.on('ownID', (playerId: string) => {
+			myId = playerId
+			console.log("Player's own id: ", myId)
+		})
+
+		// Add a new player to the players list
 		socket.on('newPlayer', (player: player) => {
 			creationQueue[creationQueue.length] = player
 			console.log("Added player to creation queue")
 		});
+
 		// Update the moved player's velocity in the players list
 		socket.on('playerMoved', (player: player) => {
-			moveQueue[moveQueue.length] = player
+			for (let playerId = 0; playerId < players.length; playerId++) {
+				if (players[playerId].id == player.id) {
+					players[playerId].xMov = player.xMov
+					players[playerId].yMov = player.yMov
+					moveQueue[moveQueue.length] = players[playerId].id
+					break
+				}
+			}
 			console.log("A player moved")
 		});
+
+		socket.on('playerStoped', (player: player) => {
+			for (let playerId = 0; playerId < players.length; playerId++) {
+				if (players[playerId].id == player.id) {
+					players[playerId].xMov = player.xMov
+					players[playerId].yMov = player.yMov
+					moveQueue[moveQueue.length] = players[playerId].id
+					break
+				}
+			}
+		})
+
 		// Remove the disconnected player from the players list
 		socket.on('playerDisconnected', (playerId: string) => {
 			console.log("A player has disconnected")
-			for (let playerI = 0; playerI < players.length; playerI++) {
-				if (players[playerI].id == playerId) {
-					deletionQueue[deletionQueue.length] = players[playerI]
-					players = players.filter(player => player.id != playerId)
-					console.log("Player has been added to deletion queue and deleted from player list")
-				}
-			}
+			deletionQueue[deletionQueue.length] = playerId
+			console.log("Player has been added to deletion queue")
 		});
-		// Send player movements to the server
-		const sendPlayerMovement = (x: number, y: number) => {
-			socket.emit('playerMovement', { x, y });
-		};
 		return socket
 	}
 
