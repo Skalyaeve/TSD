@@ -19,12 +19,11 @@ function createNewPlayer(idStr) {
 		xPos: (side == 'left' ? 100 : 1820),
 		yPos: 100 + Math.random() * 880,
 		xDir: (side == 'left' ? 'right' : 'left'),
-		yDir: 'none',
-		xMov: 0,
-		yMov: 0,
 		lastMove: 'none',
 		move: 'idle',
 		skinId: 1,
+		skinOffsetX: 125,
+		skinOffsetY: 125
 	}
 }
 
@@ -79,16 +78,16 @@ io.on('connection', (socket) => {
 
 	// When the player start moving, update its velocity and notify other clients
 	socket.on('playerMovement', (movementData) => {
-		players[socket.id].xMov = movementData.xMov;
-		players[socket.id].yMov = movementData.yMov;
+		players[socket.id].xPos = movementData.xPos;
+		players[socket.id].yPos = movementData.yPos;
 
 		socket.broadcast.emit('playerMoved', players[socket.id]);
 	});
 
 	// When the player stop moving, update its velocity and notify other clients
-	socket.on('playerStop', () => {
-		players[socket.id].xMov = 0
-		players[socket.id].yMov = 0
+	socket.on('playerStop', (movementData) => {
+		players[socket.id].xPos = movementData.xPos
+		players[socket.id].yPos = movementData.yPos
 
 		socket.broadcast.emit('playerStoped', players[socket.id])
 	})
