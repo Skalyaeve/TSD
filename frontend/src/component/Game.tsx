@@ -24,8 +24,7 @@ interface player {
 	skinId: number								// Player skin id in skins array
 	sprite?: Phaser.Physics.Arcade.Sprite 		// Player sprite
 	colliders: Phaser.Physics.Arcade.Collider[]	// Player colliders
-	skinOffsetX: number
-	skinOffsetY: number
+	scaleFactor: number
 }
 
 interface skin {
@@ -156,11 +155,7 @@ function Party() {
 			let spriteOffsetX: number = newSprite.body.x - player.xPos
 			let spriteOffsetY: number = newSprite.body.y - player.yPos
 			console.log("Offset x:", spriteOffsetX, "y:", spriteOffsetY)
-			if (skins[player.skinId].name == 'mage') {
-				/*newSprite.body.setSize(50, 52)
-				newSprite.body.setOffset(100, 114)*/
-				newSprite.setScale(2.5, 2.5).refreshBody()
-			}
+			newSprite.setScale(player.scaleFactor, player.scaleFactor).refreshBody()
 			newSprite.setBounce(1)
 			newSprite.setCollideWorldBounds(true)
 			newSprite.setImmovable(true)
@@ -208,7 +203,7 @@ function Party() {
 
 	/****** SCENE UPDATE ******/
 
-	function checkKeyInputs(scene: Phaser.Scene) {
+	function checkKeyInputs() {
 		let player: player | null = null
 		let endVelocityX: number = 0
 		let endVelocityY: number = 0
@@ -232,12 +227,13 @@ function Party() {
 			if (keys.down.isDown)
 				endVelocityY += canvas.gameSpeed
 			if (player.sprite) {
+				
 				player.sprite.setVelocityX(endVelocityX)
 				player.sprite.setVelocityY(endVelocityY)
 				if (player.move == 'run' && player.sprite.body)
-					sendPlayerMovement(player.sprite.body.x, player.sprite.body.y)
+					sendPlayerMovement(player.sprite.body.x + 28.5 * player.scaleFactor, player.sprite.body.y + 52 * player.scaleFactor)
 				if (player.move == 'idle' && player.lastMove == 'run' && player.sprite.body)
-					sendPlayerStop(player.sprite.body.x, player.sprite.body.y)
+					sendPlayerStop(player.sprite.body.x + 28.5 * 2.5, player.sprite.body.y + 52 * 2.5)
 			}
 		}
 	}
@@ -250,7 +246,7 @@ function Party() {
 			players[players.length] = creationQueue[queueId]
 			createPlayer(players[players.length - 1].id, scene)
 		}
-		console.log("Creation queue is now empty")
+		//console.log("Creation queue is now empty")
 		creationQueue = []
 	}
 
@@ -265,7 +261,7 @@ function Party() {
 				}
 			}
 		}
-		console.log("Deletion queue is now empty")
+		//console.log("Deletion queue is now empty")
 		deletionQueue = []
 	}
 
@@ -274,7 +270,7 @@ function Party() {
 		for (let playerId = 0; playerId < players.length; playerId++) {
 			if (players[playerId].move != players[playerId].lastMove) {
 				if (players[playerId].move == 'run')
-					players[playerId].sprite?.play(skins[players[playerId].skinId].name + 'RunAnim')
+					players[playerId].sprite?.play(skins[players[playerId].skinId].name + 'IdleAnim')
 				else if (players[playerId].move == 'idle' && players[playerId].lastMove == 'run')
 					players[playerId].sprite?.play(skins[players[playerId].skinId].name + 'IdleAnim')
 			}
@@ -291,14 +287,14 @@ function Party() {
 				if (player.id == moveQueue[queueId] && player.id != myId) {
 					player.sprite?.setPosition(player.xPos, player.yPos)
 					if (player.move == 'run' && player.lastMove == 'idle')
-						player.sprite?.play(skins[player.skinId].name + 'RunAnim')
+						player.sprite?.play(skins[player.skinId].name + 'IdleAnim')
 					else if (player.move == 'idle' && player.lastMove == 'run')
 						player.sprite?.play(skins[player.skinId].name + 'IdleAnim')
-					console.log("Moved player ", player.id, " xv: ", player.xPos, " yv: ", player.yPos)
+					//console.log("Moved player ", player.id, " xv: ", player.xPos, " yv: ", player.yPos)
 				}
 			}
 		}
-		console.log("Move queue is now empty")
+		//console.log("Move queue is now empty")
 		moveQueue = []
 	}
 
@@ -314,7 +310,7 @@ function Party() {
 	}
 
 	function update(this: Phaser.Scene) {
-		checkKeyInputs(this)
+		checkKeyInputs()
 		checkNewPlayer(this)
 		checkDisconnect()
 		checkMove()
@@ -366,7 +362,7 @@ function Party() {
 
 	// Start socket comunication
 	const startSocket = () => {
-		socket = io('http://localhost:3001')
+		socket = io('http://10.12.7.5:3001')
 
 		// Update the players list with the received data (when connecting for the first time)
 		socket.on('currentPlayers', (playersList: player[]) => {

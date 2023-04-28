@@ -9,7 +9,25 @@ import { v4 as uuidv4 } from 'uuid';
 /* ------------------- FUNCTIONS ------------------- */
 
 let side = 'left'
-let playerNumber = 0
+let skin = 'mage'
+
+function getSkin(skinName) {
+	let scaleFactor
+	let skinId
+	if (skinName == 'mage') {
+		scaleFactor = 2.5
+		skinId = 1
+	}
+	else {
+		scaleFactor = 1
+		skinId = 0
+	}
+	return {
+		scaleFactor,
+		skinId
+	}
+}
+
 function createNewPlayer(idStr) {
 	if (side == 'left')
 		side = 'right'
@@ -21,9 +39,8 @@ function createNewPlayer(idStr) {
 		xDir: (side == 'left' ? 'right' : 'left'),
 		lastMove: 'none',
 		move: 'idle',
-		skinId: 1,
-		skinOffsetX: 125,
-		skinOffsetY: 125
+		skinId: getSkin(skin).skinId,
+		scaleFactor: getSkin(skin).scaleFactor
 	}
 }
 
@@ -63,7 +80,7 @@ io.on('connection', (socket) => {
 
 	// Create a new player with a unique ID and initial position
 	const newPlayer = createNewPlayer(`${socket.id}`);
-	
+
 	// Add the new player to the players object
 	players[socket.id] = newPlayer
 
