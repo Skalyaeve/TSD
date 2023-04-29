@@ -1,26 +1,59 @@
-import React, { memo, useMemo, useCallback, useState, useEffect } from 'react'
+import React, { memo, useMemo, useCallback, useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { NewBox, Timer } from './utils.tsx'
+import { Transition } from 'react-transition-group'
+import { NewBox, Timer, useToggle } from './utils.tsx'
 
 // --------PARTY-INFOS----------------------------------------------------- //
 export const GameInfos: React.FC = memo(() => {
+	// ----VALUES----------------------------- //
+	const transitionTime = 500
+	const transitionTemplate = {
+		transition: `height ${transitionTime}ms ease-in-out, opacity ${transitionTime}ms ease-in-out`,
+		height: 0,
+		opacity: 0,
+	}
+	const transitionSteps = {
+		entering: { height: 0, opacity: 0 },
+		entered: { height: '275px', opacity: 1 },
+		exiting: { height: '275px', opacity: 1 },
+		exited: { height: 0, opacity: 0 },
+		unmounted: { height: 0, opacity: 0 }
+	}
+
+	// ----REFS------------------------------- //
+	const gameInfosRef = useRef(null)
+
+	// ----STATES----------------------------- //
+	const [transition, tglTransition] = useToggle(false)
+
+	// ----EFFECTS---------------------------- //
+	useEffect(() => {
+		tglTransition()
+	}, [])
+
 	// ----CLASSNAMES------------------------- //
-	const gameInfo = 'gameInfo'
-	const gameInfoPlayer = `${gameInfo}-player`
-	const gameInfoPlayerL = `${gameInfoPlayer}--left`
-	const gameInfoPlayerR = `${gameInfoPlayer}--right`
-	const gameInfoScore = `${gameInfo}-score`
-	const gameInfoScoreL = `${gameInfoScore}--left`
-	const gameInfoScoreR = `${gameInfoScore}--right`
+	const name = 'gameInfo'
+	const playerPPName = `${name}-player`
+	const scoreName = `${name}-score`
 
 	// ----RENDER----------------------------- //
-	return <div className={`${gameInfo}s`}>
-		<div className={`${gameInfoPlayer} ${gameInfoPlayerL}`}>Player 1</div>
-		<div className={`${gameInfoPlayer} ${gameInfoPlayerR}`}>Player 2</div>
-		<div className={`${gameInfoScore} ${gameInfoScoreL}`}>0</div>
-		<div className={`${gameInfoScore} ${gameInfoScoreR}`}>0</div>
-		<div className={`${gameInfo}-timer`}><Timer /></div>
-	</div>
+	return <Transition
+		nodeRef={gameInfosRef}
+		in={transition}
+		timeout={transitionTime}
+	>
+		{state => (<div className={`${name}s`} ref={gameInfosRef}
+			style={{
+				...transitionTemplate,
+				...transitionSteps[state]
+			}}>
+			<div className={playerPPName}>Player 1</div>
+			<div className={playerPPName}>Player 2</div>
+			<div className={scoreName}>0</div>
+			<div className={scoreName}>0</div>
+			<div className={`${name}-timer`}><Timer /></div>
+		</div>)}
+	</Transition>
 })
 
 
@@ -37,9 +70,7 @@ const Matchmaker: React.FC = memo(() => {
 	})
 
 	// ----EFFECTS---------------------------- //
-	useEffect(() => {
-		localStorage.setItem('inGame', inGame ? '1' : '0')
-	}, [inGame])
+	useEffect(() => localStorage.setItem('inGame', inGame ? '1' : '0'), [inGame])
 
 	useEffect(() => {
 		if (!matchmaking) return
@@ -48,7 +79,7 @@ const Matchmaker: React.FC = memo(() => {
 			setMatchmaking(false)
 			setInGame(true)
 			navigate('/game')
-		}, 3000)
+		}, 1000)
 
 		return () => clearInterval(interval)
 	}, [matchmaking])

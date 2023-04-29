@@ -20,6 +20,7 @@ ex: ".navBar-logo--pressed {}"
 #2 Form
 #3 Position
 #4 Margin - Padding
+#5 Animations
 --------------------------------- */
 
 @import url("NavBar.css");
@@ -27,15 +28,17 @@ ex: ".navBar-logo--pressed {}"
 @import url("Matchmaker.css");
 @import url("Home.css");
 @import url("Profile.css");
+@import url("Characters.css");
 @import url("Leader.css");
 @import url("Game.css");
+@import url("Transitions.css");
 
 /* ---TAGS----------------------- */
 * {
 	/* #1 Elements */
 	background-position: center;
 	box-sizing: border-box;
-	font-family: system-ui;
+	font-family: serif;
 	font-size: 21px;
 	color: rgb(255, 255, 255);
 
@@ -51,15 +54,12 @@ a {
 
 button {
 	/* #1 Elements */
-	background-color: transparent;
 	border: none;
 }
 
 input {
 	/* #1 Elements */
 	border: none;
-	font-family: system-ui;
-	font-size: 18px;
 
 	/* #2 Form */
 	height: 30px;
@@ -79,24 +79,24 @@ body * {
 .root {
 	/* #1 Elements */
 	display: grid;
-	grid-template-columns: 275px auto;
+	grid-template-columns: 265px auto;
 	grid-template-rows: 1fr;
 
 	/* #2 Form */
-	width: 100vw;
 	height: 100vh;
 	min-width: 1024px;
 	min-height: 768px;
 }
 
 /* ---LOGIN---------------------- */
-.login {
+.login-btn {
 	/* #1 Elements */
 	border: 1px solid rgb(255, 255, 255);
+	opacity: 0;
 
 	/* #2 Form */
-	width: 300px;
-	height: 115px;
+	width: 325px;
+	height: 125px;
 	border-radius: 5px;
 
 	/* #3 Position */
@@ -106,9 +106,10 @@ body * {
 	transform: translate(-50%, -50%);
 }
 
-.login--pressed {
+.login-btn--pressed {
 	/* #1 Elements */
 	background-color: rgb(255, 255, 255, 0.3);
+	opacity: 1;
 }
 
 /* ---HEADER--------------------- */
@@ -116,23 +117,9 @@ body * {
 	/* #1 Elements */
 	display: grid;
 	grid-template-columns: 1fr;
-	grid-template-rows: 280px auto 100px;
-
-	/* #2 Form */
-	min-width: 275px;
-	min-height: 768px;
+	grid-template-rows: auto 1fr 100px;
 
 	/* #4 Margin - Padding */
 	padding: 10px;
-}
-
-/* ---MAIN-CONTENT--------------- */
-.main {
-	/* #2 Form */
-	min-width: 749px;
-	min-height: 768px;
-
-	/* #4 Margin - Padding */
-	padding: 10px;
-	padding-left: 0;
+	height: 100%;
 }

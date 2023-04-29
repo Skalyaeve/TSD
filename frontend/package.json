@@ -21,7 +21,8 @@
 		"react-dnd": "^16.0.1",
 		"react-dnd-html5-backend": "^16.0.1",
 		"react-dom": "^18.2.0",
-		"react-router-dom": "^6.10.0"
+		"react-router-dom": "^6.10.0",
+		"react-transition-group": "^4.4.5"
 	},
 	"devDependencies": {
 		"@babel/cli": "^7.21.0",
@@ -33,6 +34,7 @@
 		"@babel/preset-typescript": "^7.21.4",
 		"@testing-library/jest-dom": "^5.16.5",
 		"@testing-library/react": "^14.0.0",
+		"@types/react-transition-group": "^4.4.5",
 		"@types/uuid": "^9.0.1",
 		"babel-loader": "^9.1.2",
 		"concurrently": "^8.0.1",
