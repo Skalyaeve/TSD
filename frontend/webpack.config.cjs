@@ -70,7 +70,7 @@ module.exports = {
 		// Le proxi permettant de forward les requetes de webpack a Node.js
 		proxy: {
 			'/api': {
-				target: 'http://localhost:3001',
+				target: 'http://10.11.12.2:3000',
 				changeOrigin: true,
 			},
 		},

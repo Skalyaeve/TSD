@@ -20,19 +20,14 @@ ex: ".navBar-logo--pressed {}"
 #2 Form
 #3 Position
 #4 Margin - Padding
+#5 Animations
 --------------------------------- */
 
 /* ---CHAT----------------------- */
 .chat {
 	/* #1 Elements */
 	position: relative;
-
-	/* #3 Position */
-	grid-column: 1 / 1;
-	grid-row: 2 / 2;
-
-	/* #4 Margin - Padding */
-	padding: 10px 0;
+	z-index: 2;
 }
 
 .chat-body {
@@ -48,8 +43,10 @@ ex: ".navBar-logo--pressed {}"
 	max-width: 225%;
 
 	/* #3 Position */
-	z-index: 2;
 	position: absolute;
+
+	/* #4 Margin - Padding */
+	margin-top: 10px;
 }
 
 .chat-body--noResize {
@@ -62,7 +59,7 @@ ex: ".navBar-logo--pressed {}"
 	border: 1px solid rgb(0, 122, 6);
 
 	/* #2 Form */
-	height: 45px;
+	height: 55px;
 	border-radius: 5px;
 }
 
@@ -107,7 +104,6 @@ ex: ".navBar-logo--pressed {}"
 .chat-sendMsg-btn {
 	/* #1 Elements */
 	border: 1px solid rgb(0, 122, 6);
-	font-size: 15px;
 
 	/* #2 Form */
 	width: calc(100% - 5px);
@@ -144,7 +140,6 @@ ex: ".navBar-logo--pressed {}"
 	/* #1 Elements */
 	border-bottom: 1px solid rgb(0, 122, 6);
 	border-left: 1px solid rgb(0, 122, 6);
-	font-size: 18px;
 
 	/* #3 Position */
 	grid-column: 2 / 2;
@@ -193,7 +188,6 @@ ex: ".navBar-logo--pressed {}"
 .chat-roomUsr-link {
 	/* #1 Elements */
 	text-align: start;
-	font-size: 18px;
 
 	/* #2 Form */
 	width: 100%;
@@ -216,7 +210,6 @@ ex: ".navBar-logo--pressed {}"
 	/* #1 Elements */
 	border-bottom: 1px solid rgb(0, 122, 6);
 	border-left: 1px solid rgb(0, 122, 6);
-	font-size: 15px;
 
 	/* #2 Form */
 	width: 33.4px;
@@ -247,7 +240,6 @@ ex: ".navBar-logo--pressed {}"
 .chat-room-link {
 	/* #1 Elements */
 	border-right: 1px solid rgb(0, 122, 6);
-	font-size: 18px;
 
 	/* #2 Form */
 	width: 100%;
@@ -258,7 +250,6 @@ ex: ".navBar-logo--pressed {}"
 	/* #1 Elements */
 	border-bottom: 1px solid rgb(0, 122, 6);
 	border-right: 1px solid rgb(0, 122, 6);
-	font-size: 15px;
 
 	/* #2 Form */
 	width: 20px;
@@ -284,8 +275,8 @@ ex: ".navBar-logo--pressed {}"
 	border-radius: 5px;
 
 	/* #3 Position */
-	z-index: 2;
 	position: absolute;
+	top: 10px;
 }
 
 .chat-roomSet-main-input {
@@ -350,7 +341,6 @@ ex: ".navBar-logo--pressed {}"
 .chat-roomSet-btn {
 	/* #1 Elements */
 	border: 1px solid rgb(0, 122, 6);
-	font-size: 18px;
 
 	/* #2 Form */
 	width: 120px;
@@ -402,7 +392,6 @@ ex: ".navBar-logo--pressed {}"
 .chat-roomSet-usr-link {
 	/* #1 Elements */
 	text-align: start;
-	font-size: 18px;
 
 	/* #2 Form */
 	width: 100%;
@@ -425,7 +414,6 @@ ex: ".navBar-logo--pressed {}"
 	/* #1 Elements */
 	border-left: 1px solid rgb(0, 122, 6);
 	border-bottom: 1px solid rgb(0, 122, 6);
-	font-size: 15px;
 
 	/* #2 Form */
 	width: 31.45px;
@@ -433,6 +421,11 @@ ex: ".navBar-logo--pressed {}"
 }
 
 /* ---BTN------------------------ */
+.chat-btn--small {
+	/* #1 Elements */
+	font-size: 15px;
+}
+
 .chat-btn--pressed {
 	/* #1 Elements */
 	background-color: rgba(0, 122, 6, 0.3);

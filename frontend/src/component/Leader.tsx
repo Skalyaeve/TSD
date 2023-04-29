@@ -60,7 +60,7 @@ const Board: React.FC<BoardProps> = memo(({ name, btnName, btnPressedName }) => 
 		content={content}
 	/>, [])
 
-	const renderUsers = useMemo(() => Array.from({ length: 10 }, (_, index) => (
+	const renderUsers = useMemo(() => Array.from({ length: 20 }, (_, index) => (
 		<UserStats
 			key={index + 1}
 			id={index + 1}

@@ -1,4 +1,4 @@
-import React, { memo, useMemo, useCallback, useState, useEffect } from 'react'
+import React, { memo, useMemo, useCallback, useState, useEffect, CSSProperties, Ref } from 'react'
 import { Link } from 'react-router-dom'
 import { useDrag, useDrop } from 'react-dnd'
 
@@ -13,7 +13,7 @@ export const useToggle = (def: boolean): [boolean, () => void] => {
 	// ----RETURN----------------------------- //
 	return [value, valueToggler]
 }
-export const toggleOnUp = (def: boolean): [boolean, React.HTMLAttributes<HTMLElement>] => {
+export const tglOnUp = (def: boolean): [boolean, React.HTMLAttributes<HTMLElement>] => {
 	// ----STATES----------------------------- //
 	const [value, valueToggler] = useToggle(def)
 
@@ -25,7 +25,7 @@ export const toggleOnUp = (def: boolean): [boolean, React.HTMLAttributes<HTMLEle
 	// ----RETURN----------------------------- //
 	return [value, btnHdl]
 }
-export const toggleOnOver = (def: boolean): [boolean, React.HTMLAttributes<HTMLElement>] => {
+export const tglOnOver = (def: boolean): [boolean, React.HTMLAttributes<HTMLElement>] => {
 	// ----STATES----------------------------- //
 	const [value, valueToggler] = useToggle(def)
 
@@ -38,22 +38,6 @@ export const toggleOnOver = (def: boolean): [boolean, React.HTMLAttributes<HTMLE
 	// ----RETURN----------------------------- //
 	return [value, btnHdl]
 }
-
-
-// --------INPUT----------------------------------------------------------- //
-interface InputProps {
-	name: string
-	PH?: string
-}
-export const Input: React.FC<InputProps> = memo(({ name, PH = ' ...' }) => {
-	// ----RENDER----------------------------- //
-	return <input
-		className={name}
-		id={name}
-		name={name}
-		placeholder={PH}
-	/>
-})
 
 
 // --------TIMER----------------------------------------------------------- //
@@ -80,34 +64,19 @@ export const Timer: React.FC = memo(() => {
 })
 
 
-// --------DRAG-DROP------------------------------------------------------- //
-interface DragDropProps extends React.HTMLAttributes<HTMLDivElement> {
-	itemId: number
-	content: any
-	moveItem: (draggedId: number, droppedId: number) => void
+// --------INPUT----------------------------------------------------------- //
+interface InputProps {
+	name: string
+	PH?: string
 }
-export const DragDrop: React.FC<DragDropProps> = memo(({
-	itemId, content, moveItem, ...divParams
-}) => {
-	// ----TYPES------------------------------ //
-	interface Item {
-		id: number
-	}
-
-	// ----HANDLERS--------------------------- //
-	const [, drag] = useDrag<Item>({
-		type: 'item',
-		item: { id: itemId }
-	})
-	const [, drop] = useDrop<Item>({
-		accept: 'item',
-		drop: (item) => moveItem(item.id, itemId)
-	})
-
+export const Input: React.FC<InputProps> = memo(({ name, PH = ' ...' }) => {
 	// ----RENDER----------------------------- //
-	return <div ref={(node) => drag(drop(node))} {...divParams}>
-		{content}
-	</div >
+	return <input
+		className={name}
+		id={name}
+		name={name}
+		placeholder={PH}
+	/>
 })
 
 
@@ -119,11 +88,13 @@ interface NewBoxProps {
 	nameIfOver?: string
 	to?: string
 	handlers?: React.HTMLAttributes<HTMLElement>
+	style?: CSSProperties
 	content?: any
 }
-export const NewBox: React.FC<NewBoxProps> = memo(({
-	tag, className, nameIfPressed, nameIfOver, to, handlers, content
-}) => {
+const NewBoxComponent: React.ForwardRefRenderFunction<
+	HTMLAnchorElement | HTMLButtonElement | HTMLDivElement,
+	NewBoxProps
+> = ({ tag, className, nameIfPressed, nameIfOver, to, handlers, style = {}, content }, ref) => {
 	// ----STATES----------------------------- //
 	const [pressed, setPressed] = useState(false)
 	const [over, setOver] = useState(false)
@@ -175,21 +146,62 @@ export const NewBox: React.FC<NewBoxProps> = memo(({
 	// ----RENDER----------------------------- //
 	const render = useMemo(() => {
 		if (tag === 'Link' && to) return (
-			<Link to={to} className={boxName} {...mergedHandlers}>
+			<Link to={to} className={boxName}
+				style={style}
+				ref={ref as Ref<HTMLAnchorElement>}
+				{...mergedHandlers}>
 				{content}
 			</Link>
 		)
 		else if (tag === 'btn') return (
-			<button className={boxName} {...mergedHandlers}>
+			<button className={boxName}
+				style={style}
+				ref={ref as Ref<HTMLButtonElement>}
+				{...mergedHandlers}>
 				{content}
 			</button>
 		)
 		else return (
-			<div className={boxName} {...mergedHandlers}>
+			<div className={boxName}
+				style={style}
+				ref={ref as Ref<HTMLDivElement>}
+				{...mergedHandlers}>
 				{content}
 			</div>
 		)
 	}, [pressed, over, tag, className, nameIfPressed,
-		nameIfOver, to, handlers, content])
+		nameIfOver, to, handlers, style, content])
 	return render
+}
+export const NewBox = React.memo(React.forwardRef(NewBoxComponent));
+
+
+// --------DRAG-DROP------------------------------------------------------- //
+interface DragDropProps extends React.HTMLAttributes<HTMLDivElement> {
+	itemId: number
+	content: any
+	moveItem: (draggedId: number, droppedId: number) => void
+}
+export const DragDrop: React.FC<DragDropProps> = memo(({
+	itemId, content, moveItem, ...divParams
+}) => {
+	// ----TYPES------------------------------ //
+	interface Item {
+		id: number
+	}
+
+	// ----HANDLERS--------------------------- //
+	const [, drag] = useDrag<Item>({
+		type: 'item',
+		item: { id: itemId }
+	})
+	const [, drop] = useDrop<Item>({
+		accept: 'item',
+		drop: (item) => moveItem(item.id, itemId)
+	})
+
+	// ----RENDER----------------------------- //
+	return <div ref={(node) => drag(drop(node))} {...divParams}>
+		{content}
+	</div >
 })

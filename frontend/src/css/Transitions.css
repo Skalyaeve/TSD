@@ -23,14 +23,34 @@ ex: ".navBar-logo--pressed {}"
 #5 Animations
 --------------------------------- */
 
-/* ---HOME----------------------- */
-.home-body {
+/* ---OPACITY-------------------- */
+.opacity-enter {
 	/* #1 Elements */
-	border: 1px solid rgb(255, 239, 57);
-	display: flex;
-	align-items: center;
-	justify-content: center;
+	opacity: 0 !important;
+}
 
-	/* #2 Form */
-	height: 100%;
+.opacity-enter-active {
+	/* #1 Elements */
+	opacity: 1 !important;
+
+	/* #5 Animations */
+	transition: opacity 300ms ease-in;
+}
+
+.opacity-enter-done {
+	/* #1 Elements */
+	opacity: 1 !important;
+}
+
+.opacity-exit {
+	/* #1 Elements */
+	opacity: 1 !important;
+}
+
+.opacity-exit-active {
+	/* #1 Elements */
+	opacity: 0 !important;
+
+	/* #5 Animations */
+	transition: opacity 300ms ease-out;
 }

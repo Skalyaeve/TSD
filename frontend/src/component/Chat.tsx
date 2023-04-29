@@ -492,7 +492,7 @@ const Chat: React.FC = memo(() => {
 		setSettingsOpen(0)
 		if (chatRef.current) {
 			const element = chatRef.current
-			element.setAttribute('style', 'width: 255px')
+			element.setAttribute('style', 'width: 100%')
 		}
 	}, [chatOpenned])
 
@@ -505,7 +505,9 @@ const Chat: React.FC = memo(() => {
 	const bodyName = `${name}-body`
 	const mainName = `${name}-main`
 	const mainInputName = `${mainName}-input`
-	const btnPressedName = `${name}-btn--pressed`
+	const btnName = `${name}-btn`
+	const smallBtnName = `${btnName}--small`
+	const btnPressedName = `${btnName}--pressed`
 
 	// ----RENDER----------------------------- //
 	return <div className={name}>
@@ -530,7 +532,7 @@ const Chat: React.FC = memo(() => {
 				/>
 				<NewBox
 					tag='btn'
-					className='chat-sendMsg-btn'
+					className={`${name}-sendMsg-btn ${smallBtnName}`}
 					nameIfPressed={btnPressedName}
 					content='[OK]'
 				/>
