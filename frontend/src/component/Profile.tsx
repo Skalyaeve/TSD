@@ -1,5 +1,7 @@
 import React, { memo, useMemo, useCallback, useState, useEffect } from 'react'
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, useLocation } from 'react-router-dom'
+import { AnimatePresence, motion } from 'framer-motion'
+
 import { NewBox, Input, tglOnOver, tglOnUp } from './utils.tsx'
 import ErrorPage from './ErrorPage.tsx'
 
@@ -13,7 +15,13 @@ const Infos: React.FC = memo(() => {
 	const historyName = `${name}-history`
 
 	// ----RENDER----------------------------- //
-	return <main className={`${name}-infos main`}>
+	return <motion.div
+		key={`${name}-infos main`}
+		className={`${name}-infos main`}
+		initial={{ opacity: 0 }}
+		animate={{ opacity: 1 }}
+		exit={{ opacity: 0 }}
+	>
 		<div className={accountInfosName}>
 			<AccountInfos className={accountInfosName} />
 		</div>
@@ -26,11 +34,11 @@ const Infos: React.FC = memo(() => {
 		<div className={historyName}>
 			<History name={historyName} />
 		</div>
-	</main>
+	</motion.div>
 })
 
 
-// --------ACCOUNT-INFOS--------------------------------------------------- //
+// --------ACCOUNT-INFOS---------------------------------    ------------------ //
 interface AccountInfosProps {
 	className: string
 }
@@ -108,7 +116,7 @@ const Achievements: React.FC<AchievementsProps> = memo(({ name }) => {
 
 	return <>
 		<div className={`${name}-count`}>
-			Achievements
+			ACHIEVEMENTS
 		</div>
 		<div className={`${name}-list`}>
 			{render}
@@ -181,7 +189,7 @@ interface MatchProps {
 const Match: React.FC<MatchProps> = memo(({ id, name }) => {
 	// ----RENDER----------------------------- //
 	return <div className={`${name}-match`}>
-		Match #{id}
+		MATCH #{id}
 	</div>
 })
 
@@ -219,7 +227,11 @@ const Friends: React.FC = memo(() => {
 		content={content}
 	/>, [])
 
-	return <main className={`${mainName} main`}>
+	return <motion.main className={`${mainName} main`}
+		initial={{ opacity: 0 }}
+		animate={{ opacity: 1 }}
+		exit={{ opacity: 0 }}
+	>
 		<div className={`${mainName}-head`}>
 			<NewBox
 				tag='btn'
@@ -247,7 +259,7 @@ const Friends: React.FC = memo(() => {
 				{renderFriends}
 			</div>
 		</div>
-	</main >
+	</motion.main >
 })
 // --------FRIEND-SEARCH--------------------------------------------------- //
 interface FriendSearchProps {
@@ -297,8 +309,6 @@ const FriendSearch: React.FC<FriendSearchProps> = memo(({
 		content={boxContent}
 	/>
 })
-
-
 // --------FRIEND---------------------------------------------------------- //
 interface FriendProps {
 	id: number
@@ -375,11 +385,16 @@ const FriendName: React.FC<FriendNameProps> = memo(({
 
 // --------PROFILE--------------------------------------------------------- //
 const Profile: React.FC = memo(() => {
+	// ----LOCATION--------------------------- //
+	const location = useLocation()
+
 	// ----RENDER----------------------------- //
-	return <Routes>
-		<Route path='/' element={<Infos />} />
-		<Route path='/friends' element={<Friends />} />
-		<Route path='*' element={<ErrorPage code={404} />} />
-	</Routes>
+	return <AnimatePresence mode='wait'>
+		<Routes location={location} key={location.pathname}>
+			<Route path='/' element={<Infos />} />
+			<Route path='/friends' element={<Friends />} />
+			<Route path='*' element={<ErrorPage code={404} />} />
+		</Routes>
+	</AnimatePresence>
 })
 export default Profile

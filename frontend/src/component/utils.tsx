@@ -1,9 +1,11 @@
-import React, { memo, useMemo, useCallback, useState, useEffect, CSSProperties, Ref } from 'react'
+import React, {
+	memo, useMemo, useCallback, useState, useEffect, CSSProperties
+} from 'react'
 import { Link } from 'react-router-dom'
 import { useDrag, useDrop } from 'react-dnd'
 
 // --------USE-BOOL-------------------------------------------------------- //
-export const useToggle = (def: boolean): [boolean, () => void] => {
+export const useTgl = (def: boolean): [boolean, () => void] => {
 	// ----STATES----------------------------- //
 	const [value, setValue] = useState(def)
 
@@ -15,7 +17,7 @@ export const useToggle = (def: boolean): [boolean, () => void] => {
 }
 export const tglOnUp = (def: boolean): [boolean, React.HTMLAttributes<HTMLElement>] => {
 	// ----STATES----------------------------- //
-	const [value, valueToggler] = useToggle(def)
+	const [value, valueToggler] = useTgl(def)
 
 	// ----HANDLERS--------------------------- //
 	const btnHdl = useMemo(() => ({
@@ -27,7 +29,7 @@ export const tglOnUp = (def: boolean): [boolean, React.HTMLAttributes<HTMLElemen
 }
 export const tglOnOver = (def: boolean): [boolean, React.HTMLAttributes<HTMLElement>] => {
 	// ----STATES----------------------------- //
-	const [value, valueToggler] = useToggle(def)
+	const [value, valueToggler] = useTgl(def)
 
 	// ----HANDLERS--------------------------- //
 	const btnHdl = useMemo(() => ({
@@ -37,6 +39,14 @@ export const tglOnOver = (def: boolean): [boolean, React.HTMLAttributes<HTMLElem
 
 	// ----RETURN----------------------------- //
 	return [value, btnHdl]
+}
+
+
+// --------STRING-MANIP---------------------------------------------------- //
+export const cutThenCompare = (path1: string, path2: string) => {
+	const section1 = path1.split('/')[1]
+	const section2 = path2.split('/')[1]
+	return section1 === section2
 }
 
 
@@ -89,12 +99,13 @@ interface NewBoxProps {
 	to?: string
 	handlers?: React.HTMLAttributes<HTMLElement>
 	style?: CSSProperties
+	motionProps?: any
 	content?: any
 }
-const NewBoxComponent: React.ForwardRefRenderFunction<
-	HTMLAnchorElement | HTMLButtonElement | HTMLDivElement,
-	NewBoxProps
-> = ({ tag, className, nameIfPressed, nameIfOver, to, handlers, style = {}, content }, ref) => {
+export const NewBox: React.FC<NewBoxProps> = memo(({
+	tag, className, nameIfPressed, nameIfOver, to,
+	handlers, style = {}, motionProps = {}, content
+}) => {
 	// ----STATES----------------------------- //
 	const [pressed, setPressed] = useState(false)
 	const [over, setOver] = useState(false)
@@ -148,7 +159,6 @@ const NewBoxComponent: React.ForwardRefRenderFunction<
 		if (tag === 'Link' && to) return (
 			<Link to={to} className={boxName}
 				style={style}
-				ref={ref as Ref<HTMLAnchorElement>}
 				{...mergedHandlers}>
 				{content}
 			</Link>
@@ -156,7 +166,6 @@ const NewBoxComponent: React.ForwardRefRenderFunction<
 		else if (tag === 'btn') return (
 			<button className={boxName}
 				style={style}
-				ref={ref as Ref<HTMLButtonElement>}
 				{...mergedHandlers}>
 				{content}
 			</button>
@@ -164,7 +173,6 @@ const NewBoxComponent: React.ForwardRefRenderFunction<
 		else return (
 			<div className={boxName}
 				style={style}
-				ref={ref as Ref<HTMLDivElement>}
 				{...mergedHandlers}>
 				{content}
 			</div>
@@ -172,8 +180,7 @@ const NewBoxComponent: React.ForwardRefRenderFunction<
 	}, [pressed, over, tag, className, nameIfPressed,
 		nameIfOver, to, handlers, style, content])
 	return render
-}
-export const NewBox = React.memo(React.forwardRef(NewBoxComponent));
+})
 
 
 // --------DRAG-DROP------------------------------------------------------- //

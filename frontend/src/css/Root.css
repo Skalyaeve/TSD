@@ -31,7 +31,6 @@ ex: ".navBar-logo--pressed {}"
 @import url("Characters.css");
 @import url("Leader.css");
 @import url("Game.css");
-@import url("Transitions.css");
 
 /* ---TAGS----------------------- */
 * {
@@ -78,38 +77,43 @@ body * {
 /* ---ROOT----------------------- */
 .root {
 	/* #1 Elements */
-	display: grid;
-	grid-template-columns: 265px auto;
-	grid-template-rows: 1fr;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 
 	/* #2 Form */
+	width: 100vw;
 	height: 100vh;
 	min-width: 1024px;
 	min-height: 768px;
+}
+
+.root-motion {
+	/* #1 Elements */
+	display: grid;
+	grid-template-columns: 265px auto;
+	grid-template-rows: 1fr;
+	overflow: hidden;
+
+	/* #2 Form */
+	width: 100%;
+	height: 100%;
 }
 
 /* ---LOGIN---------------------- */
 .login-btn {
 	/* #1 Elements */
 	border: 1px solid rgb(255, 255, 255);
-	opacity: 0;
 
 	/* #2 Form */
-	width: 325px;
-	height: 125px;
+	width: 100%;
+	height: 100%;
 	border-radius: 5px;
-
-	/* #3 Position */
-	position: fixed;
-	top: 50%;
-	left: 50%;
-	transform: translate(-50%, -50%);
 }
 
 .login-btn--pressed {
 	/* #1 Elements */
 	background-color: rgb(255, 255, 255, 0.3);
-	opacity: 1;
 }
 
 /* ---HEADER--------------------- */

@@ -24,13 +24,17 @@ ex: ".navBar-logo--pressed {}"
 --------------------------------- */
 
 /* ---HOME----------------------- */
-.home-body {
+.home {
 	/* #1 Elements */
-	border: 1px solid rgb(255, 239, 57);
+	border: 1px solid rgb(255, 255, 0);
 	display: flex;
 	align-items: center;
 	justify-content: center;
 
 	/* #2 Form */
-	height: 100%;
+	width: calc(100% - 10px);
+	height: calc(100% - 20px);
+
+	/* #3 Position */
+	align-self: center;
 }

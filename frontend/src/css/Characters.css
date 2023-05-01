@@ -27,11 +27,18 @@ ex: ".navBar-logo--pressed {}"
 .characters {
 	/* #1 Elements */
 	display: flex;
+
+	/* #2 Form */
+	width: calc(100% - 10px);
+	height: calc(100% - 20px);
+
+	/* #3 Position */
+	align-self: center;
 }
 
 .characters-select {
 	/* #1 Elements */
-	border: 1px solid rgb(255, 239, 57);
+	border: 1px solid rgb(255, 255, 0);
 	border-right: none;
 	display: grid;
 	grid-template-columns: 1fr 1fr 1fr;

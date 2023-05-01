@@ -189,6 +189,13 @@ ex: ".navBar-logo--pressed {}"
 .profile-friends {
 	/* #1 Elements */
 	overflow-y: auto;
+
+	/* #2 Form */
+	width: calc(100% - 10px);
+	height: calc(100% - 20px);
+
+	/* #3 Position */
+	align-self: center;
 }
 
 .profile-friends-head {
@@ -339,7 +346,7 @@ ex: ".navBar-logo--pressed {}"
 
 .profile-friend-pic {
 	/* #1 Elements */
-	border: 1px solid rgb(255, 239, 57);
+	border: 1px solid rgb(255, 255, 0);
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -369,5 +376,5 @@ ex: ".navBar-logo--pressed {}"
 /* ---BTN-PRESSED---------------- */
 .profile-btn--pressed {
 	/* #1 Elements */
-	background-color: rgb(255, 239, 57, 0.355);
+	background-color: rgb(255, 255, 0, 0.3);
 }
