@@ -1,5 +1,10 @@
-import React, { memo, useMemo, useCallback, useState, useEffect, useLayoutEffect, useRef } from 'react'
+import React, {
+	memo, useMemo, useCallback, useState, useEffect, useLayoutEffect, useRef
+} from 'react'
+import { AnimatePresence, motion } from 'framer-motion'
+
 import { NewBox, DragDrop } from './utils.tsx'
+import { bouncyHeightGrowByPercent, bouncyComeFromCol } from './framerMotionAnime.tsx'
 
 // --------ROOM-SETTINGS--------------------------------------------------- //
 interface RoomSettingsPos {
@@ -438,6 +443,68 @@ const TextArea: React.FC<TextAreaProps> = memo(({ chatArea, showUsers }) => {
 })
 
 
+// --------MAIN-CONTENT---------------------------------------------------- //
+interface MainContentProps {
+	name: string
+	mainName: string
+	btnName: string
+	showUsers: boolean
+	settingsOpen: number
+	setSettingsOpen: React.Dispatch<React.SetStateAction<number>>
+}
+const MainContent: React.FC<MainContentProps> = memo(({
+	name, mainName, btnName, showUsers, settingsOpen, setSettingsOpen
+}) => {
+	// ----STATES----------------------------- //
+	const [chatArea, setChatArea] = useState(1)
+
+	// ----CLASSNAMES------------------------- //
+	const mainInputName = `${mainName}-input`
+	const smallBtnName = `${btnName}--small`
+
+	// ----RENDER----------------------------- //
+	const bouncyHeightGrowByPercentRender = useMemo(() => {
+		const baseAnimation = bouncyHeightGrowByPercent(100, 0.1, 0.75, 0.6, 0.9, 1);
+		return {
+			...baseAnimation,
+			exit: {
+				...baseAnimation.exit,
+				borderTop: '1px solid green',
+			},
+		};
+	}, []);
+
+	return <motion.div
+		key={mainName}
+		className={mainName}
+		{...bouncyHeightGrowByPercentRender}
+	>
+		<RoomBoxes
+			settingsOpen={settingsOpen}
+			setSettingsOpen={setSettingsOpen}
+			setChatArea={setChatArea}
+		/>
+		<TextArea
+			chatArea={chatArea}
+			showUsers={showUsers}
+		/>
+		{showUsers === true && <RoomUsers />}
+		<input
+			className={mainInputName}
+			id={mainInputName}
+			name={mainInputName}
+			placeholder=' ...'
+		/>
+		<NewBox
+			tag='btn'
+			className={`${name}-sendMsg-btn ${smallBtnName}`}
+			nameIfPressed={`${btnName}--pressed`}
+			content='[OK]'
+		/>
+	</motion.div>
+})
+
+
 // --------CHAT------------------------------------------------------------ //
 const Chat: React.FC = memo(() => {
 	// ----REFS------------------------------- //
@@ -447,7 +514,6 @@ const Chat: React.FC = memo(() => {
 	const [chatOpenned, setChatOpenned] = useState(false)
 	const [chatWidth, setChatWidth] = useState(0)
 	const [showUsers, setShowUsers] = useState(false)
-	const [chatArea, setChatArea] = useState(1)
 
 	const [settingsOpen, setSettingsOpen] = useState(0)
 	const [settingsPos, setSettingsPos] = useState({ left: '100%' })
@@ -504,51 +570,55 @@ const Chat: React.FC = memo(() => {
 	const name = 'chat'
 	const bodyName = `${name}-body`
 	const mainName = `${name}-main`
-	const mainInputName = `${mainName}-input`
 	const btnName = `${name}-btn`
-	const smallBtnName = `${btnName}--small`
-	const btnPressedName = `${btnName}--pressed`
 
 	// ----RENDER----------------------------- //
-	return <div className={name}>
-		<div className={`${bodyName}${chatOpenned === false ? ` ${bodyName}--noResize` : ''}`}
-			ref={chatRef}>
-			{chatOpenned === true && <div className={mainName}>
-				<RoomBoxes
-					settingsOpen={settingsOpen}
-					setSettingsOpen={setSettingsOpen}
-					setChatArea={setChatArea}
-				/>
-				<TextArea
-					chatArea={chatArea}
-					showUsers={showUsers}
-				/>
-				{showUsers === true && <RoomUsers />}
-				<input
-					className={mainInputName}
-					id={mainInputName}
-					name={mainInputName}
-					placeholder=' ...'
-				/>
-				<NewBox
-					tag='btn'
-					className={`${name}-sendMsg-btn ${smallBtnName}`}
-					nameIfPressed={btnPressedName}
-					content='[OK]'
-				/>
-			</div>}
-			<NewBox
-				tag='btn'
-				className={`${mainName}-btn${chatOpenned === true ? ` ${mainName}-btn--expended` : ''}`}
-				nameIfPressed={btnPressedName}
-				handlers={mainBtnHdl}
-				content='[CHAT]'
-			/>
-		</div>
-		{settingsOpen !== 0 && <RoomSettings
-			settingsOpen={settingsOpen}
-			settingsPos={settingsPos}
-		/>}
-	</div>
+	const bouncyComeFromColRender = useMemo(() => (
+		bouncyComeFromCol(185, 20, 0.75, 1.1, 1.3)
+	), [])
+
+	return <motion.div
+		key={`${name}-motion`}
+		className={`${name}-motion`}
+		{...bouncyComeFromColRender}>
+
+		<div className={name}>
+			<div className={`${bodyName}${chatOpenned === false ? ` ${bodyName}--noResize` : ''}`}
+				ref={chatRef}>
+				<AnimatePresence>
+					{chatOpenned === true && <MainContent
+						name={name}
+						mainName={mainName}
+						btnName={btnName}
+						showUsers={showUsers}
+						settingsOpen={settingsOpen}
+						setSettingsOpen={setSettingsOpen}
+					/>}
+
+					<motion.div
+						key={`${mainName}-btn-motion`}
+						className={`${mainName}-btn-motion`}
+						whileHover={{
+							y: [0, (chatOpenned === true ? 10 : -10), 0],
+							transition: { ease: 'easeInOut', times: [0, 0.6, 1] }
+						}}>
+						<NewBox
+							tag='btn'
+							className={`${mainName}-btn${chatOpenned === true ? ` ${mainName}-btn--expended` : ''}`}
+							nameIfPressed={`${btnName}--pressed`}
+							handlers={mainBtnHdl}
+							content='[CHAT]'
+						/>
+					</motion.div>
+				</AnimatePresence>
+			</div>
+
+			{settingsOpen !== 0 && <RoomSettings
+				settingsOpen={settingsOpen}
+				settingsPos={settingsPos}
+			/>}
+		</div >
+
+	</motion.div >
 })
 export default Chat

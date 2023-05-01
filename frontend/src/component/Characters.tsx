@@ -1,4 +1,6 @@
 import React, { memo, useMemo, useState } from 'react'
+import { motion } from 'framer-motion'
+
 import { NewBox, tglOnOver } from './utils.tsx'
 
 // --------CHARACTER-BOX--------------------------------------------------- //
@@ -38,8 +40,6 @@ const Character: React.FC<CharacterProps> = memo(({ name }) => {
 		</div>
 	</div>
 })
-
-
 // --------SPELL----------------------------------------------------------- //
 interface SpellProps {
 	spellName: string
@@ -81,11 +81,15 @@ const Characters: React.FC = memo(() => {
 		<CharBox key={index + 1} id={index + 1} name={name} />
 	)), [totalCharacters])
 
-	return <main className={`${name}s main`}>
+	return <motion.main className={`${name}s main`}
+		initial={{ opacity: 0 }}
+		animate={{ opacity: 1 }}
+		exit={{ opacity: 0 }}
+	>
 		<div className={`${name}s-select`}>
 			{renderFriends}
 		</div>
 		<Character name={name} />
-	</main>
+	</motion.main>
 })
 export default Characters

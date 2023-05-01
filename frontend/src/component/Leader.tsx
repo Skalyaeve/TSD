@@ -1,4 +1,6 @@
 import React, { memo, useMemo } from 'react'
+import { motion } from 'framer-motion'
+
 import { NewBox, Input } from './utils.tsx'
 
 // --------USER------------------------------------------------------------ //
@@ -100,7 +102,11 @@ const Leader: React.FC = memo(() => {
 		content={content}
 	/>, [])
 
-	return <main className={`${name} main`}>
+	return <motion.main className={`${name} main`}
+		initial={{ opacity: 0 }}
+		animate={{ opacity: 1 }}
+		exit={{ opacity: 0 }}
+	>
 		<div className={`${name}-head`}>
 			{headBtn('down', '[>>]')}
 			{headBtn('up', '[<<]')}
@@ -114,6 +120,6 @@ const Leader: React.FC = memo(() => {
 			btnName={btnName}
 			btnPressedName={btnPressedName}
 		/>
-	</main >
+	</motion.main >
 })
 export default Leader

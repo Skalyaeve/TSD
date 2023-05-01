@@ -27,18 +27,26 @@ ex: ".navBar-logo--pressed {}"
 .chat {
 	/* #1 Elements */
 	position: relative;
+
+	/* #2 Form */
+	width: 100%;
+	height: 100%;
+
+	/* #3 Position */
 	z-index: 2;
 }
 
 .chat-body {
 	/* #1 Elements */
+	background-color: transparent;
 	display: flex;
 	flex-direction: column-reverse;
 	overflow-x: auto;
+	overflow-y: hidden;
 
 	/* #2 Form */
 	resize: horizontal;
-	height: calc(100% - 20px);
+	height: 100%;
 	min-width: 100%;
 	max-width: 225%;
 
@@ -46,7 +54,8 @@ ex: ".navBar-logo--pressed {}"
 	position: absolute;
 
 	/* #4 Margin - Padding */
-	margin-top: 10px;
+	padding-top: 10px;
+	padding-bottom: 10px;
 }
 
 .chat-body--noResize {
@@ -54,19 +63,22 @@ ex: ".navBar-logo--pressed {}"
 	resize: none;
 }
 
+.chat-main-btn-motion {
+	/* #2 Form */
+	height: 56px;
+}
+
 .chat-main-btn {
 	/* #1 Elements */
-	border: 1px solid rgb(0, 122, 6);
+	border: 1px solid rgb(0, 128, 0);
 
 	/* #2 Form */
-	height: 55px;
+	width: 100%;
+	height: 100%;
 	border-radius: 5px;
 }
 
 .chat-main-btn--expended {
-	/* #1 Elements */
-	border-bottom: none;
-
 	/* #2 Form */
 	border-bottom-left-radius: 0;
 	border-bottom-right-radius: 0;
@@ -74,7 +86,8 @@ ex: ".navBar-logo--pressed {}"
 
 .chat-main {
 	/* #1 Elements */
-	border: 1px solid rgb(0, 122, 6);
+	border: 1px solid rgb(0, 128, 0);
+	border-top: none;
 	display: grid;
 	grid-template-columns: auto 40px;
 	grid-template-rows: 40px auto 40px;
@@ -88,7 +101,7 @@ ex: ".navBar-logo--pressed {}"
 
 .chat-main-input {
 	/* #1 Elements */
-	border: 1px solid rgb(0, 122, 6);
+	border: 1px solid rgb(0, 128, 0);
 
 	/* #2 Form */
 	width: calc(100% - 10px);
@@ -103,7 +116,7 @@ ex: ".navBar-logo--pressed {}"
 
 .chat-sendMsg-btn {
 	/* #1 Elements */
-	border: 1px solid rgb(0, 122, 6);
+	border: 1px solid rgb(0, 128, 0);
 
 	/* #2 Form */
 	width: calc(100% - 5px);
@@ -119,7 +132,7 @@ ex: ".navBar-logo--pressed {}"
 
 .chat-txtArea {
 	/* #1 Elements */
-	border-bottom: 1px solid rgb(0, 122, 6);
+	border-bottom: 1px solid rgb(0, 128, 0);
 	display: flex;
 	align-items: flex-end;
 
@@ -138,8 +151,8 @@ ex: ".navBar-logo--pressed {}"
 
 .chat-newRoom-btn {
 	/* #1 Elements */
-	border-bottom: 1px solid rgb(0, 122, 6);
-	border-left: 1px solid rgb(0, 122, 6);
+	border-bottom: 1px solid rgb(0, 128, 0);
+	border-left: 1px solid rgb(0, 128, 0);
 
 	/* #3 Position */
 	grid-column: 2 / 2;
@@ -149,8 +162,8 @@ ex: ".navBar-logo--pressed {}"
 /* ---USERS---------------------- */
 .chat-roomUsers {
 	/* #1 Elements */
-	border-bottom: 1px solid rgb(0, 122, 6);
-	border-left: 1px solid rgb(0, 122, 6);
+	border-bottom: 1px solid rgb(0, 128, 0);
+	border-left: 1px solid rgb(0, 128, 0);
 	display: flex;
 	flex-direction: column;
 	overflow-y: auto;
@@ -168,7 +181,7 @@ ex: ".navBar-logo--pressed {}"
 
 .chat-roomUsers-input {
 	/* #1 Elements */
-	border-bottom: 1px solid rgb(0, 122, 6);
+	border-bottom: 1px solid rgb(0, 128, 0);
 
 	/* #2 Form */
 	flex-shrink: 0;
@@ -176,7 +189,7 @@ ex: ".navBar-logo--pressed {}"
 
 .chat-roomUsr {
 	/* #1 Elements */
-	border-bottom: 1px solid rgb(0, 122, 6);
+	border-bottom: 1px solid rgb(0, 128, 0);
 	display: flex;
 	position: relative;
 
@@ -208,8 +221,8 @@ ex: ".navBar-logo--pressed {}"
 
 .chat-roomUsr-btn {
 	/* #1 Elements */
-	border-bottom: 1px solid rgb(0, 122, 6);
-	border-left: 1px solid rgb(0, 122, 6);
+	border-bottom: 1px solid rgb(0, 128, 0);
+	border-left: 1px solid rgb(0, 128, 0);
 
 	/* #2 Form */
 	width: 33.4px;
@@ -219,7 +232,7 @@ ex: ".navBar-logo--pressed {}"
 /* ---ROOM-BOXES----------------- */
 .chat-rooms {
 	/* #1 Elements */
-	border-bottom: 1px solid rgb(0, 122, 6);
+	border-bottom: 1px solid rgb(0, 128, 0);
 	display: flex;
 	overflow-x: auto;
 
@@ -239,7 +252,7 @@ ex: ".navBar-logo--pressed {}"
 
 .chat-room-link {
 	/* #1 Elements */
-	border-right: 1px solid rgb(0, 122, 6);
+	border-right: 1px solid rgb(0, 128, 0);
 
 	/* #2 Form */
 	width: 100%;
@@ -248,8 +261,8 @@ ex: ".navBar-logo--pressed {}"
 
 .chat-setRoom-btn {
 	/* #1 Elements */
-	border-bottom: 1px solid rgb(0, 122, 6);
-	border-right: 1px solid rgb(0, 122, 6);
+	border-bottom: 1px solid rgb(0, 128, 0);
+	border-right: 1px solid rgb(0, 128, 0);
 
 	/* #2 Form */
 	width: 20px;
@@ -264,7 +277,7 @@ ex: ".navBar-logo--pressed {}"
 /* ---ROOM-SETTINGS-------------- */
 .chat-roomSet {
 	/* #1 Elements */
-	border: 1px solid rgb(0, 122, 6);
+	border: 1px solid rgb(0, 128, 0);
 	display: grid;
 	grid-template-columns: 1fr 1fr;
 	grid-template-rows: 75px 1fr 45px;
@@ -281,7 +294,7 @@ ex: ".navBar-logo--pressed {}"
 
 .chat-roomSet-main-input {
 	/* #1 Elements */
-	border: 1px solid rgb(0, 122, 6);
+	border: 1px solid rgb(0, 128, 0);
 	text-align: center;
 
 	/* #2 Form */
@@ -308,8 +321,8 @@ ex: ".navBar-logo--pressed {}"
 
 .chat-roomSet-search-input {
 	/* #1 Elements */
-	border-top: 1px solid rgb(0, 122, 6);
-	border-bottom: 1px solid rgb(0, 122, 6);
+	border-top: 1px solid rgb(0, 128, 0);
+	border-bottom: 1px solid rgb(0, 128, 0);
 
 	/* #2 Form */
 	flex-shrink: 0;
@@ -317,7 +330,7 @@ ex: ".navBar-logo--pressed {}"
 
 .chat-roomSet-users {
 	/* #1 Elements */
-	border-bottom: 1px solid rgb(0, 122, 6);
+	border-bottom: 1px solid rgb(0, 128, 0);
 	display: flex;
 	flex-direction: column;
 	overflow-y: auto;
@@ -325,7 +338,7 @@ ex: ".navBar-logo--pressed {}"
 
 .chat-roomSet-users-added {
 	/* #1 Elements */
-	border-right: 1px solid rgb(0, 122, 6);
+	border-right: 1px solid rgb(0, 128, 0);
 
 	/* #3 Position */
 	grid-column: 1 / 1;
@@ -340,7 +353,7 @@ ex: ".navBar-logo--pressed {}"
 
 .chat-roomSet-btn {
 	/* #1 Elements */
-	border: 1px solid rgb(0, 122, 6);
+	border: 1px solid rgb(0, 128, 0);
 
 	/* #2 Form */
 	width: 120px;
@@ -380,7 +393,7 @@ ex: ".navBar-logo--pressed {}"
 /* ---ROOM-USR-SET--------------- */
 .chat-roomSet-usr {
 	/* #1 Elements */
-	border-bottom: 1px solid rgb(0, 122, 6);
+	border-bottom: 1px solid rgb(0, 128, 0);
 	display: flex;
 	position: relative;
 
@@ -412,8 +425,8 @@ ex: ".navBar-logo--pressed {}"
 
 .chat-roomSet-usr-btn {
 	/* #1 Elements */
-	border-left: 1px solid rgb(0, 122, 6);
-	border-bottom: 1px solid rgb(0, 122, 6);
+	border-left: 1px solid rgb(0, 128, 0);
+	border-bottom: 1px solid rgb(0, 128, 0);
 
 	/* #2 Form */
 	width: 31.45px;

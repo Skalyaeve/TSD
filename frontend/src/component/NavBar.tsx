@@ -1,101 +1,173 @@
-import React, { memo, useMemo } from 'react'
-import { Routes, Route } from 'react-router-dom'
-import { CSSTransition } from 'react-transition-group'
-import { NewBox } from './utils.tsx'
+import React, {
+	memo, useMemo, useCallback, useState, useEffect, useRef
+} from 'react'
+import { Routes, Route, useLocation } from 'react-router-dom'
+import { AnimatePresence, motion } from 'framer-motion'
+
+import { NewBox, cutThenCompare } from './utils.tsx'
+import { bouncyHeightGrowByPx, bouncyGrowingListElem } from './framerMotionAnime.tsx'
 import { GameInfos } from './Matchmaker.tsx'
+
+// --------VALUES---------------------------------------------------------- //
+const animeDuration = 0.5
+const backLinkHeight = 50
+const linkHeight = 75
 
 // --------LINK------------------------------------------------------------ //
 interface NavBarLinkProps {
+	name: string
 	to: string
+	index: number
 	content: string
 }
-const NavBarLink: React.FC<NavBarLinkProps> = memo(({ to, content }) => {
-	// ----CLASSNAMES---- ---------------- //
-	const name = 'navBar-link'
-
+const NavBarLink: React.FC<NavBarLinkProps> = memo(({ name, to, index, content }) => {
 	// ----RENDER----------------------------- //
-	return <NewBox
-		tag='Link'
-		to={to}
-		className={name}
-		nameIfPressed={`${name}--pressed`}
-		content={content}
-	/>
+	const comeFrom = index ? backLinkHeight + linkHeight * (index - 1) : 0
+	const growingListRender = bouncyGrowingListElem(
+		-comeFrom, (index ? linkHeight + 1 : backLinkHeight), 0.2, 0.75, animeDuration
+	)
+
+	return <motion.div
+		key={`${name}-motion`}
+		className={`${name}-motion`}
+		whileHover={{
+			borderRadius: '5px',
+			scale: 1.025,
+			transition: { ease: 'easeInOut' }
+		}}
+		{...growingListRender}
+	>
+		<NewBox
+			tag='Link'
+			to={to}
+			className={name}
+			nameIfPressed={`${name}--pressed`}
+			content={content}
+		/>
+	</motion.div>
 })
 
 
 // --------NAVBAR---------------------------------------------------------- //
 interface NavBarProps {
-	logoutBtnHdl: React.HTMLAttributes<HTMLElement>
+	loggedTgl: () => void
 }
-const NavBar: React.FC<NavBarProps> = memo(({ logoutBtnHdl }) => {
-	// ----VALUES----------------------------- //
-	const backLinkSize = 50
-	const linkSize = 75
+const NavBar: React.FC<NavBarProps> = memo(({ loggedTgl }) => {
+	// ----LOCATION--------------------------- //
+	const location = useLocation()
+
+	// ----REFS------------------------------- //
+	const previousPath = useRef<string | null>(null)
+
+	// ----STATES----------------------------- //
+	const [displayedElement, setDisplayedElement] = useState<JSX.Element>(<></>)
+
+	// ----EFFECTS---------------------------- //
+	useEffect(() => {
+		if (previousPath.current === null || !cutThenCompare(location.pathname, previousPath.current)) {
+			setDisplayedElement(
+				<Routes location={location} key={location.pathname}>
+					<Route path='/' element={fromHome} />
+					<Route path='/profile/*' element={fromProfil} />
+					<Route path='/characters' element={fromCharacters} />
+					<Route path='/leader' element={fromLeader} />
+					<Route path='/game' element={<GameInfos />} />
+					<Route path='*' element={from404} />
+				</Routes>
+			)
+		}
+		previousPath.current = location.pathname
+	}, [location.pathname])
+
+	// ----HANDLERS--------------------------- //
+	const handleLogBtn = useCallback(() => {
+		loggedTgl()
+		setDisplayedElement(<></>)
+	}, [loggedTgl])
+
+	const logBtnHdl = useMemo(() => ({
+		onMouseUp: handleLogBtn
+	}), [handleLogBtn])
 
 	// ----CLASSNAMES------------------------- //
 	const name = 'navBar'
 	const linkName = `${name}-link`
 
 	// ----RENDER----------------------------- //
-	const logoutBox = useMemo(() => <NewBox
-		tag='btn'
-		className={`${linkName}`}
-		nameIfPressed={`${linkName}--pressed`}
-		handlers={logoutBtnHdl}
-		content='[LOGOUT]'
-	/>, [])
+	const logoutBoxAnimeRender = useMemo(() => bouncyHeightGrowByPx(
+		backLinkHeight + 1, 0.2, 0.75, animeDuration
+	), [])
+
+	const logoutBox = useMemo(() => <motion.div
+		key={`${linkName}-motion`}
+		className={`${linkName}-motion`}
+		whileHover={{
+			borderRadius: '5px',
+			scale: 1.025,
+			transition: { ease: 'easeInOut' }
+		}}
+		{...logoutBoxAnimeRender}
+	>
+		<NewBox
+			tag='btn'
+			className={`${linkName}`}
+			nameIfPressed={`${linkName}--pressed`}
+			handlers={logBtnHdl}
+			content='[LOGOUT]'
+		/>
+	</motion.div>, [])
 
 	const fromHome = useMemo(() => {
-		const height = backLinkSize + linkSize * 3
-		return <nav className={name} style={{ height: height }}>
+		const navBarAnimeRender = bouncyHeightGrowByPx(backLinkHeight + linkHeight * 3, 0.2, 0.75, animeDuration)
+		return <motion.nav key={`${name}-fromHome`} className={name} {...navBarAnimeRender}>
 			{logoutBox}
-			<NavBarLink to='/profile' content='[PROFILE]' />
-			<NavBarLink to='/characters' content='[CHARACTERS]' />
-			<NavBarLink to='/leader' content='[LEADER]' />
-		</nav>
+			<NavBarLink name={linkName} to='/profile' index={1}
+				content='[PROFILE]' />
+			<NavBarLink name={linkName} to='/characters' index={2}
+				content='[CHARACTERS]' />
+			<NavBarLink name={linkName} to='/leader' index={3}
+				content='[LEADER]' />
+		</motion.nav>
 	}, [])
 
 	const fromProfil = useMemo(() => {
-		const height = backLinkSize + linkSize * 2
-		return <nav className={name} style={{ height: height }}>
-			<NavBarLink to='/' content='[BACK]' />
-			<NavBarLink to='/profile' content='[INFOS]' />
-			<NavBarLink to='/profile/friends' content='[FRIENDS]' />
-		</nav>
+		const navBarAnimeRender = bouncyHeightGrowByPx(backLinkHeight + linkHeight * 2, 0.2, 0.75, animeDuration)
+		return <motion.nav key={`${name}-fromProfil`} className={name} {...navBarAnimeRender}>
+			<NavBarLink name={linkName} to='/' index={0}
+				content='[BACK]' />
+			<NavBarLink name={linkName} to='/profile' index={1}
+				content='[INFOS]' />
+			<NavBarLink name={linkName} to='/profile/friends' index={2}
+				content='[FRIENDS]' />
+		</motion.nav>
 	}, [])
 
 	const fromLeader = useMemo(() => {
-		const height = backLinkSize
-		return <nav className={name} style={{ height: height }}>
-			<NavBarLink to='/' content='[BACK]' />
-		</nav>
+		const navBarAnimeRender = bouncyHeightGrowByPx(backLinkHeight, 0.2, 0.75, animeDuration)
+		return <motion.nav key={`${name}-fromLeader`} className={name} {...navBarAnimeRender}>
+			<NavBarLink name={linkName} to='/' index={0}
+				content='[BACK]' />
+		</motion.nav>
 	}, [])
 
 	const fromCharacters = useMemo(() => {
-		const height = backLinkSize
-		return <nav className={name} style={{ height: height }}>
-			<NavBarLink to='/' content='[BACK]' />
-		</nav>
+		const navBarAnimeRender = bouncyHeightGrowByPx(backLinkHeight, 0.2, 0.75, animeDuration)
+		return <motion.nav key={`${name}-fromCharacters`} className={name} {...navBarAnimeRender}>
+			<NavBarLink name={linkName} to='/' index={0}
+				content='[BACK]' />
+		</motion.nav>
 	}, [])
 
 	const from404 = useMemo(() => {
-		const height = backLinkSize + linkSize * 3
-		return <nav className={name} style={{ height: height }}>
-			{logoutBox}
-			<NavBarLink to='/profile' content='[PROFIL]' />
-			<NavBarLink to='/leader' content='[LEADER]' />
-			<NavBarLink to='/' content='[HOME]' />
-		</nav>
+		const navBarAnimeRender = bouncyHeightGrowByPx(backLinkHeight + linkHeight * 3, 0.2, 0.75, animeDuration)
+		return <motion.nav key={`${name}-from404`} className={name} {...navBarAnimeRender}>
+			<NavBarLink name={linkName} to='/' index={0}
+				content='[HOME]' />
+		</motion.nav>
 	}, [])
 
-	return <Routes>
-		<Route path='/' element={fromHome} index />
-		<Route path='/profile/*' element={fromProfil} />
-		<Route path='/characters' element={fromCharacters} />
-		<Route path='/leader' element={fromLeader} />
-		<Route path='/game' element={<GameInfos />} />
-		<Route path='*' element={from404} />
-	</Routes>
+	return <AnimatePresence mode='wait'>
+		{displayedElement}
+	</AnimatePresence>
 })
 export default NavBar

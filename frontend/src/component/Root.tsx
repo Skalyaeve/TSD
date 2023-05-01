@@ -1,7 +1,9 @@
-import React, { memo, useMemo, useCallback, useState, useEffect, useRef } from 'react'
+import React, { memo, useMemo, useEffect } from 'react'
 import { Routes, Route, useLocation, useNavigate } from 'react-router-dom'
-import { CSSTransition } from 'react-transition-group'
-import { NewBox, useToggle } from './utils.tsx'
+import { AnimatePresence, motion } from 'framer-motion'
+
+import { NewBox, useTgl } from './utils.tsx'
+import { bouncyPopUpByPx, fadeInOut } from './framerMotionAnime.tsx'
 import NavBar from './NavBar.tsx'
 import Chat from './Chat.tsx'
 import Matchmaker from './Matchmaker.tsx'
@@ -12,60 +14,40 @@ import Party from './Game.tsx'
 import Leader from './Leader.tsx'
 import ErrorPage from './ErrorPage.tsx'
 
-// --------LOGIN-BTN------------------------------------------------------- //
-interface LoginButtonProps {
-	setLoginBtn: React.Dispatch<React.SetStateAction<boolean>>
-	setLogged: React.Dispatch<React.SetStateAction<boolean>>
+// --------LOG-SCREEN------------------------------------------------------ //
+interface LogScreenProps {
+	loggedTgl: () => void
 }
-const LoginButton: React.FC<LoginButtonProps> = memo(({ setLoginBtn, setLogged }) => {
-	// ----VALUES----------------------------- //
-	const transitionTime = 300
-
-	// ----REFS------------------------------- //
-	const loginBtnRef = useRef(null)
-
-	// ----STATES----------------------------- //
-	const [transition, tglTransition] = useToggle(false)
-
-	// ----EFFECTS---------------------------- //
-	useEffect(() => {
-		const timer = setTimeout(() => tglTransition(), 150)
-		return () => clearTimeout(timer)
-	}, [])
-
+const LogScreen: React.FC<LogScreenProps> = memo(({ loggedTgl }) => {
 	// ----HANDLERS--------------------------- //
-	const login = useCallback(() => {
-		tglTransition()
-		setTimeout(() => {
-			setLoginBtn(false)
-			setLogged(true)
-		}, transitionTime)
-	}, [])
-
-	// ----HANDLERS--------------------------- //
-	const loginBtnHdl = useMemo(() => ({
-		onMouseUp: login
-	}), [])
+	const logBtnHdl = useMemo(() => ({
+		onMouseUp: loggedTgl
+	}), [loggedTgl])
 
 	// ----CLASSNAMES------------------------- //
-	const name = 'login-btn'
+	const loginBtnName = 'login-btn'
+	const logScreenMotionName = 'logScreen-motion'
 
 	// ----RENDER----------------------------- //
-	return <CSSTransition
-		nodeRef={loginBtnRef}
-		in={transition}
-		timeout={transitionTime}
-		classNames='opacity'
+	const bouncyPopUpByPxRender = bouncyPopUpByPx(325, 125)
+
+	return <motion.div
+		key={logScreenMotionName}
+		className={logScreenMotionName}
+		whileHover={{
+			scale: 1.025,
+			transition: { ease: 'easeInOut' }
+		}}
+		{...bouncyPopUpByPxRender}
 	>
 		<NewBox
 			tag='btn'
-			className={name}
-			nameIfPressed={`${name}--pressed`}
-			handlers={loginBtnHdl}
-			ref={loginBtnRef}
+			className={loginBtnName}
+			nameIfPressed={`${loginBtnName}--pressed`}
+			handlers={logBtnHdl}
 			content='[42Auth]'
 		/>
-	</CSSTransition>
+	</motion.div>
 })
 
 
@@ -76,8 +58,7 @@ const Root: React.FC = () => {
 	const navigate = useNavigate()
 
 	// ----STATES----------------------------- //
-	const [logged, setLogged] = useState(localStorage.getItem('logged') === '1')
-	const [loginBtn, setLoginBtn] = useState(logged ? false : true)
+	const [logged, loggedTgl] = useTgl(localStorage.getItem('logged') === '1')
 
 	// ----EFFECTS---------------------------- //
 	useEffect(() => {
@@ -85,42 +66,39 @@ const Root: React.FC = () => {
 	}, [logged])
 
 	useEffect(() => {
-		if (logged && localStorage.getItem('inGame') === '1')
-			navigate('/game')
+		if (logged && localStorage.getItem('inGame') === '1') navigate('/game')
 	}, [location.pathname])
 
-	// ----HANDLERS--------------------------- //
-	const logout = useCallback(() => {
-		setLogged(false)
-		setLoginBtn(true)
-	}, [])
-
-	const logoutBtnHdl = useMemo(() => ({
-		onMouseUp: logout
-	}), [])
+	// ----CLASSNAMES------------------------- //
+	const rootMotionName = 'root-motion'
 
 	// ----RENDER----------------------------- //
-	return <>
-		{loginBtn && <LoginButton
-			setLoginBtn={setLoginBtn}
-			setLogged={setLogged}
-		/>}
-		{logged && <>
+	const fadeInOutRender = useMemo(() => fadeInOut(1, 1), [])
+
+	return <AnimatePresence mode='wait'>
+		{!logged && <LogScreen loggedTgl={loggedTgl} />}
+		{logged && <motion.div
+			key={rootMotionName}
+			className={rootMotionName}
+			{...fadeInOutRender}>
+
 			<header className='header'>
-				<NavBar logoutBtnHdl={logoutBtnHdl} />
+				<NavBar loggedTgl={loggedTgl} />
 				<Chat />
 				<Matchmaker />
 			</header>
 
 			<Routes>
-				<Route path='/' element={<Home />} index />
+				<Route path='/' element={<Home />} />
 				<Route path='/profile/*' element={<Profile />} />
 				<Route path='/characters' element={<Characters />} />
 				<Route path='/leader' element={<Leader />} />
 				<Route path='/game' element={<Party />} />
 				<Route path='*' element={<ErrorPage code={404} />} />
 			</Routes>
-		</>}
-	</>
+
+		</motion.div>
+		}
+	</AnimatePresence>
 }
 export default Root

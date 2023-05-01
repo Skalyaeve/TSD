@@ -27,11 +27,18 @@ ex: ".navBar-logo--pressed {}"
 .leader {
 	/* #1 Elements */
 	overflow-y: auto;
+
+	/* #2 Form */
+	width: calc(100% - 10px);
+	height: calc(100% - 20px);
+
+	/* #3 Position */
+	align-self: center;
 }
 
 .leader-head {
 	/* #1 Elements */
-	border: 1px solid rgb(255, 239, 57);
+	border: 1px solid rgb(255, 255, 0);
 	border-bottom: none;
 	display: flex;
 	flex-direction: row-reverse;
@@ -46,7 +53,7 @@ ex: ".navBar-logo--pressed {}"
 
 .leader-input {
 	/* #1 Elements */
-	border: 1px solid rgb(255, 239, 57);
+	border: 1px solid rgb(255, 255, 0);
 
 	/* #2 Form */
 	width: 325px;
@@ -55,7 +62,7 @@ ex: ".navBar-logo--pressed {}"
 
 .leader-btn {
 	/* #1 Elements */
-	border: 1px solid rgb(255, 239, 57);
+	border: 1px solid rgb(255, 255, 0);
 
 	/* #2 Form */
 	width: 60px;
@@ -89,7 +96,7 @@ ex: ".navBar-logo--pressed {}"
 
 .leader-body {
 	/* #1 Elements */
-	border: 1px solid rgb(255, 239, 57);
+	border: 1px solid rgb(255, 255, 0);
 	overflow-y: auto;
 
 	/* #2 Form */
@@ -98,7 +105,7 @@ ex: ".navBar-logo--pressed {}"
 
 .leader-boardHead {
 	/* #1 Elements */
-	border-bottom: 1px solid rgb(255, 239, 57);
+	border-bottom: 1px solid rgb(255, 255, 0);
 	display: flex;
 
 	/* #2 Form */
@@ -112,7 +119,7 @@ ex: ".navBar-logo--pressed {}"
 .leader-col {
 	/* #1 Elements */
 	border: none;
-	border-right: 1px solid rgb(255, 239, 57);
+	border-right: 1px solid rgb(255, 255, 0);
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -147,7 +154,7 @@ ex: ".navBar-logo--pressed {}"
 
 .leader-usr-pic {
 	/* #1 Elements */
-	border: 1px solid rgb(255, 239, 57);
+	border: 1px solid rgb(255, 255, 0);
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -171,7 +178,7 @@ ex: ".navBar-logo--pressed {}"
 
 .leader-usr {
 	/* #1 Elements */
-	border-bottom: 1px solid rgb(255, 239, 57);
+	border-bottom: 1px solid rgb(255, 255, 0);
 	display: flex;
 
 	/* #2 Form */
@@ -180,5 +187,5 @@ ex: ".navBar-logo--pressed {}"
 
 .leader-btn--pressed {
 	/* #1 Elements */
-	background-color: rgb(255, 239, 57, 0.355);
+	background-color: rgb(255, 255, 0, 0.3);
 }

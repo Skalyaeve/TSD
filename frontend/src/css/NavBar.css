@@ -31,35 +31,41 @@ ex: ".navBar-logo--pressed {}"
 	grid-template-rows: minmax(50px, auto);
 	grid-auto-rows: minmax(75px, auto);
 
-	/* #5 Animations */
-	transition: height 300ms ease-in;
+	/* #3 Position */
+	z-index: 3;
+}
+
+.navBar-link-motion {
+	/* #1 Elements */
+	border: 1px solid rgb(200, 0, 0);
+	border-collapse: collapse;
 }
 
 .navBar-link {
 	/* #1 Elements */
-	border: 1px solid rgb(172, 0, 0);
-	border-top: none;
+	background-color: transparent;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-}
-
-.navBar-link:first-child {
-	/* #1 Elements */
-	border-top: 1px solid rgb(172, 0, 0);
 
 	/* #2 Form */
-	border-top-left-radius: 5px;
-	border-top-right-radius: 5px;
+	width: 100%;
+	height: 100%;
 }
 
-.navBar-link:last-child {
+.navBar-link-motion:first-child {
 	/* #2 Form */
-	border-bottom-left-radius: 5px;
-	border-bottom-right-radius: 5px;
+	border-top-left-radius: 5px !important;
+	border-top-right-radius: 5px !important;
+}
+
+.navBar-link-motion:last-child {
+	/* #2 Form */
+	border-bottom-left-radius: 5px !important;
+	border-bottom-right-radius: 5px !important;
 }
 
 .navBar-link--pressed {
 	/* #1 Elements */
-	background-color: rgb(172, 0, 0, 0.3);
+	background-color: rgb(200, 0, 0, 0.3);
 }

@@ -8,13 +8,19 @@ import './css/Root.css'
 
 const root = document.getElementById('root')
 const strictMode = false
+const testMode = false
+
+// import {} from ''
+const Test = React.memo(() => {
+	return <></>
+})
 
 if (root) {
 	if (strictMode) createRoot(root).render(
 		<React.StrictMode>
 			<DndProvider backend={HTML5Backend}>
 				<BrowserRouter>
-					<Root />
+					{testMode ? <Test /> : <Root />}
 				</BrowserRouter>
 			</DndProvider>
 		</React.StrictMode>
@@ -22,7 +28,7 @@ if (root) {
 	else createRoot(root).render(
 		<DndProvider backend={HTML5Backend}>
 			<BrowserRouter>
-				<Root />
+				{testMode ? <Test /> : <Root />}
 			</BrowserRouter>
 		</DndProvider>
 	)
