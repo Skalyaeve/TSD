@@ -38,7 +38,6 @@ ex: ".navBar-logo--pressed {}"
 .navBar-link-motion {
 	/* #1 Elements */
 	border: 1px solid rgb(200, 0, 0);
-	border-collapse: collapse;
 }
 
 .navBar-link {
@@ -55,14 +54,14 @@ ex: ".navBar-logo--pressed {}"
 
 .navBar-link-motion:first-child {
 	/* #2 Form */
-	border-top-left-radius: 5px !important;
-	border-top-right-radius: 5px !important;
+	border-top-left-radius: 5px;
+	border-top-right-radius: 5px;
 }
 
 .navBar-link-motion:last-child {
 	/* #2 Form */
-	border-bottom-left-radius: 5px !important;
-	border-bottom-right-radius: 5px !important;
+	border-bottom-left-radius: 5px;
+	border-bottom-right-radius: 5px;
 }
 
 .navBar-link--pressed {

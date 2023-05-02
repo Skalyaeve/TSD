@@ -1,29 +1,28 @@
-import React, { memo, useMemo, useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import { motion } from 'framer-motion'
 
-import { NewBox, tglOnOver } from './utils.tsx'
+import { FtBtn, FtDiv } from '../tsx-utils/ftSam/ftBox.tsx'
+import { tglOnUp } from '../tsx-utils/ftSam/ftHooks.tsx'
 
 // --------CHARACTER-BOX--------------------------------------------------- //
 interface CharBoxProps {
 	id: number
 	name: string
 }
-const CharBox: React.FC<CharBoxProps> = memo(({ id, name }) => {
+const CharBox: React.FC<CharBoxProps> = ({ id, name }) => {
 	// ----RENDER----------------------------- //
-	return <NewBox
-		tag='btn'
-		className={`${name}-box`}
-		nameIfPressed={`${name}-btn--pressed`}
+	return <FtBtn className={`${name}-box`}
+		pressedName={`${name}-btn--pressed`}
 		content={`[Character ${id}]`}
 	/>
-})
+}
 
 
 // --------CHARACTER------------------------------------------------------- //
 interface CharacterProps {
 	name: string
 }
-const Character: React.FC<CharacterProps> = memo(({ name }) => {
+const Character: React.FC<CharacterProps> = ({ name }) => {
 	// ----CLASSNAMES------------------------- //
 	const spellName = `${name}-spell`
 
@@ -39,37 +38,35 @@ const Character: React.FC<CharacterProps> = memo(({ name }) => {
 			</div>
 		</div>
 	</div>
-})
+}
 // --------SPELL----------------------------------------------------------- //
 interface SpellProps {
 	spellName: string
 	nameExt: string
 	content: string
 }
-const Spell: React.FC<SpellProps> = memo(({ spellName, nameExt, content }) => {
+const Spell: React.FC<SpellProps> = ({ spellName, nameExt, content }) => {
 	// ----STATES----------------------------- //
-	const [tooltip, toggleTooltip] = tglOnOver(false)
+	const [tooltip, tglTooltip] = tglOnUp(false)
 
 	// ----CLASSNAMES------------------------- //
 	const boxName = `${spellName}-box`
 
 	// ----RENDER----------------------------- //
 	return <div className={`${boxName}-${nameExt} ${boxName}`}>
-		<NewBox
-			tag='div'
-			className={`${spellName}-${nameExt} ${spellName}`}
-			handlers={toggleTooltip}
+		<FtDiv className={`${spellName}-${nameExt} ${spellName}`}
+			handler={tglTooltip}
 			content={content}
 		/>
 		{tooltip && <div className={`${spellName}-tooltip`}>
 			TOOLTIP
 		</div>}
 	</div>
-})
+}
 
 
 // --------CHARACTERS------------------------------------------------------ //
-const Characters: React.FC = memo(() => {
+const Characters: React.FC = () => {
 	// ----STATES----------------------------- //
 	const [totalCharacters, setTotalCharacters] = useState(9)
 
@@ -91,5 +88,5 @@ const Characters: React.FC = memo(() => {
 		</div>
 		<Character name={name} />
 	</motion.main>
-})
+}
 export default Characters
