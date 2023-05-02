@@ -6,11 +6,12 @@
 export const fadeInOut = (
 	inDuration: number = 0.5,
 	outDuration: number = inDuration,
-	initialOpacity: number = 0
+	initialOpacity: number = 0,
+	maxOpacity: number = 1
 ) => ({
 	initial: { opacity: initialOpacity },
 	animate: {
-		opacity: 1,
+		opacity: maxOpacity,
 		transition: { opacity: { duration: inDuration } }
 	},
 	exit: {
@@ -18,7 +19,6 @@ export const fadeInOut = (
 		transition: { opacity: { duration: outDuration } }
 	}
 })
-
 
 // ------------------------------------------------------------------------ //
 // --------FORM------------------------------------------------------------ //
@@ -28,12 +28,13 @@ export const fadeInOut = (
 export const popUp = (
 	inDuration: number = 0.5,
 	outDuration: number = inDuration,
-	initialOpacity: number = 0
+	initialOpacity: number = 0,
+	maxOpacity: number = 1
 ) => ({
 	initial: { scale: 0, opacity: initialOpacity },
 	animate: {
 		scale: 1,
-		opacity: 1,
+		opacity: maxOpacity,
 		transition: {
 			scale: { duration: inDuration },
 			opacity: { duration: inDuration }
@@ -48,18 +49,20 @@ export const popUp = (
 		}
 	}
 })
+
 export const popUpByPercent = (
 	width: number = 100,
 	height: number = 100,
 	inDuration: number = 0.5,
 	outDuration: number = inDuration,
-	initialOpacity: number = 0
+	initialOpacity: number = 0,
+	maxOpacity: number = 1
 ) => ({
 	initial: { width: 0, height: 0, opacity: initialOpacity },
 	animate: {
 		width: `${width}%`,
 		height: `${height}%`,
-		opacity: 1,
+		opacity: maxOpacity,
 		transition: {
 			width: { duration: inDuration },
 			height: { duration: inDuration },
@@ -77,18 +80,20 @@ export const popUpByPercent = (
 		}
 	}
 })
+
 export const popUpByPx = (
 	width: number,
 	height: number,
 	inDuration: number = 0.5,
 	outDuration: number = inDuration,
-	initialOpacity: number = 0
+	initialOpacity: number = 0,
+	maxOpacity: number = 1
 ) => ({
 	initial: { width: 0, height: 0, opacity: initialOpacity },
 	animate: {
 		width: `${width}px`,
 		height: `${height}px`,
-		opacity: 1,
+		opacity: maxOpacity,
 		transition: {
 			width: { duration: inDuration },
 			height: { duration: inDuration },
@@ -113,12 +118,13 @@ export const bouncyPopUp = (
 	maxAt: number = 0.75,
 	inDuration: number = 0.5,
 	outDuration: number = inDuration,
-	initialOpacity: number = 0
+	initialOpacity: number = 0,
+	maxOpacity: number = 1
 ) => ({
 	initial: { scale: 0, opacity: initialOpacity },
 	animate: {
 		scale: [0, maxScale, 1],
-		opacity: 1,
+		opacity: maxOpacity,
 		transition: {
 			scale: { duration: inDuration, times: [0, maxAt, 1] },
 			opacity: { duration: inDuration }
@@ -133,6 +139,7 @@ export const bouncyPopUp = (
 		}
 	}
 })
+
 export const bouncyPopUpByPercent = (
 	width: number = 100,
 	height: number = 100,
@@ -140,13 +147,14 @@ export const bouncyPopUpByPercent = (
 	maxAt: number = 0.75,
 	inDuration: number = 0.5,
 	outDuration: number = inDuration,
-	initialOpacity: number = 0
+	initialOpacity: number = 0,
+	maxOpacity: number = 1
 ) => ({
 	initial: { width: 0, height: 0, opacity: initialOpacity },
 	animate: {
 		width: ['0%', `${width + width * extraScale}%`, `${width}%`],
 		height: ['0%', `${height + height * extraScale}%`, `${height}%`],
-		opacity: 1,
+		opacity: maxOpacity,
 		transition: {
 			width: { duration: inDuration, times: [0, maxAt, 1] },
 			height: { duration: inDuration, times: [0, maxAt, 1] },
@@ -164,6 +172,7 @@ export const bouncyPopUpByPercent = (
 		}
 	}
 })
+
 export const bouncyPopUpByPx = (
 	width: number,
 	height: number,
@@ -171,13 +180,14 @@ export const bouncyPopUpByPx = (
 	maxAt: number = 0.75,
 	inDuration: number = 0.5,
 	outDuration: number = inDuration,
-	initialOpacity: number = 0
+	initialOpacity: number = 0,
+	maxOpacity: number = 1
 ) => ({
 	initial: { width: 0, height: 0, opacity: initialOpacity },
 	animate: {
 		width: ['0px', `${width + width * extraScale}px`, `${width}px`],
 		height: ['0px', `${height + height * extraScale}px`, `${height}px`],
-		opacity: 1,
+		opacity: maxOpacity,
 		transition: {
 			width: { duration: inDuration, times: [0, maxAt, 1] },
 			height: { duration: inDuration, times: [0, maxAt, 1] },
@@ -200,12 +210,13 @@ export const bouncyPopUpByPx = (
 export const heightGrow = (
 	inDuration: number = 0.5,
 	outDuration: number = inDuration,
-	initialOpacity: number = 0
+	initialOpacity: number = 0,
+	maxOpacity: number = 1
 ) => ({
 	initial: { scaleY: 0, opacity: initialOpacity },
 	animate: {
 		scaleY: 1,
-		opacity: 1,
+		opacity: maxOpacity,
 		transition: {
 			scaleY: { duration: inDuration },
 			opacity: { duration: inDuration }
@@ -220,16 +231,18 @@ export const heightGrow = (
 		}
 	}
 })
+
 export const heightGrowByPercent = (
 	height: number = 100,
 	inDuration: number = 0.5,
 	outDuration: number = inDuration,
-	initialOpacity: number = 0
+	initialOpacity: number = 0,
+	maxOpacity: number = 1
 ) => ({
 	initial: { height: 0, opacity: initialOpacity },
 	animate: {
 		height: `${height}%`,
-		opacity: 1,
+		opacity: maxOpacity,
 		transition: {
 			height: { duration: inDuration },
 			opacity: { duration: inDuration }
@@ -244,16 +257,18 @@ export const heightGrowByPercent = (
 		}
 	}
 })
+
 export const heightGrowByPx = (
 	height: number,
 	inDuration: number = 0.5,
 	outDuration: number = inDuration,
-	initialOpacity: number = 0
+	initialOpacity: number = 0,
+	maxOpacity: number = 1
 ) => ({
 	initial: { height: 0, opacity: initialOpacity },
 	animate: {
 		height: `${height}px`,
-		opacity: 1,
+		opacity: maxOpacity,
 		transition: {
 			height: { duration: inDuration },
 			opacity: { duration: inDuration }
@@ -275,12 +290,13 @@ export const bouncyHeightGrow = (
 	maxAt: number = 0.75,
 	inDuration: number = 0.5,
 	outDuration: number = inDuration,
-	initialOpacity: number = 0
+	initialOpacity: number = 0,
+	maxOpacity: number = 1
 ) => ({
 	initial: { scaleY: 0, opacity: initialOpacity },
 	animate: {
 		scaleY: [0, maxScale, 1],
-		opacity: 1,
+		opacity: maxOpacity,
 		transition: {
 			scaleY: { duration: inDuration, times: [0, maxAt, 1] },
 			opacity: { duration: inDuration }
@@ -295,6 +311,7 @@ export const bouncyHeightGrow = (
 		}
 	}
 })
+
 export const bouncyHeightGrowByPercent = (
 	height: number = 100,
 	extraScale: number = 0.1,
@@ -302,11 +319,12 @@ export const bouncyHeightGrowByPercent = (
 	inDuration: number = 0.5,
 	outDuration: number = inDuration,
 	initialOpacity: number = 0,
+	maxOpacity: number = 1,
 ) => ({
 	initial: { height: 0, opacity: initialOpacity },
 	animate: {
 		height: ['0%', `${height + height * extraScale}%`, `${height}%`],
-		opacity: 1,
+		opacity: maxOpacity,
 		transition: {
 			height: { duration: inDuration, times: [0, maxAt, 1] },
 			opacity: { duration: inDuration },
@@ -321,18 +339,20 @@ export const bouncyHeightGrowByPercent = (
 		}
 	}
 })
+
 export const bouncyHeightGrowByPx = (
 	height: number,
 	extraScale: number = 0.1,
 	maxAt: number = 0.75,
 	inDuration: number = 0.5,
 	outDuration: number = inDuration,
-	initialOpacity: number = 0
+	initialOpacity: number = 0,
+	maxOpacity: number = 1
 ) => ({
 	initial: { height: 0, opacity: initialOpacity },
 	animate: {
 		height: ['0px', `${height + height * extraScale}px`, `${height}px`],
-		opacity: 1,
+		opacity: maxOpacity,
 		transition: {
 			height: { duration: inDuration, times: [0, maxAt, 1] },
 			opacity: { duration: inDuration }
@@ -352,12 +372,13 @@ export const bouncyHeightGrowByPx = (
 export const widthGrow = (
 	inDuration: number = 0.5,
 	outDuration: number = inDuration,
-	initialOpacity: number = 0
+	initialOpacity: number = 0,
+	maxOpacity: number = 1
 ) => ({
 	initial: { scaleX: 0, opacity: initialOpacity },
 	animate: {
 		scaleX: 1,
-		opacity: 1,
+		opacity: maxOpacity,
 		transition: {
 			scaleX: { duration: inDuration },
 			opacity: { duration: inDuration }
@@ -372,16 +393,18 @@ export const widthGrow = (
 		}
 	}
 })
+
 export const widthGrowByPercent = (
 	width: number = 100,
 	inDuration: number = 0.5,
 	outDuration: number = inDuration,
-	initialOpacity: number = 0
+	initialOpacity: number = 0,
+	maxOpacity: number = 1
 ) => ({
 	initial: { width: 0, opacity: initialOpacity },
 	animate: {
 		width: `${width}%`,
-		opacity: 1,
+		opacity: maxOpacity,
 		transition: {
 			width: { duration: inDuration },
 			opacity: { duration: inDuration }
@@ -396,16 +419,18 @@ export const widthGrowByPercent = (
 		}
 	}
 })
+
 export const widthGrowByPx = (
 	width: number,
 	inDuration: number = 0.5,
 	outDuration: number = inDuration,
-	initialOpacity: number = 0
+	initialOpacity: number = 0,
+	maxOpacity: number = 1
 ) => ({
 	initial: { width: 0, opacity: initialOpacity },
 	animate: {
 		width: `${width}px`,
-		opacity: 1,
+		opacity: maxOpacity,
 		transition: {
 			width: { duration: inDuration },
 			opacity: { duration: inDuration }
@@ -427,12 +452,13 @@ export const bouncyWidthGrow = (
 	maxAt: number = 0.75,
 	inDuration: number = 0.5,
 	outDuration: number = inDuration,
-	initialOpacity: number = 0
+	initialOpacity: number = 0,
+	maxOpacity: number = 1
 ) => ({
 	initial: { scaleX: 0, opacity: initialOpacity },
 	animate: {
 		scaleX: [0, maxScale, 1],
-		opacity: 1,
+		opacity: maxOpacity,
 		transition: {
 			scaleX: { duration: inDuration, times: [0, maxAt, 1] },
 			opacity: { duration: inDuration }
@@ -447,18 +473,20 @@ export const bouncyWidthGrow = (
 		}
 	}
 })
+
 export const bouncyWidthGrowByPercent = (
 	width: number = 100,
 	extraScale: number = 0.1,
 	maxAt: number = 0.75,
 	inDuration: number = 0.5,
 	outDuration: number = inDuration,
-	initialOpacity: number = 0
+	initialOpacity: number = 0,
+	maxOpacity: number = 1
 ) => ({
 	initial: { width: 0, opacity: initialOpacity },
 	animate: {
 		width: ['0%', `${width + width * extraScale}%`, `${width}%`],
-		opacity: 1,
+		opacity: maxOpacity,
 		transition: {
 			width: { duration: inDuration, times: [0, maxAt, 1] },
 			opacity: { duration: inDuration }
@@ -473,18 +501,20 @@ export const bouncyWidthGrowByPercent = (
 		}
 	}
 })
+
 export const bouncyWidthGrowByPx = (
 	width: number,
 	extraScale: number = 0.1,
 	maxAt: number = 0.75,
 	inDuration: number = 0.5,
 	outDuration: number = inDuration,
-	initialOpacity: number = 0
+	initialOpacity: number = 0,
+	maxOpacity: number = 1
 ) => ({
 	initial: { width: 0, opacity: initialOpacity },
 	animate: {
 		width: ['0px', `${width + width * extraScale}px`, `${width}px`],
-		opacity: 1,
+		opacity: maxOpacity,
 		transition: {
 			width: { duration: inDuration, times: [0, maxAt, 1] },
 			opacity: { duration: inDuration }
@@ -500,7 +530,6 @@ export const bouncyWidthGrowByPx = (
 	}
 })
 
-
 // ------------------------------------------------------------------------ //
 // --------POSITION-------------------------------------------------------- //
 // ------------------------------------------------------------------------ //
@@ -510,11 +539,12 @@ export const comeFromCol = (
 	comeFrom: number,
 	inDuration: number = 0.5,
 	outDuration: number = inDuration,
-	initialOpacity: number = 0
+	initialOpacity: number = 0,
+	maxOpacity: number = 1
 ) => ({
 	initial: { opacity: initialOpacity, y: `${comeFrom}px` },
 	animate: {
-		opacity: 1,
+		opacity: maxOpacity,
 		y: 0,
 		transition: {
 			opacity: { duration: inDuration },
@@ -530,15 +560,17 @@ export const comeFromCol = (
 		}
 	}
 })
+
 export const comeFromRow = (
 	comeFrom: number,
 	inDuration: number = 0.5,
 	outDuration: number = inDuration,
-	initialOpacity: number = 0
+	initialOpacity: number = 0,
+	maxOpacity: number = 1
 ) => ({
 	initial: { opacity: initialOpacity, x: `${comeFrom}px` },
 	animate: {
-		opacity: 1,
+		opacity: maxOpacity,
 		x: 0,
 		transition: {
 			opacity: { duration: inDuration },
@@ -562,11 +594,12 @@ export const bouncyComeFromCol = (
 	maxAt: number = 0.75,
 	inDuration: number = 0.5,
 	outDuration: number = inDuration,
-	initialOpacity: number = 0
+	initialOpacity: number = 0,
+	maxOpacity: number = 1
 ) => ({
 	initial: { opacity: initialOpacity, y: `${comeFrom}px` },
 	animate: {
-		opacity: 1,
+		opacity: maxOpacity,
 		y: [`${comeFrom}px`, `-${bounce}px`, '0px'],
 		transition: {
 			opacity: { duration: inDuration },
@@ -582,17 +615,19 @@ export const bouncyComeFromCol = (
 		}
 	}
 })
+
 export const bouncyComeFromRow = (
 	comeFrom: number,
 	maxAt: number = 0.75,
 	bounce: number = 10,
 	inDuration: number = 0.5,
 	outDuration: number = inDuration,
-	initialOpacity: number = 0
+	initialOpacity: number = 0,
+	maxOpacity: number = 1
 ) => ({
 	initial: { opacity: initialOpacity, x: `${comeFrom}px` },
 	animate: {
-		opacity: 1,
+		opacity: maxOpacity,
 		x: [`${comeFrom}px`, `-${bounce}px`, '0px'],
 		transition: {
 			opacity: { duration: inDuration },
@@ -609,7 +644,6 @@ export const bouncyComeFromRow = (
 	}
 })
 
-
 // ------------------------------------------------------------------------ //
 // --------FORM+POSITION--------------------------------------------------- //
 // ------------------------------------------------------------------------ //
@@ -620,13 +654,14 @@ export const growingListElem = (
 	height: number,
 	inDuration: number = 0.5,
 	outDuration: number = inDuration,
-	initialOpacity: number = 0
+	initialOpacity: number = 0,
+	maxOpacity: number = 1
 ) => ({
 	initial: { height: 0, y: `${comeFrom}px`, opacity: initialOpacity },
 	animate: {
 		height: `${height}px`,
 		y: 0,
-		opacity: 1,
+		opacity: maxOpacity,
 		transition: {
 			height: { duration: inDuration },
 			y: { duration: inDuration },
@@ -653,13 +688,14 @@ export const bouncyGrowingListElem = (
 	maxAt: number = 0.75,
 	inDuration: number = 0.5,
 	outDuration: number = inDuration,
-	initialOpacity: number = 0
+	initialOpacity: number = 0,
+	maxOpacity: number = 1
 ) => ({
 	initial: { height: 0, y: `${comeFrom}px`, opacity: initialOpacity },
 	animate: {
 		height: ['0px', `${height + height * extraScale}px`, `${height}px`],
 		y: [`${comeFrom}px`, `-${height * 0.05}px`, '0px'],
-		opacity: 1,
+		opacity: maxOpacity,
 		transition: {
 			height: { duration: inDuration, times: [0, maxAt, 1] },
 			y: { duration: inDuration, times: [0, maxAt, 1] },

@@ -32,6 +32,9 @@ ex: ".navBar-logo--pressed {}"
 	width: 100%;
 	height: 100%;
 	border-radius: 5px;
+
+	/* #3 Position */
+	z-index: 3;
 }
 
 .matchmaker--pressed {
