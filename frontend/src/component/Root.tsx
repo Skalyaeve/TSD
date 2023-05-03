@@ -5,7 +5,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { NewBox, useTgl } from './utils.tsx'
 import { bouncyPopUpByPx, fadeInOut } from './framerMotionAnime.tsx'
 import NavBar from './NavBar.tsx'
-import Chat from './Chat.tsx'
+// import Chat from './Chat.tsx'
 import Matchmaker from './Matchmaker.tsx'
 import Home from './Home.tsx'
 import Profile from './Profile.tsx'
@@ -13,6 +13,10 @@ import Characters from './Characters.tsx'
 import Party from './Game.tsx'
 import Leader from './Leader.tsx'
 import ErrorPage from './ErrorPage.tsx'
+import ChatLink from './Chat/ChatLink.tsx'
+import Chat from './Chat/Chat.tsx'
+import { Link } from 'react-router-dom'
+
 
 // --------LOG-SCREEN------------------------------------------------------ //
 interface LogScreenProps {
@@ -84,7 +88,7 @@ const Root: React.FC = () => {
 
 			<header className='header'>
 				<NavBar loggedTgl={loggedTgl} />
-				<Chat />
+				<ChatLink />
 				<Matchmaker />
 			</header>
 
@@ -94,6 +98,7 @@ const Root: React.FC = () => {
 				<Route path='/characters' element={<Characters />} />
 				<Route path='/leader' element={<Leader />} />
 				<Route path='/game' element={<Party />} />
+				<Route path="/chat" element={<Chat name="Pieri"/>} />
 				<Route path='*' element={<ErrorPage code={404} />} />
 			</Routes>
 
