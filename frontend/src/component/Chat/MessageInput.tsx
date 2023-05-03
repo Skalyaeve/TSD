@@ -18,7 +18,6 @@ export default function MessageInput({send} : {send: (val: string) => void})
             value={value}
             />
             <button type="submit">Send</button>
-            {/* <button onClick={() => send(value)}>Send</button> */}
         </form>
     );
 }
