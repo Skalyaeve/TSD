@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import Phaser from 'phaser'
 import { Socket, io } from 'socket.io-client'
 
@@ -78,15 +78,9 @@ function Party() {
 	// Keyboard keys
 	let keys: keys
 
-	// Player list
-	let players: player[] = []
+	let players: { [key: string]: player } = {}
 
-	let p: { [key: string]: player } = {}
-
-	// Skin list
-	let skins: skin[] = []
-
-	let s: { [key: string]: skin } = {}
+	let skins: { [key: string]: skin } = {}
 
 	// Player self id
 	let myId: string
@@ -117,7 +111,7 @@ function Party() {
 
 	// Initialise all skins of the scene
 	function skinsInitialisation(scene: Phaser.Scene) {
-		s['player'] = {
+		skins['player'] = {
 			name: 'player',
 			nbFrames: 2,
 			xSize: 100,
@@ -126,7 +120,7 @@ function Party() {
 			runSheet: playerRun__Sheet,
 			scaleFactor: 1
 		}
-		s['mage'] = {
+		skins['mage'] = {
 			name: 'mage',
 			nbFrames: 8,
 			xSize: 250,
@@ -135,9 +129,9 @@ function Party() {
 			runSheet: mageRun__Sheet,
 			scaleFactor: 2.5
 		}
-		for (let skinName in s) {
-			scene.load.spritesheet(skinName + 'Idle', s[skinName].idleSheet, { frameWidth: s[skinName].xSize, frameHeight: s[skinName].ySize })
-			scene.load.spritesheet(skinName + 'Run', s[skinName].runSheet, { frameWidth: s[skinName].xSize, frameHeight: s[skinName].ySize })
+		for (let skinName in skins) {
+			scene.load.spritesheet(skinName + 'Idle', skins[skinName].idleSheet, { frameWidth: skins[skinName].xSize, frameHeight: skins[skinName].ySize })
+			scene.load.spritesheet(skinName + 'Run', skins[skinName].runSheet, { frameWidth: skins[skinName].xSize, frameHeight: skins[skinName].ySize })
 		}
 	}
 
@@ -145,8 +139,9 @@ function Party() {
 
 	// Create players for this scene
 	function createPlayer(playerId: string, scene: Phaser.Scene) {
-		let player: player = p[playerId]
-		let skin = s[player.skin]
+		let player: player = players[playerId]
+		let skin = skins[player.skin]
+		console.log("create x:", player.xPos, "y:", player.yPos)
 		let newSprite = scene.physics.add.sprite(player.xPos, player.yPos, player.skin + 'Idle')
 		newSprite.setScale(skin.scaleFactor, skin.scaleFactor).refreshBody()
 		newSprite.setBounce(1)
@@ -161,17 +156,17 @@ function Party() {
 
 	// Create animation for this scene
 	function createAnims(scene: Phaser.Scene) {
-		for (let skinName in s) {
+		for (let skinName in skins) {
 			scene.anims.create({
 				key: skinName + 'IdleAnim',
-				frames: scene.anims.generateFrameNumbers(skinName + 'Idle', { start: 0, end: s[skinName].nbFrames - 1 }),
-				frameRate: s[skinName].nbFrames,
+				frames: scene.anims.generateFrameNumbers(skinName + 'Idle', { start: 0, end: skins[skinName].nbFrames - 1 }),
+				frameRate: skins[skinName].nbFrames,
 				repeat: -1
 			})
 			scene.anims.create({
 				key: skinName + 'RunAnim',
-				frames: scene.anims.generateFrameNumbers(skinName + 'Run', { start: 0, end: s[skinName].nbFrames - 1 }),
-				frameRate: s[skinName].nbFrames,
+				frames: scene.anims.generateFrameNumbers(skinName + 'Run', { start: 0, end: skins[skinName].nbFrames - 1 }),
+				frameRate: skins[skinName].nbFrames,
 				repeat: -1
 			})
 		}
@@ -186,7 +181,7 @@ function Party() {
 
 	// Send player movements to the server
 	const sendPlayerStart = () => {
-		let self: player = p[myId]
+		let self: player = players[myId]
 		self.sprite?.play(self.skin + 'RunAnim')
 		socket.emit('playerStart')
 	}
@@ -196,7 +191,7 @@ function Party() {
 	}
 
 	const sendPlayerStop = () => {
-		let self: player = p[myId]
+		let self: player = players[myId]
 		self.sprite?.play(self.skin + 'IdleAnim')
 		socket.emit('playerStop')
 	}
@@ -204,8 +199,8 @@ function Party() {
 	/****** SCENE UPDATE ******/
 
 	function checkKeyInputs() {
-		let player: player = p[myId]
-		let skin: skin = s[player.skin]
+		let player: player = players[myId]
+		let skin: skin = skins[player.skin]
 		let endVelocityX: number = 0
 		let endVelocityY: number = 0
 		if (player && player.sprite && player.sprite.body) {
@@ -242,7 +237,8 @@ function Party() {
 		if (!creationQueue.length)
 			return
 		for (let queueId = 0; queueId < creationQueue.length; queueId++) {
-			createPlayer(p[creationQueue[queueId]].id, scene)
+			createPlayer(players[creationQueue[queueId]].id, scene)
+			console.log("Creating player", players[creationQueue[queueId]].id, "at x:", players[creationQueue[queueId]].xPos, "y:", players[creationQueue[queueId]].yPos)
 		}
 		//console.log("Creation queue is now empty")
 		creationQueue = []
@@ -252,8 +248,8 @@ function Party() {
 		if (!deletionQueue.length)
 			return
 		for (let queueId = 0; queueId < deletionQueue.length; queueId++) {
-			p[deletionQueue[queueId]].sprite?.destroy()
-			delete p[deletionQueue[queueId]]
+			players[deletionQueue[queueId]].sprite?.destroy()
+			delete players[deletionQueue[queueId]]
 		}
 		//console.log("Deletion queue is now empty")
 		deletionQueue = []
@@ -262,14 +258,14 @@ function Party() {
 	// Set player animations following moveState
 	function checkAnims() {
 		for (let queueId = 0; queueId < animationQueue.length; queueId++) {
-			p[animationQueue[queueId]].sprite?.play(p[animationQueue[queueId]].skin + p[animationQueue[queueId]].anim)
+			players[animationQueue[queueId]].sprite?.play(players[animationQueue[queueId]].skin + players[animationQueue[queueId]].anim)
 		}
 		animationQueue = []
 	}
 
 	function checkMove() {
 		for (let queueId of moveQueue) {
-			p[queueId].sprite?.setPosition(p[queueId].xPos, p[queueId].yPos)
+			players[queueId].sprite?.setPosition(players[queueId].xPos, players[queueId].yPos)
 		}
 		moveQueue = []
 	}
@@ -343,7 +339,7 @@ function Party() {
 		// Update the players list with the received data (when connecting for the first time)
 		socket.on('currentPlayers', (playersList: player[]) => {
 			for (let queueId = 0; queueId < playersList.length; queueId++) {
-				p[playersList[queueId].id] = playersList[queueId]
+				players[playersList[queueId].id] = playersList[queueId]
 				creationQueue[creationQueue.length] = playersList[queueId].id
 				animationQueue[animationQueue.length] = playersList[queueId].id
 				console.log("Added", playersList[queueId].id, "to animation list")
@@ -359,28 +355,28 @@ function Party() {
 
 		// Add a new player to the players list
 		socket.on('newPlayer', (player: player) => {
-			p[player.id] = player
+			players[player.id] = player
 			creationQueue[creationQueue.length] = player.id
 			animationQueue[animationQueue.length] = player.id
 			console.log("Added player to creation queue")
 		})
 
 		socket.on('playerStarted', (playerId: string) => {
-			p[playerId].anim = 'RunAnim'
+			players[playerId].anim = 'RunAnim'
 			animationQueue[animationQueue.length] = playerId
 			console.log("A player started:", playerId)
 		})
 
 		// Update the moved player's velocity in the players list
 		socket.on('playerMoved', (playerId: string, xPos: number, yPos: number) => {
-			p[playerId].xPos = xPos
-			p[playerId].yPos = yPos
+			players[playerId].xPos = xPos
+			players[playerId].yPos = yPos
 			moveQueue[moveQueue.length] = playerId
 			console.log("A player moved:", playerId)
 		})
 
 		socket.on('playerStoped', (playerId: string) => {
-			p[playerId].anim = 'IdleAnim'
+			players[playerId].anim = 'IdleAnim'
 			animationQueue[animationQueue.length] = playerId
 			console.log("A player stoped:", playerId)
 		})
@@ -394,7 +390,7 @@ function Party() {
 		return socket
 	}
 
-	useLayoutEffect(() => {
+	useEffect(() => {
 
 		createGame()
 

@@ -4,12 +4,10 @@ import { Server } from 'socket.io';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
-import { v4 as uuidv4 } from 'uuid';
 
 /* ------------------- FUNCTIONS ------------------- */
 
 let side = 'left'
-let ski
 
 function getSkin(skinName) {
 	let scaleFactor
@@ -34,8 +32,8 @@ function createNewPlayer(idStr) {
 	else side = 'left'
 	return {
 		id: idStr,
-		xPos: (side == 'left' ? 100 : 1820),
-		yPos: 100 + Math.random() * 880,
+		xPos: (side == 'left' ? 300 : 1620),
+		yPos: 250 + Math.random() * 580,
 		xDir: (side == 'left' ? 'right' : 'left'),
 		lastMove: 'none',
 		move: 'idle',
@@ -68,6 +66,7 @@ app.get('*', (req, res) => {
 	res.sendFile(path.join(__dirname, 'dist', 'index.html'));
 });
 
+// Start listening on specified port
 httpServer.listen(port, () => {
 	console.log(`Server listening on port ${port}`);
 });
@@ -77,31 +76,29 @@ const players = {};
 
 io.on('connection', (socket) => {
 	console.log(`Player connected: ${socket.id}`);
-
-	// Create a new player with a unique ID and initial position
-	const newPlayer = createNewPlayer(`${socket.id}`);
-
-	// Add the new player to the players object
-	players[socket.id] = newPlayer
-
-	// Send the current players list to the newly connected player
-	socket.emit('currentPlayers', Object.values(players));
-
 	// Send the player his own ID
 	socket.emit('ownID', `${socket.id}`)
 
+	// Create a new player with a unique ID and initial position
+	const newPlayer = createNewPlayer(`${socket.id}`);
+	// Add the new player to the players object
+	players[socket.id] = newPlayer
+	// Send the current players list to the newly connected player
+	socket.emit('currentPlayers', Object.values(players));
 	// Notify all clients about the new player
 	socket.broadcast.emit('newPlayer', newPlayer);
 
+	// When the player starts moving, notify other clients
 	socket.on('playerStart', () => {
 		socket.broadcast.emit('playerStarted', players[socket.id].id);
 	})
-	// When the player start moving, update its velocity and notify other clients
+	// When the player is moving, update its velocity and notify other clients
 	socket.on('playerMovement', (movementData) => {
+		players[socket.id].xPos = movementData.xPos
+		players[socket.id].yPos = movementData.yPos
 		socket.broadcast.emit('playerMoved', players[socket.id].id, movementData.xPos, movementData.yPos);
 	});
-
-	// When the player stop moving, update its velocity and notify other clients
+	// When the player stop moving, notify other clients
 	socket.on('playerStop', () => {
 		socket.broadcast.emit('playerStoped', players[socket.id].id)
 	})
