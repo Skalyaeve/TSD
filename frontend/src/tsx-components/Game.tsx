@@ -135,8 +135,8 @@ function Party() {
 		if (player) {
 			let newSprite = scene.physics.add.sprite(player.xPos, player.yPos, skins[player.skinId].name + 'Idle')
 			if (skins[player.skinId].name == 'mage') {
-				newSprite.body.setSize(50, 52)
-				newSprite.body.setOffset(100, 114)
+				/*newSprite.body.setSize(50, 52)
+				newSprite.body.setOffset(100, 114)*/
 				newSprite.setScale(2.5, 2.5).refreshBody()
 			}
 			newSprite.setBounce(1)
@@ -197,6 +197,7 @@ function Party() {
 			}
 		}
 		if (player) {
+			player.lastMove = player.move
 			if (allKeysUp())
 				player.move = 'idle'
 			else
@@ -251,7 +252,7 @@ function Party() {
 		for (let playerId = 0; playerId < players.length; playerId++) {
 			if (players[playerId].move != players[playerId].lastMove) {
 				if (players[playerId].move == 'run')
-					players[playerId].sprite?.play(skins[players[playerId].skinId].name + 'RunAnim')
+					players[playerId].sprite?.play(skins[players[playerId].skinId].name + 'IdleAnim')
 				else
 					players[playerId].sprite?.play(skins[players[playerId].skinId].name + 'IdleAnim')
 			}
@@ -267,7 +268,7 @@ function Party() {
 				if (players[playerId].id == moveQueue[queueId] && players[playerId].id != myId) {
 					players[playerId].sprite?.setPosition(players[playerId].xMov, players[playerId].yMov)
 					if (players[playerId].move == 'run' && players[playerId].lastMove == 'idle')
-						players[playerId].sprite?.play(skins[players[playerId].skinId].name + 'RunAnim')
+						players[playerId].sprite?.play(skins[players[playerId].skinId].name + 'IdleAnim')
 					else if (players[playerId].move == 'idle' && players[playerId].lastMove == 'run')
 						players[playerId].sprite?.play(skins[players[playerId].skinId].name + 'IdleAnim')
 					console.log("Moved player ", players[playerId].id, " xv: ", players[playerId].xMov, " yv: ", players[playerId].yMov)
