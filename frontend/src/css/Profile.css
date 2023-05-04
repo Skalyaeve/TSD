@@ -20,13 +20,13 @@ ex: ".navBar-logo--pressed {}"
 #2 Form
 #3 Position
 #4 Margin - Padding
+#5 Animations
 --------------------------------- */
 
 /* ---BTN------------------------ */
 .profile-btn {
 	/* #1 Elements */
 	border: 1px solid rgb(255, 239, 57);
-	font-size: 15px;
 
 	/* #2 Form */
 	width: 35px;
@@ -143,7 +143,6 @@ ex: ".navBar-logo--pressed {}"
 	/* #1 Elements */
 	border: 1px solid rgb(255, 239, 57);
 	border-bottom: none;
-	font-size: 24px;
 	text-align: center;
 	display: flex;
 	align-items: center;
@@ -187,6 +186,18 @@ ex: ".navBar-logo--pressed {}"
 }
 
 /* ---FRIENDS-------------------- */
+.profile-friends {
+	/* #1 Elements */
+	overflow-y: auto;
+
+	/* #2 Form */
+	width: calc(100% - 10px);
+	height: calc(100% - 20px);
+
+	/* #3 Position */
+	align-self: center;
+}
+
 .profile-friends-head {
 	/* #1 Elements */
 	border: 1px solid rgb(255, 239, 57);
@@ -236,7 +247,6 @@ ex: ".navBar-logo--pressed {}"
 	height: 6%;
 
 	/* #3 Position */
-	z-index: 1;
 	position: sticky;
 	top: 0;
 }
@@ -249,7 +259,6 @@ ex: ".navBar-logo--pressed {}"
 .profile-friends-col {
 	/* #1 Elements */
 	border-right: 1px solid rgb(255, 239, 57);
-	font-size: 17px;
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -263,11 +272,6 @@ ex: ".navBar-logo--pressed {}"
 	/* #1 Elements */
 	border: none;
 	border-right: 1px solid rgb(255, 239, 57);
-}
-
-.profile-friends-col-body {
-	/* #1 Elements */
-	font-size: 30px;
 }
 
 .profile-friends-col-name {
@@ -292,7 +296,6 @@ ex: ".navBar-logo--pressed {}"
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	font-size: 17px;
 
 	/* #2 Form */
 	width: 100%;
@@ -343,8 +346,7 @@ ex: ".navBar-logo--pressed {}"
 
 .profile-friend-pic {
 	/* #1 Elements */
-	border: 1px solid rgb(255, 239, 57);
-	font-size: 17px;
+	border: 1px solid rgb(255, 255, 0);
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -360,7 +362,6 @@ ex: ".navBar-logo--pressed {}"
 .profile-friend-link {
 	/* #1 Elements */
 	background-color: transparent;
-	font-size: 17px;
 
 	/* #4 Margin - Padding */
 	margin-left: 10px;
@@ -372,168 +373,8 @@ ex: ".navBar-logo--pressed {}"
 	right: 10px;
 }
 
-/* ---CHARACTERS----------------- */
-.profile-characters {
-	/* #1 Elements */
-	display: flex;
-}
-
-.profile-characters-select {
-	/* #1 Elements */
-	border: 1px solid rgb(255, 239, 57);
-	border-right: none;
-	display: grid;
-	grid-template-columns: 1fr 1fr 1fr;
-	grid-template-rows: 1fr 1fr 1fr;
-	align-items: center;
-
-	/* #2 Form */
-	width: 60%;
-	height: 100%;
-}
-
-.profile-character {
-	/* #1 Elements */
-	border: 1px solid rgb(255, 239, 57);
-
-	/* #2 Form */
-	width: 40%;
-	height: 100%;
-}
-
-.profile-characterBox {
-	/* #1 Elements */
-	border: 1px solid rgb(255, 239, 57);
-
-	/* #2 Form */
-	width: 145px;
-	height: 145px;
-
-	/* #3 Position */
-	justify-self: center;
-}
-
-.profile-character-skin {
-	/* #1 Elements */
-	border-bottom: 1px solid rgb(255, 239, 57);
-	display: flex;
-	align-items: center;
-	justify-content: center;
-
-	/* #2 Form */
-	height: 40%;
-}
-
-.profile-character-infos {
-	/* #1 Elements */
-	display: flex;
-	position: relative;
-
-	/* #2 Form */
-	height: 60%;
-}
-
-.profile-character-stats {
-	/* #1 Elements */
-	border-bottom: 1px solid rgb(255, 239, 57);
-	border-right: 1px solid rgb(255, 239, 57);
-	display: flex;
-	align-items: center;
-	justify-content: center;
-
-	/* #2 Form */
-	height: 60%;
-	width: 50%;
-
-	/* #3 Position */
-	position: absolute;
-}
-
-.profile-character-story {
-	/* #1 Elements */
-	border-bottom: 1px solid rgb(255, 239, 57);
-	display: flex;
-	align-items: center;
-	justify-content: center;
-
-	/* #2 Form */
-	height: 60%;
-	width: 50%;
-
-	/* #3 Position */
-	position: absolute;
-	right: 0;
-}
-
-.profile-character-spells {
-	/* #1 Elements */
-	display: grid;
-	grid-template-columns: 1fr 1fr;
-	grid-template-rows: 1fr;
-	align-items: center;
-
-	/* #2 Form */
-	height: 40%;
-	width: 100%;
-
-	/* #3 Position */
-	position: absolute;
-	bottom: 0;
-}
-
-.profile-character-spell-box {
-	/* #1 Elements */
-	background-color: transparent;
-	display: flex;
-	flex-direction: column-reverse;
-	align-items: flex-end;
-	position: relative;
-
-	/* #3 Position */
-	justify-self: center;
-}
-
-.profile-character-spell-box-A {
-	/* #4 Margin - Padding */
-	margin-left: 10px;
-}
-
-.profile-character-spell-box-B {
-	/* #4 Margin - Padding */
-	margin-right: 10px;
-}
-
-.profile-character-spell {
-	/* #1 Elements */
-	border: 1px solid rgb(255, 239, 57);
-	display: flex;
-	align-items: center;
-	justify-content: center;
-
-	/* #2 Form */
-	height: 125px;
-	width: 125px;
-}
-
-.profile-character-spell-tooltip {
-	/* #1 Elements */
-	border: 1px solid rgb(255, 239, 57);
-	display: flex;
-	align-items: center;
-	justify-content: center;
-
-	/* #2 Form */
-	height: 200px;
-	width: 300px;
-
-	/* #3 Position */
-	position: absolute;
-	right: 0;
-	bottom: 130px;
-}
-
 /* ---BTN-PRESSED---------------- */
 .profile-btn--pressed {
 	/* #1 Elements */
-	background-color: rgb(255, 239, 57, 0.355);
+	background-color: rgb(255, 255, 0, 0.3);
 }

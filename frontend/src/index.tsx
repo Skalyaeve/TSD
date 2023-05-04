@@ -3,18 +3,23 @@ import { BrowserRouter } from 'react-router-dom'
 import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
 import { createRoot } from 'react-dom/client'
-import Root from './component/Root.tsx'
+import Root from './tsx-components/Root.tsx'
 import './css/Root.css'
 
 const root = document.getElementById('root')
 const strictMode = false
+const testMode = false
+
+const Test = () => {
+	return <></>
+}
 
 if (root) {
 	if (strictMode) createRoot(root).render(
 		<React.StrictMode>
 			<DndProvider backend={HTML5Backend}>
 				<BrowserRouter>
-					<Root />
+					{testMode ? <Test /> : <Root />}
 				</BrowserRouter>
 			</DndProvider>
 		</React.StrictMode>
@@ -22,7 +27,7 @@ if (root) {
 	else createRoot(root).render(
 		<DndProvider backend={HTML5Backend}>
 			<BrowserRouter>
-				<Root />
+				{testMode ? <Test /> : <Root />}
 			</BrowserRouter>
 		</DndProvider>
 	)

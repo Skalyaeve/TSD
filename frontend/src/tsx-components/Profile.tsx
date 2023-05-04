@@ -1,10 +1,13 @@
-import React, { memo, useMemo, useCallback, useState } from 'react'
-import { Routes, Route } from 'react-router-dom'
-import { NewBox, Input, toggleOnOver, toggleOnUp } from './utils.tsx'
+import React, { useMemo, useCallback, useState, useEffect } from 'react'
+import { Routes, Route, useLocation } from 'react-router-dom'
+import { AnimatePresence, motion } from 'framer-motion'
+
+import { FtBtn, FtDiv, FtInput } from '../tsx-utils/ftSam/ftBox.tsx'
+import { tglOnOver, tglOnUp } from '../tsx-utils/ftSam/ftHooks.tsx'
 import ErrorPage from './ErrorPage.tsx'
 
 // --------INFOS----------------------------------------------------------- //
-const Infos: React.FC = memo(() => {
+const Infos: React.FC = () => {
 	// ----CLASSNAMES------------------------- //
 	const name = 'profile'
 	const accountInfosName = `${name}-accountInfos`
@@ -13,9 +16,15 @@ const Infos: React.FC = memo(() => {
 	const historyName = `${name}-history`
 
 	// ----RENDER----------------------------- //
-	return <main className={`${name}-infos main`}>
+	return <motion.div
+		key={`${name}-infos main`}
+		className={`${name}-infos main`}
+		initial={{ opacity: 0 }}
+		animate={{ opacity: 1 }}
+		exit={{ opacity: 0 }}
+	>
 		<div className={accountInfosName}>
-			<AccountInfos name={accountInfosName} />
+			<AccountInfos className={accountInfosName} />
 		</div>
 		<div className={achievementName}>
 			<Achievements name={achievementName} />
@@ -26,22 +35,78 @@ const Infos: React.FC = memo(() => {
 		<div className={historyName}>
 			<History name={historyName} />
 		</div>
-	</main>
-})
-// --------ACCOUNT-INFOS--------------------------------------------------- //
-interface AccountInfosProps {
-	name: string
+	</motion.div>
 }
-const AccountInfos: React.FC<AccountInfosProps> = memo(({ name }) => {
+
+
+// --------ACCOUNT-INFOS---------------------------------    ------------------ //
+interface AccountInfosProps {
+	className: string
+}
+const AccountInfos: React.FC<AccountInfosProps> = ({ className }) => {
+	// ----RENDER----------------------------- //
 	return <>
-		<div className={`${name}-pic`}>PP</div>
+		<div className={className + '-pic'}>
+			<ProfilePicture />
+		</div >
 	</>
-})
+}
+// --------PP-------------------------------------------------------------- //
+const ProfilePicture: React.FC = () => {
+	// ----STATES----------------------------- //
+	const [profilePicture, setProfilePicture] = useState<string>('')
+	const [loading, setLoading] = useState<boolean>(true)
+
+	// ----EFFECTS---------------------------- //
+	useEffect(() => {
+		const blobToBase64 = (blob: Blob): Promise<string> => {
+			return new Promise((resolve, reject) => {
+				const reader = new FileReader()
+				reader.onerror = reject
+				reader.onload = () => resolve(reader.result as string)
+				reader.readAsDataURL(blob)
+			})
+		}
+
+		const fetchData = async () => {
+			try {
+				const userId = 'users/0'
+				const response = await fetch(`http://10.11.12.2:3000/${userId}`)
+				if (response.ok) {
+					// const blob = await response.blob()
+					// const base64Image = await blobToBase64(blob)
+					const txt = await response.text()
+					setProfilePicture(txt)
+					setLoading(false)
+				} else {
+					console.error(`[ERROR] fetch('http://10.11.12.2:3000/${userId}') failed`)
+					setLoading(false)
+				}
+			} catch (error) {
+				console.error('[ERROR] ', error)
+				setLoading(false)
+			}
+		}
+
+		fetchData()
+	}, [])
+
+	// ----RENDER----------------------------- //
+	return <>
+		{loading ?
+			<>Chargement en cours...</>
+			:
+			<>{profilePicture}</>
+		}
+	</>
+}
+
+
 // --------ACHIEVEMENTS---------------------------------------------------- //
 interface AchievementsProps {
 	name: string
 }
-const Achievements: React.FC<AchievementsProps> = memo(({ name }) => {
+const Achievements: React.FC<AchievementsProps> = ({ name }) => {
 	// ----STATES----------------------------- //
 	const [count, setCount] = useState(18)
 
@@ -52,19 +117,19 @@ const Achievements: React.FC<AchievementsProps> = memo(({ name }) => {
 
 	return <>
 		<div className={`${name}-count`}>
-			Achievements
+			ACHIEVEMENTS
 		</div>
 		<div className={`${name}-list`}>
 			{render}
 		</div>
 	</>
-})
+}
 // --------ACHIEVEMENT----------------------------------------------------- //
 interface AchievementProps {
 	id: number
 	name: string
 }
-const Achievement: React.FC<AchievementProps> = memo(({ id, name }) => {
+const Achievement: React.FC<AchievementProps> = ({ id, name }) => {
 	// ----STATES----------------------------- //
 	const [tooltip, setTooltip] = useState(false)
 	const [tooltipPos, setTooltipPos] = useState({ top: 0, left: 0 })
@@ -72,7 +137,7 @@ const Achievement: React.FC<AchievementProps> = memo(({ id, name }) => {
 	// ----HANDLERS--------------------------- //
 	const toggleTooltip = useCallback((event: React.MouseEvent<HTMLDivElement>) => {
 		if (event.type === 'mouseenter') {
-			const rect = event.currentTarget.getBoundingClientRect();
+			const rect = event.currentTarget.getBoundingClientRect()
 			setTooltipPos({
 				top: window.scrollY + rect.top - 205,
 				left: window.scrollX + rect.left,
@@ -88,10 +153,8 @@ const Achievement: React.FC<AchievementProps> = memo(({ id, name }) => {
 
 	// ----RENDER----------------------------- //
 	return <>
-		<NewBox
-			tag='div'
-			className={name}
-			handlers={unitHdl}
+		<FtDiv className={name}
+			handler={unitHdl}
 			content='UNIT'
 		/>
 		{tooltip && <div className={`${name}-tooltip`}
@@ -99,12 +162,14 @@ const Achievement: React.FC<AchievementProps> = memo(({ id, name }) => {
 			TOOLTIP
 		</div>}
 	</>
-})
+}
+
+
 // --------HISTORY--------------------------------------------------------- //
 interface HistoryProps {
 	name: string
 }
-const History: React.FC<HistoryProps> = memo(({ name }) => {
+const History: React.FC<HistoryProps> = ({ name }) => {
 	// ----STATES----------------------------- //
 	const [count, setCount] = useState(20)
 
@@ -114,22 +179,22 @@ const History: React.FC<HistoryProps> = memo(({ name }) => {
 	)), [count])
 
 	return <>{render}</>
-})
+}
 // --------MATCH----------------------------------------------------------- //
 interface MatchProps {
 	id: number
 	name: string
 }
-const Match: React.FC<MatchProps> = memo(({ id, name }) => {
+const Match: React.FC<MatchProps> = ({ id, name }) => {
 	// ----RENDER----------------------------- //
 	return <div className={`${name}-match`}>
-		Match #{id}
+		MATCH #{id}
 	</div>
-})
+}
 
 
 // --------FRIENDS--------------------------------------------------------- //
-const Friends: React.FC = memo(() => {
+const Friends: React.FC = () => {
 	// ----STATES----------------------------- //
 	const [friendsCount, setFriendsCount] = useState(20)
 
@@ -154,27 +219,28 @@ const Friends: React.FC = memo(() => {
 		/>
 	)), [friendsCount])
 
-	const listHeadBox = useMemo(() => (nameExt: string, content: string) => <NewBox
-		tag='btn'
-		className={`${colName}-${nameExt} ${colName}-head ${colName} ${btnName}`}
-		nameIfPressed={btnPressedName}
-		content={content}
-	/>, [])
+	const listHeadBox = useMemo(() => (nameExt: string, content: string) => (
+		<FtBtn className={`${colName}-${nameExt} ${colName}-head ${colName} ${btnName}`}
+			pressedName={btnPressedName}
+			content={content}
+		/>
+	), [])
 
-	return <main className={`${mainName} main`}>
+	return <motion.main className={`${mainName} main`}
+		initial={{ opacity: 0 }}
+		animate={{ opacity: 1 }}
+		exit={{ opacity: 0 }}
+	>
 		<div className={`${mainName}-head`}>
-			<NewBox
-				tag='btn'
-				className={`${inputName}-btn ${btnName}`}
-				nameIfPressed={btnPressedName}
+			<FtBtn className={`${inputName}-btn ${btnName}`}
+				pressedName={btnPressedName}
 				content='[ADD]'
 			/>
-			<Input name={inputName} />
+			<FtInput name={inputName} />
 		</div>
 		<div className={listName}>
 			<div className={`${listName}-head`}>
-				<FriendSearch
-					name={name}
+				<FriendSearch name={name}
 					colName={colName}
 					btnName={btnName}
 					btnPressedName={btnPressedName}
@@ -189,8 +255,8 @@ const Friends: React.FC = memo(() => {
 				{renderFriends}
 			</div>
 		</div>
-	</main >
-})
+	</motion.main >
+}
 // --------FRIEND-SEARCH--------------------------------------------------- //
 interface FriendSearchProps {
 	name: string
@@ -198,12 +264,12 @@ interface FriendSearchProps {
 	btnName: string
 	btnPressedName: string
 }
-const FriendSearch: React.FC<FriendSearchProps> = memo(({
+const FriendSearch: React.FC<FriendSearchProps> = ({
 	name, colName, btnName, btnPressedName
 }) => {
 	// ----STATES----------------------------- //
-	const [searchBtn, toggleSearchBtn] = toggleOnOver(false)
-	const [searchin, toggleSearchin] = toggleOnUp(false)
+	const [searchBtn, toggleSearchBtn] = tglOnOver(false)
+	const [searchin, toggleSearchin] = tglOnUp(false)
 
 	// ----CLASSNAMES------------------------- //
 	const searchName = `${name}-friend-search`
@@ -211,34 +277,28 @@ const FriendSearch: React.FC<FriendSearchProps> = memo(({
 
 	// ----RENDER----------------------------- //
 	const childBtnContent = useMemo(() => (!searchin ?
-		<NewBox
-			tag='div'
-			className={searchName}
-			nameIfPressed={btnPressedName}
+		<FtDiv className={searchName}
+			pressedName={btnPressedName}
 			content='[NAME]'
 		/>
 		:
-		<Input name={inputName} />
+		<FtInput name={inputName} />
 	), [searchin])
 
 	const boxContent = useMemo(() => <>
 		{childBtnContent}
-		{(searchBtn || searchin) && <NewBox
-			tag='div'
-			className={`${searchName}-btn ${btnName}`}
-			nameIfPressed={btnPressedName}
-			handlers={toggleSearchin}
+		{(searchBtn || searchin) && <FtDiv className={`${searchName}-btn ${btnName}`}
+			pressedName={btnPressedName}
+			handler={toggleSearchin}
 			content={searchin ? '[X]' : '[S]'}
 		/>}
 	</>, [childBtnContent, searchBtn, searchin])
 
-	return <NewBox
-		tag='div'
-		className={`${colName}-name ${colName}-head ${colName} ${btnName}`}
-		handlers={toggleSearchBtn}
+	return <FtDiv className={`${colName}-name ${colName}-head ${colName} ${btnName}`}
+		handler={toggleSearchBtn}
 		content={boxContent}
 	/>
-})
+}
 // --------FRIEND---------------------------------------------------------- //
 interface FriendProps {
 	id: number
@@ -247,7 +307,7 @@ interface FriendProps {
 	btnName: string
 	btnPressedName: string
 }
-const Friend: React.FC<FriendProps> = memo(({
+const Friend: React.FC<FriendProps> = ({
 	id, name, colName, btnName, btnPressedName
 }) => {
 	// ----RENDER----------------------------- //
@@ -269,7 +329,7 @@ const Friend: React.FC<FriendProps> = memo(({
 		{friendBox('ratio', '0')}
 		{friendBox('scored', '0')}
 	</div>
-})
+}
 // --------FRIEND-NAME----------------------------------------------------- //
 interface FriendNameProps {
 	name: string
@@ -277,11 +337,11 @@ interface FriendNameProps {
 	btnName: string
 	btnPressedName: string
 }
-const FriendName: React.FC<FriendNameProps> = memo(({
+const FriendName: React.FC<FriendNameProps> = ({
 	name, btnName, btnPressedName, colName
 }) => {
 	// ----STATES----------------------------- //
-	const [delBtn, toggleDelBtn] = toggleOnOver(false)
+	const [delBtn, toggleDelBtn] = tglOnOver(false)
 
 	// ----RENDER----------------------------- //
 	const btnContent = useMemo(() => <>
@@ -290,122 +350,35 @@ const FriendName: React.FC<FriendNameProps> = memo(({
 	</>, [])
 
 	const boxContent = useMemo(() => <>
-		<NewBox
-			tag='btn'
-			className={`${name}-name`}
-			nameIfPressed={btnPressedName}
+		<FtBtn className={`${name}-name`}
+			pressedName={btnPressedName}
 			content={btnContent}
 		/>
-		{delBtn === true && <NewBox
-			tag='btn'
-			className={`${name}-del-btn ${btnName}`}
-			nameIfPressed={btnPressedName}
+		{delBtn === true && <FtBtn className={`${name}-del-btn ${btnName}`}
+			pressedName={btnPressedName}
 			content='[X]'
 		/>}
 	</>, [delBtn])
 
-	return <NewBox
-		tag='div'
-		className={`${colName}-name ${colName}-body ${colName}`}
-		handlers={toggleDelBtn}
+	return <FtDiv className={`${colName}-name ${colName}-body ${colName}`}
+		handler={toggleDelBtn}
 		content={boxContent}
 	/>
-})
-
-
-// --------CHARACTERS------------------------------------------------------ //
-const Characters: React.FC = memo(() => {
-	// ----STATES----------------------------- //
-	const [totalCharacters, setTotalCharacters] = useState(9)
-
-	// ----CLASSNAMES------------------------- //
-	const name = 'profile'
-	const boxName = `${name}-characters`
-
-	// ----RENDER----------------------------- //
-	const renderFriends = useMemo(() => Array.from({ length: totalCharacters }, (_, index) => (
-		<CharBox key={index + 1} id={index + 1} name={name} />
-	)), [totalCharacters])
-
-	return <main className={`${boxName} main`}>
-		<div className={`${boxName}-select`}>
-			{renderFriends}
-		</div>
-		<Character name={name} />
-	</main>
-})
-// --------CHARACTER-BOX--------------------------------------------------- //
-interface CharBoxProps {
-	id: number
-	name: string
 }
-const CharBox: React.FC<CharBoxProps> = memo(({ id, name }) => {
-	// ----RENDER----------------------------- //
-	return <NewBox
-		tag='btn'
-		className={`${name}-characterBox`}
-		nameIfPressed={`${name}-btn--pressed`}
-		content={`[Character ${id}]`}
-	/>
-})
-// --------CHARACTER------------------------------------------------------- //
-interface CharacterProps {
-	name: string
-}
-const Character: React.FC<CharacterProps> = memo(({ name }) => {
-	// ----CLASSNAMES------------------------- //
-	const boxName = `${name}-character`
-	const spellName = `${boxName}-spell`
-
-	// ----RENDER----------------------------- //
-	return <div className={boxName}>
-		<div className={`${boxName}-skin`}>SKIN</div>
-		<div className={`${boxName}-infos`}>
-			<div className={`${boxName}-stats`}>STATS</div>
-			<div className={`${boxName}-story`}>STORY</div>
-			<div className={`${spellName}s`}>
-				<Spell spellName={spellName} nameExt='A' content='ACTIVE' />
-				<Spell spellName={spellName} nameExt='B' content='PASSIVE' />
-			</div>
-		</div>
-	</div>
-})
-// --------SPELL----------------------------------------------------------- //
-interface SpellProps {
-	spellName: string
-	nameExt: string
-	content: string
-}
-const Spell: React.FC<SpellProps> = memo(({ spellName, nameExt, content }) => {
-	// ----STATES----------------------------- //
-	const [tooltip, toggleTooltip] = toggleOnOver(false)
-
-	// ----CLASSNAMES------------------------- //
-	const boxName = `${spellName}-box`
-
-	// ----RENDER----------------------------- //
-	return <div className={`${boxName}-${nameExt} ${boxName}`}>
-		<NewBox
-			tag='div'
-			className={`${spellName}-${nameExt} ${spellName}`}
-			handlers={toggleTooltip}
-			content={content}
-		/>
-		{tooltip && <div className={`${spellName}-tooltip`}>
-			TOOLTIP
-		</div>}
-	</div>
-})
 
 
 // --------PROFILE--------------------------------------------------------- //
-const Profile: React.FC = memo(() => {
+const Profile: React.FC = () => {
+	// ----LOCATION--------------------------- //
+	const location = useLocation()
+
 	// ----RENDER----------------------------- //
-	return <Routes>
-		<Route path='/' element={<Infos />} />
-		<Route path='/friends' element={<Friends />} />
-		<Route path='/characters' element={<Characters />} />
-		<Route path='*' element={<ErrorPage code={404} />} />
-	</Routes>
-})
+	return <AnimatePresence mode='wait'>
+		<Routes location={location} key={location.pathname}>
+			<Route path='/' element={<Infos />} />
+			<Route path='/friends' element={<Friends />} />
+			<Route path='*' element={<ErrorPage code={404} />} />
+		</Routes>
+	</AnimatePresence>
+}
 export default Profile

@@ -1,0 +1,191 @@
+/* ---------------------------------
+Méthodologie B-E--M (Bloc, Elément, Modifieur)
+
+Block: Un composant indépendant
+ex: Un bouton, une barre de navigation, un en-tête...
+ex: ".navBar {}"
+ex: ".button {}"
+
+Element: Une partie d'un Block qui a un sens uniquement dans le contexte de ce Block.
+ex: ".navBar-logo {}"
+ex: ".button-icon {}"
+
+Modifier: Une variation ou un état d'un Block ou d'un élément. 
+ex: ".button--large {}"
+ex: ".navBar-logo--pressed {}"
+--------------------------------- */
+
+/* ---------------------------------
+#1 Elements
+#2 Form
+#3 Position
+#4 Margin - Padding
+#5 Animations
+--------------------------------- */
+
+/* ---CHARACTERS----------------- */
+.characters {
+	/* #1 Elements */
+	display: flex;
+
+	/* #2 Form */
+	width: calc(100% - 10px);
+	height: calc(100% - 20px);
+
+	/* #3 Position */
+	align-self: center;
+}
+
+.characters-select {
+	/* #1 Elements */
+	border: 1px solid rgb(255, 255, 0);
+	border-right: none;
+	display: grid;
+	grid-template-columns: 1fr 1fr 1fr;
+	grid-template-rows: 1fr 1fr 1fr;
+	align-items: center;
+
+	/* #2 Form */
+	width: 60%;
+	height: 100%;
+}
+
+.character {
+	/* #1 Elements */
+	border: 1px solid rgb(255, 239, 57);
+
+	/* #2 Form */
+	width: 40%;
+	height: 100%;
+}
+
+.character-box {
+	/* #1 Elements */
+	border: 1px solid rgb(255, 239, 57);
+
+	/* #2 Form */
+	width: 145px;
+	height: 145px;
+
+	/* #3 Position */
+	justify-self: center;
+}
+
+.character-skin {
+	/* #1 Elements */
+	border-bottom: 1px solid rgb(255, 239, 57);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	/* #2 Form */
+	height: 40%;
+}
+
+.character-infos {
+	/* #1 Elements */
+	display: flex;
+	position: relative;
+
+	/* #2 Form */
+	height: 60%;
+}
+
+.character-stats {
+	/* #1 Elements */
+	border-bottom: 1px solid rgb(255, 239, 57);
+	border-right: 1px solid rgb(255, 239, 57);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	/* #2 Form */
+	height: 60%;
+	width: 50%;
+
+	/* #3 Position */
+	position: absolute;
+}
+
+.character-story {
+	/* #1 Elements */
+	border-bottom: 1px solid rgb(255, 239, 57);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	/* #2 Form */
+	height: 60%;
+	width: 50%;
+
+	/* #3 Position */
+	position: absolute;
+	right: 0;
+}
+
+.character-spells {
+	/* #1 Elements */
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	grid-template-rows: 1fr;
+	align-items: center;
+
+	/* #2 Form */
+	height: 40%;
+	width: 100%;
+
+	/* #3 Position */
+	position: absolute;
+	bottom: 0;
+}
+
+.character-spell-box {
+	/* #1 Elements */
+	background-color: transparent;
+	display: flex;
+	flex-direction: column-reverse;
+	align-items: flex-end;
+	position: relative;
+
+	/* #3 Position */
+	justify-self: center;
+}
+
+.character-spell-box-A {
+	/* #4 Margin - Padding */
+	margin-left: 10px;
+}
+
+.character-spell-box-B {
+	/* #4 Margin - Padding */
+	margin-right: 10px;
+}
+
+.character-spell {
+	/* #1 Elements */
+	border: 1px solid rgb(255, 239, 57);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	/* #2 Form */
+	height: 125px;
+	width: 125px;
+}
+
+.character-spell-tooltip {
+	/* #1 Elements */
+	border: 1px solid rgb(255, 239, 57);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	/* #2 Form */
+	height: 200px;
+	width: 300px;
+
+	/* #3 Position */
+	position: absolute;
+	right: 0;
+	bottom: 130px;
+}

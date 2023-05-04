@@ -20,12 +20,25 @@ ex: ".navBar-logo--pressed {}"
 #2 Form
 #3 Position
 #4 Margin - Padding
+#5 Animations
 --------------------------------- */
 
 /* ---LEADER--------------------- */
+.leader {
+	/* #1 Elements */
+	overflow-y: auto;
+
+	/* #2 Form */
+	width: calc(100% - 10px);
+	height: calc(100% - 20px);
+
+	/* #3 Position */
+	align-self: center;
+}
+
 .leader-head {
 	/* #1 Elements */
-	border: 1px solid rgb(255, 239, 57);
+	border: 1px solid rgb(255, 255, 0);
 	border-bottom: none;
 	display: flex;
 	flex-direction: row-reverse;
@@ -38,30 +51,22 @@ ex: ".navBar-logo--pressed {}"
 	padding: 10px;
 }
 
-.leader-body {
-	/* #1 Elements */
-	border: 1px solid rgb(255, 239, 57);
-
-	/* #2 Form */
-	height: 80%;
-}
-
 .leader-input {
 	/* #1 Elements */
-	border: 1px solid rgb(255, 239, 57);
+	border: 1px solid rgb(255, 255, 0);
 
 	/* #2 Form */
-	width: 250px;
+	width: 325px;
+	height: 40px;
 }
 
 .leader-btn {
 	/* #1 Elements */
-	border: 1px solid rgb(255, 239, 57);
-	font-size: 15px;
+	border: 1px solid rgb(255, 255, 0);
 
 	/* #2 Form */
-	width: 35px;
-	height: 30px;
+	width: 60px;
+	height: 40px;
 }
 
 .leader-input-btn {
@@ -72,12 +77,12 @@ ex: ".navBar-logo--pressed {}"
 
 .leader-findTop-btn {
 	/* #2 Form */
-	width: 80px;
+	width: 120px;
 }
 
 .leader-findMe-btn {
 	/* #2 Form */
-	width: 80px;
+	width: 120px;
 
 	/* #4 Margin - Padding */
 	margin-left: 5px;
@@ -89,32 +94,40 @@ ex: ".navBar-logo--pressed {}"
 	margin-right: 5px;
 }
 
+.leader-body {
+	/* #1 Elements */
+	border: 1px solid rgb(255, 255, 0);
+	overflow-y: auto;
+
+	/* #2 Form */
+	height: 80%;
+}
+
 .leader-boardHead {
 	/* #1 Elements */
-	border-bottom: 1px solid rgb(255, 239, 57);
+	border-bottom: 1px solid rgb(255, 255, 0);
 	display: flex;
 
 	/* #2 Form */
-	height: 6%;
+	height: 50px;
+
+	/* #3 Position */
+	position: sticky;
+	top: 0;
 }
 
 .leader-col {
 	/* #1 Elements */
 	border: none;
-	border-right: 1px solid rgb(255, 239, 57);
-	font-size: 30px;
+	border-right: 1px solid rgb(255, 255, 0);
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	overflow-x: hidden;
 
 	/* #2 Form */
 	width: 14%;
 	height: 100%;
-}
-
-.leader-col-head {
-	/* #1 Elements */
-	font-size: 17px;
 }
 
 .leader-col-name {
@@ -141,7 +154,7 @@ ex: ".navBar-logo--pressed {}"
 
 .leader-usr-pic {
 	/* #1 Elements */
-	border: 1px solid rgb(255, 239, 57);
+	border: 1px solid rgb(255, 255, 0);
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -157,24 +170,22 @@ ex: ".navBar-logo--pressed {}"
 	text-align: start;
 
 	/* #2 Form */
-	font-size: 17px;
 	width: calc(100% - 110px);
 
 	/* #4 Margin - Padding */
-	padding-left: 10px;
+	margin-left: 10px;
 }
 
 .leader-usr {
 	/* #1 Elements */
-	border-bottom: 1px solid rgb(255, 239, 57);
-	font-size: 17px;
+	border-bottom: 1px solid rgb(255, 255, 0);
 	display: flex;
 
 	/* #2 Form */
-	height: 9.4%;
+	height: 70px;
 }
 
 .leader-btn--pressed {
 	/* #1 Elements */
-	background-color: rgb(255, 239, 57, 0.355);
+	background-color: rgb(255, 255, 0, 0.3);
 }

@@ -20,6 +20,7 @@ ex: ".navBar-logo--pressed {}"
 #2 Form
 #3 Position
 #4 Margin - Padding
+#5 Animations
 --------------------------------- */
 
 /* ---CHAT----------------------- */
@@ -27,29 +28,36 @@ ex: ".navBar-logo--pressed {}"
 	/* #1 Elements */
 	position: relative;
 
-	/* #3 Position */
-	grid-column: 1 / 1;
-	grid-row: 2 / 2;
+	/* #2 Form */
+	width: 100%;
+	height: 100%;
 
-	/* #4 Margin - Padding */
-	padding: 10px 0;
+	/* #3 Position */
+	z-index: 2;
 }
+
+
 
 .chat-body {
 	/* #1 Elements */
+	background-color: transparent;
 	display: flex;
 	flex-direction: column-reverse;
 	overflow-x: auto;
+	overflow-y: hidden;
 
 	/* #2 Form */
 	resize: horizontal;
-	height: calc(100% - 20px);
+	height: 100%;
 	min-width: 100%;
 	max-width: 225%;
 
 	/* #3 Position */
-	z-index: 2;
 	position: absolute;
+
+	/* #4 Margin - Padding */
+	padding-top: 10px;
+	padding-bottom: 10px;
 }
 
 .chat-body--noResize {
@@ -59,25 +67,22 @@ ex: ".navBar-logo--pressed {}"
 
 .chat-main-btn {
 	/* #1 Elements */
-	border: 1px solid rgb(0, 122, 6);
+	border: 1px solid rgb(0, 128, 0);
 
 	/* #2 Form */
-	height: 45px;
+	height: 56px;
 	border-radius: 5px;
 }
 
 .chat-main-btn--expended {
-	/* #1 Elements */
-	border-bottom: none;
-
 	/* #2 Form */
-	border-bottom-left-radius: 0;
-	border-bottom-right-radius: 0;
+	border-bottom-left-radius: 0px;
+	border-bottom-right-radius: 0px;
 }
 
 .chat-main {
 	/* #1 Elements */
-	border: 1px solid rgb(0, 122, 6);
+	border: 1px solid rgb(0, 128, 0);
 	display: grid;
 	grid-template-columns: auto 40px;
 	grid-template-rows: 40px auto 40px;
@@ -91,7 +96,7 @@ ex: ".navBar-logo--pressed {}"
 
 .chat-main-input {
 	/* #1 Elements */
-	border: 1px solid rgb(0, 122, 6);
+	border: 1px solid rgb(0, 128, 0);
 
 	/* #2 Form */
 	width: calc(100% - 10px);
@@ -106,8 +111,7 @@ ex: ".navBar-logo--pressed {}"
 
 .chat-sendMsg-btn {
 	/* #1 Elements */
-	border: 1px solid rgb(0, 122, 6);
-	font-size: 15px;
+	border: 1px solid rgb(0, 128, 0);
 
 	/* #2 Form */
 	width: calc(100% - 5px);
@@ -123,7 +127,7 @@ ex: ".navBar-logo--pressed {}"
 
 .chat-txtArea {
 	/* #1 Elements */
-	border-bottom: 1px solid rgb(0, 122, 6);
+	border-bottom: 1px solid rgb(0, 128, 0);
 	display: flex;
 	align-items: flex-end;
 
@@ -142,9 +146,8 @@ ex: ".navBar-logo--pressed {}"
 
 .chat-newRoom-btn {
 	/* #1 Elements */
-	border-bottom: 1px solid rgb(0, 122, 6);
-	border-left: 1px solid rgb(0, 122, 6);
-	font-size: 18px;
+	border-bottom: 1px solid rgb(0, 128, 0);
+	border-left: 1px solid rgb(0, 128, 0);
 
 	/* #3 Position */
 	grid-column: 2 / 2;
@@ -154,8 +157,8 @@ ex: ".navBar-logo--pressed {}"
 /* ---USERS---------------------- */
 .chat-roomUsers {
 	/* #1 Elements */
-	border-bottom: 1px solid rgb(0, 122, 6);
-	border-left: 1px solid rgb(0, 122, 6);
+	border-bottom: 1px solid rgb(0, 128, 0);
+	border-left: 1px solid rgb(0, 128, 0);
 	display: flex;
 	flex-direction: column;
 	overflow-y: auto;
@@ -173,7 +176,7 @@ ex: ".navBar-logo--pressed {}"
 
 .chat-roomUsers-input {
 	/* #1 Elements */
-	border-bottom: 1px solid rgb(0, 122, 6);
+	border-bottom: 1px solid rgb(0, 128, 0);
 
 	/* #2 Form */
 	flex-shrink: 0;
@@ -181,19 +184,18 @@ ex: ".navBar-logo--pressed {}"
 
 .chat-roomUsr {
 	/* #1 Elements */
-	border-bottom: 1px solid rgb(0, 122, 6);
+	border-bottom: 1px solid rgb(0, 128, 0);
 	display: flex;
 	position: relative;
 
 	/* #2 Form */
 	flex-shrink: 0;
-	height: 33.4px;
+	height: 33px;
 }
 
 .chat-roomUsr-link {
 	/* #1 Elements */
 	text-align: start;
-	font-size: 18px;
 
 	/* #2 Form */
 	width: 100%;
@@ -214,9 +216,9 @@ ex: ".navBar-logo--pressed {}"
 
 .chat-roomUsr-btn {
 	/* #1 Elements */
-	border-bottom: 1px solid rgb(0, 122, 6);
-	border-left: 1px solid rgb(0, 122, 6);
-	font-size: 15px;
+	border-bottom: 1px solid rgb(0, 128, 0);
+	border-left: 1px solid rgb(0, 128, 0);
+	font-size: 18px;
 
 	/* #2 Form */
 	width: 33.4px;
@@ -226,7 +228,7 @@ ex: ".navBar-logo--pressed {}"
 /* ---ROOM-BOXES----------------- */
 .chat-rooms {
 	/* #1 Elements */
-	border-bottom: 1px solid rgb(0, 122, 6);
+	border-bottom: 1px solid rgb(0, 128, 0);
 	display: flex;
 	overflow-x: auto;
 
@@ -241,13 +243,12 @@ ex: ".navBar-logo--pressed {}"
 
 	/* #2 Form */
 	flex-shrink: 0;
-	width: calc(60.5px + 5%);
+	width: calc(57.5px + 5%);
 }
 
 .chat-room-link {
 	/* #1 Elements */
-	border-right: 1px solid rgb(0, 122, 6);
-	font-size: 18px;
+	border-right: 1px solid rgb(0, 128, 0);
 
 	/* #2 Form */
 	width: 100%;
@@ -256,8 +257,8 @@ ex: ".navBar-logo--pressed {}"
 
 .chat-setRoom-btn {
 	/* #1 Elements */
-	border-bottom: 1px solid rgb(0, 122, 6);
-	border-right: 1px solid rgb(0, 122, 6);
+	border-bottom: 1px solid rgb(0, 128, 0);
+	border-right: 1px solid rgb(0, 128, 0);
 	font-size: 15px;
 
 	/* #2 Form */
@@ -273,7 +274,7 @@ ex: ".navBar-logo--pressed {}"
 /* ---ROOM-SETTINGS-------------- */
 .chat-roomSet {
 	/* #1 Elements */
-	border: 1px solid rgb(0, 122, 6);
+	border: 1px solid rgb(0, 128, 0);
 	display: grid;
 	grid-template-columns: 1fr 1fr;
 	grid-template-rows: 75px 1fr 45px;
@@ -284,13 +285,13 @@ ex: ".navBar-logo--pressed {}"
 	border-radius: 5px;
 
 	/* #3 Position */
-	z-index: 2;
 	position: absolute;
+	top: 10px;
 }
 
 .chat-roomSet-main-input {
 	/* #1 Elements */
-	border: 1px solid rgb(0, 122, 6);
+	border: 1px solid rgb(0, 128, 0);
 	text-align: center;
 
 	/* #2 Form */
@@ -317,8 +318,8 @@ ex: ".navBar-logo--pressed {}"
 
 .chat-roomSet-search-input {
 	/* #1 Elements */
-	border-top: 1px solid rgb(0, 122, 6);
-	border-bottom: 1px solid rgb(0, 122, 6);
+	border-top: 1px solid rgb(0, 128, 0);
+	border-bottom: 1px solid rgb(0, 128, 0);
 
 	/* #2 Form */
 	flex-shrink: 0;
@@ -326,7 +327,7 @@ ex: ".navBar-logo--pressed {}"
 
 .chat-roomSet-users {
 	/* #1 Elements */
-	border-bottom: 1px solid rgb(0, 122, 6);
+	border-bottom: 1px solid rgb(0, 128, 0);
 	display: flex;
 	flex-direction: column;
 	overflow-y: auto;
@@ -334,7 +335,7 @@ ex: ".navBar-logo--pressed {}"
 
 .chat-roomSet-users-added {
 	/* #1 Elements */
-	border-right: 1px solid rgb(0, 122, 6);
+	border-right: 1px solid rgb(0, 128, 0);
 
 	/* #3 Position */
 	grid-column: 1 / 1;
@@ -349,8 +350,7 @@ ex: ".navBar-logo--pressed {}"
 
 .chat-roomSet-btn {
 	/* #1 Elements */
-	border: 1px solid rgb(0, 122, 6);
-	font-size: 18px;
+	border: 1px solid rgb(0, 128, 0);
 
 	/* #2 Form */
 	width: 120px;
@@ -390,7 +390,7 @@ ex: ".navBar-logo--pressed {}"
 /* ---ROOM-USR-SET--------------- */
 .chat-roomSet-usr {
 	/* #1 Elements */
-	border-bottom: 1px solid rgb(0, 122, 6);
+	border-bottom: 1px solid rgb(0, 128, 0);
 	display: flex;
 	position: relative;
 
@@ -402,7 +402,6 @@ ex: ".navBar-logo--pressed {}"
 .chat-roomSet-usr-link {
 	/* #1 Elements */
 	text-align: start;
-	font-size: 18px;
 
 	/* #2 Form */
 	width: 100%;
@@ -423,9 +422,9 @@ ex: ".navBar-logo--pressed {}"
 
 .chat-roomSet-usr-btn {
 	/* #1 Elements */
-	border-left: 1px solid rgb(0, 122, 6);
-	border-bottom: 1px solid rgb(0, 122, 6);
-	font-size: 15px;
+	border-left: 1px solid rgb(0, 128, 0);
+	border-bottom: 1px solid rgb(0, 128, 0);
+	font-size: 18px;
 
 	/* #2 Form */
 	width: 31.45px;
@@ -433,6 +432,11 @@ ex: ".navBar-logo--pressed {}"
 }
 
 /* ---BTN------------------------ */
+.chat-btn--small {
+	/* #1 Elements */
+	font-size: 15px;
+}
+
 .chat-btn--pressed {
 	/* #1 Elements */
 	background-color: rgba(0, 122, 6, 0.3);

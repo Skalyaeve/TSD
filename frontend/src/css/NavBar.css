@@ -20,6 +20,7 @@ ex: ".navBar-logo--pressed {}"
 #2 Form
 #3 Position
 #4 Margin - Padding
+#5 Animations
 --------------------------------- */
 
 /* ---NAVBAR--------------------- */
@@ -27,33 +28,37 @@ ex: ".navBar-logo--pressed {}"
 	/* #1 Elements */
 	display: grid;
 	grid-template-columns: 1fr;
-	grid-template-rows: 0.5fr 1fr 1fr 1fr;
+	grid-template-rows: minmax(50px, auto);
+	grid-auto-rows: minmax(75px, auto);
+
+	/* #3 Position */
+	z-index: 3;
+}
+
+.navBar-link-motion {
+	/* #1 Elements */
+	border: 1px solid rgb(200, 0, 0);
 }
 
 .navBar-link {
 	/* #1 Elements */
-	border: 1px solid rgb(172, 0, 0);
-	border-top: none;
+	background-color: transparent;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-}
 
-.navBar-link--back {
 	/* #2 Form */
-	height: 45px;
+	width: 100%;
+	height: 100%;
 }
 
-.navBar-link--first {
-	/* #1 Elements */
-	border-top: 1px solid rgb(172, 0, 0);
-
+.navBar-link-motion:first-child {
 	/* #2 Form */
 	border-top-left-radius: 5px;
 	border-top-right-radius: 5px;
 }
 
-.navBar-link--last {
+.navBar-link-motion:last-child {
 	/* #2 Form */
 	border-bottom-left-radius: 5px;
 	border-bottom-right-radius: 5px;
@@ -61,5 +66,5 @@ ex: ".navBar-logo--pressed {}"
 
 .navBar-link--pressed {
 	/* #1 Elements */
-	background-color: rgba(124, 44, 44, 0.3);
+	background-color: rgb(200, 0, 0, 0.3);
 }

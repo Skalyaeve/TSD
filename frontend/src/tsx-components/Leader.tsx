@@ -1,5 +1,7 @@
-import React, { memo, useMemo } from 'react'
-import { NewBox, Input } from './utils.tsx'
+import React, { useMemo } from 'react'
+import { motion } from 'framer-motion'
+
+import { FtBtn, FtInput } from '../tsx-utils/ftSam/ftBox.tsx'
 
 // --------USER------------------------------------------------------------ //
 interface UserStatsProps {
@@ -8,7 +10,7 @@ interface UserStatsProps {
 	btnPressedName: string
 	colName: string
 }
-const UserStats: React.FC<UserStatsProps> = memo(({
+const UserStats: React.FC<UserStatsProps> = ({
 	id, name, btnPressedName, colName
 }) => {
 	// ----CLASSNAMES------------------------- //
@@ -27,10 +29,8 @@ const UserStats: React.FC<UserStatsProps> = memo(({
 	</div>, [])
 
 	return <div className={boxName}>
-		<NewBox
-			tag='btn'
-			className={`${colName} ${colName}-name`}
-			nameIfPressed={btnPressedName}
+		<FtBtn className={`${colName} ${colName}-name`}
+			pressedName={btnPressedName}
 			content={nameBtnContent}
 		/>
 		{usrBox('matches', '0')}
@@ -39,7 +39,7 @@ const UserStats: React.FC<UserStatsProps> = memo(({
 		{usrBox('ratio', '0')}
 		{usrBox('scored', '0')}
 	</div>
-})
+}
 
 
 // --------BOARD----------------------------------------------------------- //
@@ -48,22 +48,21 @@ interface BoardProps {
 	btnName: string
 	btnPressedName: string
 }
-const Board: React.FC<BoardProps> = memo(({ name, btnName, btnPressedName }) => {
+const Board: React.FC<BoardProps> = ({ name, btnName, btnPressedName }) => {
 	// ----CLASSNAMES------------------------- //
 	const colName = `${name}-col`
 
 	// ----RENDER----------------------------- //
-	const headCol = useMemo(() => (nameExt: string, content: string) => <NewBox
-		tag='btn'
-		className={`${colName} ${colName}-head ${colName}-${nameExt} ${btnName}`}
-		nameIfPressed={btnPressedName}
-		content={content}
-	/>, [])
+	const headCol = useMemo(() => (nameExt: string, content: string) => (
+		<FtBtn className={`${colName} ${colName}-head ${colName}-${nameExt} ${btnName}`}
+			pressedName={btnPressedName}
+			content={content}
+		/>
+	), [])
 
-	const renderUsers = useMemo(() => Array.from({ length: 10 }, (_, index) => (
-		<UserStats
+	const renderUsers = useMemo(() => Array.from({ length: 20 }, (_, index) => (
+		<UserStats id={index + 1}
 			key={index + 1}
-			id={index + 1}
 			name={name}
 			btnPressedName={btnPressedName}
 			colName={colName}
@@ -81,11 +80,11 @@ const Board: React.FC<BoardProps> = memo(({ name, btnName, btnPressedName }) => 
 		</div>
 		{renderUsers}
 	</div >
-})
+}
 
 
 // --------LEADER---------------------------------------------------------- //
-const Leader: React.FC = memo(() => {
+const Leader: React.FC = () => {
 	// ----CLASSNAMES------------------------- //
 	const name = 'leader'
 	const inputName = `${name}-input`
@@ -93,27 +92,31 @@ const Leader: React.FC = memo(() => {
 	const btnPressedName = `${btnName}--pressed`
 
 	// ----RENDER----------------------------- //
-	const headBtn = useMemo(() => (nameExt: string, content: string) => <NewBox
-		tag='btn'
-		className={`${name}-${nameExt}-btn ${btnName}`}
-		nameIfPressed={btnPressedName}
-		content={content}
-	/>, [])
+	const headBtn = useMemo(() => (nameExt: string, content: string) => (
+		<FtBtn className={`${name}-${nameExt}-btn ${btnName}`}
+			pressedName={btnPressedName}
+			content={content}
+		/>
+	), [])
 
-	return <main className={`${name} main`}>
+	return <motion.main className={`${name} main`}
+		initial={{ opacity: 0 }}
+		animate={{ opacity: 1 }}
+		exit={{ opacity: 0 }}
+	>
 		<div className={`${name}-head`}>
 			{headBtn('down', '[>>]')}
 			{headBtn('up', '[<<]')}
 			{headBtn('findMe', '[FIND ME]')}
 			{headBtn('findTop', '[TOP]')}
 			{headBtn('input', '[OK]')}
-			<Input name={inputName} />
+			<FtInput name={inputName} />
 		</div>
 		<Board
 			name={name}
 			btnName={btnName}
 			btnPressedName={btnPressedName}
 		/>
-	</main >
-})
+	</motion.main >
+}
 export default Leader

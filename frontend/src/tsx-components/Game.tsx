@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useRef, useState } from 'react'
+import React, { useLayoutEffect, useRef, useState, Dispatch, SetStateAction, createContext, useContext } from 'react'
 import Phaser from 'phaser'
 import { Socket, io } from 'socket.io-client'
 
@@ -9,7 +9,7 @@ import { Socket, io } from 'socket.io-client'
 // Spritesheets
 import playerIdle__Sheet from '../resource/assets/playerSheet.png'
 import playerRun__Sheet from '../resource/assets/playerSheet.png'
-import mageIdle__Sheet from '../resource/assets/Mage/IdleV3.png'
+import mageIdle__Sheet from '../resource/assets/Mage/Idle.png'
 import mageRun__Sheet from '../resource/assets/Mage/Run.png'
 
 /* -------------------------TYPING------------------------- */
@@ -18,22 +18,22 @@ interface player {
 	id: string									// Player ID
 	xPos: number								// Player initial X position
 	yPos: number								// Player initial Y position
-	xDir: string								// Player X direction (left/right)
+	xDir: string								// Player actual X direction (left/right)
+	yDir: string								// Player actual Y direction (none/up/down)
+	xMov: number								// Player last X movement
+	yMov: number								// Player last Y movement
 	lastMove: string							// Player last movement state (none/idle/run)
 	move: string								// Player actual movement state (idle/run)
 	skinId: number								// Player skin id in skins array
 	sprite?: Phaser.Physics.Arcade.Sprite 		// Player sprite
 	colliders: Phaser.Physics.Arcade.Collider[]	// Player colliders
-	scaleFactor: number
 }
 
 interface skin {
 	name: string								// Skin name
 	nbFrames: number							// Skin spritesheet number of frames
-	xSizeIdle: number							// Idle skin X size
-	ySizeIdle: number							// Idle skin Y size
-	xSizeRun: number							// Running skin X size
-	ySizeRun: number							// Running skin Y size
+	xSize: number								// Skin X size
+	ySize: number								// Skin Y size
 	runSheet: string							// Skin run spritesheet
 	idleSheet: string							// Skin idle spritesheet
 }
@@ -43,14 +43,6 @@ interface keys {								// Keyboard keys
 	down: Phaser.Input.Keyboard.Key				// DOWN key
 	left: Phaser.Input.Keyboard.Key				// LEFT key
 	right: Phaser.Input.Keyboard.Key			// RIGHT key
-}
-
-interface canvas {								// Scene canvas settings
-	xSize: number								// Canvas heigth
-	ySize: number								// Canvas width
-	aspectRatio: number							// Canvas aspecct 
-	leftOffset: number
-	gameSpeed: number
 }
 
 /* -------------------------GAME INITIALISATION------------------------- */
@@ -63,48 +55,45 @@ function Party() {
 	const gameRef = useRef<HTMLDivElement>(null)
 	const [game, setGame] = useState<Phaser.Game | null>(null)
 
-	// Canvas constants
-	let canvas: canvas = {
-		xSize: 1920,
-		ySize: 1080,
-		aspectRatio: 16 / 9,
-		leftOffset: 300,
-		gameSpeed: 1000,
-	}
-
-	// Player socket
-	let socket: Socket
-
-	// Keyboard keys
-	let keys: keys
-
-	// Player list
-	let players: player[] = []
+	// Constants
+	const headerPxSize: number = 275
+	const gameAspectRatio: number = 16 / 9
+	const canvasSize: number[] = [1920, 1080]
+	const globalSpeed: number = 1000
 
 	// Skin list
 	let skins: skin[] = []
 
-	// Player self id
+	// Score
+	let scoreText: Phaser.GameObjects.Text
+	let score: number[] = [0, 0]
+
+	// Player list
+	let players: player[] = []
+
+	// Player own id
 	let myId: string
+
+	// Player socket
+	let socket: Socket
 
 	// Player event queues
 	let creationQueue: player[] = []
 	let deletionQueue: string[] = []
 	let moveQueue: string[] = []
-	
-	// Score
-	let scoreText: Phaser.GameObjects.Text
-	let score: number[] = [0, 0]
-	
+
+	// Keyboard keys
+	let keys: keys
+
 	/****** SCENE PRELOADING ******/
-	
+
 	// Initialise all keyboards keys
 	function keysInitialisation(scene: Phaser.Scene) {
 		if (scene.input.keyboard) {
 			keys = {
-				up: scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.W),
+				up: scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.Z),
 				down: scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.S),
-				left: scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.A),
+				left: scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.Q),
 				right: scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.D)
 			}
 		}
@@ -115,26 +104,22 @@ function Party() {
 		skins[0] = {
 			name: 'player',
 			nbFrames: 2,
-			xSizeIdle: 100,
-			ySizeIdle: 175,
-			xSizeRun: 100,
-			ySizeRun: 175,
+			xSize: 100,
+			ySize: 175,
 			idleSheet: playerIdle__Sheet,
 			runSheet: playerRun__Sheet
 		}
 		skins[1] = {
 			name: 'mage',
 			nbFrames: 8,
-			xSizeIdle: 57,
-			ySizeIdle: 104,
-			xSizeRun: 250,
-			ySizeRun: 250,
+			xSize: 250,
+			ySize: 250,
 			idleSheet: mageIdle__Sheet,
 			runSheet: mageRun__Sheet
 		}
 		for (let skinId = 0; skinId < skins.length; skinId++) {
-			scene.load.spritesheet(skins[skinId].name + 'Idle', skins[skinId].idleSheet, { frameWidth: skins[skinId].xSizeIdle, frameHeight: skins[skinId].ySizeIdle })
-			scene.load.spritesheet(skins[skinId].name + 'Run', skins[skinId].runSheet, { frameWidth: skins[skinId].xSizeRun, frameHeight: skins[skinId].ySizeRun })
+			scene.load.spritesheet(skins[skinId].name + 'Idle', skins[skinId].idleSheet, { frameWidth: skins[skinId].xSize, frameHeight: skins[skinId].ySize })
+			scene.load.spritesheet(skins[skinId].name + 'Run', skins[skinId].runSheet, { frameWidth: skins[skinId].xSize, frameHeight: skins[skinId].ySize })
 		}
 	}
 
@@ -148,14 +133,12 @@ function Party() {
 				player = players[playerI]
 		}
 		if (player) {
-			console.log("creating player: ", player.xPos, player.yPos)
 			let newSprite = scene.physics.add.sprite(player.xPos, player.yPos, skins[player.skinId].name + 'Idle')
-			if (newSprite && newSprite.body)
-				console.log("created player: ", newSprite.body.x, newSprite.body.y)
-			let spriteOffsetX: number = newSprite.body.x - player.xPos
-			let spriteOffsetY: number = newSprite.body.y - player.yPos
-			console.log("Offset x:", spriteOffsetX, "y:", spriteOffsetY)
-			newSprite.setScale(player.scaleFactor, player.scaleFactor).refreshBody()
+			if (skins[player.skinId].name == 'mage') {
+				newSprite.body.setSize(50, 52)
+				newSprite.body.setOffset(100, 114)
+				newSprite.setScale(2.5, 2.5).refreshBody()
+			}
 			newSprite.setBounce(1)
 			newSprite.setCollideWorldBounds(true)
 			newSprite.setImmovable(true)
@@ -193,17 +176,17 @@ function Party() {
 	}
 
 	// Send player movements to the server
-	const sendPlayerMovement = (xPos: number, yPos: number) => {
-		socket.emit('playerMovement', { xPos, yPos })
+	const sendPlayerMovement = (xMov: number, yMov: number) => {
+		socket.emit('playerMovement', { xMov, yMov })
 	}
 
-	const sendPlayerStop = (xPos: number, yPos: number) => {
-		socket.emit('playerStop', { xPos, yPos })
+	const sendPlayerStop = (xMov: number, yMov: number) => {
+		socket.emit('playerStop', { xMov, yMov })
 	}
 
 	/****** SCENE UPDATE ******/
 
-	function checkKeyInputs() {
+	function checkKeyInputs(scene: Phaser.Scene) {
 		let player: player | null = null
 		let endVelocityX: number = 0
 		let endVelocityY: number = 0
@@ -219,25 +202,23 @@ function Party() {
 			else
 				player.move = 'run'
 			if (keys.left.isDown)
-				endVelocityX += -canvas.gameSpeed
+				endVelocityX += -globalSpeed
 			if (keys.right.isDown)
-				endVelocityX += canvas.gameSpeed
+				endVelocityX += globalSpeed
 			if (keys.up.isDown)
-				endVelocityY += -canvas.gameSpeed
+				endVelocityY += -globalSpeed
 			if (keys.down.isDown)
-				endVelocityY += canvas.gameSpeed
+				endVelocityY += globalSpeed
 			if (player.sprite) {
-				
 				player.sprite.setVelocityX(endVelocityX)
 				player.sprite.setVelocityY(endVelocityY)
 				if (player.move == 'run' && player.sprite.body)
-					sendPlayerMovement(player.sprite.body.x + 28.5 * player.scaleFactor, player.sprite.body.y + 52 * player.scaleFactor)
+					sendPlayerMovement(player.sprite.body.x, player.sprite.body.y)
 				if (player.move == 'idle' && player.lastMove == 'run' && player.sprite.body)
-					sendPlayerStop(player.sprite.body.x + 28.5 * 2.5, player.sprite.body.y + 52 * 2.5)
+					sendPlayerMovement(player.sprite.body.x, player.sprite.body.y)
 			}
 		}
 	}
-
 
 	function checkNewPlayer(scene: Phaser.Scene) {
 		if (!creationQueue.length)
@@ -246,7 +227,7 @@ function Party() {
 			players[players.length] = creationQueue[queueId]
 			createPlayer(players[players.length - 1].id, scene)
 		}
-		//console.log("Creation queue is now empty")
+		console.log("Creation queue is now empty")
 		creationQueue = []
 	}
 
@@ -261,17 +242,17 @@ function Party() {
 				}
 			}
 		}
-		//console.log("Deletion queue is now empty")
+		console.log("Deletion queue is now empty")
 		deletionQueue = []
 	}
 
-	// Set player animations following moveState
+	// Set player animations following moveState, xDirection and yDirection
 	function setAnims() {
 		for (let playerId = 0; playerId < players.length; playerId++) {
 			if (players[playerId].move != players[playerId].lastMove) {
 				if (players[playerId].move == 'run')
-					players[playerId].sprite?.play(skins[players[playerId].skinId].name + 'IdleAnim')
-				else if (players[playerId].move == 'idle' && players[playerId].lastMove == 'run')
+					players[playerId].sprite?.play(skins[players[playerId].skinId].name + 'RunAnim')
+				else
 					players[playerId].sprite?.play(skins[players[playerId].skinId].name + 'IdleAnim')
 			}
 			players[playerId].lastMove = players[playerId].move
@@ -283,18 +264,17 @@ function Party() {
 			return
 		for (let queueId = 0; queueId < moveQueue.length; queueId++) {
 			for (let playerId = 0; playerId < players.length; playerId++) {
-				let player = players[playerId]
-				if (player.id == moveQueue[queueId] && player.id != myId) {
-					player.sprite?.setPosition(player.xPos, player.yPos)
-					if (player.move == 'run' && player.lastMove == 'idle')
-						player.sprite?.play(skins[player.skinId].name + 'IdleAnim')
-					else if (player.move == 'idle' && player.lastMove == 'run')
-						player.sprite?.play(skins[player.skinId].name + 'IdleAnim')
-					//console.log("Moved player ", player.id, " xv: ", player.xPos, " yv: ", player.yPos)
+				if (players[playerId].id == moveQueue[queueId] && players[playerId].id != myId) {
+					players[playerId].sprite?.setPosition(players[playerId].xMov, players[playerId].yMov)
+					if (players[playerId].move == 'run' && players[playerId].lastMove == 'idle')
+						players[playerId].sprite?.play(skins[players[playerId].skinId].name + 'RunAnim')
+					else if (players[playerId].move == 'idle' && players[playerId].lastMove == 'run')
+						players[playerId].sprite?.play(skins[players[playerId].skinId].name + 'IdleAnim')
+					console.log("Moved player ", players[playerId].id, " xv: ", players[playerId].xMov, " yv: ", players[playerId].yMov)
 				}
 			}
 		}
-		//console.log("Move queue is now empty")
+		console.log("Move queue is now empty")
 		moveQueue = []
 	}
 
@@ -310,19 +290,19 @@ function Party() {
 	}
 
 	function update(this: Phaser.Scene) {
-		checkKeyInputs()
+		checkKeyInputs(this)
 		checkNewPlayer(this)
 		checkDisconnect()
 		checkMove()
 		setAnims()
 	}
 
-	// Create the game(addedUsers ? 10 : 7)
+	// Create the game
 	const createGame = () => {
 		const config: Phaser.Types.Core.GameConfig = {
 			type: Phaser.AUTO,
-			width: canvas.xSize,
-			height: canvas.ySize,
+			width: 1920,
+			height: 1080,
 			physics: {
 				default: 'arcade',
 				arcade: {
@@ -346,16 +326,16 @@ function Party() {
 	const resizeGameDiv = () => {
 		const gameDiv = gameRef.current
 		if (gameDiv) {
-			const innerWidth: number = window.innerWidth - canvas.leftOffset
+			const innerWidth: number = window.innerWidth - headerPxSize
 			const innerHeigth: number = window.innerHeight
 			const windowAspectRatio: number = innerWidth / innerHeigth
 
-			if (windowAspectRatio > canvas.aspectRatio) {
-				gameDiv.style.width = `${innerHeigth * canvas.aspectRatio}px`
+			if (windowAspectRatio > gameAspectRatio) {
+				gameDiv.style.width = `${innerHeigth * gameAspectRatio}px`
 				gameDiv.style.height = `${innerHeigth}px`
 			} else {
 				gameDiv.style.width = `${innerWidth}px`
-				gameDiv.style.height = `${innerWidth / canvas.aspectRatio}px`
+				gameDiv.style.height = `${innerWidth / gameAspectRatio}px`
 			}
 		}
 	}
@@ -381,35 +361,34 @@ function Party() {
 		socket.on('newPlayer', (player: player) => {
 			creationQueue[creationQueue.length] = player
 			console.log("Added player to creation queue")
-		})
+		});
 
 		// Update the moved player's velocity in the players list
 		socket.on('playerMoved', (player: player) => {
 			for (let playerId = 0; playerId < players.length; playerId++) {
 				if (players[playerId].id == player.id) {
-					players[playerId].xPos = player.xPos
-					players[playerId].yPos = player.yPos
+					players[playerId].xMov = player.xMov
+					players[playerId].yMov = player.yMov
 					players[playerId].lastMove = players[playerId].move
 					players[playerId].move = player.move
 					moveQueue[moveQueue.length] = players[playerId].id
 					break
 				}
 			}
-			console.log("A player moved:")
-		})
+			console.log("A player moved")
+		});
 
 		socket.on('playerStoped', (player: player) => {
 			for (let playerId = 0; playerId < players.length; playerId++) {
 				if (players[playerId].id == player.id) {
-					players[playerId].xPos = player.xPos
-					players[playerId].yPos = player.yPos
+					players[playerId].xMov = player.xMov
+					players[playerId].yMov = player.yMov
 					players[playerId].lastMove = players[playerId].move
 					players[playerId].move = player.move
 					moveQueue[moveQueue.length] = players[playerId].id
 					break
 				}
 			}
-			console.log("A player stoped:")
 		})
 
 		// Remove the disconnected player from the players list
