@@ -9,7 +9,7 @@ import { Socket, io } from 'socket.io-client'
 // Spritesheets
 import playerIdle__Sheet from '../resource/assets/playerSheet.png'
 import playerRun__Sheet from '../resource/assets/playerSheet.png'
-import mageIdle__Sheet from '../resource/assets/Mage/Idle.png'
+import mageIdle__Sheet from '../resource/assets/Mage/IdleV3.png'
 import mageRun__Sheet from '../resource/assets/Mage/Run.png'
 
 /* -------------------------TYPING------------------------- */
