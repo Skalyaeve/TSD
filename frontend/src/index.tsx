@@ -10,7 +10,7 @@ const root = document.getElementById('root')
 const strictMode = false
 const testMode = false
 
-const Test = () => {
+const Test: React.FC = () => {
 	return <></>
 }
 

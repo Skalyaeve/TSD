@@ -1,6 +1,6 @@
-import React, { useMemo, useState } from 'react'
+import React, { memo, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { motion, AnimationControls } from 'framer-motion'
+import { motion, MotionStyle } from 'framer-motion'
 
 // ------------------------------------------------------------------------ //
 // --------BOX------------------------------------------------------------- //
@@ -48,16 +48,16 @@ const newBoxHandlers = (
 
 // --------DIV------------------------------------------------------------- //
 interface FtDivProps {
-	className?: string
+	className: string
 	pressedName?: string
 	overName?: string
 	handler?: React.HTMLAttributes<HTMLElement>
 	style?: React.CSSProperties
 	content?: any
 }
-export const FtDiv: React.FC<FtDivProps> = ({
-	className, handler, pressedName, overName, style = {}, content
-}) => {
+export const FtDiv = memo(React.forwardRef<HTMLDivElement, FtDivProps>((
+	{ className, pressedName, overName, handler, style, content }, ref
+) => {
 	// ----STATES----------------------------- //
 	const [pressed, setPressed] = useState(false)
 	const [over, setOver] = useState(false)
@@ -70,28 +70,29 @@ export const FtDiv: React.FC<FtDivProps> = ({
 	// ----HANDLERS--------------------------- //
 	const mergedHandlers = useMemo(() => (
 		newBoxHandlers(setPressed, setOver, handler, pressedName, overName)
-	), [])
+	), [handler, pressedName, overName])
 
 	// ----RENDER----------------------------- //
 	return <div className={name}
+		ref={ref}
 		style={style}
 		{...mergedHandlers}>
 		{content}
 	</div>
-}
+}))
 
 // --------BUTTON---------------------------------------------------------- //
 interface FtBtnProps {
-	className?: string
+	className: string
 	pressedName?: string
 	overName?: string
 	handler?: React.HTMLAttributes<HTMLElement>
 	style?: React.CSSProperties
 	content?: any
 }
-export const FtBtn: React.FC<FtBtnProps> = ({
-	className, handler, pressedName, overName, style = {}, content
-}) => {
+export const FtBtn = memo(React.forwardRef<HTMLButtonElement, FtBtnProps>((
+	{ className, pressedName, overName, handler, style, content }, ref
+) => {
 	// ----STATES----------------------------- //
 	const [pressed, setPressed] = useState(false)
 	const [over, setOver] = useState(false)
@@ -104,29 +105,30 @@ export const FtBtn: React.FC<FtBtnProps> = ({
 	// ----HANDLERS--------------------------- //
 	const mergedHandlers = useMemo(() => (
 		newBoxHandlers(setPressed, setOver, handler, pressedName, overName)
-	), [])
+	), [handler, pressedName, overName])
 
 	// ----RENDER----------------------------- //
 	return <button className={name}
+		ref={ref}
 		style={style}
 		{...mergedHandlers}>
 		{content}
 	</button>
-}
+}))
 
 // --------LINK------------------------------------------------------------ //
 interface FtLinkProps {
 	to: string
-	className?: string
+	className: string
 	pressedName?: string
 	overName?: string
 	handler?: React.HTMLAttributes<HTMLElement>
 	style?: React.CSSProperties
 	content?: any
 }
-export const FtLink: React.FC<FtLinkProps> = ({
-	to, className, pressedName, overName, handler, style = {}, content
-}) => {
+export const FtLink = memo(React.forwardRef<HTMLAnchorElement, FtLinkProps>((
+	{ to, className, pressedName, overName, handler, style, content }, ref
+) => {
 	// ----STATES----------------------------- //
 	const [pressed, setPressed] = useState(false)
 	const [over, setOver] = useState(false)
@@ -139,32 +141,34 @@ export const FtLink: React.FC<FtLinkProps> = ({
 	// ----HANDLERS--------------------------- //
 	const mergedHandlers = useMemo(() => (
 		newBoxHandlers(setPressed, setOver, handler, pressedName, overName)
-	), [])
+	), [handler, pressedName, overName])
 
 	// ----RENDER----------------------------- //
 	return <Link className={name}
+		ref={ref}
 		to={to}
 		style={style}
 		{...mergedHandlers}>
 		{content}
 	</Link>
-}
+}))
 
 // --------INPUT----------------------------------------------------------- //
 interface FtInputProps {
 	name: string
 	PH?: string
 }
-export const FtInput: React.FC<FtInputProps> = ({
-	name, PH = ' ...'
-}) => {
+export const FtInput = memo(React.forwardRef<HTMLInputElement, FtInputProps>((
+	{ name, PH = ' ...' }, ref
+) => {
 	// ----RENDER----------------------------- //
 	return <input className={name}
+		ref={ref}
 		id={name}
 		name={name}
 		placeholder={PH}
 	/>
-}
+}))
 
 // ------------------------------------------------------------------------ //
 // --------MOTION-BOX------------------------------------------------------ //
@@ -199,17 +203,17 @@ const newMotionBoxHandlers = (
 
 // --------MOTION-DIV------------------------------------------------------ //
 interface FtMotionDivProps {
-	className?: string
+	className: string
 	pressedName?: string
 	overName?: string
 	handler?: React.HTMLAttributes<HTMLElement>
-	style?: React.CSSProperties
 	motionProps?: {}
+	style?: MotionStyle
 	content?: any
 }
-export const FtMotionDiv: React.FC<FtMotionDivProps> = ({
-	className, handler, pressedName, overName, style = {}, motionProps = {}, content
-}) => {
+export const FtMotionDiv = memo(React.forwardRef<HTMLDivElement, FtMotionDivProps>((
+	{ className, pressedName, overName, handler, motionProps, style, content }, ref
+) => {
 	// ----STATES----------------------------- //
 	const [pressed, setPressed] = useState(false)
 	const [over, setOver] = useState(false)
@@ -222,95 +226,80 @@ export const FtMotionDiv: React.FC<FtMotionDivProps> = ({
 	// ----HANDLERS--------------------------- //
 	const mergedHandlers = useMemo(() => (
 		newMotionBoxHandlers(setPressed, setOver, handler, pressedName, overName)
-	), [])
+	), [handler, pressedName, overName])
 
 	// ----RENDER----------------------------- //
 	return <motion.div className={name}
+		ref={ref}
 		style={style}
 		{...motionProps}
 		{...mergedHandlers}>
 		{content}
 	</motion.div>
-}
+}))
 
 // --------MOTION-BUTTON--------------------------------------------------- //
 interface FtMotionBtnProps {
-	className?: string;
-	pressedName?: string;
-	overName?: string;
-	handler?: React.HTMLAttributes<HTMLElement>;
-	style?: React.CSSProperties;
-	motionProps?: {};
-	animate?: AnimationControls;
-	content?: any;
+	className: string
+	pressedName?: string
+	overName?: string
+	handler?: React.HTMLAttributes<HTMLElement>
+	motionProps?: {}
+	style?: MotionStyle
+	content?: any
 }
-export const FtMotionBtn = React.forwardRef<HTMLButtonElement, FtMotionBtnProps>(
-	(
-		{
-			className,
-			handler,
-			pressedName,
-			overName,
-			style = {},
-			motionProps = {},
-			animate,
-			content,
-		},
-		ref
-	) => {
-		// ----STATES----------------------------- //
-		const [pressed, setPressed] = useState(false)
-		const [over, setOver] = useState(false)
+export const FtMotionBtn = memo(React.forwardRef<HTMLButtonElement, FtMotionBtnProps>((
+	{ className, pressedName, overName, handler, motionProps, style, content }, ref
+) => {
+	// ----STATES----------------------------- //
+	const [pressed, setPressed] = useState(false)
+	const [over, setOver] = useState(false)
 
-		// ----CLASSNAMES------------------------- //
-		const pressedExtName = pressedName ? ` ${pressedName}` : ''
-		const overExtName = overName ? ` ${overName}` : ''
-		const name = `${className}${pressed ? pressedExtName : ''}${over ? overExtName : ''}`
+	// ----CLASSNAMES------------------------- //
+	const pressedExtName = pressedName ? ` ${pressedName}` : ''
+	const overExtName = overName ? ` ${overName}` : ''
+	const name = `${className}${pressed ? pressedExtName : ''}${over ? overExtName : ''}`
 
-		// ----HANDLERS--------------------------- //
-		const mergedHandlers = useMemo(() => (
-			newMotionBoxHandlers(setPressed, setOver, handler, pressedName, overName)
-		), [])
+	// ----HANDLERS--------------------------- //
+	const mergedHandlers = useMemo(() => (
+		newMotionBoxHandlers(setPressed, setOver, handler, pressedName, overName)
+	), [handler, pressedName, overName])
 
-		// ----RENDER----------------------------- //
-		return <motion.button className={name}
-			animate={animate}
-			ref={ref}
-			style={style}
-			{...motionProps}
-			{...mergedHandlers}>
-			{content}
-		</motion.button>
-	}
-)
+	// ----RENDER----------------------------- //
+	return <motion.button className={name}
+		ref={ref}
+		style={style}
+		{...motionProps}
+		{...mergedHandlers}>
+		{content}
+	</motion.button>
+}))
 
 // --------MOTION-LINK----------------------------------------------------- //
 interface FtMotionLinkProps {
 	to: string
-	className?: string
+	className: string
 	pressedName?: string
 	overName?: string
 	handler?: React.HTMLAttributes<HTMLElement>
-	style?: React.CSSProperties
 	motionProps?: {}
+	style?: MotionStyle
 	content?: any
 }
-export const FtMotionLink: React.FC<FtMotionLinkProps> = ({
-	to, className, handler, pressedName, overName, style = {}, motionProps = {}, content
-}) => {
-	// ----CLASSNAMES------------------------- //
-	const motionName = `${className}-motion`
-
+export const FtMotionLink = memo(React.forwardRef<HTMLDivElement, FtMotionLinkProps>((
+	{ to, className, pressedName, overName, handler, motionProps, style, content }, ref
+) => {
 	// ----RENDER----------------------------- //
-	return <motion.div className={motionName}
+	return <motion.div className={`${className}-motion`}
+		ref={ref}
+		style={style}
 		{...motionProps}>
 		<FtLink className={className}
 			to={to}
 			pressedName={pressedName}
 			overName={overName}
 			handler={handler}
-			style={style}
 			content={content}
 		/>
 	</motion.div>
-}
+}))

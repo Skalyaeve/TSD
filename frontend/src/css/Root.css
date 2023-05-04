@@ -77,9 +77,10 @@ body * {
 /* ---ROOT----------------------- */
 .root {
 	/* #1 Elements */
-	display: flex;
-	align-items: center;
-	justify-content: center;
+	display: grid;
+	grid-template-columns: 265px auto;
+	grid-template-rows: 1fr;
+	overflow: hidden;
 
 	/* #2 Form */
 	width: 100vw;
@@ -88,25 +89,22 @@ body * {
 	min-height: 768px;
 }
 
-.root-motion {
-	/* #1 Elements */
-	display: grid;
-	grid-template-columns: 265px auto;
-	grid-template-rows: 1fr;
-	overflow: hidden;
-
-	/* #2 Form */
-	width: 100%;
-	height: 100%;
+/* ---LOGIN---------------------- */
+.login-btn-box {
+	/* #3 Position */
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
 }
 
-/* ---LOGIN---------------------- */
 .login-btn {
 	/* #1 Elements */
 	border: 1px solid rgb(255, 255, 255);
 	font-size: 24px;
 
 	/* #2 Form */
+	height: 100%;
 	border-radius: 5px;
 }
 

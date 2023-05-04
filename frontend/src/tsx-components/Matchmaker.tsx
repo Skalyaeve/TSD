@@ -1,27 +1,29 @@
-import React, { useMemo, useCallback, useState, useEffect, useRef } from 'react'
-import { useMotionValue } from 'framer-motion'
+import React, { useMemo, useCallback, useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { motion } from 'framer-motion'
 
 import { FtMotionBtn } from '../tsx-utils/ftSam/ftBox.tsx'
-import { tglOnOver } from '../tsx-utils/ftSam/ftHooks.tsx'
-import { Timer, getMaxedXYrand } from '../tsx-utils/ftSam/ftNumbers.tsx'
-import { bouncyComeFromCol } from '../tsx-utils/ftSam/ftFramerMotion.tsx'
+import { Timer } from '../tsx-utils/ftSam/ftNumbers.tsx'
+import { bouncyComeFromCol, bouncyHeightGrowByPx } from '../tsx-utils/ftSam/ftFramerMotion.tsx'
 
 // --------PARTY-INFOS----------------------------------------------------- //
 export const GameInfos: React.FC = () => {
 	// ----CLASSNAMES------------------------- //
 	const name = 'gameInfo'
+	const boxName = `${name}s`
 	const playerPPName = `${name}-player`
 	const scoreName = `${name}-score`
+	const timerName = `${name}-timer`
 
 	// ----RENDER----------------------------- //
-	return <div className={`${name}s`}>
+	return <motion.div className={boxName}
+		{...bouncyHeightGrowByPx(275)}>
 		<div className={playerPPName}>Player 1</div>
 		<div className={playerPPName}>Player 2</div>
 		<div className={scoreName}>0</div>
 		<div className={scoreName}>0</div>
-		<div className={`${name}-timer`}><Timer /></div>
-	</div>
+		<div className={timerName}><Timer /></div>
+	</motion.div>
 }
 
 // --------MATCHMAKER------------------------------------------------------ //
@@ -35,22 +37,14 @@ const Matchmaker: React.FC = () => {
 		const value = localStorage.getItem('inGame')
 		return value === '1'
 	})
-	const [isOver, isOverHdl] = tglOnOver(false)
-	const randomXY = useRef(getMaxedXYrand(7))
-	const usedXY = useRef(randomXY.current)
-
-	const animation = useMotionValue(0);
 
 	// ----EFFECTS---------------------------- //
-	useEffect(() => (
-		localStorage.setItem('inGame', inGame ? '1' : '0')
-	), [inGame])
-
 	useEffect(() => {
 		if (!matchmaking) return
 
 		const timer = setTimeout(() => {
 			setMatchmaking(false)
+			localStorage.setItem('inGame', '1')
 			setInGame(true)
 			navigate('/game')
 		}, 2000)
@@ -58,98 +52,52 @@ const Matchmaker: React.FC = () => {
 		return () => clearTimeout(timer)
 	}, [matchmaking])
 
-	useEffect(() => {
-		if (!isOver) return
-
-		const randInterval = setInterval(() => {
-			randomXY.current = getMaxedXYrand(7)
-		}, 4000)
-
-		let usedIntervalFromUsed: NodeJS.Timer | null = null
-		const timer = setTimeout(() => {
-			usedXY.current = {
-				x: -usedXY.current.x,
-				y: -usedXY.current.y,
-			}
-			usedIntervalFromUsed = setInterval(() => {
-				usedXY.current = {
-					x: -usedXY.current.x,
-					y: -usedXY.current.y,
-				}
-			}, 4000)
-		}, 2000)
-
-		const usedIntervalFromRand = setInterval(() => {
-			usedXY.current = {
-				x: randomXY.current.x,
-				y: randomXY.current.y,
-			}
-		}, 4000)
-
-		return () => {
-			clearInterval(randInterval)
-			clearTimeout(timer)
-			if (usedIntervalFromUsed) clearInterval(usedIntervalFromUsed)
-			clearInterval(usedIntervalFromRand)
-		}
-	}, [isOver])
-
-	useEffect(() => {
-		if (isOver) animation.start({
-			x: 100,
-			transition: {
-				duration: 1,
-				ease: "easeInOut",
-			},
-		});
-	}, [usedXY.current.x, usedXY.current.y, isOver])
-
 	// ----HANDLERS--------------------------- //
 	const toggleMatchmaker = useCallback(() => {
 		if (!matchmaking && !inGame) setMatchmaking(true)
 		else if (inGame) {
+			localStorage.setItem('inGame', '0')
 			setInGame(false)
 			navigate('/')
 		} else setMatchmaking(false)
 	}, [matchmaking, inGame])
 
 	const matchmakerBtnHdl = useMemo(() => ({
-		...isOverHdl,
 		onMouseUp: toggleMatchmaker
 	}), [toggleMatchmaker])
 
-	// ----CLASSNAMES------------------------- //
-	const name = 'matchmaker'
-
 	// ----ANIMATIONS------------------------- //
 	const btnMotion = useMemo(() => {
-		const bouncyComeFromColAnimation = bouncyComeFromCol(185, 20, 0.75, 1)
+		const bouncyComeFromColAnimation = bouncyComeFromCol(185, 20, 0.75, 0.9)
 		return {
 			...bouncyComeFromColAnimation,
 			whileHover: {
-				scale: 1.02,
-				transition: {
-					duration: 1,
-					ease: 'linear',
-					repeat: Infinity,
-					repeatType: 'reverse',
-				},
+				rotate: [0, -5, 5, 0],
+				transition: { ease: 'easeIn' }
 			},
+			whileTap: {
+				rotate: [0, 5, -5, 5, -5, 0],
+				transition: { ease: 'easeInOut' }
+			}
 		}
 	}, [])
 
+	// ----CLASSNAMES------------------------- //
+	const name = 'matchmaker'
+	const pressedName = `${name}--pressed`
+
 	// ----RENDER----------------------------- //
 	const btnContent = useMemo(() => {
-		if (!matchmaking) return (inGame ? <>[EXIT]</> : <>[PLAY]</>)
+		if (!matchmaking) return inGame ? <>[EXIT]</> : <>[PLAY]</>
 		else return <>[STOP] <Timer /></>
 	}, [matchmaking, inGame])
 
-	return <FtMotionBtn className={name}
-		pressedName={`${name}--pressed`}
+	return <FtMotionBtn
+		className={name}
+		pressedName={pressedName}
 		handler={matchmakerBtnHdl}
 		motionProps={btnMotion}
-		animate={animation}
 		content={btnContent}
 	/>
 }
-export default Matchmaker
+export default Matchmaker	

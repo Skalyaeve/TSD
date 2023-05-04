@@ -2,6 +2,7 @@ import React, { useMemo } from 'react'
 import { motion } from 'framer-motion'
 
 import { FtBtn, FtInput } from '../tsx-utils/ftSam/ftBox.tsx'
+import { fadeInOut } from '../tsx-utils/ftSam/ftFramerMotion.tsx'
 
 // --------USER------------------------------------------------------------ //
 interface UserStatsProps {
@@ -40,7 +41,6 @@ const UserStats: React.FC<UserStatsProps> = ({
 		{usrBox('scored', '0')}
 	</div>
 }
-
 
 // --------BOARD----------------------------------------------------------- //
 interface BoardProps {
@@ -82,7 +82,6 @@ const Board: React.FC<BoardProps> = ({ name, btnName, btnPressedName }) => {
 	</div >
 }
 
-
 // --------LEADER---------------------------------------------------------- //
 const Leader: React.FC = () => {
 	// ----CLASSNAMES------------------------- //
@@ -100,10 +99,7 @@ const Leader: React.FC = () => {
 	), [])
 
 	return <motion.main className={`${name} main`}
-		initial={{ opacity: 0 }}
-		animate={{ opacity: 1 }}
-		exit={{ opacity: 0 }}
-	>
+		{...fadeInOut(0.5)}	>
 		<div className={`${name}-head`}>
 			{headBtn('down', '[>>]')}
 			{headBtn('up', '[<<]')}

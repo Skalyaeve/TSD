@@ -32,6 +32,7 @@ ex: ".navBar-logo--pressed {}"
 	grid-auto-rows: minmax(75px, auto);
 
 	/* #3 Position */
+	grid-row: 1 / 1;
 	z-index: 3;
 }
 
@@ -48,7 +49,6 @@ ex: ".navBar-logo--pressed {}"
 	justify-content: center;
 
 	/* #2 Form */
-	width: 100%;
 	height: 100%;
 }
 

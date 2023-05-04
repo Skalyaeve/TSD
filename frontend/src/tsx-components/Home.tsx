@@ -7,7 +7,7 @@ import { fadeInOut } from '../tsx-utils/ftSam/ftFramerMotion.tsx'
 const Home: React.FC = () => {
 	// ----RENDER----------------------------- //
 	return <motion.main className='home main'
-		{...fadeInOut()}>
+		{...fadeInOut(0.5)}>
 		HOME
 	</motion.main>
 }

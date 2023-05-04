@@ -1,51 +1,41 @@
-import { useCallback, useState } from 'react'
+import { useMemo, useCallback, useState } from 'react'
 
-import { getMaxedXYrand } from './ftNumbers.tsx'
+import { getSignChangeRandXY } from './ftNumbers.tsx'
 
 // --------USE-BOOL-------------------------------------------------------- //
 export const useTgl = (def: boolean): [boolean, () => void] => {
 	const [value, setValue] = useState(def)
-	const valueToggler = useCallback(() => setValue(x => !x), [value])
+	const valueToggler = useCallback(() => setValue(x => !x), [])
 
 	return [value, valueToggler]
 }
 
-export const useTglBis = (defaultValue: boolean): [
-	boolean, () => void, () => void
-] => {
-	const [state, setState] = useState(defaultValue)
-	const setTrue = useCallback(() => setState(true), [])
-	const setFalse = useCallback(() => setState(false), [])
-
-	return [state, setTrue, setFalse]
-}
-
 export const tglOnUp = (def: boolean): [boolean, React.HTMLAttributes<HTMLElement>] => {
-	const [value, valueToggler] = useTgl(def)
-	const btnHdl = { onMouseUp: valueToggler }
+	const [value, tglValue] = useTgl(def)
+	const valueHdl = useMemo(() => ({ onMouseUp: tglValue }), [])
 
-	return [value, btnHdl]
+	return [value, valueHdl]
 }
 
 export const tglOnOver = (def: boolean): [boolean, React.HTMLAttributes<HTMLElement>] => {
-	const [value, valeTrue, valueFalse] = useTglBis(def)
-	const btnHdl = {
-		onMouseEnter: valeTrue,
-		onMouseLeave: valueFalse
-	}
+	const [value, tglValue] = useTgl(def)
+	const valueHdl = useMemo(() => ({
+		onMouseEnter: tglValue,
+		onMouseLeave: tglValue
+	}), [])
 
-	return [value, btnHdl]
+	return [value, valueHdl]
 }
 
 // --------USE-NUMBER------------------------------------------------------ //
-export const useRandomXY = (maxDistance: number): [
+export const useRandomXY = (min: number, max: number): [
 	{ x: number, y: number }, () => void
 ] => {
-	const [randomXY, setRandomXY] = useState(getMaxedXYrand(maxDistance))
+	const [randomXY, setRandomXY] = useState(getSignChangeRandXY(min, max))
 
-	const doRandomXY = useCallback(() => (
-		setRandomXY(getMaxedXYrand(maxDistance))
-	), [])
+	const doRandomXY = useCallback(() => {
+		setRandomXY(getSignChangeRandXY(min, max))
+	}, [])
 
 	return [randomXY, doRandomXY]
 }
