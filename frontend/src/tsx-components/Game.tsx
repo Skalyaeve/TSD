@@ -112,8 +112,8 @@ function Party() {
 		skins[1] = {
 			name: 'mage',
 			nbFrames: 8,
-			xSize: 250,
-			ySize: 250,
+			xSize: 70,
+			ySize: 104,
 			idleSheet: mageIdle__Sheet,
 			runSheet: mageRun__Sheet
 		}
