@@ -9,7 +9,7 @@ import { Socket, io } from 'socket.io-client'
 // Spritesheets
 import playerIdle__Sheet from '../resource/assets/playerSheet.png'
 import playerRun__Sheet from '../resource/assets/playerSheet.png'
-import mageIdle__Sheet from '../resource/assets/Mage/newIdle.png'
+import mageIdle__Sheet from '../resource/assets/Mage/IdleV3.png'
 import mageRun__Sheet from '../resource/assets/Mage/Run.png'
 
 /* -------------------------TYPING------------------------- */
@@ -362,7 +362,7 @@ function Party() {
 
 	// Start socket comunication
 	const startSocket = () => {
-		socket = io('http://10.12.7.5:3001')
+		socket = io('http://localhost:3001')
 
 		// Update the players list with the received data (when connecting for the first time)
 		socket.on('currentPlayers', (playersList: player[]) => {
