@@ -148,11 +148,6 @@ function Party() {
 		let player: player = p[playerId]
 		let skin = s[player.skin]
 		let newSprite = scene.physics.add.sprite(player.xPos, player.yPos, player.skin + 'Idle')
-		if (newSprite && newSprite.body)
-			console.log("created player: ", newSprite.body.x, newSprite.body.y)
-		let spriteOffsetX: number = newSprite.body.x - player.xPos
-		let spriteOffsetY: number = newSprite.body.y - player.yPos
-		console.log("Offset x:", spriteOffsetX, "y:", spriteOffsetY)
 		newSprite.setScale(skin.scaleFactor, skin.scaleFactor).refreshBody()
 		newSprite.setBounce(1)
 		newSprite.setCollideWorldBounds(true)
