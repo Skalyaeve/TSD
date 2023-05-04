@@ -4,6 +4,8 @@
 
 // --------FADE------------------------------------------------------------ //
 export const fadeInOut = (
+	animateEase: string = 'easeInOut',
+	exitEase: string = animateEase,
 	inDuration: number = 0.5,
 	outDuration: number = inDuration,
 	initialOpacity: number = 0,
@@ -12,11 +14,11 @@ export const fadeInOut = (
 	initial: { opacity: initialOpacity },
 	animate: {
 		opacity: maxOpacity,
-		transition: { opacity: { duration: inDuration } }
+		transition: { opacity: { duration: inDuration, ease: animateEase } }
 	},
 	exit: {
 		opacity: initialOpacity,
-		transition: { opacity: { duration: outDuration } }
+		transition: { opacity: { duration: outDuration, ease: exitEase } }
 	}
 })
 
@@ -26,6 +28,8 @@ export const fadeInOut = (
 
 // --------POP-UP---------------------------------------------------------- //
 export const popUp = (
+	animateEase: string = 'easeInOut',
+	exitEase: string = animateEase,
 	inDuration: number = 0.5,
 	outDuration: number = inDuration,
 	initialOpacity: number = 0,
@@ -36,16 +40,16 @@ export const popUp = (
 		scale: 1,
 		opacity: maxOpacity,
 		transition: {
-			scale: { duration: inDuration },
-			opacity: { duration: inDuration }
+			scale: { duration: inDuration, ease: animateEase },
+			opacity: { duration: inDuration, ease: animateEase }
 		}
 	},
 	exit: {
 		scale: 0,
 		opacity: initialOpacity,
 		transition: {
-			scale: { duration: outDuration },
-			opacity: { duration: outDuration }
+			scale: { duration: outDuration, ease: exitEase },
+			opacity: { duration: outDuration, ease: exitEase }
 		}
 	}
 })
@@ -53,6 +57,8 @@ export const popUp = (
 export const popUpByPercent = (
 	width: number = 100,
 	height: number = 100,
+	animateEase: string = 'easeInOut',
+	exitEase: string = animateEase,
 	inDuration: number = 0.5,
 	outDuration: number = inDuration,
 	initialOpacity: number = 0,
@@ -64,9 +70,9 @@ export const popUpByPercent = (
 		height: `${height}%`,
 		opacity: maxOpacity,
 		transition: {
-			width: { duration: inDuration },
-			height: { duration: inDuration },
-			opacity: { duration: inDuration }
+			width: { duration: inDuration, ease: animateEase },
+			height: { duration: inDuration, ease: animateEase },
+			opacity: { duration: inDuration, ease: animateEase }
 		}
 	},
 	exit: {
@@ -74,9 +80,9 @@ export const popUpByPercent = (
 		height: 0,
 		opacity: initialOpacity,
 		transition: {
-			width: { duration: outDuration },
-			height: { duration: outDuration },
-			opacity: { duration: outDuration }
+			width: { duration: outDuration, ease: exitEase },
+			height: { duration: outDuration, ease: exitEase },
+			opacity: { duration: outDuration, ease: exitEase }
 		}
 	}
 })
@@ -84,6 +90,8 @@ export const popUpByPercent = (
 export const popUpByPx = (
 	width: number,
 	height: number,
+	animateEase: string = 'easeInOut',
+	exitEase: string = animateEase,
 	inDuration: number = 0.5,
 	outDuration: number = inDuration,
 	initialOpacity: number = 0,
@@ -95,9 +103,9 @@ export const popUpByPx = (
 		height: `${height}px`,
 		opacity: maxOpacity,
 		transition: {
-			width: { duration: inDuration },
-			height: { duration: inDuration },
-			opacity: { duration: inDuration }
+			width: { duration: inDuration, ease: animateEase },
+			height: { duration: inDuration, ease: animateEase },
+			opacity: { duration: inDuration, ease: animateEase }
 		}
 	},
 	exit: {
@@ -105,9 +113,9 @@ export const popUpByPx = (
 		height: 0,
 		opacity: initialOpacity,
 		transition: {
-			width: { duration: outDuration },
-			height: { duration: outDuration },
-			opacity: { duration: outDuration }
+			width: { duration: outDuration, ease: exitEase },
+			height: { duration: outDuration, ease: exitEase },
+			opacity: { duration: outDuration, ease: exitEase }
 		}
 	}
 })
@@ -116,6 +124,8 @@ export const popUpByPx = (
 export const bouncyPopUp = (
 	maxScale: number = 1.1,
 	maxAt: number = 0.75,
+	animateEase: string = 'easeInOut',
+	exitEase: string = animateEase,
 	inDuration: number = 0.5,
 	outDuration: number = inDuration,
 	initialOpacity: number = 0,
@@ -126,16 +136,24 @@ export const bouncyPopUp = (
 		scale: [0, maxScale, 1],
 		opacity: maxOpacity,
 		transition: {
-			scale: { duration: inDuration, times: [0, maxAt, 1] },
-			opacity: { duration: inDuration }
+			scale: {
+				duration: inDuration,
+				times: [0, maxAt, 1],
+				ease: animateEase
+			},
+			opacity: { duration: inDuration, ease: animateEase }
 		}
 	},
 	exit: {
 		scale: [1, maxScale, 0],
 		opacity: initialOpacity,
 		transition: {
-			scale: { duration: outDuration, times: [0, 1 - maxAt, 1] },
-			opacity: { duration: outDuration }
+			scale: {
+				duration: outDuration,
+				times: [0, 1 - maxAt, 1],
+				ease: exitEase
+			},
+			opacity: { duration: outDuration, ease: exitEase }
 		}
 	}
 })
@@ -145,6 +163,8 @@ export const bouncyPopUpByPercent = (
 	height: number = 100,
 	extraScale: number = 0.2,
 	maxAt: number = 0.75,
+	animateEase: string = 'easeInOut',
+	exitEase: string = animateEase,
 	inDuration: number = 0.5,
 	outDuration: number = inDuration,
 	initialOpacity: number = 0,
@@ -156,9 +176,17 @@ export const bouncyPopUpByPercent = (
 		height: ['0%', `${height + height * extraScale}%`, `${height}%`],
 		opacity: maxOpacity,
 		transition: {
-			width: { duration: inDuration, times: [0, maxAt, 1] },
-			height: { duration: inDuration, times: [0, maxAt, 1] },
-			opacity: { duration: inDuration }
+			width: {
+				duration: inDuration,
+				times: [0, maxAt, 1],
+				ease: animateEase
+			},
+			height: {
+				duration: inDuration,
+				times: [0, maxAt, 1],
+				ease: animateEase
+			},
+			opacity: { duration: inDuration, ease: animateEase }
 		}
 	},
 	exit: {
@@ -166,9 +194,17 @@ export const bouncyPopUpByPercent = (
 		height: [`${height}%`, `${height + height * extraScale}%`, '0%'],
 		opacity: initialOpacity,
 		transition: {
-			width: { duration: outDuration, times: [0, 1 - maxAt, 1] },
-			height: { duration: outDuration, times: [0, 1 - maxAt, 1] },
-			opacity: { duration: outDuration }
+			width: {
+				duration: outDuration,
+				times: [0, 1 - maxAt, 1],
+				ease: exitEase
+			},
+			height: {
+				duration: outDuration,
+				times: [0, 1 - maxAt, 1],
+				ease: exitEase
+			},
+			opacity: { duration: outDuration, ease: exitEase }
 		}
 	}
 })
@@ -178,6 +214,8 @@ export const bouncyPopUpByPx = (
 	height: number,
 	extraScale: number = 0.2,
 	maxAt: number = 0.75,
+	animateEase: string = 'easeInOut',
+	exitEase: string = animateEase,
 	inDuration: number = 0.5,
 	outDuration: number = inDuration,
 	initialOpacity: number = 0,
@@ -189,9 +227,17 @@ export const bouncyPopUpByPx = (
 		height: ['0px', `${height + height * extraScale}px`, `${height}px`],
 		opacity: maxOpacity,
 		transition: {
-			width: { duration: inDuration, times: [0, maxAt, 1] },
-			height: { duration: inDuration, times: [0, maxAt, 1] },
-			opacity: { duration: inDuration }
+			width: {
+				duration: inDuration,
+				times: [0, maxAt, 1],
+				ease: animateEase
+			},
+			height: {
+				duration: inDuration,
+				times: [0, maxAt, 1],
+				ease: animateEase
+			},
+			opacity: { duration: inDuration, ease: animateEase }
 		}
 	},
 	exit: {
@@ -199,15 +245,25 @@ export const bouncyPopUpByPx = (
 		height: [`${height}px`, `${height + height * extraScale}px`, '0px'],
 		opacity: initialOpacity,
 		transition: {
-			width: { duration: outDuration, times: [0, 1 - maxAt, 1] },
-			height: { duration: outDuration, times: [0, 1 - maxAt, 1] },
-			opacity: { duration: outDuration }
+			width: {
+				duration: outDuration,
+				times: [0, 1 - maxAt, 1],
+				ease: exitEase
+			},
+			height: {
+				duration: outDuration,
+				times: [0, 1 - maxAt, 1],
+				ease: exitEase
+			},
+			opacity: { duration: outDuration, ease: exitEase }
 		}
 	}
 })
 
 // --------HEIGHT-GROW----------------------------------------------------- //
 export const heightGrow = (
+	animateEase: string = 'easeInOut',
+	exitEase: string = animateEase,
 	inDuration: number = 0.5,
 	outDuration: number = inDuration,
 	initialOpacity: number = 0,
@@ -218,22 +274,24 @@ export const heightGrow = (
 		scaleY: 1,
 		opacity: maxOpacity,
 		transition: {
-			scaleY: { duration: inDuration },
-			opacity: { duration: inDuration }
+			scaleY: { duration: inDuration, ease: animateEase },
+			opacity: { duration: inDuration, ease: animateEase }
 		}
 	},
 	exit: {
 		scaleY: 0,
 		opacity: initialOpacity,
 		transition: {
-			scaleY: { duration: outDuration },
-			opacity: { duration: outDuration }
+			scaleY: { duration: outDuration, ease: exitEase },
+			opacity: { duration: outDuration, ease: exitEase }
 		}
 	}
 })
 
 export const heightGrowByPercent = (
 	height: number = 100,
+	animateEase: string = 'easeInOut',
+	exitEase: string = animateEase,
 	inDuration: number = 0.5,
 	outDuration: number = inDuration,
 	initialOpacity: number = 0,
@@ -244,22 +302,24 @@ export const heightGrowByPercent = (
 		height: `${height}%`,
 		opacity: maxOpacity,
 		transition: {
-			height: { duration: inDuration },
-			opacity: { duration: inDuration }
+			height: { duration: inDuration, ease: animateEase },
+			opacity: { duration: inDuration, ease: animateEase }
 		}
 	},
 	exit: {
 		height: 0,
 		opacity: initialOpacity,
 		transition: {
-			height: { duration: outDuration },
-			opacity: { duration: outDuration }
+			height: { duration: outDuration, ease: exitEase },
+			opacity: { duration: outDuration, ease: exitEase }
 		}
 	}
 })
 
 export const heightGrowByPx = (
 	height: number,
+	animateEase: string = 'easeInOut',
+	exitEase: string = animateEase,
 	inDuration: number = 0.5,
 	outDuration: number = inDuration,
 	initialOpacity: number = 0,
@@ -270,16 +330,16 @@ export const heightGrowByPx = (
 		height: `${height}px`,
 		opacity: maxOpacity,
 		transition: {
-			height: { duration: inDuration },
-			opacity: { duration: inDuration }
+			height: { duration: inDuration, ease: animateEase },
+			opacity: { duration: inDuration, ease: animateEase }
 		}
 	},
 	exit: {
 		height: 0,
 		opacity: initialOpacity,
 		transition: {
-			height: { duration: outDuration },
-			opacity: { duration: outDuration }
+			height: { duration: outDuration, ease: exitEase },
+			opacity: { duration: outDuration, ease: exitEase }
 		}
 	}
 })
@@ -288,6 +348,8 @@ export const heightGrowByPx = (
 export const bouncyHeightGrow = (
 	maxScale: number = 1.1,
 	maxAt: number = 0.75,
+	animateEase: string = 'easeInOut',
+	exitEase: string = animateEase,
 	inDuration: number = 0.5,
 	outDuration: number = inDuration,
 	initialOpacity: number = 0,
@@ -298,16 +360,24 @@ export const bouncyHeightGrow = (
 		scaleY: [0, maxScale, 1],
 		opacity: maxOpacity,
 		transition: {
-			scaleY: { duration: inDuration, times: [0, maxAt, 1] },
-			opacity: { duration: inDuration }
+			scaleY: {
+				duration: inDuration,
+				times: [0, maxAt, 1],
+				ease: animateEase
+			},
+			opacity: { duration: inDuration, ease: animateEase }
 		}
 	},
 	exit: {
 		scaleY: [1, maxScale, 0],
 		opacity: initialOpacity,
 		transition: {
-			scaleY: { duration: outDuration, times: [0, 1 - maxAt, 1] },
-			opacity: { duration: outDuration }
+			scaleY: {
+				duration: outDuration,
+				times: [0, 1 - maxAt, 1],
+				ease: exitEase
+			},
+			opacity: { duration: outDuration, ease: exitEase }
 		}
 	}
 })
@@ -316,26 +386,36 @@ export const bouncyHeightGrowByPercent = (
 	height: number = 100,
 	extraScale: number = 0.2,
 	maxAt: number = 0.75,
+	animateEase: string = 'easeInOut',
+	exitEase: string = animateEase,
 	inDuration: number = 0.5,
 	outDuration: number = inDuration,
 	initialOpacity: number = 0,
-	maxOpacity: number = 1,
+	maxOpacity: number = 1
 ) => ({
 	initial: { height: 0, opacity: initialOpacity },
 	animate: {
 		height: ['0%', `${height + height * extraScale}%`, `${height}%`],
 		opacity: maxOpacity,
 		transition: {
-			height: { duration: inDuration, times: [0, maxAt, 1] },
-			opacity: { duration: inDuration },
+			height: {
+				duration: inDuration,
+				times: [0, maxAt, 1],
+				ease: animateEase
+			},
+			opacity: { duration: inDuration, ease: animateEase },
 		}
 	},
 	exit: {
 		height: [`${height}%`, `${height + height * extraScale}%`, '0%'],
 		opacity: initialOpacity,
 		transition: {
-			height: { duration: outDuration, times: [0, 1 - maxAt, 1] },
-			opacity: { duration: outDuration },
+			height: {
+				duration: outDuration,
+				times: [0, 1 - maxAt, 1],
+				ease: exitEase
+			},
+			opacity: { duration: outDuration, ease: exitEase },
 		}
 	}
 })
@@ -344,6 +424,8 @@ export const bouncyHeightGrowByPx = (
 	height: number,
 	extraScale: number = 0.2,
 	maxAt: number = 0.75,
+	animateEase: string = 'easeInOut',
+	exitEase: string = animateEase,
 	inDuration: number = 0.5,
 	outDuration: number = inDuration,
 	initialOpacity: number = 0,
@@ -354,22 +436,32 @@ export const bouncyHeightGrowByPx = (
 		height: ['0px', `${height + height * extraScale}px`, `${height}px`],
 		opacity: maxOpacity,
 		transition: {
-			height: { duration: inDuration, times: [0, maxAt, 1] },
-			opacity: { duration: inDuration }
+			height: {
+				duration: inDuration,
+				times: [0, maxAt, 1],
+				ease: animateEase
+			},
+			opacity: { duration: inDuration, ease: animateEase }
 		}
 	},
 	exit: {
 		height: [`${height}px`, `${height + height * extraScale}px`, '0px'],
 		opacity: initialOpacity,
 		transition: {
-			height: { duration: outDuration, times: [0, 1 - maxAt, 1] },
-			opacity: { duration: outDuration }
+			height: {
+				duration: outDuration,
+				times: [0, 1 - maxAt, 1],
+				ease: exitEase
+			},
+			opacity: { duration: outDuration, ease: exitEase }
 		}
 	}
 })
 
 // --------WIDTH-GROW------------------------------------------------------ //
 export const widthGrow = (
+	animateEase: string = 'easeInOut',
+	exitEase: string = animateEase,
 	inDuration: number = 0.5,
 	outDuration: number = inDuration,
 	initialOpacity: number = 0,
@@ -380,22 +472,24 @@ export const widthGrow = (
 		scaleX: 1,
 		opacity: maxOpacity,
 		transition: {
-			scaleX: { duration: inDuration },
-			opacity: { duration: inDuration }
+			scaleX: { duration: inDuration, ease: animateEase },
+			opacity: { duration: inDuration, ease: animateEase }
 		}
 	},
 	exit: {
 		scaleX: 0,
 		opacity: initialOpacity,
 		transition: {
-			scaleX: { duration: outDuration },
-			opacity: { duration: outDuration }
+			scaleX: { duration: outDuration, ease: exitEase },
+			opacity: { duration: outDuration, ease: exitEase }
 		}
 	}
 })
 
 export const widthGrowByPercent = (
 	width: number = 100,
+	animateEase: string = 'easeInOut',
+	exitEase: string = animateEase,
 	inDuration: number = 0.5,
 	outDuration: number = inDuration,
 	initialOpacity: number = 0,
@@ -406,22 +500,24 @@ export const widthGrowByPercent = (
 		width: `${width}%`,
 		opacity: maxOpacity,
 		transition: {
-			width: { duration: inDuration },
-			opacity: { duration: inDuration }
+			width: { duration: inDuration, ease: animateEase },
+			opacity: { duration: inDuration, ease: animateEase }
 		}
 	},
 	exit: {
 		width: 0,
 		opacity: initialOpacity,
 		transition: {
-			width: { duration: outDuration },
-			opacity: { duration: outDuration }
+			width: { duration: outDuration, ease: exitEase },
+			opacity: { duration: outDuration, ease: exitEase }
 		}
 	}
 })
 
 export const widthGrowByPx = (
 	width: number,
+	animateEase: string = 'easeInOut',
+	exitEase: string = animateEase,
 	inDuration: number = 0.5,
 	outDuration: number = inDuration,
 	initialOpacity: number = 0,
@@ -432,16 +528,16 @@ export const widthGrowByPx = (
 		width: `${width}px`,
 		opacity: maxOpacity,
 		transition: {
-			width: { duration: inDuration },
-			opacity: { duration: inDuration }
+			width: { duration: inDuration, ease: animateEase },
+			opacity: { duration: inDuration, ease: animateEase }
 		}
 	},
 	exit: {
 		width: 0,
 		opacity: initialOpacity,
 		transition: {
-			width: { duration: outDuration },
-			opacity: { duration: outDuration }
+			width: { duration: outDuration, ease: exitEase },
+			opacity: { duration: outDuration, ease: exitEase }
 		}
 	}
 })
@@ -450,6 +546,8 @@ export const widthGrowByPx = (
 export const bouncyWidthGrow = (
 	maxScale: number = 1.1,
 	maxAt: number = 0.75,
+	animateEase: string = 'easeInOut',
+	exitEase: string = animateEase,
 	inDuration: number = 0.5,
 	outDuration: number = inDuration,
 	initialOpacity: number = 0,
@@ -460,16 +558,24 @@ export const bouncyWidthGrow = (
 		scaleX: [0, maxScale, 1],
 		opacity: maxOpacity,
 		transition: {
-			scaleX: { duration: inDuration, times: [0, maxAt, 1] },
-			opacity: { duration: inDuration }
+			scaleX: {
+				duration: inDuration,
+				times: [0, maxAt, 1],
+				ease: animateEase
+			},
+			opacity: { duration: inDuration, ease: animateEase }
 		}
 	},
 	exit: {
 		scaleX: [1, maxScale, 0],
 		opacity: initialOpacity,
 		transition: {
-			scaleX: { duration: outDuration, times: [0, 1 - maxAt, 1] },
-			opacity: { duration: outDuration }
+			scaleX: {
+				duration: outDuration,
+				times: [0, 1 - maxAt, 1],
+				ease: exitEase
+			},
+			opacity: { duration: outDuration, ease: exitEase }
 		}
 	}
 })
@@ -478,26 +584,36 @@ export const bouncyWidthGrowByPercent = (
 	width: number = 100,
 	extraScale: number = 0.2,
 	maxAt: number = 0.75,
+	animateEase: string = 'easeInOut',
+	exitEase: string = animateEase,
 	inDuration: number = 0.5,
 	outDuration: number = inDuration,
 	initialOpacity: number = 0,
-	maxOpacity: number = 1
+	maxOpacity: number = 1,
 ) => ({
 	initial: { width: 0, opacity: initialOpacity },
 	animate: {
 		width: ['0%', `${width + width * extraScale}%`, `${width}%`],
 		opacity: maxOpacity,
 		transition: {
-			width: { duration: inDuration, times: [0, maxAt, 1] },
-			opacity: { duration: inDuration }
+			width: {
+				duration: inDuration,
+				times: [0, maxAt, 1],
+				ease: animateEase
+			},
+			opacity: { duration: inDuration, ease: animateEase }
 		}
 	},
 	exit: {
 		width: [`${width}%`, `${width + width * extraScale}%`, '0%'],
 		opacity: initialOpacity,
 		transition: {
-			width: { duration: outDuration, times: [0, 1 - maxAt, 1] },
-			opacity: { duration: outDuration }
+			width: {
+				duration: outDuration,
+				times: [0, 1 - maxAt, 1],
+				ease: exitEase
+			},
+			opacity: { duration: outDuration, ease: exitEase }
 		}
 	}
 })
@@ -506,6 +622,8 @@ export const bouncyWidthGrowByPx = (
 	width: number,
 	extraScale: number = 0.2,
 	maxAt: number = 0.75,
+	animateEase: string = 'easeInOut',
+	exitEase: string = animateEase,
 	inDuration: number = 0.5,
 	outDuration: number = inDuration,
 	initialOpacity: number = 0,
@@ -516,16 +634,24 @@ export const bouncyWidthGrowByPx = (
 		width: ['0px', `${width + width * extraScale}px`, `${width}px`],
 		opacity: maxOpacity,
 		transition: {
-			width: { duration: inDuration, times: [0, maxAt, 1] },
-			opacity: { duration: inDuration }
+			width: {
+				duration: inDuration,
+				times: [0, maxAt, 1],
+				ease: animateEase
+			},
+			opacity: { duration: inDuration, ease: animateEase }
 		}
 	},
 	exit: {
 		width: [`${width}px`, `${width + width * extraScale}px`, '0px'],
 		opacity: initialOpacity,
 		transition: {
-			width: { duration: outDuration, times: [0, 1 - maxAt, 1] },
-			opacity: { duration: outDuration }
+			width: {
+				duration: outDuration,
+				times: [0, 1 - maxAt, 1],
+				ease: exitEase
+			},
+			opacity: { duration: outDuration, ease: exitEase }
 		}
 	}
 })
@@ -537,6 +663,8 @@ export const bouncyWidthGrowByPx = (
 // --------COME-FROM-BORDERS----------------------------------------------- //
 export const comeFromCol = (
 	comeFrom: number,
+	animateEase: string = 'easeInOut',
+	exitEase: string = animateEase,
 	inDuration: number = 0.5,
 	outDuration: number = inDuration,
 	initialOpacity: number = 0,
@@ -547,22 +675,24 @@ export const comeFromCol = (
 		opacity: maxOpacity,
 		y: 0,
 		transition: {
-			opacity: { duration: inDuration },
-			y: { duration: inDuration }
+			opacity: { duration: inDuration, ease: animateEase },
+			y: { duration: inDuration, ease: animateEase }
 		}
 	},
 	exit: {
 		opacity: initialOpacity,
 		y: `${comeFrom}px`,
 		transition: {
-			opacity: { duration: outDuration },
-			y: { duration: outDuration }
+			opacity: { duration: outDuration, ease: exitEase },
+			y: { duration: outDuration, ease: exitEase }
 		}
 	}
 })
 
 export const comeFromRow = (
 	comeFrom: number,
+	animateEase: string = 'easeInOut',
+	exitEase: string = animateEase,
 	inDuration: number = 0.5,
 	outDuration: number = inDuration,
 	initialOpacity: number = 0,
@@ -573,16 +703,16 @@ export const comeFromRow = (
 		opacity: maxOpacity,
 		x: 0,
 		transition: {
-			opacity: { duration: inDuration },
-			x: { duration: inDuration }
+			opacity: { duration: inDuration, ease: animateEase },
+			x: { duration: inDuration, ease: animateEase }
 		}
 	},
 	exit: {
 		opacity: initialOpacity,
 		x: `${comeFrom}px`,
 		transition: {
-			opacity: { duration: outDuration },
-			x: { duration: outDuration }
+			opacity: { duration: outDuration, ease: exitEase },
+			x: { duration: outDuration, ease: exitEase }
 		}
 	}
 })
@@ -592,6 +722,8 @@ export const bouncyComeFromCol = (
 	comeFrom: number,
 	bounce: number = 10,
 	maxAt: number = 0.75,
+	animateEase: string = 'easeInOut',
+	exitEase: string = animateEase,
 	inDuration: number = 0.5,
 	outDuration: number = inDuration,
 	initialOpacity: number = 0,
@@ -602,16 +734,24 @@ export const bouncyComeFromCol = (
 		opacity: maxOpacity,
 		y: [`${comeFrom}px`, `-${bounce}px`, '0px'],
 		transition: {
-			opacity: { duration: inDuration },
-			y: { duration: inDuration, times: [0, maxAt, 1] }
+			opacity: { duration: inDuration, ease: animateEase },
+			y: {
+				duration: inDuration,
+				times: [0, maxAt, 1],
+				ease: animateEase
+			}
 		}
 	},
 	exit: {
 		opacity: initialOpacity,
 		y: ['0px', `-${bounce}px`, `${comeFrom}px`],
 		transition: {
-			opacity: { duration: outDuration },
-			y: { duration: outDuration, times: [0, 1 - maxAt, 1] }
+			opacity: { duration: outDuration, ease: exitEase },
+			y: {
+				duration: outDuration,
+				times: [0, 1 - maxAt, 1],
+				ease: exitEase
+			}
 		}
 	}
 })
@@ -620,6 +760,8 @@ export const bouncyComeFromRow = (
 	comeFrom: number,
 	maxAt: number = 0.75,
 	bounce: number = 10,
+	animateEase: string = 'easeInOut',
+	exitEase: string = animateEase,
 	inDuration: number = 0.5,
 	outDuration: number = inDuration,
 	initialOpacity: number = 0,
@@ -630,16 +772,24 @@ export const bouncyComeFromRow = (
 		opacity: maxOpacity,
 		x: [`${comeFrom}px`, `-${bounce}px`, '0px'],
 		transition: {
-			opacity: { duration: inDuration },
-			x: { duration: inDuration, times: [0, maxAt, 1] }
+			opacity: { duration: inDuration, ease: animateEase },
+			x: {
+				duration: inDuration,
+				times: [0, maxAt, 1],
+				ease: animateEase
+			}
 		}
 	},
 	exit: {
 		opacity: initialOpacity,
 		x: ['0px', `-${bounce}px`, `${comeFrom}px`],
 		transition: {
-			opacity: { duration: outDuration },
-			x: { duration: outDuration, times: [0, 1 - maxAt, 1] }
+			opacity: { duration: outDuration, ease: exitEase },
+			x: {
+				duration: outDuration,
+				times: [0, 1 - maxAt, 1],
+				ease: exitEase
+			}
 		}
 	}
 })
@@ -652,6 +802,8 @@ export const bouncyComeFromRow = (
 export const growingListElem = (
 	comeFrom: number,
 	height: number,
+	animateEase: string = 'easeInOut',
+	exitEase: string = animateEase,
 	inDuration: number = 0.5,
 	outDuration: number = inDuration,
 	initialOpacity: number = 0,
@@ -663,9 +815,9 @@ export const growingListElem = (
 		y: 0,
 		opacity: maxOpacity,
 		transition: {
-			height: { duration: inDuration },
-			y: { duration: inDuration },
-			opacity: { duration: inDuration }
+			height: { duration: inDuration, ease: animateEase },
+			y: { duration: inDuration, ease: animateEase },
+			opacity: { duration: inDuration, ease: animateEase }
 		}
 	},
 	exit: {
@@ -673,9 +825,9 @@ export const growingListElem = (
 		y: `${comeFrom}px`,
 		opacity: initialOpacity,
 		transition: {
-			height: { duration: outDuration },
-			y: { duration: outDuration },
-			opacity: { duration: outDuration }
+			height: { duration: outDuration, ease: exitEase },
+			y: { duration: outDuration, ease: exitEase },
+			opacity: { duration: outDuration, ease: exitEase }
 		}
 	}
 })
@@ -686,6 +838,8 @@ export const bouncyGrowingListElem = (
 	height: number,
 	extraScale: number = 0.2,
 	maxAt: number = 0.75,
+	animateEase: string = 'easeInOut',
+	exitEase: string = animateEase,
 	inDuration: number = 0.5,
 	outDuration: number = inDuration,
 	initialOpacity: number = 0,
@@ -697,9 +851,17 @@ export const bouncyGrowingListElem = (
 		y: [`${comeFrom}px`, `-${height * 0.05}px`, '0px'],
 		opacity: maxOpacity,
 		transition: {
-			height: { duration: inDuration, times: [0, maxAt, 1] },
-			y: { duration: inDuration, times: [0, maxAt, 1] },
-			opacity: { duration: inDuration }
+			height: {
+				duration: inDuration,
+				times: [0, maxAt, 1],
+				ease: animateEase
+			},
+			y: {
+				duration: inDuration,
+				times: [0, maxAt, 1],
+				ease: animateEase
+			},
+			opacity: { duration: inDuration, ease: animateEase }
 		}
 	},
 	exit: {
@@ -707,9 +869,17 @@ export const bouncyGrowingListElem = (
 		y: ['0px', `-${height * 0.05}px`, `${comeFrom}px`],
 		opacity: initialOpacity,
 		transition: {
-			height: { duration: outDuration, times: [0, 1 - maxAt, 1] },
-			y: { duration: outDuration, times: [0, 1 - maxAt, 1] },
-			opacity: { duration: outDuration }
+			height: {
+				duration: outDuration,
+				times: [0, 1 - maxAt, 1],
+				ease: exitEase
+			},
+			y: {
+				duration: outDuration,
+				times: [0, 1 - maxAt, 1],
+				ease: exitEase
+			},
+			opacity: { duration: outDuration, ease: exitEase }
 		}
 	}
 })

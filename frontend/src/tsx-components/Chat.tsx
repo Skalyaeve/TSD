@@ -442,7 +442,7 @@ const MainContent: React.FC<MainContentProps> = ({
 
 	// ----RENDER----------------------------- //
 	const bouncyHeightGrowByPercentRender = useMemo(() => ({
-		...bouncyHeightGrowByPercent(100, 0.1, 0.75, 0.6, 0.9, 1)
+		...bouncyHeightGrowByPercent(100, 0.1, 0.75, 'easeInOut', 'easeInOut', 0.6, 0.9, 1)
 	}), []);
 
 	return <motion.div className={mainName}
@@ -540,7 +540,7 @@ const Chat: React.FC = memo(() => {
 
 	// ----RENDER----------------------------- //
 	const bouncyComeFromColRender = useMemo(() => (
-		bouncyComeFromCol(185, 20, 0.75, 1)
+		bouncyComeFromCol(185, 20, 0.75, 'easeInOut', 'easeInOut', 1)
 	), [])
 
 	const mainButtonMotion = {
