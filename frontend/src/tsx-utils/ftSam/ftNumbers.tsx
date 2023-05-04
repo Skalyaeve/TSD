@@ -9,7 +9,7 @@ export const Timer: React.FC = () => {
 
 	// ----EFFECTS---------------------------- //
 	useEffect(() => {
-		const interval = setInterval(() => setTimer((x) => x + 1), 1000)
+		const interval = setInterval(() => setTimer(x => x + 1), 1000)
 		return () => clearInterval(interval)
 	}, [])
 
@@ -18,11 +18,20 @@ export const Timer: React.FC = () => {
 }
 
 // --------RANDOM---------------------------------------------------------- //
-export const getMaxedXYrand = (maxDist: number) => ({
-	x: Math.random() * maxDist * (Math.random() < 0.5 ? -1 : 1),
-	y: Math.random() * maxDist * (Math.random() < 0.5 ? -1 : 1)
+export const getRandXY = (min: number, max: number) => ({
+	x: min + Math.random() * (max - min),
+	y: min + Math.random() * (max - min)
 })
 
-export const getMaxedRand = (maxDist: number) => (
-	Math.random() * maxDist * (Math.random() < 0.5 ? -1 : 1)
+export const getRand = (min: number, max: number) => (
+	min + Math.random() * (max - min)
+)
+
+export const getSignChangeRandXY = (min: number, max: number) => ({
+	x: (min + Math.random() * (max - min)) * (Math.random() < 0.5 ? -1 : 1),
+	y: (min + Math.random() * (max - min)) * (Math.random() < 0.5 ? -1 : 1)
+})
+
+export const getSignChangeRand = (min: number, max: number) => (
+	(min + Math.random() * (max - min)) * (Math.random() < 0.5 ? -1 : 1)
 )

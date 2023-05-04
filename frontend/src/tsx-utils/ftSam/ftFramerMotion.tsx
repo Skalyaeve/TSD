@@ -143,7 +143,7 @@ export const bouncyPopUp = (
 export const bouncyPopUpByPercent = (
 	width: number = 100,
 	height: number = 100,
-	extraScale: number = 0.1,
+	extraScale: number = 0.2,
 	maxAt: number = 0.75,
 	inDuration: number = 0.5,
 	outDuration: number = inDuration,
@@ -176,7 +176,7 @@ export const bouncyPopUpByPercent = (
 export const bouncyPopUpByPx = (
 	width: number,
 	height: number,
-	extraScale: number = 0.1,
+	extraScale: number = 0.2,
 	maxAt: number = 0.75,
 	inDuration: number = 0.5,
 	outDuration: number = inDuration,
@@ -314,7 +314,7 @@ export const bouncyHeightGrow = (
 
 export const bouncyHeightGrowByPercent = (
 	height: number = 100,
-	extraScale: number = 0.1,
+	extraScale: number = 0.2,
 	maxAt: number = 0.75,
 	inDuration: number = 0.5,
 	outDuration: number = inDuration,
@@ -342,7 +342,7 @@ export const bouncyHeightGrowByPercent = (
 
 export const bouncyHeightGrowByPx = (
 	height: number,
-	extraScale: number = 0.1,
+	extraScale: number = 0.2,
 	maxAt: number = 0.75,
 	inDuration: number = 0.5,
 	outDuration: number = inDuration,
@@ -476,7 +476,7 @@ export const bouncyWidthGrow = (
 
 export const bouncyWidthGrowByPercent = (
 	width: number = 100,
-	extraScale: number = 0.1,
+	extraScale: number = 0.2,
 	maxAt: number = 0.75,
 	inDuration: number = 0.5,
 	outDuration: number = inDuration,
@@ -504,7 +504,7 @@ export const bouncyWidthGrowByPercent = (
 
 export const bouncyWidthGrowByPx = (
 	width: number,
-	extraScale: number = 0.1,
+	extraScale: number = 0.2,
 	maxAt: number = 0.75,
 	inDuration: number = 0.5,
 	outDuration: number = inDuration,
@@ -674,7 +674,7 @@ export const growingListElem = (
 		opacity: initialOpacity,
 		transition: {
 			height: { duration: outDuration },
-			y: { duration: inDuration },
+			y: { duration: outDuration },
 			opacity: { duration: outDuration }
 		}
 	}
@@ -684,7 +684,7 @@ export const growingListElem = (
 export const bouncyGrowingListElem = (
 	comeFrom: number,
 	height: number,
-	extraScale: number = 0.1,
+	extraScale: number = 0.2,
 	maxAt: number = 0.75,
 	inDuration: number = 0.5,
 	outDuration: number = inDuration,
@@ -708,7 +708,7 @@ export const bouncyGrowingListElem = (
 		opacity: initialOpacity,
 		transition: {
 			height: { duration: outDuration, times: [0, 1 - maxAt, 1] },
-			y: { duration: inDuration, times: [0, 1 - maxAt, 1] },
+			y: { duration: outDuration, times: [0, 1 - maxAt, 1] },
 			opacity: { duration: outDuration }
 		}
 	}

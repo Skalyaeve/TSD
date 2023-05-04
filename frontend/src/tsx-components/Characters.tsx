@@ -17,7 +17,6 @@ const CharBox: React.FC<CharBoxProps> = ({ id, name }) => {
 	/>
 }
 
-
 // --------CHARACTER------------------------------------------------------- //
 interface CharacterProps {
 	name: string
@@ -39,6 +38,7 @@ const Character: React.FC<CharacterProps> = ({ name }) => {
 		</div>
 	</div>
 }
+
 // --------SPELL----------------------------------------------------------- //
 interface SpellProps {
 	spellName: string
@@ -63,7 +63,6 @@ const Spell: React.FC<SpellProps> = ({ spellName, nameExt, content }) => {
 		</div>}
 	</div>
 }
-
 
 // --------CHARACTERS------------------------------------------------------ //
 const Characters: React.FC = () => {

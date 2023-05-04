@@ -1,10 +1,10 @@
-import React, { useMemo, useEffect } from 'react'
+import React, { useEffect, useLayoutEffect } from 'react'
 import { Routes, Route, useLocation, useNavigate } from 'react-router-dom'
-import { AnimatePresence, motion } from 'framer-motion'
+import { AnimatePresence } from 'framer-motion'
 
-import { useTglBis } from '../tsx-utils/ftSam/ftHooks.tsx'
+import { useTgl } from '../tsx-utils/ftSam/ftHooks.tsx'
 import { FtMotionBtn } from '../tsx-utils/ftSam/ftBox.tsx'
-import { bouncyPopUpByPx, fadeInOut } from '../tsx-utils/ftSam/ftFramerMotion.tsx'
+import { bouncyPopUpByPx } from '../tsx-utils/ftSam/ftFramerMotion.tsx'
 import NavBar from './NavBar.tsx'
 import Chat from './Chat.tsx'
 import Matchmaker from './Matchmaker.tsx'
@@ -17,33 +17,37 @@ import ErrorPage from './ErrorPage.tsx'
 
 // --------LOG-SCREEN------------------------------------------------------ //
 interface LogginBtnProps {
-	loggedTrue: () => void
+	tglLogged: () => void
 }
-const LogginBtn: React.FC<LogginBtnProps> = ({ loggedTrue }) => {
-	// ----HANDLERS--------------------------- //
-	const btnHdl = { onMouseUp: loggedTrue }
-
+const LoginBtn: React.FC<LogginBtnProps> = ({ tglLogged }) => {
 	// ----ANIMATIONS------------------------- //
 	const btnMotion = {
 		...bouncyPopUpByPx(325, 125),
 		whileHover: {
 			scale: 1.025,
 			transition: {
-				ease: 'easeInOut',
 				duration: 1,
 				repeat: Infinity,
-				repeatType: "reverse"
+				repeatType: 'reverse',
+				ease: 'linear'
 			}
 		}
 	}
 
+	// ----CLASSNAMES------------------------- //
+	const name = 'login-btn'
+	const parentName = `${name}-box`
+	const pressedName = `${name}--pressed`
+
 	// ----RENDER----------------------------- //
-	return <FtMotionBtn className='login-btn'
-		pressedName='login-btn--pressed'
-		handler={btnHdl}
-		motionProps={btnMotion}
-		content='[42Auth]'
-	/>
+	return <div className={parentName}>
+		<FtMotionBtn className={name}
+			pressedName={pressedName}
+			handler={{ onMouseUp: () => tglLogged() }}
+			motionProps={btnMotion}
+			content='[42Auth]'
+		/>
+	</div>
 }
 
 // --------ROOT------------------------------------------------------------ //
@@ -53,47 +57,43 @@ const Root: React.FC = () => {
 	const navigate = useNavigate()
 
 	// ----STATES----------------------------- //
-	const [logged, loggedTrue, loggedFalse] = useTglBis(
-		localStorage.getItem('logged') === '1'
-	)
+	const [logged, tglLogged] = useTgl(localStorage.getItem('logged') === '1')
 
 	// ----EFFECTS---------------------------- //
-	useEffect(() => (
-		localStorage.setItem('logged', logged ? '1' : '0')
-	), [logged])
-
-	useEffect(() => {
+	useLayoutEffect(() => {
 		if (logged && localStorage.getItem('inGame') === '1')
 			navigate('/game')
 	}, [location.pathname])
 
-	// ----ANIMATIONS------------------------- //
-	const rootMotion = useMemo(() => fadeInOut(1), [])
+	useEffect(() => {
+		localStorage.setItem('logged', logged ? '1' : '0')
+	}, [logged])
+
+	// ----CLASSNAMES------------------------- //
+	const headerName = 'header'
 
 	// ----RENDER----------------------------- //
 	return <AnimatePresence mode='wait'>
-		{!logged && <LogginBtn loggedTrue={loggedTrue} />}
+		{!logged && <LoginBtn key='login' tglLogged={tglLogged} />}
 
-		{logged && <motion.div className='root-motion'
-			key='root-motion'
-			{...rootMotion}>
-
-			<header className='header'>
-				<NavBar loggedFalse={loggedFalse} />
+		{logged && <>
+			<header className={headerName}>
+				<NavBar tglLogged={tglLogged} />
 				<Chat />
 				<Matchmaker />
 			</header>
 
-			<Routes>
-				<Route path='/' element={<Home />} />
-				<Route path='/profile/*' element={<Profile />} />
-				<Route path='/characters' element={<Characters />} />
-				<Route path='/leader' element={<Leader />} />
-				<Route path='/game' element={<Party />} />
-				<Route path='*' element={<ErrorPage code={404} />} />
-			</Routes>
-
-		</motion.div>}
+			<AnimatePresence mode='wait'>
+				<Routes location={location} key={location.pathname}>
+					<Route path='/' element={<Home />} />
+					<Route path='/profile/*' element={<Profile />} />
+					<Route path='/characters' element={<Characters />} />
+					<Route path='/leader' element={<Leader />} />
+					<Route path='/game' element={<Party />} />
+					<Route path='*' element={<ErrorPage code={404} />} />
+				</Routes>
+			</AnimatePresence>
+		</>}
 	</AnimatePresence>
 }
 export default Root
