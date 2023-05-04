@@ -9,7 +9,7 @@ import { v4 as uuidv4 } from 'uuid';
 /* ------------------- FUNCTIONS ------------------- */
 
 let side = 'left'
-let skin = 'mage'
+let ski
 
 function getSkin(skinName) {
 	let scaleFactor
@@ -39,8 +39,8 @@ function createNewPlayer(idStr) {
 		xDir: (side == 'left' ? 'right' : 'left'),
 		lastMove: 'none',
 		move: 'idle',
-		skinId: getSkin(skin).skinId,
-		scaleFactor: getSkin(skin).scaleFactor
+		skin: 'mage',
+		anim: 'IdleAnim'
 	}
 }
 
@@ -93,20 +93,17 @@ io.on('connection', (socket) => {
 	// Notify all clients about the new player
 	socket.broadcast.emit('newPlayer', newPlayer);
 
+	socket.on('playerStart', () => {
+		socket.broadcast.emit('playerStarted', players[socket.id].id);
+	})
 	// When the player start moving, update its velocity and notify other clients
 	socket.on('playerMovement', (movementData) => {
-		players[socket.id].xPos = movementData.xPos;
-		players[socket.id].yPos = movementData.yPos;
-
-		socket.broadcast.emit('playerMoved', players[socket.id]);
+		socket.broadcast.emit('playerMoved', players[socket.id].id, movementData.xPos, movementData.yPos);
 	});
 
 	// When the player stop moving, update its velocity and notify other clients
-	socket.on('playerStop', (movementData) => {
-		players[socket.id].xPos = movementData.xPos
-		players[socket.id].yPos = movementData.yPos
-
-		socket.broadcast.emit('playerStoped', players[socket.id])
+	socket.on('playerStop', () => {
+		socket.broadcast.emit('playerStoped', players[socket.id].id)
 	})
 
 	// When the player disconnects, remove them from the players object and notify other clients

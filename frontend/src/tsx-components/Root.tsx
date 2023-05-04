@@ -60,7 +60,7 @@ const Root: React.FC = () => {
 	const [logged, tglLogged] = useTgl(localStorage.getItem('logged') === '1')
 
 	// ----EFFECTS---------------------------- //
-	useLayoutEffect(() => {
+	useEffect(() => {
 		if (logged && localStorage.getItem('inGame') === '1')
 			navigate('/game')
 	}, [location.pathname])
