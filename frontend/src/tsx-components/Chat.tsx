@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback, useState, useEffect, useLayoutEffect, useRef } from 'react'
+import React, { memo, useMemo, useCallback, useState, useEffect, useLayoutEffect, useRef } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 
 import { FtBtn, FtMotionBtn } from '../tsx-utils/ftSam/ftBox.tsx'
@@ -472,7 +472,7 @@ const MainContent: React.FC<MainContentProps> = ({
 }
 
 // --------CHAT------------------------------------------------------------ //
-const Chat: React.FC = () => {
+const Chat: React.FC = memo(() => {
 	// ----REFS------------------------------- //
 	const chatRef = useRef<HTMLDivElement | null>(null)
 
@@ -540,16 +540,16 @@ const Chat: React.FC = () => {
 
 	// ----RENDER----------------------------- //
 	const bouncyComeFromColRender = useMemo(() => (
-		bouncyComeFromCol(185, 20, 0.75, 1.1, 1.3)
+		bouncyComeFromCol(185, 20, 0.75, 1)
 	), [])
 
 	const mainButtonMotion = {
 		whileHover: {
 			y: [0, -5, 0],
 			transition: {
-				ease: 'easeOut',
 				times: [0, 0.75, 1],
 				repeat: Infinity,
+				ease: 'easeOut'
 			}
 		}
 	}
@@ -580,10 +580,11 @@ const Chat: React.FC = () => {
 			</AnimatePresence>
 		</div>
 
-		{settingsOpen !== 0 &&
-			<RoomSettings settingsOpen={settingsOpen} settingsPos={settingsPos} />
+		{settingsOpen !== 0 && <RoomSettings
+			settingsOpen={settingsOpen}
+			settingsPos={settingsPos} />
 		}
 
 	</motion.div >
-}
+})
 export default Chat

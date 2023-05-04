@@ -38,7 +38,6 @@ const Infos: React.FC = () => {
 	</motion.div>
 }
 
-
 // --------ACCOUNT-INFOS---------------------------------    ------------------ //
 interface AccountInfosProps {
 	className: string
@@ -51,6 +50,7 @@ const AccountInfos: React.FC<AccountInfosProps> = ({ className }) => {
 		</div >
 	</>
 }
+
 // --------PP-------------------------------------------------------------- //
 const ProfilePicture: React.FC = () => {
 	// ----STATES----------------------------- //
@@ -101,7 +101,6 @@ const ProfilePicture: React.FC = () => {
 	</>
 }
 
-
 // --------ACHIEVEMENTS---------------------------------------------------- //
 interface AchievementsProps {
 	name: string
@@ -124,6 +123,7 @@ const Achievements: React.FC<AchievementsProps> = ({ name }) => {
 		</div>
 	</>
 }
+
 // --------ACHIEVEMENT----------------------------------------------------- //
 interface AchievementProps {
 	id: number
@@ -164,7 +164,6 @@ const Achievement: React.FC<AchievementProps> = ({ id, name }) => {
 	</>
 }
 
-
 // --------HISTORY--------------------------------------------------------- //
 interface HistoryProps {
 	name: string
@@ -180,6 +179,7 @@ const History: React.FC<HistoryProps> = ({ name }) => {
 
 	return <>{render}</>
 }
+
 // --------MATCH----------------------------------------------------------- //
 interface MatchProps {
 	id: number
@@ -191,7 +191,6 @@ const Match: React.FC<MatchProps> = ({ id, name }) => {
 		MATCH #{id}
 	</div>
 }
-
 
 // --------FRIENDS--------------------------------------------------------- //
 const Friends: React.FC = () => {
@@ -257,6 +256,7 @@ const Friends: React.FC = () => {
 		</div>
 	</motion.main >
 }
+
 // --------FRIEND-SEARCH--------------------------------------------------- //
 interface FriendSearchProps {
 	name: string
@@ -299,6 +299,7 @@ const FriendSearch: React.FC<FriendSearchProps> = ({
 		content={boxContent}
 	/>
 }
+
 // --------FRIEND---------------------------------------------------------- //
 interface FriendProps {
 	id: number
@@ -330,6 +331,7 @@ const Friend: React.FC<FriendProps> = ({
 		{friendBox('scored', '0')}
 	</div>
 }
+
 // --------FRIEND-NAME----------------------------------------------------- //
 interface FriendNameProps {
 	name: string
@@ -365,7 +367,6 @@ const FriendName: React.FC<FriendNameProps> = ({
 		content={boxContent}
 	/>
 }
-
 
 // --------PROFILE--------------------------------------------------------- //
 const Profile: React.FC = () => {

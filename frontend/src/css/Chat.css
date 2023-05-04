@@ -33,10 +33,9 @@ ex: ".navBar-logo--pressed {}"
 	height: 100%;
 
 	/* #3 Position */
+	grid-row: 2 / 2;
 	z-index: 2;
 }
-
-
 
 .chat-body {
 	/* #1 Elements */
