@@ -7,6 +7,8 @@ import { dirname } from 'path';
 
 /* ------------------- FUNCTIONS ------------------- */
 
+let nbLeft = 0
+let nbRight = 0
 let side = 'left'
 
 function getSkin(skinName) {
@@ -27,14 +29,20 @@ function getSkin(skinName) {
 }
 
 function createNewPlayer(idStr) {
-	if (side == 'left')
+	if (side == 'left') {
+		nbLeft++
 		side = 'right'
-	else side = 'left'
+	}
+	else {
+		nbRight++
+		side = 'left'
+	}
+	let finalSide = (nbRight > nbLeft ? 'left' : 'right')
 	return {
 		id: idStr,
-		xPos: (side == 'left' ? 250 : 1670),
+		xPos: (finalSide == 'left' ? 250 : 1670),
 		yPos: 250 + Math.random() * 580,
-		xDir: (side == 'left' ? 'right' : 'left'),
+		xDir: (finalSide == 'left' ? 'right' : 'left'),
 		lastMove: 'none',
 		move: 'idle',
 		skin: 'mage',
@@ -106,6 +114,10 @@ io.on('connection', (socket) => {
 	// When the player disconnects, remove them from the players object and notify other clients
 	socket.on('disconnect', () => {
 		console.log(`Player disconnected: ${socket.id}`);
+		if (players[socket.id].xDir == 'left')
+			nbRight--
+		else
+			nbLeft--
 		delete players[socket.id];
 		io.emit('playerDisconnected', socket.id);
 	});
