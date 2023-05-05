@@ -36,10 +36,10 @@ ex: ".navBar-logo--pressed {}"
 	align-self: center;
 }
 
+/* ---HEAD----------------------- */
 .leader-head {
 	/* #1 Elements */
 	border: 1px solid rgb(255, 255, 0);
-	border-bottom: none;
 	display: flex;
 	flex-direction: row-reverse;
 	align-items: flex-end;
@@ -57,7 +57,7 @@ ex: ".navBar-logo--pressed {}"
 
 	/* #2 Form */
 	width: 325px;
-	height: 40px;
+	height: 35px;
 }
 
 .leader-btn {
@@ -65,8 +65,8 @@ ex: ".navBar-logo--pressed {}"
 	border: 1px solid rgb(255, 255, 0);
 
 	/* #2 Form */
-	width: 60px;
-	height: 40px;
+	width: 55px;
+	height: 35px;
 }
 
 .leader-input-btn {
@@ -77,12 +77,12 @@ ex: ".navBar-logo--pressed {}"
 
 .leader-findTop-btn {
 	/* #2 Form */
-	width: 120px;
+	width: 110px;
 }
 
 .leader-findMe-btn {
 	/* #2 Form */
-	width: 120px;
+	width: 110px;
 
 	/* #4 Margin - Padding */
 	margin-left: 5px;
@@ -94,6 +94,7 @@ ex: ".navBar-logo--pressed {}"
 	margin-right: 5px;
 }
 
+/* ---BODY----------------------- */
 .leader-body {
 	/* #1 Elements */
 	border: 1px solid rgb(255, 255, 0);
@@ -130,13 +131,13 @@ ex: ".navBar-logo--pressed {}"
 	height: 100%;
 }
 
-.leader-col-name {
+.leader-col:first-child {
 	/* #2 Form */
 	width: 25%;
 	min-width: 250px;
 }
 
-.leader-col-scored {
+.leader-col:last-child {
 	/* #1 Elements */
 	border-right: none;
 
@@ -144,6 +145,12 @@ ex: ".navBar-logo--pressed {}"
 	width: 19%;
 }
 
+.leader-col--bigFont {
+	/* #1 Elements */
+	font-size: 30px;
+}
+
+/* ---USR-NAME------------------- */
 .leader-usr-rank {
 	/* #1 Elements */
 	background-color: transparent;
@@ -178,6 +185,7 @@ ex: ".navBar-logo--pressed {}"
 
 .leader-usr {
 	/* #1 Elements */
+	border-top: 1px solid rgb(255, 255, 0);
 	border-bottom: 1px solid rgb(255, 255, 0);
 	display: flex;
 
@@ -185,6 +193,7 @@ ex: ".navBar-logo--pressed {}"
 	height: 70px;
 }
 
+/* ---BTN------------------------ */
 .leader-btn--pressed {
 	/* #1 Elements */
 	background-color: rgb(255, 255, 0, 0.3);

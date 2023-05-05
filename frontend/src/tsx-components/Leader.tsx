@@ -1,118 +1,114 @@
-import React, { useMemo } from 'react'
+import React from 'react'
 import { motion } from 'framer-motion'
 
 import { FtBtn, FtInput } from '../tsx-utils/ftSam/ftBox.tsx'
-import { fadeInOut } from '../tsx-utils/ftSam/ftFramerMotion.tsx'
+import { fadeInOut, comeFromCol, heightGrow } from '../tsx-utils/ftSam/ftFramerMotion.tsx'
+
+// --------CLASSNAMES------------------------------------------------------ //
+const NAME = 'leader'
+const COL_NAME = `${NAME}-col`
+const BTN_NAME = `${NAME}-btn`
+const PRESSED_NAME = `${BTN_NAME}--pressed`
 
 // --------USER------------------------------------------------------------ //
 interface UserStatsProps {
-	id: number
-	name: string
-	btnPressedName: string
-	colName: string
+	rank: number
 }
-const UserStats: React.FC<UserStatsProps> = ({
-	id, name, btnPressedName, colName
-}) => {
+const UserStats: React.FC<UserStatsProps> = ({ rank }) => {
 	// ----CLASSNAMES------------------------- //
-	const boxName = `${name}-usr`
+	const boxName = `${NAME}-usr`
+	const rankName = `${boxName}-rank`
+	const ppName = `${boxName}-pic`
+	const linkName = `${boxName}-link`
+	const colName = `${COL_NAME} ${COL_NAME}--bigFont`
 
 	// ----RENDER----------------------------- //
-	const nameBtnContent = useMemo(() => <>
-		<div className={`${boxName}-rank`}>#{id}</div>
-		<div className={`${boxName}-pic`}>PP</div>
-		<div className={`${boxName}-link`}>[NAME]</div>
-	</>, [])
+	const nameBtnContent = <>
+		<div className={rankName}>#{rank}</div>
+		<div className={ppName}>PP</div>
+		<div className={linkName}>[NAME]</div>
+	</>
 
-	const usrBox = useMemo(() => (nameExt: string, content: string) => <div
-		className={`${colName} ${colName}-${nameExt}`}>
-		{content}
-	</div>, [])
+	const usrBox = (content: string) => (
+		<div className={colName}>
+			{content}
+		</div>
+	)
 
-	return <div className={boxName}>
-		<FtBtn className={`${colName} ${colName}-name`}
-			pressedName={btnPressedName}
+	return <motion.div className={boxName}
+		{...comeFromCol((200 * rank), 'easeOut', 'easeIn', 1)}>
+		<FtBtn className={COL_NAME}
+			pressedName={PRESSED_NAME}
 			content={nameBtnContent}
 		/>
-		{usrBox('matches', '0')}
-		{usrBox('wins', '0')}
-		{usrBox('loses', '0')}
-		{usrBox('ratio', '0')}
-		{usrBox('scored', '0')}
-	</div>
+		{usrBox('0')}
+		{usrBox('0')}
+		{usrBox('0')}
+		{usrBox('0')}
+		{usrBox('0')}
+	</motion.div>
 }
 
 // --------BOARD----------------------------------------------------------- //
-interface BoardProps {
-	name: string
-	btnName: string
-	btnPressedName: string
-}
-const Board: React.FC<BoardProps> = ({ name, btnName, btnPressedName }) => {
+const Board: React.FC = () => {
 	// ----CLASSNAMES------------------------- //
-	const colName = `${name}-col`
+	const boxName = `${NAME}-body`
+	const headName = `${NAME}-boardHead`
+	const headColName = `${COL_NAME} ${BTN_NAME}`
 
 	// ----RENDER----------------------------- //
-	const headCol = useMemo(() => (nameExt: string, content: string) => (
-		<FtBtn className={`${colName} ${colName}-head ${colName}-${nameExt} ${btnName}`}
-			pressedName={btnPressedName}
+	const headCol = (content: string) => (
+		<FtBtn className={headColName}
+			pressedName={PRESSED_NAME}
 			content={content}
 		/>
-	), [])
+	)
 
-	const renderUsers = useMemo(() => Array.from({ length: 20 }, (_, index) => (
-		<UserStats id={index + 1}
-			key={index + 1}
-			name={name}
-			btnPressedName={btnPressedName}
-			colName={colName}
-		/>
-	)), [])
+	const renderUsers = Array.from({ length: 20 }, (_, index) => (
+		<UserStats key={index} rank={index + 1} />
+	))
 
-	return <div className={`${name}-body`}>
-		<div className={`${name}-boardHead`}>
-			<div className={`${colName} ${colName}-head ${colName}-name`}>NAME</div>
-			{headCol('matches', '[MATCHES]')}
-			{headCol('wins', '[WINS]')}
-			{headCol('loses', '[LOSES]')}
-			{headCol('ratio', '[RATIO]')}
-			{headCol('scored', '[SCORED]')}
+	return <div className={boxName}>
+		<div className={headName}>
+			<div className={COL_NAME}>NAME</div>
+			{headCol('[MATCHES]')}
+			{headCol('[WINS]')}
+			{headCol('[LOSES]')}
+			{headCol('[RATIO]')}
+			{headCol('[SCORED]')}
 		</div>
 		{renderUsers}
-	</div >
+	</div>
 }
 
 // --------LEADER---------------------------------------------------------- //
 const Leader: React.FC = () => {
 	// ----CLASSNAMES------------------------- //
-	const name = 'leader'
-	const inputName = `${name}-input`
-	const btnName = `${name}-btn`
-	const btnPressedName = `${btnName}--pressed`
+	const boxName = `${NAME} main`
+	const headName = `${NAME}-head`
+	const inputName = `${NAME}-input`
+	const headBtnName = (nameExt: string) => `${NAME}-${nameExt}-btn ${BTN_NAME}`
 
 	// ----RENDER----------------------------- //
-	const headBtn = useMemo(() => (nameExt: string, content: string) => (
-		<FtBtn className={`${name}-${nameExt}-btn ${btnName}`}
-			pressedName={btnPressedName}
+	const headBtn = (nameExt: string, content: string) => (
+		<FtBtn className={headBtnName(nameExt)}
+			pressedName={PRESSED_NAME}
 			content={content}
 		/>
-	), [])
+	)
 
-	return <motion.main className={`${name} main`}
-		{...fadeInOut(0.5)}	>
-		<div className={`${name}-head`}>
+	return <motion.main className={boxName}
+		{...fadeInOut('easeInOut', 'easeInOut', 0.5)}>
+		<motion.div className={headName}
+			{...heightGrow()}>
 			{headBtn('down', '[>>]')}
 			{headBtn('up', '[<<]')}
 			{headBtn('findMe', '[FIND ME]')}
 			{headBtn('findTop', '[TOP]')}
 			{headBtn('input', '[OK]')}
 			<FtInput name={inputName} />
-		</div>
-		<Board
-			name={name}
-			btnName={btnName}
-			btnPressedName={btnPressedName}
-		/>
+		</motion.div>
+		<Board />
 	</motion.main >
 }
 export default Leader

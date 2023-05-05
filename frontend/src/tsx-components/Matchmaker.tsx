@@ -68,9 +68,8 @@ const Matchmaker: React.FC = () => {
 
 	// ----ANIMATIONS------------------------- //
 	const btnMotion = useMemo(() => {
-		const bouncyComeFromColAnimation = bouncyComeFromCol(185, 20, 0.75, 0.9)
 		return {
-			...bouncyComeFromColAnimation,
+			...bouncyComeFromCol(185, 20, 0.75, 'easeInOut', 'easeInOut', 0.9),
 			whileHover: {
 				rotate: [0, -5, 5, 0],
 				transition: { ease: 'easeIn' }
