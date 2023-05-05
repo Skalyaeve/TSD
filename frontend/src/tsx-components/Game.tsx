@@ -441,8 +441,7 @@ function Party() {
 
 	// React game element
 	return (
-		<main className="game main">
-			<div className='game-canvas' ref={gameRef}></div>
+		<main className="game main" ref={gameRef}>
 		</main>
 	)
 }

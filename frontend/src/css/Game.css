@@ -27,10 +27,12 @@ ex: ".navBar-logo--pressed {}"
 	/* #1 Elements */
 	display: flex;
 	align-items: center;
+	justify-content: center;
 
 	/* #4 Margin - Padding */
 	padding: 10px;
 	padding-left: 0;
+	overflow: hidden;
 }
 
 .game canvas {
@@ -39,4 +41,6 @@ ex: ".navBar-logo--pressed {}"
 
 	/* #2 Form */
 	width: 100%;
+	max-width: 1920px;
+	max-height: 1080px;
 }

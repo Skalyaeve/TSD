@@ -9,35 +9,14 @@ import { dirname } from 'path';
 
 let nbLeft = 0
 let nbRight = 0
-let side = 'left'
-
-function getSkin(skinName) {
-	let scaleFactor
-	let skinId
-	if (skinName == 'mage') {
-		scaleFactor = 2.5
-		skinId = 1
-	}
-	else {
-		scaleFactor = 1
-		skinId = 0
-	}
-	return {
-		scaleFactor,
-		skinId
-	}
-}
 
 function createNewPlayer(idStr) {
-	if (side == 'left') {
-		nbLeft++
-		side = 'right'
-	}
-	else {
-		nbRight++
-		side = 'left'
-	}
 	let finalSide = (nbRight > nbLeft ? 'left' : 'right')
+	console.log("r:", nbRight, "l:", nbLeft, finalSide + " connected")
+	if (nbRight > nbLeft)
+		nbLeft = nbLeft + 1
+	else
+		nbRight = nbRight + 1
 	return {
 		id: idStr,
 		xPos: (finalSide == 'left' ? 250 : 1670),
@@ -114,10 +93,14 @@ io.on('connection', (socket) => {
 	// When the player disconnects, remove them from the players object and notify other clients
 	socket.on('disconnect', () => {
 		console.log(`Player disconnected: ${socket.id}`);
-		if (players[socket.id].xDir == 'left')
-			nbRight--
-		else
-			nbLeft--
+		if (players[socket.id].xDir == 'left') {
+			nbRight = nbRight - 1
+			console.log("right disconnected, right:", nbRight, "left:", nbLeft)
+		}
+		else {
+			nbLeft = nbLeft - 1
+			console.log("left disconnected, right:", nbRight, "left:", nbLeft)
+		}
 		delete players[socket.id];
 		io.emit('playerDisconnected', socket.id);
 	});
