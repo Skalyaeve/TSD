@@ -322,24 +322,6 @@ function Party() {
 		}
 	}
 
-	// Resize game div on page resize
-	const resizeGameDiv = () => {
-		const gameDiv = gameRef.current
-		if (gameDiv) {
-			const innerWidth: number = window.innerWidth - headerPxSize
-			const innerHeigth: number = window.innerHeight
-			const windowAspectRatio: number = innerWidth / innerHeigth
-
-			if (windowAspectRatio > gameAspectRatio) {
-				gameDiv.style.width = `${innerHeigth * gameAspectRatio}px`
-				gameDiv.style.height = `${innerHeigth}px`
-			} else {
-				gameDiv.style.width = `${innerWidth}px`
-				gameDiv.style.height = `${innerWidth / gameAspectRatio}px`
-			}
-		}
-	}
-
 	// Start socket comunication
 	const startSocket = () => {
 		socket = io('http://localhost:3001')
@@ -403,10 +385,6 @@ function Party() {
 	useLayoutEffect(() => {
 
 		createGame()
-
-		window.addEventListener('resize', resizeGameDiv)
-		resizeGameDiv()
-
 		const socket = startSocket()
 
 		// Destruction
@@ -415,16 +393,11 @@ function Party() {
 				game.destroy(true, false)
 				setGame(null)
 			}
-			window.removeEventListener('resize', resizeGameDiv)
 			socket.disconnect()
 		}
 	}, [])
 
-	return (
-		<main className="game main">
-			<div className='game-canvas' ref={gameRef}></div>
-		</main>
-	)
+	return <main className="game main" ref={gameRef}>
+	</main>
 }
-
 export default Party

@@ -3,22 +3,14 @@
 // ------------------------------------------------------------------------ //
 
 // --------FADE------------------------------------------------------------ //
-interface fadeProps {
-	initialOpacity?: number
-	maxOpacity?: number
-	inDuration?: number
-	outDuration?: number
-	animateEase?: string
-	exitEase?: string
-}
-export const fade = ({
-	initialOpacity = 0,
-	maxOpacity = 1,
-	inDuration = 0.5,
-	outDuration = inDuration,
-	animateEase = 'easeInOut',
-	exitEase = animateEase
-}: fadeProps) => ({
+export const fadeInOut = (
+	animateEase: string = 'easeInOut',
+	exitEase: string = animateEase,
+	inDuration: number = 0.5,
+	outDuration: number = inDuration,
+	initialOpacity: number = 0,
+	maxOpacity: number = 1
+) => ({
 	initial: { opacity: initialOpacity },
 	animate: {
 		opacity: maxOpacity,
@@ -30,35 +22,22 @@ export const fade = ({
 	}
 })
 
-
 // ------------------------------------------------------------------------ //
 // --------FORM------------------------------------------------------------ //
 // ------------------------------------------------------------------------ //
 
-// --------POP------------------------------------------------------------- //
-interface popByScaleProps {
-	initialScale?: number
-	maxScale?: number
-	initialOpacity?: number
-	maxOpacity?: number
-	inDuration?: number
-	outDuration?: number
-	animateEase?: string
-	exitEase?: string
-}
-export const popByScale = ({
-	initialScale = 0,
-	maxScale = 1,
-	initialOpacity = 0,
-	maxOpacity = 1,
-	inDuration = 0.5,
-	outDuration = inDuration,
-	animateEase = 'easeInOut',
-	exitEase = animateEase
-}: popByScaleProps) => ({
-	initial: { scale: initialScale, opacity: initialOpacity },
+// --------POP-UP---------------------------------------------------------- //
+export const popUp = (
+	animateEase: string = 'easeInOut',
+	exitEase: string = animateEase,
+	inDuration: number = 0.5,
+	outDuration: number = inDuration,
+	initialOpacity: number = 0,
+	maxOpacity: number = 1
+) => ({
+	initial: { scale: 0, opacity: initialOpacity },
 	animate: {
-		scale: maxScale,
+		scale: 1,
 		opacity: maxOpacity,
 		transition: {
 			scale: { duration: inDuration, ease: animateEase },
@@ -66,7 +45,7 @@ export const popByScale = ({
 		}
 	},
 	exit: {
-		scale: initialScale,
+		scale: 0,
 		opacity: initialOpacity,
 		transition: {
 			scale: { duration: outDuration, ease: exitEase },
@@ -75,34 +54,20 @@ export const popByScale = ({
 	}
 })
 
-interface popByPercentProps {
-	initialWidth?: number
-	initialHeight?: number
-	maxWidth?: number
-	maxHeight?: number
-	initialOpacity?: number
-	maxOpacity?: number
-	inDuration?: number
-	outDuration?: number
-	animateEase?: string
-	exitEase?: string
-}
-export const popByPercent = ({
-	initialWidth = 0,
-	initialHeight = 0,
-	maxWidth = 100,
-	maxHeight = 100,
-	initialOpacity = 0,
-	maxOpacity = 1,
-	inDuration = 0.5,
-	outDuration = inDuration,
-	animateEase = 'easeInOut',
-	exitEase = animateEase
-}: popByPercentProps) => ({
-	initial: { width: initialWidth, height: initialHeight, opacity: initialOpacity },
+export const popUpByPercent = (
+	width: number = 100,
+	height: number = 100,
+	animateEase: string = 'easeInOut',
+	exitEase: string = animateEase,
+	inDuration: number = 0.5,
+	outDuration: number = inDuration,
+	initialOpacity: number = 0,
+	maxOpacity: number = 1
+) => ({
+	initial: { width: 0, height: 0, opacity: initialOpacity },
 	animate: {
-		width: `${maxWidth}%`,
-		height: `${maxHeight}%`,
+		width: `${width}%`,
+		height: `${height}%`,
 		opacity: maxOpacity,
 		transition: {
 			width: { duration: inDuration, ease: animateEase },
@@ -111,8 +76,8 @@ export const popByPercent = ({
 		}
 	},
 	exit: {
-		width: initialWidth,
-		height: initialHeight,
+		width: 0,
+		height: 0,
 		opacity: initialOpacity,
 		transition: {
 			width: { duration: outDuration, ease: exitEase },
@@ -122,34 +87,20 @@ export const popByPercent = ({
 	}
 })
 
-interface popByPxProps {
-	initialWidth?: number
-	initialHeight?: number
-	maxWidth: number
-	maxHeight: number
-	initialOpacity?: number
-	maxOpacity?: number
-	inDuration?: number
-	outDuration?: number
-	animateEase?: string
-	exitEase?: string
-}
-export const popByPx = ({
-	initialWidth = 0,
-	initialHeight = 0,
-	maxWidth,
-	maxHeight,
-	initialOpacity = 0,
-	maxOpacity = 1,
-	inDuration = 0.5,
-	outDuration = inDuration,
-	animateEase = 'easeInOut',
-	exitEase = animateEase
-}: popByPxProps) => ({
-	initial: { width: initialWidth, height: initialHeight, opacity: initialOpacity },
+export const popUpByPx = (
+	width: number,
+	height: number,
+	animateEase: string = 'easeInOut',
+	exitEase: string = animateEase,
+	inDuration: number = 0.5,
+	outDuration: number = inDuration,
+	initialOpacity: number = 0,
+	maxOpacity: number = 1
+) => ({
+	initial: { width: 0, height: 0, opacity: initialOpacity },
 	animate: {
-		width: `${maxWidth}px`,
-		height: `${maxHeight}px`,
+		width: `${width}px`,
+		height: `${height}px`,
 		opacity: maxOpacity,
 		transition: {
 			width: { duration: inDuration, ease: animateEase },
@@ -158,8 +109,8 @@ export const popByPx = ({
 		}
 	},
 	exit: {
-		width: initialWidth,
-		height: initialHeight,
+		width: 0,
+		height: 0,
 		opacity: initialOpacity,
 		transition: {
 			width: { duration: outDuration, ease: exitEase },
@@ -170,50 +121,36 @@ export const popByPx = ({
 })
 
 // --------BOUNCY-POP-UP--------------------------------------------------- //
-interface bouncyPopByScaleProps {
-	initialScale?: number
-	maxScale?: number
-	finalScale?: number
-	maxScaleAt?: number
-	initialOpacity?: number
-	maxOpacity?: number
-	inDuration?: number
-	outDuration?: number
-	animateEase?: string
-	exitEase?: string
-}
-export const bouncyPopByScale = ({
-	initialScale = 0,
-	maxScale = 1.2,
-	finalScale = 1,
-	maxScaleAt = 0.75,
-	initialOpacity = 0,
-	maxOpacity = 1,
-	inDuration = 0.5,
-	outDuration = inDuration,
-	animateEase = 'easeInOut',
-	exitEase = animateEase
-}: bouncyPopByScaleProps) => ({
-	initial: { scale: initialScale, opacity: initialOpacity },
+export const bouncyPopUp = (
+	maxScale: number = 1.1,
+	maxAt: number = 0.75,
+	animateEase: string = 'easeInOut',
+	exitEase: string = animateEase,
+	inDuration: number = 0.5,
+	outDuration: number = inDuration,
+	initialOpacity: number = 0,
+	maxOpacity: number = 1
+) => ({
+	initial: { scale: 0, opacity: initialOpacity },
 	animate: {
-		scale: [initialScale, maxScale, finalScale],
+		scale: [0, maxScale, 1],
 		opacity: maxOpacity,
 		transition: {
 			scale: {
 				duration: inDuration,
-				times: [0, maxScaleAt, 1],
+				times: [0, maxAt, 1],
 				ease: animateEase
 			},
 			opacity: { duration: inDuration, ease: animateEase }
 		}
 	},
 	exit: {
-		scale: [finalScale, maxScale, initialScale],
+		scale: [1, maxScale, 0],
 		opacity: initialOpacity,
 		transition: {
 			scale: {
 				duration: outDuration,
-				times: [0, 1 - maxScaleAt, 1],
+				times: [0, 1 - maxAt, 1],
 				ease: exitEase
 			},
 			opacity: { duration: outDuration, ease: exitEase }
@@ -221,30 +158,18 @@ export const bouncyPopByScale = ({
 	}
 })
 
-interface bouncyPopByPercentProps {
-	initialWidth?: number
-	initialHeight?: number
-	maxWidth?: number
-	maxHeight?: number
-	initialOpacity?: number
-	maxOpacity?: number
-	inDuration?: number
-	outDuration?: number
-	animateEase?: string
-	exitEase?: string
-}
-export const bouncyPopByPercent = ({
-	initialWidth = 0,
-	initialHeight = 0,
-	maxWidth = 100,
-	maxHeight = 100,
-	initialOpacity = 0,
-	maxOpacity = 1,
-	inDuration = 0.5,
-	outDuration = inDuration,
-	animateEase = 'easeInOut',
-	exitEase = animateEase
-}: popByPercentProps) => ({
+export const bouncyPopUpByPercent = (
+	width: number = 100,
+	height: number = 100,
+	extraScale: number = 0.2,
+	maxAt: number = 0.75,
+	animateEase: string = 'easeInOut',
+	exitEase: string = animateEase,
+	inDuration: number = 0.5,
+	outDuration: number = inDuration,
+	initialOpacity: number = 0,
+	maxOpacity: number = 1
+) => ({
 	initial: { width: 0, height: 0, opacity: initialOpacity },
 	animate: {
 		width: ['0%', `${width + width * extraScale}%`, `${width}%`],
@@ -284,7 +209,7 @@ export const bouncyPopByPercent = ({
 	}
 })
 
-export const bouncyPopByPx = (
+export const bouncyPopUpByPx = (
 	width: number,
 	height: number,
 	extraScale: number = 0.2,
