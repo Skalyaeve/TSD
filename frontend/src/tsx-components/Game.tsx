@@ -1,12 +1,12 @@
+/* -------------------------LIBRARIES IMPORTS------------------------- */
+
 import React, { useEffect, useRef, useState } from 'react'
 import Phaser from 'phaser'
 import { Socket, io } from 'socket.io-client'
 
-/* -------------------------ASSETS IMPORT------------------------- */
+/* -------------------------ASSETS IMPORTS------------------------- */
 
-// Images
-
-// Spritesheets
+// Images && Spritesheets
 import playerIdle__Sheet from '../resource/assets/playerSheet.png'
 import playerRun__Sheet from '../resource/assets/playerSheet.png'
 import mageIdle__Sheet from '../resource/assets/Mage/Idle.png'
@@ -14,8 +14,9 @@ import mageRun__Sheet from '../resource/assets/Mage/Run.png'
 import blank__Sheet from '../resource/assets/blank.png'
 import black__Sheet from '../resource/assets/black.png'
 
-/* -------------------------TYPING------------------------- */
+/* -------------------------TYPES------------------------- */
 
+// Skins interface
 interface skin {
 	name: string								// Skin name
 	idleSheet: string							// Skin idle spritesheet
@@ -30,6 +31,7 @@ interface skin {
 	scaleFactor: number							// Skin sprite scale factor
 }
 
+// Players interface
 interface player {
 	id: string									// Player ID
 	xPos: number								// Player initial X position
@@ -39,11 +41,11 @@ interface player {
 	move: string								// Player actual movement state (idle/run)
 	skin: string								// Player skin name
 	anim: string								// Player actual animation
-
 	sprite?: Phaser.Physics.Arcade.Sprite 		// Player sprite
-	//colliders: Phaser.Physics.Arcade.Collider[]	// Player colliders
+	colliders: Phaser.Physics.Arcade.Collider[]	// Player colliders
 }
 
+// Keys interface
 interface keys {								// Keyboard keys
 	up: Phaser.Input.Keyboard.Key				// UP key
 	down: Phaser.Input.Keyboard.Key				// DOWN key
@@ -51,6 +53,7 @@ interface keys {								// Keyboard keys
 	right: Phaser.Input.Keyboard.Key			// RIGHT key
 }
 
+// Game canvas interface
 interface canvas {								// Scene canvas settings
 	xSize: number								// Canvas heigth
 	ySize: number								// Canvas width
@@ -84,8 +87,10 @@ function Party() {
 	// Keyboard keys
 	let keys: keys
 
+	// Players list
 	let players: { [key: string]: player } = {}
 
+	// Skins list
 	let skins: { [key: string]: skin } = {}
 
 	// Player self id
@@ -93,13 +98,9 @@ function Party() {
 
 	// Player event queues
 	let creationQueue: string[] = []
+	let moveQueue: string[] = []
 	let animationQueue: string[] = []
 	let deletionQueue: string[] = []
-	let moveQueue: string[] = []
-
-	// Score
-	let scoreText: Phaser.GameObjects.Text
-	let score: number[] = [0, 0]
 
 	/****** SCENE PRELOADING ******/
 
@@ -221,13 +222,14 @@ function Party() {
 		return false
 	}
 
-	// Send player movements to the server
+	// Send player start to the server
 	const sendPlayerStart = () => {
 		let self: player = players[myId]
 		self.sprite?.play(self.skin + 'RunAnim')
 		socket.emit('playerStart')
 	}
 
+	// Send player movements to the server
 	const sendPlayerMovement = () => {
 		const player = players[myId]
 		if (player.sprite && player.sprite.body) {
@@ -237,6 +239,7 @@ function Party() {
 		}
 	}
 
+	// Send player stop to the server
 	const sendPlayerStop = () => {
 		let self: player = players[myId]
 		self.sprite?.play(self.skin + 'IdleAnim')
@@ -245,6 +248,7 @@ function Party() {
 
 	/****** SCENE UPDATE ******/
 
+	// Adapts player moveState and devolity following the pressed keys
 	function checkKeyInputs() {
 		let player: player = players[myId]
 		let skin: skin = skins[player.skin]
@@ -280,6 +284,7 @@ function Party() {
 		}
 	}
 
+	// Create new player upon connection
 	function checkNewPlayer(scene: Phaser.Scene) {
 		if (!creationQueue.length)
 			return
@@ -289,10 +294,10 @@ function Party() {
 			createPlayer(player.id, scene)
 			console.log("Creating player", player.id, "at x:", player.xPos, "y:", player.yPos)
 		}
-		//console.log("Creation queue is now empty")
 		creationQueue = []
 	}
 
+	// Delete player upon disconnection
 	function checkDisconnect() {
 		if (!deletionQueue.length)
 			return
@@ -300,11 +305,10 @@ function Party() {
 			players[deletionQueue[queueId]].sprite?.destroy()
 			delete players[deletionQueue[queueId]]
 		}
-		//console.log("Deletion queue is now empty")
 		deletionQueue = []
 	}
 
-	// Set player animations following moveState
+	// Set player animations following anim state
 	function checkAnims() {
 		for (let queueId = 0; queueId < animationQueue.length; queueId++) {
 			players[animationQueue[queueId]].sprite?.play(players[animationQueue[queueId]].skin + players[animationQueue[queueId]].anim)
@@ -312,9 +316,9 @@ function Party() {
 		animationQueue = []
 	}
 
+	// Set player position following xPos and yPos
 	function checkMove() {
 		for (let queueId of moveQueue) {
-			console.log("Moved:", players[queueId], "to x:", players[queueId].xPos, "y:", players[queueId].yPos)
 			players[queueId].sprite?.setPosition(players[queueId].xPos, players[queueId].yPos)
 		}
 		moveQueue = []
@@ -322,16 +326,19 @@ function Party() {
 
 	/****** OVERLOADED PHASER FUNCTIONS ******/
 
+	// Scene preloading for textures & keys
 	function preload(this: Phaser.Scene) {
 		keysInitialisation(this)
 		skinsInitialisation(this)
 	}
 
+	// Scene creation
 	function create(this: Phaser.Scene) {
 		createAnims(this)
 		this.add.text(0, 0, "side: " + (players[myId].xDir == 'left' ? 'right' : 'left'), { fontSize: "50px" })
 	}
 
+	// Scene update
 	function update(this: Phaser.Scene) {
 		checkKeyInputs()
 		checkNewPlayer(this)
@@ -339,6 +346,8 @@ function Party() {
 		checkAnims()
 		checkDisconnect()
 	}
+
+	/****** PAGE REACT ELEMENTS ******/
 
 	// Create the game(addedUsers ? 10 : 7)
 	const createGame = () => {
@@ -383,74 +392,62 @@ function Party() {
 		}
 	}
 
-	// Start socket comunication
+	// Start socket comunication with game server
 	const startSocket = () => {
 		socket = io('http://localhost:3001')
-
 		// Update the players list with the received data (when connecting for the first time)
 		socket.on('currentPlayers', (playersList: player[]) => {
 			for (let queueId = 0; queueId < playersList.length; queueId++) {
 				players[playersList[queueId].id] = playersList[queueId]
 				creationQueue[creationQueue.length] = playersList[queueId].id
 				animationQueue[animationQueue.length] = playersList[queueId].id
-				console.log("Added", playersList[queueId].id, "to animation queue")
 			}
 			console.log("Added ", playersList.length, " players to the creation queue")
 		});
-
 		// Get the player's own ID
 		socket.on('ownID', (playerId: string) => {
 			myId = playerId
 			console.log("Player's own id: ", myId)
 		})
-
 		// Add a new player to the players list
 		socket.on('newPlayer', (player: player) => {
 			players[player.id] = player
 			creationQueue[creationQueue.length] = player.id
 			animationQueue[animationQueue.length] = player.id
-			console.log("Added player to creation queue")
+			console.log("A new player connected")
 		})
-
+		// Changes the player's animation on movement chance
 		socket.on('playerStarted', (playerId: string) => {
 			players[playerId].anim = 'RunAnim'
 			animationQueue[animationQueue.length] = playerId
-			console.log("A player started:", playerId)
+			console.log("A player started moving:", playerId)
 		})
-
 		// Update the moved player's velocity in the players list
 		socket.on('playerMoved', (playerId: string, xPos: number, yPos: number) => {
 			players[playerId].xPos = xPos
 			players[playerId].yPos = yPos
 			moveQueue[moveQueue.length] = playerId
-			console.log("A player moved:", playerId)
 		})
-
+		// Changes the player's animation on movement chance
 		socket.on('playerStoped', (playerId: string) => {
 			players[playerId].anim = 'IdleAnim'
 			animationQueue[animationQueue.length] = playerId
-			console.log("A player stoped:", playerId)
+			console.log("A player stoped moving:", playerId)
 		})
-
 		// Remove the disconnected player from the players list
 		socket.on('playerDisconnected', (playerId: string) => {
 			console.log("A player has disconnected")
 			deletionQueue[deletionQueue.length] = playerId
-			console.log("Player has been added to deletion queue")
 		});
 		return socket
 	}
 
+	// Construction of the whole page
 	useEffect(() => {
-
 		createGame()
-
 		window.addEventListener('resize', resizeGameDiv)
 		resizeGameDiv()
-
 		const socket = startSocket()
-
-		// Destruction
 		return () => {
 			if (game) {
 				game.destroy(true, false)
@@ -461,6 +458,7 @@ function Party() {
 		}
 	}, [])
 
+	// React game element
 	return (
 		<main className="game main">
 			<div className='game-canvas' ref={gameRef}></div>
