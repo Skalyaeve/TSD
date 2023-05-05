@@ -32,7 +32,7 @@ function createNewPlayer(idStr) {
 	else side = 'left'
 	return {
 		id: idStr,
-		xPos: (side == 'left' ? 300 : 1620),
+		xPos: (side == 'left' ? 250 : 1670),
 		yPos: 250 + Math.random() * 580,
 		xDir: (side == 'left' ? 'right' : 'left'),
 		lastMove: 'none',
