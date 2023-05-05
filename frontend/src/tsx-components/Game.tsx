@@ -1,6 +1,6 @@
 /* -------------------------LIBRARIES IMPORTS------------------------- */
 
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef } from 'react'
 import Phaser from 'phaser'
 import { Socket, io } from 'socket.io-client'
 
@@ -183,7 +183,7 @@ function Party() {
 		let player: player = players[playerId]
 		let skin = skins[player.skin]
 		player.sprite = scene.physics.add.sprite(player.xPos, player.yPos, player.skin + 'Idle')
-		if (player.sprite.body){
+		if (player.sprite.body) {
 			player.sprite.body.setSize(skin.xResize, skin.yResize)
 			player.sprite.body.setOffset(skin.xOffset, skin.yOffset)
 		}
@@ -251,7 +251,6 @@ function Party() {
 	// Adapts player moveState and devolity following the pressed keys
 	function checkKeyInputs() {
 		let player: player = players[myId]
-		let skin: skin = skins[player.skin]
 		let endVelocityX: number = 0
 		let endVelocityY: number = 0
 		if (player && player.sprite && player.sprite.body) {
@@ -262,12 +261,14 @@ function Party() {
 					player.move = 'idle'
 				}
 			}
-			else if (player.move == 'run')
-				sendPlayerMovement()
-			else if (player.move == 'idle') {
-				sendPlayerStart()
-				sendPlayerMovement()
-				player.move = 'run'
+			else {
+				if (player.move == 'run')
+					sendPlayerMovement()
+				else {
+					sendPlayerStart()
+					sendPlayerMovement()
+					player.move = 'run'
+				}
 			}
 			if (keys.left.isDown)
 				endVelocityX += -canvas.gameSpeed
@@ -289,10 +290,7 @@ function Party() {
 		if (!creationQueue.length)
 			return
 		for (let queueId = 0; queueId < creationQueue.length; queueId++) {
-			let player = players[creationQueue[queueId]]
-			let skin = skins[player.skin]
-			createPlayer(player.id, scene)
-			console.log("Creating player", player.id, "at x:", player.xPos, "y:", player.yPos)
+			createPlayer(players[creationQueue[queueId]].id, scene)
 		}
 		creationQueue = []
 	}
@@ -340,16 +338,16 @@ function Party() {
 
 	// Scene update
 	function update(this: Phaser.Scene) {
-		checkKeyInputs()
 		checkNewPlayer(this)
+		checkDisconnect()
+		checkKeyInputs()
 		checkMove()
 		checkAnims()
-		checkDisconnect()
 	}
 
 	/****** PAGE REACT ELEMENTS ******/
 
-	// Create the game(addedUsers ? 10 : 7)
+	// Create the game
 	const createGame = () => {
 		const config: Phaser.Types.Core.GameConfig = {
 			type: Phaser.AUTO,
@@ -370,24 +368,6 @@ function Party() {
 		}
 		if (gameRef.current) {
 			game = new Phaser.Game({ ...config, parent: gameRef.current, })
-		}
-	}
-
-	// Resize game div on page resize
-	const resizeGameDiv = () => {
-		const gameDiv = gameRef.current
-		if (gameDiv) {
-			const innerWidth: number = window.innerWidth - canvas.leftOffset
-			const innerHeigth: number = window.innerHeight
-			const windowAspectRatio: number = innerWidth / innerHeigth
-
-			if (windowAspectRatio > canvas.aspectRatio) {
-				gameDiv.style.width = `${innerHeigth * canvas.aspectRatio}px`
-				gameDiv.style.height = `${innerHeigth}px`
-			} else {
-				gameDiv.style.width = `${innerWidth}px`
-				gameDiv.style.height = `${innerWidth / canvas.aspectRatio}px`
-			}
 		}
 	}
 
@@ -444,8 +424,6 @@ function Party() {
 	// Construction of the whole page
 	useEffect(() => {
 		createGame()
-		window.addEventListener('resize', resizeGameDiv)
-		resizeGameDiv()
 		const socket = startSocket()
 		return () => {
 			if (game) {
@@ -457,7 +435,6 @@ function Party() {
 					players[playerId].sprite?.destroy()
 				game.destroy(true, false)
 			}
-			window.removeEventListener('resize', resizeGameDiv)
 			socket.disconnect()
 		}
 	}, [])
