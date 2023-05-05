@@ -70,7 +70,7 @@ function Party() {
 
 	// React variables
 	const gameRef = useRef<HTMLDivElement>(null)
-	const [game, setGame] = useState<Phaser.Game | null>(null)
+	let game: Phaser.Game
 
 	// Canvas constants
 	let canvas: canvas = {
@@ -369,8 +369,7 @@ function Party() {
 			},
 		}
 		if (gameRef.current) {
-			const newGame: Phaser.Game = new Phaser.Game({ ...config, parent: gameRef.current, })
-			setGame(newGame)
+			game = new Phaser.Game({ ...config, parent: gameRef.current, })
 		}
 	}
 
@@ -394,7 +393,7 @@ function Party() {
 
 	// Start socket comunication with game server
 	const startSocket = () => {
-		socket = io('http://localhost:3001')
+		socket = io('http://10.11.12.2:3001')
 		// Update the players list with the received data (when connecting for the first time)
 		socket.on('currentPlayers', (playersList: player[]) => {
 			for (let queueId = 0; queueId < playersList.length; queueId++) {
@@ -450,8 +449,13 @@ function Party() {
 		const socket = startSocket()
 		return () => {
 			if (game) {
+				keys.up.destroy()
+				keys.down.destroy()
+				keys.left.destroy()
+				keys.down.destroy()
+				for (let playerId in players)
+					players[playerId].sprite?.destroy()
 				game.destroy(true, false)
-				setGame(null)
 			}
 			window.removeEventListener('resize', resizeGameDiv)
 			socket.disconnect()
