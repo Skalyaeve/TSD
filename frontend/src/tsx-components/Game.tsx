@@ -141,7 +141,7 @@ function Party() {
 	function createPlayer(playerId: string, scene: Phaser.Scene) {
 		let player: player = players[playerId]
 		let skin = skins[player.skin]
-		console.log("create x:", player.xPos, "y:", player.yPos)
+		console.log("physics add at x:", player.xPos, "y:", player.yPos)
 		let newSprite = scene.physics.add.sprite(player.xPos, player.yPos, player.skin + 'Idle')
 		newSprite.setScale(skin.scaleFactor, skin.scaleFactor).refreshBody()
 		newSprite.setBounce(1)
@@ -372,7 +372,7 @@ function Party() {
 			players[playerId].xPos = xPos
 			players[playerId].yPos = yPos
 			moveQueue[moveQueue.length] = playerId
-			console.log("A player moved:", playerId)
+			console.log("A player moved:", playerId, "x:", xPos, "y:", yPos)
 		})
 
 		socket.on('playerStoped', (playerId: string) => {
