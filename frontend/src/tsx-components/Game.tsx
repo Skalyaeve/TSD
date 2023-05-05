@@ -11,17 +11,23 @@ import playerIdle__Sheet from '../resource/assets/playerSheet.png'
 import playerRun__Sheet from '../resource/assets/playerSheet.png'
 import mageIdle__Sheet from '../resource/assets/Mage/Idle.png'
 import mageRun__Sheet from '../resource/assets/Mage/Run.png'
+import blank__Sheet from '../resource/assets/blank.png'
+import black__Sheet from '../resource/assets/black.png'
 
 /* -------------------------TYPING------------------------- */
 
 interface skin {
 	name: string								// Skin name
-	nbFrames: number							// Skin spritesheet number of frames
-	xSize: number								// Idle skin X size
-	ySize: number								// Idle skin Y size
-	runSheet: string							// Skin run spritesheet
 	idleSheet: string							// Skin idle spritesheet
-	scaleFactor: number
+	runSheet: string							// Skin run spritesheet
+	nbFrames: number							// Skin spritesheet number of frames
+	xSize: number								// Skin spritesheet X size
+	ySize: number								// Skin spritesheet Y size
+	xResize: number								// Skin hitbox X size
+	yResize: number								// Skin hitbox Y size
+	xOffset: number								// Skin X offset between sprite and hitbox
+	yOffset: number								// Skin Y offset between sprite and hitbox
+	scaleFactor: number							// Skin sprite scale factor
 }
 
 interface player {
@@ -31,8 +37,8 @@ interface player {
 	xDir: string								// Player X direction (left/right)
 	lastMove: string							// Player last movement state (none/idle/run)
 	move: string								// Player actual movement state (idle/run)
-	skin: string
-	anim: string
+	skin: string								// Player skin name
+	anim: string								// Player actual animation
 
 	sprite?: Phaser.Physics.Arcade.Sprite 		// Player sprite
 	//colliders: Phaser.Physics.Arcade.Collider[]	// Player colliders
@@ -113,20 +119,54 @@ function Party() {
 	function skinsInitialisation(scene: Phaser.Scene) {
 		skins['player'] = {
 			name: 'player',
+			idleSheet: playerIdle__Sheet,
+			runSheet: playerRun__Sheet,
 			nbFrames: 2,
 			xSize: 100,
 			ySize: 175,
-			idleSheet: playerIdle__Sheet,
-			runSheet: playerRun__Sheet,
+			xResize: 100,
+			yResize: 175,
+			xOffset: 0,
+			yOffset: 0,
 			scaleFactor: 1
 		}
 		skins['mage'] = {
 			name: 'mage',
+			idleSheet: mageIdle__Sheet,
+			runSheet: mageRun__Sheet,
 			nbFrames: 8,
 			xSize: 250,
 			ySize: 250,
-			idleSheet: mageIdle__Sheet,
-			runSheet: mageRun__Sheet,
+			xResize: 50,
+			yResize: 52,
+			xOffset: 100,
+			yOffset: 114,
+			scaleFactor: 2.5
+		}
+		skins['black'] = {
+			name: 'black',
+			idleSheet: black__Sheet,
+			runSheet: black__Sheet,
+			nbFrames: 2,
+			xSize: 125,
+			ySize: 250,
+			xResize: 125,
+			yResize: 250,
+			xOffset: 0,
+			yOffset: 0,
+			scaleFactor: 2.5
+		}
+		skins['blank'] = {
+			name: 'blank',
+			idleSheet: blank__Sheet,
+			runSheet: blank__Sheet,
+			nbFrames: 2,
+			xSize: 125,
+			ySize: 250,
+			xResize: 125,
+			yResize: 250,
+			xOffset: 0,
+			yOffset: 0,
 			scaleFactor: 2.5
 		}
 		for (let skinName in skins) {
@@ -141,17 +181,19 @@ function Party() {
 	function createPlayer(playerId: string, scene: Phaser.Scene) {
 		let player: player = players[playerId]
 		let skin = skins[player.skin]
-		console.log("physics add at x:", player.xPos, "y:", player.yPos)
-		let newSprite = scene.physics.add.sprite(player.xPos, player.yPos, player.skin + 'Idle')
-		newSprite.setScale(skin.scaleFactor, skin.scaleFactor).refreshBody()
-		newSprite.setBounce(1)
-		newSprite.setCollideWorldBounds(true)
-		newSprite.setImmovable(true)
+		player.sprite = scene.physics.add.sprite(player.xPos, player.yPos, player.skin + 'Idle')
+		if (player.sprite.body){
+			player.sprite.body.setSize(skin.xResize, skin.yResize)
+			player.sprite.body.setOffset(skin.xOffset, skin.yOffset)
+		}
+		player.sprite.setScale(skin.scaleFactor, skin.scaleFactor)
+		player.sprite.setBounce(1)
+		player.sprite.setCollideWorldBounds(true)
+		player.sprite.setImmovable(true)
 		if (player.xDir == 'left')
-			newSprite.setFlipX(true)
+			player.sprite.setFlipX(true)
 		else if (player.xDir == 'right')
-			newSprite.setFlipX(false)
-		player.sprite = newSprite
+			player.sprite.setFlipX(false)
 	}
 
 	// Create animation for this scene
@@ -186,8 +228,13 @@ function Party() {
 		socket.emit('playerStart')
 	}
 
-	const sendPlayerMovement = (xPos: number, yPos: number) => {
-		socket.emit('playerMovement', { xPos, yPos })
+	const sendPlayerMovement = () => {
+		const player = players[myId]
+		if (player.sprite && player.sprite.body) {
+			const xPos = player.sprite.body.x + skins[player.skin].xResize / 2 * skins[player.skin].scaleFactor
+			const yPos = player.sprite.body.y + skins[player.skin].yResize / 2 //* skins[player.skin].scaleFactor
+			socket.emit('playerMovement', { xPos, yPos })
+		}
 	}
 
 	const sendPlayerStop = () => {
@@ -207,15 +254,15 @@ function Party() {
 			if (allKeysUp()) {
 				if (player.move == 'run') {
 					sendPlayerStop()
-					sendPlayerMovement(player.sprite.body.x + skin.xSize / 2 * skin.scaleFactor, player.sprite.body.y + skin.ySize / 2 * skin.scaleFactor)
+					sendPlayerMovement()
 					player.move = 'idle'
 				}
 			}
 			else if (player.move == 'run')
-				sendPlayerMovement(player.sprite.body.x + skin.xSize / 2 * skin.scaleFactor, player.sprite.body.y + skin.ySize / 2 * skin.scaleFactor)
+				sendPlayerMovement()
 			else if (player.move == 'idle') {
 				sendPlayerStart()
-				sendPlayerMovement(player.sprite.body.x + skin.xSize / 2 * skin.scaleFactor, player.sprite.body.y + skin.ySize / 2 * skin.scaleFactor)
+				sendPlayerMovement()
 				player.move = 'run'
 			}
 			if (keys.left.isDown)
@@ -237,8 +284,10 @@ function Party() {
 		if (!creationQueue.length)
 			return
 		for (let queueId = 0; queueId < creationQueue.length; queueId++) {
-			createPlayer(players[creationQueue[queueId]].id, scene)
-			console.log("Creating player", players[creationQueue[queueId]].id, "at x:", players[creationQueue[queueId]].xPos, "y:", players[creationQueue[queueId]].yPos)
+			let player = players[creationQueue[queueId]]
+			let skin = skins[player.skin]
+			createPlayer(player.id, scene)
+			console.log("Creating player", player.id, "at x:", player.xPos, "y:", player.yPos)
 		}
 		//console.log("Creation queue is now empty")
 		creationQueue = []
@@ -265,6 +314,7 @@ function Party() {
 
 	function checkMove() {
 		for (let queueId of moveQueue) {
+			console.log("Moved:", players[queueId], "to x:", players[queueId].xPos, "y:", players[queueId].yPos)
 			players[queueId].sprite?.setPosition(players[queueId].xPos, players[queueId].yPos)
 		}
 		moveQueue = []
@@ -279,6 +329,7 @@ function Party() {
 
 	function create(this: Phaser.Scene) {
 		createAnims(this)
+		this.add.text(0, 0, "side: " + (players[myId].xDir == 'left' ? 'right' : 'left'), { fontSize: "50px" })
 	}
 
 	function update(this: Phaser.Scene) {
@@ -342,7 +393,7 @@ function Party() {
 				players[playersList[queueId].id] = playersList[queueId]
 				creationQueue[creationQueue.length] = playersList[queueId].id
 				animationQueue[animationQueue.length] = playersList[queueId].id
-				console.log("Added", playersList[queueId].id, "to animation list")
+				console.log("Added", playersList[queueId].id, "to animation queue")
 			}
 			console.log("Added ", playersList.length, " players to the creation queue")
 		});

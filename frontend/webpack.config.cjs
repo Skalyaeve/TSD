@@ -67,13 +67,6 @@ module.exports = {
 		hot: true,
 		// Permet de refresh nos pages (Ctrl+F5 ou bouton 'Actualiser')
 		historyApiFallback: true,
-		// Le proxi permettant de forward les requetes de webpack a Node.js
-		proxy: {
-			'/api': {
-				target: 'http://10.11.12.2:3000',
-				changeOrigin: true,
-			},
-		},
 	},
 
 	// Output de Webpack: JSX traduit en JS
