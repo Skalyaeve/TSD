@@ -24,19 +24,19 @@ ex: ".navBar-logo--pressed {}"
 
 /* ------CLASS-------------------- */
 .game {
+	/* #1 Elements */
 	display: flex;
+	align-items: center;
+
+	/* #4 Margin - Padding */
 	padding: 10px;
 	padding-left: 0;
 }
 
-.game-canvas {
+.game canvas {
 	/* #1 Elements */
-	border: 1px solid rgb(255, 239, 57);
-	/* #3 Position */
-	align-self: center;
-}
+	border: 1px solid rgb(255, 255, 0);
 
-.game-canvas canvas {
 	/* #2 Form */
 	width: 100%;
 }

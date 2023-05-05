@@ -367,7 +367,8 @@ function Party() {
 			},
 		}
 		if (gameRef.current) {
-			game = new Phaser.Game({ ...config, parent: gameRef.current, })
+			const newGame: Phaser.Game = new Phaser.Game({ ...config, parent: gameRef.current, })
+			setGame(newGame)
 		}
 	}
 
@@ -439,12 +440,7 @@ function Party() {
 		}
 	}, [])
 
-	// React game element
-	return (
-		<main className="game main">
-			<div className='game-canvas' ref={gameRef}></div>
-		</main>
-	)
+	return <main className="game main" ref={gameRef}>
+	</main>
 }
-
 export default Party
