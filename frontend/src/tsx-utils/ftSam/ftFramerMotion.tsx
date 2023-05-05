@@ -1,266 +1,42 @@
-// ------------------------------------------------------------------------ //
-// --------ELEMENTS-------------------------------------------------------- //
-// ------------------------------------------------------------------------ //
-
-// --------FADE------------------------------------------------------------ //
-export const fadeInOut = (
-	animateEase: string = 'easeInOut',
-	exitEase: string = animateEase,
-	inDuration: number = 0.5,
-	outDuration: number = inDuration,
-	initialOpacity: number = 0,
-	maxOpacity: number = 1
-) => ({
+// --------OPACITY---------------------------------------------------------- //
+interface fadeProps {
+	initialOpacity?: number
+	maxOpacity?: number
+	inDuration?: number
+	outDuration?: number
+	animateEase?: string
+	exitEase?: string
+}
+export const fade = ({
+	initialOpacity = 0,
+	maxOpacity = 1,
+	inDuration = 0.5,
+	outDuration = inDuration,
+	animateEase = 'easeInOut',
+	exitEase = animateEase
+}: fadeProps) => ({
 	initial: { opacity: initialOpacity },
 	animate: {
 		opacity: maxOpacity,
-		transition: { opacity: { duration: inDuration, ease: animateEase } }
-	},
-	exit: {
-		opacity: initialOpacity,
-		transition: { opacity: { duration: outDuration, ease: exitEase } }
-	}
-})
-
-// ------------------------------------------------------------------------ //
-// --------FORM------------------------------------------------------------ //
-// ------------------------------------------------------------------------ //
-
-// --------POP-UP---------------------------------------------------------- //
-export const popUp = (
-	animateEase: string = 'easeInOut',
-	exitEase: string = animateEase,
-	inDuration: number = 0.5,
-	outDuration: number = inDuration,
-	initialOpacity: number = 0,
-	maxOpacity: number = 1
-) => ({
-	initial: { scale: 0, opacity: initialOpacity },
-	animate: {
-		scale: 1,
-		opacity: maxOpacity,
 		transition: {
-			scale: { duration: inDuration, ease: animateEase },
-			opacity: { duration: inDuration, ease: animateEase }
-		}
-	},
-	exit: {
-		scale: 0,
-		opacity: initialOpacity,
-		transition: {
-			scale: { duration: outDuration, ease: exitEase },
-			opacity: { duration: outDuration, ease: exitEase }
-		}
-	}
-})
-
-export const popUpByPercent = (
-	width: number = 100,
-	height: number = 100,
-	animateEase: string = 'easeInOut',
-	exitEase: string = animateEase,
-	inDuration: number = 0.5,
-	outDuration: number = inDuration,
-	initialOpacity: number = 0,
-	maxOpacity: number = 1
-) => ({
-	initial: { width: 0, height: 0, opacity: initialOpacity },
-	animate: {
-		width: `${width}%`,
-		height: `${height}%`,
-		opacity: maxOpacity,
-		transition: {
-			width: { duration: inDuration, ease: animateEase },
-			height: { duration: inDuration, ease: animateEase },
-			opacity: { duration: inDuration, ease: animateEase }
-		}
-	},
-	exit: {
-		width: 0,
-		height: 0,
-		opacity: initialOpacity,
-		transition: {
-			width: { duration: outDuration, ease: exitEase },
-			height: { duration: outDuration, ease: exitEase },
-			opacity: { duration: outDuration, ease: exitEase }
-		}
-	}
-})
-
-export const popUpByPx = (
-	width: number,
-	height: number,
-	animateEase: string = 'easeInOut',
-	exitEase: string = animateEase,
-	inDuration: number = 0.5,
-	outDuration: number = inDuration,
-	initialOpacity: number = 0,
-	maxOpacity: number = 1
-) => ({
-	initial: { width: 0, height: 0, opacity: initialOpacity },
-	animate: {
-		width: `${width}px`,
-		height: `${height}px`,
-		opacity: maxOpacity,
-		transition: {
-			width: { duration: inDuration, ease: animateEase },
-			height: { duration: inDuration, ease: animateEase },
-			opacity: { duration: inDuration, ease: animateEase }
-		}
-	},
-	exit: {
-		width: 0,
-		height: 0,
-		opacity: initialOpacity,
-		transition: {
-			width: { duration: outDuration, ease: exitEase },
-			height: { duration: outDuration, ease: exitEase },
-			opacity: { duration: outDuration, ease: exitEase }
-		}
-	}
-})
-
-// --------BOUNCY-POP-UP--------------------------------------------------- //
-export const bouncyPopUp = (
-	maxScale: number = 1.1,
-	maxAt: number = 0.75,
-	animateEase: string = 'easeInOut',
-	exitEase: string = animateEase,
-	inDuration: number = 0.5,
-	outDuration: number = inDuration,
-	initialOpacity: number = 0,
-	maxOpacity: number = 1
-) => ({
-	initial: { scale: 0, opacity: initialOpacity },
-	animate: {
-		scale: [0, maxScale, 1],
-		opacity: maxOpacity,
-		transition: {
-			scale: {
+			opacity: {
 				duration: inDuration,
-				times: [0, maxAt, 1],
 				ease: animateEase
-			},
-			opacity: { duration: inDuration, ease: animateEase }
+			}
 		}
 	},
 	exit: {
-		scale: [1, maxScale, 0],
 		opacity: initialOpacity,
 		transition: {
-			scale: {
+			opacity: {
 				duration: outDuration,
-				times: [0, 1 - maxAt, 1],
 				ease: exitEase
-			},
-			opacity: { duration: outDuration, ease: exitEase }
+			}
 		}
 	}
 })
 
-export const bouncyPopUpByPercent = (
-	width: number = 100,
-	height: number = 100,
-	extraScale: number = 0.2,
-	maxAt: number = 0.75,
-	animateEase: string = 'easeInOut',
-	exitEase: string = animateEase,
-	inDuration: number = 0.5,
-	outDuration: number = inDuration,
-	initialOpacity: number = 0,
-	maxOpacity: number = 1
-) => ({
-	initial: { width: 0, height: 0, opacity: initialOpacity },
-	animate: {
-		width: ['0%', `${width + width * extraScale}%`, `${width}%`],
-		height: ['0%', `${height + height * extraScale}%`, `${height}%`],
-		opacity: maxOpacity,
-		transition: {
-			width: {
-				duration: inDuration,
-				times: [0, maxAt, 1],
-				ease: animateEase
-			},
-			height: {
-				duration: inDuration,
-				times: [0, maxAt, 1],
-				ease: animateEase
-			},
-			opacity: { duration: inDuration, ease: animateEase }
-		}
-	},
-	exit: {
-		width: [`${width}%`, `${width + width * extraScale}%`, '0%'],
-		height: [`${height}%`, `${height + height * extraScale}%`, '0%'],
-		opacity: initialOpacity,
-		transition: {
-			width: {
-				duration: outDuration,
-				times: [0, 1 - maxAt, 1],
-				ease: exitEase
-			},
-			height: {
-				duration: outDuration,
-				times: [0, 1 - maxAt, 1],
-				ease: exitEase
-			},
-			opacity: { duration: outDuration, ease: exitEase }
-		}
-	}
-})
-
-export const bouncyPopUpByPx = (
-	width: number,
-	height: number,
-	extraScale: number = 0.2,
-	maxAt: number = 0.75,
-	animateEase: string = 'easeInOut',
-	exitEase: string = animateEase,
-	inDuration: number = 0.5,
-	outDuration: number = inDuration,
-	initialOpacity: number = 0,
-	maxOpacity: number = 1
-) => ({
-	initial: { width: 0, height: 0, opacity: initialOpacity },
-	animate: {
-		width: ['0px', `${width + width * extraScale}px`, `${width}px`],
-		height: ['0px', `${height + height * extraScale}px`, `${height}px`],
-		opacity: maxOpacity,
-		transition: {
-			width: {
-				duration: inDuration,
-				times: [0, maxAt, 1],
-				ease: animateEase
-			},
-			height: {
-				duration: inDuration,
-				times: [0, maxAt, 1],
-				ease: animateEase
-			},
-			opacity: { duration: inDuration, ease: animateEase }
-		}
-	},
-	exit: {
-		width: [`${width}px`, `${width + width * extraScale}px`, '0px'],
-		height: [`${height}px`, `${height + height * extraScale}px`, '0px'],
-		opacity: initialOpacity,
-		transition: {
-			width: {
-				duration: outDuration,
-				times: [0, 1 - maxAt, 1],
-				ease: exitEase
-			},
-			height: {
-				duration: outDuration,
-				times: [0, 1 - maxAt, 1],
-				ease: exitEase
-			},
-			opacity: { duration: outDuration, ease: exitEase }
-		}
-	}
-})
-
-// --------HEIGHT-GROW----------------------------------------------------- //
+// --------HEIGHT---------------------------------------------------------- //
 export const heightGrow = (
 	animateEase: string = 'easeInOut',
 	exitEase: string = animateEase,
@@ -344,7 +120,7 @@ export const heightGrowByPx = (
 	}
 })
 
-// --------BOUNCY-HEIGHT-GROW---------------------------------------------- //
+// --------HEIGHT+BOUNCE--------------------------------------------------- //
 export const bouncyHeightGrow = (
 	maxScale: number = 1.1,
 	maxAt: number = 0.75,
@@ -458,7 +234,7 @@ export const bouncyHeightGrowByPx = (
 	}
 })
 
-// --------WIDTH-GROW------------------------------------------------------ //
+// --------WIDTH----------------------------------------------------------- //
 export const widthGrow = (
 	animateEase: string = 'easeInOut',
 	exitEase: string = animateEase,
@@ -542,7 +318,7 @@ export const widthGrowByPx = (
 	}
 })
 
-// --------BOUNCY-WIDTH-GROW----------------------------------------------- //
+// --------WIDTH+BOUNCE---------------------------------------------------- //
 export const bouncyWidthGrow = (
 	maxScale: number = 1.1,
 	maxAt: number = 0.75,
@@ -656,11 +432,7 @@ export const bouncyWidthGrowByPx = (
 	}
 })
 
-// ------------------------------------------------------------------------ //
-// --------POSITION-------------------------------------------------------- //
-// ------------------------------------------------------------------------ //
-
-// --------COME-FROM-BORDERS----------------------------------------------- //
+// --------Y-POS----------------------------------------------------------- //
 export const comeFromCol = (
 	comeFrom: number,
 	animateEase: string = 'easeInOut',
@@ -689,35 +461,7 @@ export const comeFromCol = (
 	}
 })
 
-export const comeFromRow = (
-	comeFrom: number,
-	animateEase: string = 'easeInOut',
-	exitEase: string = animateEase,
-	inDuration: number = 0.5,
-	outDuration: number = inDuration,
-	initialOpacity: number = 0,
-	maxOpacity: number = 1
-) => ({
-	initial: { opacity: initialOpacity, x: `${comeFrom}px` },
-	animate: {
-		opacity: maxOpacity,
-		x: 0,
-		transition: {
-			opacity: { duration: inDuration, ease: animateEase },
-			x: { duration: inDuration, ease: animateEase }
-		}
-	},
-	exit: {
-		opacity: initialOpacity,
-		x: `${comeFrom}px`,
-		transition: {
-			opacity: { duration: outDuration, ease: exitEase },
-			x: { duration: outDuration, ease: exitEase }
-		}
-	}
-})
-
-// --------BOUNCY-COME-FROM-BORDERS---------------------------------------- //
+// --------Y-POS+BOUNCE---------------------------------------------------- //
 export const bouncyComeFromCol = (
 	comeFrom: number,
 	bounce: number = 10,
@@ -756,6 +500,36 @@ export const bouncyComeFromCol = (
 	}
 })
 
+// --------X-POS----------------------------------------------------------- //
+export const comeFromRow = (
+	comeFrom: number,
+	animateEase: string = 'easeInOut',
+	exitEase: string = animateEase,
+	inDuration: number = 0.5,
+	outDuration: number = inDuration,
+	initialOpacity: number = 0,
+	maxOpacity: number = 1
+) => ({
+	initial: { opacity: initialOpacity, x: `${comeFrom}px` },
+	animate: {
+		opacity: maxOpacity,
+		x: 0,
+		transition: {
+			opacity: { duration: inDuration, ease: animateEase },
+			x: { duration: inDuration, ease: animateEase }
+		}
+	},
+	exit: {
+		opacity: initialOpacity,
+		x: `${comeFrom}px`,
+		transition: {
+			opacity: { duration: outDuration, ease: exitEase },
+			x: { duration: outDuration, ease: exitEase }
+		}
+	}
+})
+
+// --------X-POS+BOUNCE---------------------------------------------------- //
 export const bouncyComeFromRow = (
 	comeFrom: number,
 	maxAt: number = 0.75,
@@ -790,96 +564,6 @@ export const bouncyComeFromRow = (
 				times: [0, 1 - maxAt, 1],
 				ease: exitEase
 			}
-		}
-	}
-})
-
-// ------------------------------------------------------------------------ //
-// --------FORM+POSITION--------------------------------------------------- //
-// ------------------------------------------------------------------------ //
-
-// --------GROWING-LIST---------------------------------------------------- //
-export const growingListElem = (
-	comeFrom: number,
-	height: number,
-	animateEase: string = 'easeInOut',
-	exitEase: string = animateEase,
-	inDuration: number = 0.5,
-	outDuration: number = inDuration,
-	initialOpacity: number = 0,
-	maxOpacity: number = 1
-) => ({
-	initial: { height: 0, y: `${comeFrom}px`, opacity: initialOpacity },
-	animate: {
-		height: `${height}px`,
-		y: 0,
-		opacity: maxOpacity,
-		transition: {
-			height: { duration: inDuration, ease: animateEase },
-			y: { duration: inDuration, ease: animateEase },
-			opacity: { duration: inDuration, ease: animateEase }
-		}
-	},
-	exit: {
-		height: 0,
-		y: `${comeFrom}px`,
-		opacity: initialOpacity,
-		transition: {
-			height: { duration: outDuration, ease: exitEase },
-			y: { duration: outDuration, ease: exitEase },
-			opacity: { duration: outDuration, ease: exitEase }
-		}
-	}
-})
-
-// --------BOUNCY-GROWING-LIST--------------------------------------------- //
-export const bouncyGrowingListElem = (
-	comeFrom: number,
-	height: number,
-	extraScale: number = 0.2,
-	maxAt: number = 0.75,
-	animateEase: string = 'easeInOut',
-	exitEase: string = animateEase,
-	inDuration: number = 0.5,
-	outDuration: number = inDuration,
-	initialOpacity: number = 0,
-	maxOpacity: number = 1
-) => ({
-	initial: { height: 0, y: `${comeFrom}px`, opacity: initialOpacity },
-	animate: {
-		height: ['0px', `${height + height * extraScale}px`, `${height}px`],
-		y: [`${comeFrom}px`, `-${height * 0.05}px`, '0px'],
-		opacity: maxOpacity,
-		transition: {
-			height: {
-				duration: inDuration,
-				times: [0, maxAt, 1],
-				ease: animateEase
-			},
-			y: {
-				duration: inDuration,
-				times: [0, maxAt, 1],
-				ease: animateEase
-			},
-			opacity: { duration: inDuration, ease: animateEase }
-		}
-	},
-	exit: {
-		height: [`${height}px`, `${height + height * extraScale}px`, '0px'],
-		y: ['0px', `-${height * 0.05}px`, `${comeFrom}px`],
-		opacity: initialOpacity,
-		transition: {
-			height: {
-				duration: outDuration,
-				times: [0, 1 - maxAt, 1],
-				ease: exitEase
-			},
-			y: {
-				duration: outDuration,
-				times: [0, 1 - maxAt, 1],
-				ease: exitEase
-			},
-			opacity: { duration: outDuration, ease: exitEase }
 		}
 	}
 })
