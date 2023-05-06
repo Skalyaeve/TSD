@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback, useState, useEffect } from 'react'
+import React, { memo, useMemo, useCallback, useState, useEffect } from 'react'
 import { Routes, Route, useLocation } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 
@@ -38,7 +38,7 @@ const Infos: React.FC = () => {
 	</motion.div>
 }
 
-// --------ACCOUNT-INFOS---------------------------------    ------------------ //
+// --------ACCOUNT-INFOS--------------------------------------------------- //
 interface AccountInfosProps {
 	className: string
 }
@@ -369,7 +369,7 @@ const FriendName: React.FC<FriendNameProps> = ({
 }
 
 // --------PROFILE--------------------------------------------------------- //
-const Profile: React.FC = () => {
+const Profile: React.FC = memo(() => {
 	// ----LOCATION--------------------------- //
 	const location = useLocation()
 
@@ -381,5 +381,5 @@ const Profile: React.FC = () => {
 			<Route path='*' element={<ErrorPage code={404} />} />
 		</Routes>
 	</AnimatePresence>
-}
+})
 export default Profile

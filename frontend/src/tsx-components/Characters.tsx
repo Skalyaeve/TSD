@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react'
+import React, { memo, useMemo, useState } from 'react'
 import { motion } from 'framer-motion'
 
 import { FtBtn, FtDiv } from '../tsx-utils/ftSam/ftBox.tsx'
@@ -65,7 +65,7 @@ const Spell: React.FC<SpellProps> = ({ spellName, nameExt, content }) => {
 }
 
 // --------CHARACTERS------------------------------------------------------ //
-const Characters: React.FC = () => {
+const Characters: React.FC = memo(() => {
 	// ----STATES----------------------------- //
 	const [totalCharacters, setTotalCharacters] = useState(9)
 
@@ -87,5 +87,5 @@ const Characters: React.FC = () => {
 		</div>
 		<Character name={name} />
 	</motion.main>
-}
+})
 export default Characters

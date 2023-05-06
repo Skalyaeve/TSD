@@ -157,9 +157,10 @@ export const FtLink = memo(React.forwardRef<HTMLAnchorElement, FtLinkProps>((
 interface FtInputProps {
 	name: string
 	PH?: string
+	style?: React.CSSProperties
 }
 export const FtInput = memo(React.forwardRef<HTMLInputElement, FtInputProps>((
-	{ name, PH = ' ...' }, ref
+	{ name, PH = ' ...', style }, ref
 ) => {
 	// ----RENDER----------------------------- //
 	return <input className={name}
@@ -167,6 +168,7 @@ export const FtInput = memo(React.forwardRef<HTMLInputElement, FtInputProps>((
 		id={name}
 		name={name}
 		placeholder={PH}
+		style={style}
 	/>
 }))
 
@@ -302,4 +304,25 @@ export const FtMotionLink = memo(React.forwardRef<HTMLDivElement, FtMotionLinkPr
 			content={content}
 		/>
 	</motion.div>
+}))
+
+// --------MOTION-INPUT---------------------------------------------------- //
+interface FtMotionInputProps {
+	name: string
+	PH?: string
+	motionProps?: {}
+	style?: MotionStyle
+}
+export const FtMotionInput = memo(React.forwardRef<HTMLInputElement, FtMotionInputProps>((
+	{ name, PH = ' ...', style, motionProps }, ref
+) => {
+	// ----RENDER----------------------------- //
+	return <motion.input className={name}
+		ref={ref}
+		id={name}
+		name={name}
+		placeholder={PH}
+		style={style}
+		{...motionProps}
+	/>
 }))

@@ -4,14 +4,18 @@ import { AnimatePresence, motion } from 'framer-motion'
 
 import { FtMotionLink, FtMotionBtn } from '../tsx-utils/ftSam/ftBox.tsx'
 import { cutThenCompare } from '../tsx-utils/ftSam/ftStrings.tsx'
-import { bouncyHeightGrowByPx, bouncyGrowingListElem } from '../tsx-utils/ftSam/ftFramerMotion.tsx'
+import { bouncyHeightChangeByPx, bouncyYMove, mergeMotions } from '../tsx-utils/ftSam/ftFramerMotion.tsx'
 import { GameInfos } from './Matchmaker.tsx'
 
 // --------ANIMATION------------------------------------------------------- //
 const BACK_LINK_HEIGHT = 50
 const LINK_HEIGHT = 75
 
-const navBarMotion = (height: number) => bouncyHeightGrowByPx(height)
+const navBarMotion = (height: number) => bouncyHeightChangeByPx({ finalHeight: height })
+const navBarLinkMotion = (from: number, height: number) => mergeMotions(
+	bouncyHeightChangeByPx({ finalHeight: height }),
+	bouncyYMove({ from: from, extra: 0 })
+)
 
 // --------CLASSNAMES------------------------------------------------------ //
 const NAME = 'navBar'
@@ -31,7 +35,7 @@ const NavBarLink: React.FC<NavBarLinkProps> = ({ index, to, content, animating }
 	const barHeight = (index ? LINK_HEIGHT + 1 : BACK_LINK_HEIGHT + 1)
 	const comeFrom = (index ? BACK_LINK_HEIGHT + LINK_HEIGHT * (index - 1) : 0)
 	const linkMotion = {
-		...bouncyGrowingListElem(-comeFrom, barHeight),
+		...navBarLinkMotion(-comeFrom, barHeight),
 		whileHover: {
 			scale: 1.025,
 			borderTopLeftRadius: '5px',
@@ -66,7 +70,7 @@ interface FromHomeProps {
 const FromHome: React.FC<FromHomeProps> = ({ tglLogged, setRender, animating }) => {
 	// ----ANIMATIONS------------------------- //
 	const logoutBtnMotion = {
-		...bouncyGrowingListElem(0, BACK_LINK_HEIGHT + 1),
+		...navBarLinkMotion(0, BACK_LINK_HEIGHT + 1),
 		whileHover: {
 			scale: 1.025,
 			borderBottomLeftRadius: '5px',
