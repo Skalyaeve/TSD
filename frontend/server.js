@@ -12,11 +12,12 @@ let nbRight = 0
 
 function createNewPlayer(idStr) {
 	let finalSide = (nbRight > nbLeft ? 'left' : 'right')
-	console.log("r:", nbRight, "l:", nbLeft, finalSide + " connected")
+	console.log(finalSide + " connected")
 	if (nbRight > nbLeft)
 		nbLeft = nbLeft + 1
 	else
 		nbRight = nbRight + 1
+	console.log("r:", nbRight, "l:", nbLeft)
 	return {
 		id: idStr,
 		xPos: (finalSide == 'left' ? 250 : 1670),

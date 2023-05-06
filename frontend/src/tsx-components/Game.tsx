@@ -271,13 +271,13 @@ function Party() {
 				}
 			}
 			if (keys.left.isDown)
-				endVelocityX += -canvas.gameSpeed
+				endVelocityX = - canvas.gameSpeed
 			if (keys.right.isDown)
-				endVelocityX += canvas.gameSpeed
+				endVelocityX = endVelocityX + canvas.gameSpeed
 			if (keys.up.isDown)
-				endVelocityY += -canvas.gameSpeed
+				endVelocityY = - canvas.gameSpeed
 			if (keys.down.isDown)
-				endVelocityY += canvas.gameSpeed
+				endVelocityY = endVelocityY + canvas.gameSpeed
 			if (player.sprite) {
 				player.sprite.setVelocityX(endVelocityX)
 				player.sprite.setVelocityY(endVelocityY)
@@ -333,9 +333,9 @@ function Party() {
 	// Scene creation
 	function create(this: Phaser.Scene) {
 		createAnims(this)
-		this.add.text(0, 0, "side: " + (players[myId].xDir == 'left' ? 'right' : 'left'), { fontSize: "50px" })
 	}
 
+	let state = false
 	// Scene update
 	function update(this: Phaser.Scene) {
 		checkNewPlayer(this)
@@ -343,6 +343,10 @@ function Party() {
 		checkKeyInputs()
 		checkMove()
 		checkAnims()
+		if (!state && players[myId]) {
+			this.add.text(0, 0, "side: " + (players[myId].xDir == 'left' ? 'right' : 'left'), { fontSize: "50px" })
+			state = true
+		}
 	}
 
 	/****** PAGE REACT ELEMENTS ******/
@@ -373,7 +377,7 @@ function Party() {
 
 	// Start socket comunication with game server
 	const startSocket = () => {
-		socket = io('http://10.11.12.2:3001')
+		socket = io('http://localhost:3001')
 		// Update the players list with the received data (when connecting for the first time)
 		socket.on('currentPlayers', (playersList: player[]) => {
 			for (let queueId = 0; queueId < playersList.length; queueId++) {
