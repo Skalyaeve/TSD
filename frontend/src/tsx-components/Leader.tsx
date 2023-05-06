@@ -1,4 +1,4 @@
-import React, { memo } from 'react'
+import React from 'react'
 import { motion } from 'framer-motion'
 
 import { FtBtn, FtMotionBtn, FtMotionInput } from '../tsx-utils/ftSam/ftBox.tsx'
@@ -85,11 +85,7 @@ const Board: React.FC = () => {
 }
 
 // --------LEADER---------------------------------------------------------- //
-// - Pour une obscure raison, memo() permet ici à l'animation d'entrer de - //
-// - correctement s'exécuter dans le cas où ce composant serait démonter  - //
-// - puis rapidement remonter.                                            - //
-// ------------------------------------------------------------------------ //
-const Leader: React.FC = memo(() => {
+const Leader: React.FC = () => {
 	// ----ANIMATIONS------------------------- //
 	const boxMove = (index: number) => (
 		bouncyXMove({
@@ -139,5 +135,5 @@ const Leader: React.FC = memo(() => {
 		</motion.div>
 		<Board />
 	</motion.main >
-})
+}
 export default Leader

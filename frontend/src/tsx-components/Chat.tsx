@@ -1,4 +1,6 @@
-import React, { memo, useMemo, useCallback, useState, useEffect, useLayoutEffect, useRef } from 'react'
+import React, {
+	useMemo, useCallback, useState, useEffect, useLayoutEffect, useRef
+} from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 
 import { FtBtn, FtMotionBtn } from '../tsx-utils/ftSam/ftBox.tsx'
@@ -472,7 +474,7 @@ const MainContent: React.FC<MainContentProps> = ({
 }
 
 // --------CHAT------------------------------------------------------------ //
-const Chat: React.FC = memo(() => {
+const Chat: React.FC = () => {
 	// ----REFS------------------------------- //
 	const chatRef = useRef<HTMLDivElement | null>(null)
 
@@ -586,5 +588,5 @@ const Chat: React.FC = memo(() => {
 		}
 
 	</motion.div >
-})
+}
 export default Chat

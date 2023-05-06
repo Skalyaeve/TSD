@@ -1,4 +1,5 @@
 "use strict";
 
 var foo = "CECI EST UN TEST";
-console.log(foo);
+var bar = 86;
+console.log(foo, bar);

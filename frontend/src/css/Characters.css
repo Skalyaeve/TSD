@@ -26,7 +26,9 @@ ex: ".navBar-logo--pressed {}"
 /* ---CHARACTERS----------------- */
 .characters {
 	/* #1 Elements */
-	display: flex;
+	display: grid;
+	grid-template-columns: auto 500px;
+	overflow: hidden;
 
 	/* #4 Margin - Padding */
 	padding: 10px;
@@ -36,15 +38,15 @@ ex: ".navBar-logo--pressed {}"
 .characters-select {
 	/* #1 Elements */
 	border: 1px solid rgb(255, 255, 0);
-	border-right: none;
-	display: grid;
-	grid-template-columns: 1fr 1fr 1fr;
-	grid-template-rows: 1fr 1fr 1fr;
+	display: flex;
+	flex-wrap: wrap;
 	align-items: center;
+	justify-content: center;
+	overflow-x: hidden;
+	overflow-y: auto;
 
-	/* #2 Form */
-	width: 60%;
-	height: 100%;
+	/* #3 Position */
+	align-self: flex-end;
 }
 
 .character-box {
@@ -52,21 +54,20 @@ ex: ".navBar-logo--pressed {}"
 	border: 1px solid rgb(255, 255, 0);
 
 	/* #2 Form */
-	width: 145px;
-	height: 145px;
+	min-width: 200px;
+	min-height: 200px;
 
-	/* #3 Position */
-	justify-self: center;
+	/* #4 Margin - Padding */
+	margin: 50px 70px;
 }
 
 /* ---CHARACTER------------------ */
 .character {
 	/* #1 Elements */
 	border: 1px solid rgb(255, 255, 0);
-
-	/* #2 Form */
-	width: 40%;
-	height: 100%;
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	grid-template-rows: 1.5fr 2fr 1fr;
 }
 
 .character-skin {
@@ -76,17 +77,8 @@ ex: ".navBar-logo--pressed {}"
 	align-items: center;
 	justify-content: center;
 
-	/* #2 Form */
-	height: 40%;
-}
-
-.character-infos {
-	/* #1 Elements */
-	display: flex;
-	position: relative;
-
-	/* #2 Form */
-	height: 60%;
+	/* #3 Position */
+	grid-column: 1 / -1;
 }
 
 .character-stats {
@@ -96,13 +88,6 @@ ex: ".navBar-logo--pressed {}"
 	display: flex;
 	align-items: center;
 	justify-content: center;
-
-	/* #2 Form */
-	height: 60%;
-	width: 50%;
-
-	/* #3 Position */
-	position: absolute;
 }
 
 .character-story {
@@ -111,52 +96,29 @@ ex: ".navBar-logo--pressed {}"
 	display: flex;
 	align-items: center;
 	justify-content: center;
-
-	/* #2 Form */
-	height: 60%;
-	width: 50%;
-
-	/* #3 Position */
-	position: absolute;
-	right: 0;
 }
 
 .character-spells {
 	/* #1 Elements */
-	display: grid;
-	grid-template-columns: 1fr 1fr;
-	grid-template-rows: 1fr;
+	border-bottom: 1px solid rgb(255, 255, 0);
+	display: flex;
 	align-items: center;
-
-	/* #2 Form */
-	height: 40%;
-	width: 100%;
+	justify-content: center;
 
 	/* #3 Position */
-	position: absolute;
-	bottom: 0;
+	grid-column: 1 / -1;
 }
 
 .character-spell-box {
 	/* #1 Elements */
 	background-color: transparent;
 	display: flex;
-	flex-direction: column-reverse;
-	align-items: flex-end;
+	align-items: center;
+	justify-content: center;
 	position: relative;
 
-	/* #3 Position */
-	justify-self: center;
-}
-
-.character-spell-box:first-child {
 	/* #4 Margin - Padding */
-	margin-left: 10px;
-}
-
-.character-spell-box:last-child {
-	/* #4 Margin - Padding */
-	margin-right: 10px;
+	margin: 0 30px;
 }
 
 .character-spell {
@@ -167,8 +129,8 @@ ex: ".navBar-logo--pressed {}"
 	justify-content: center;
 
 	/* #2 Form */
-	height: 125px;
-	width: 125px;
+	height: 150px;
+	width: 150px;
 }
 
 .character-spell-tooltip {
@@ -179,13 +141,13 @@ ex: ".navBar-logo--pressed {}"
 	justify-content: center;
 
 	/* #2 Form */
-	height: 200px;
-	width: 300px;
+	height: 300px;
+	width: 400px;
 
 	/* #3 Position */
 	position: absolute;
 	right: 0;
-	bottom: 130px;
+	bottom: 160px;
 }
 
 /* ---BTN------------------------ */
