@@ -28,12 +28,9 @@ ex: ".navBar-logo--pressed {}"
 	/* #1 Elements */
 	display: flex;
 
-	/* #2 Form */
-	width: calc(100% - 10px);
-	height: calc(100% - 20px);
-
-	/* #3 Position */
-	align-self: center;
+	/* #4 Margin - Padding */
+	padding: 10px;
+	padding-left: 0;
 }
 
 .characters-select {
@@ -50,18 +47,9 @@ ex: ".navBar-logo--pressed {}"
 	height: 100%;
 }
 
-.character {
-	/* #1 Elements */
-	border: 1px solid rgb(255, 239, 57);
-
-	/* #2 Form */
-	width: 40%;
-	height: 100%;
-}
-
 .character-box {
 	/* #1 Elements */
-	border: 1px solid rgb(255, 239, 57);
+	border: 1px solid rgb(255, 255, 0);
 
 	/* #2 Form */
 	width: 145px;
@@ -71,9 +59,19 @@ ex: ".navBar-logo--pressed {}"
 	justify-self: center;
 }
 
+/* ---CHARACTER------------------ */
+.character {
+	/* #1 Elements */
+	border: 1px solid rgb(255, 255, 0);
+
+	/* #2 Form */
+	width: 40%;
+	height: 100%;
+}
+
 .character-skin {
 	/* #1 Elements */
-	border-bottom: 1px solid rgb(255, 239, 57);
+	border-bottom: 1px solid rgb(255, 255, 0);
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -93,8 +91,8 @@ ex: ".navBar-logo--pressed {}"
 
 .character-stats {
 	/* #1 Elements */
-	border-bottom: 1px solid rgb(255, 239, 57);
-	border-right: 1px solid rgb(255, 239, 57);
+	border-bottom: 1px solid rgb(255, 255, 0);
+	border-right: 1px solid rgb(255, 255, 0);
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -109,7 +107,7 @@ ex: ".navBar-logo--pressed {}"
 
 .character-story {
 	/* #1 Elements */
-	border-bottom: 1px solid rgb(255, 239, 57);
+	border-bottom: 1px solid rgb(255, 255, 0);
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -151,19 +149,19 @@ ex: ".navBar-logo--pressed {}"
 	justify-self: center;
 }
 
-.character-spell-box-A {
+.character-spell-box:first-child {
 	/* #4 Margin - Padding */
 	margin-left: 10px;
 }
 
-.character-spell-box-B {
+.character-spell-box:last-child {
 	/* #4 Margin - Padding */
 	margin-right: 10px;
 }
 
 .character-spell {
 	/* #1 Elements */
-	border: 1px solid rgb(255, 239, 57);
+	border: 1px solid rgb(255, 255, 0);
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -175,7 +173,7 @@ ex: ".navBar-logo--pressed {}"
 
 .character-spell-tooltip {
 	/* #1 Elements */
-	border: 1px solid rgb(255, 239, 57);
+	border: 1px solid rgb(255, 255, 0);
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -188,4 +186,9 @@ ex: ".navBar-logo--pressed {}"
 	position: absolute;
 	right: 0;
 	bottom: 130px;
+}
+
+/* ---BTN------------------------ */
+.character-btn--pressed {
+	background-color: rgb(255, 255, 0, 0.3);
 }

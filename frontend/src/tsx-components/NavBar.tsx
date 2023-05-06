@@ -4,18 +4,14 @@ import { AnimatePresence, motion } from 'framer-motion'
 
 import { FtMotionLink, FtMotionBtn } from '../tsx-utils/ftSam/ftBox.tsx'
 import { cutThenCompare } from '../tsx-utils/ftSam/ftStrings.tsx'
-import { bouncyHeightChangeByPx, bouncyYMove, mergeMotions } from '../tsx-utils/ftSam/ftFramerMotion.tsx'
+import {
+	bouncyHeightChangeByPx, bouncyHeightChangeByPercent, bouncyYMove, mergeMotions
+} from '../tsx-utils/ftSam/ftFramerMotion.tsx'
 import { GameInfos } from './Matchmaker.tsx'
 
-// --------ANIMATION------------------------------------------------------- //
+// --------VALUES---------------------------------------------------------- //
 const BACK_LINK_HEIGHT = 50
 const LINK_HEIGHT = 75
-
-const navBarMotion = (height: number) => bouncyHeightChangeByPx({ finalHeight: height })
-const navBarLinkMotion = (from: number, height: number) => mergeMotions(
-	bouncyHeightChangeByPx({ finalHeight: height }),
-	bouncyYMove({ from: from, extra: 0 })
-)
 
 // --------CLASSNAMES------------------------------------------------------ //
 const NAME = 'navBar'
@@ -32,10 +28,12 @@ interface NavBarLinkProps {
 }
 const NavBarLink: React.FC<NavBarLinkProps> = ({ index, to, content, animating }) => {
 	// ----ANIMATIONS------------------------- //
-	const barHeight = (index ? LINK_HEIGHT + 1 : BACK_LINK_HEIGHT + 1)
 	const comeFrom = (index ? BACK_LINK_HEIGHT + LINK_HEIGHT * (index - 1) : 0)
 	const linkMotion = {
-		...navBarLinkMotion(-comeFrom, barHeight),
+		...mergeMotions(
+			bouncyHeightChangeByPercent({ finalHeight: 101, maxHeight: 101 }),
+			bouncyYMove({ from: -comeFrom, extra: 0 })
+		),
 		whileHover: {
 			scale: 1.025,
 			borderTopLeftRadius: '5px',
@@ -70,7 +68,10 @@ interface FromHomeProps {
 const FromHome: React.FC<FromHomeProps> = ({ tglLogged, setRender, animating }) => {
 	// ----ANIMATIONS------------------------- //
 	const logoutBtnMotion = {
-		...navBarLinkMotion(0, BACK_LINK_HEIGHT + 1),
+		...mergeMotions(
+			bouncyHeightChangeByPercent({ finalHeight: 101, maxHeight: 101 }),
+			bouncyYMove({ from: 0, extra: 0 })
+		),
 		whileHover: {
 			scale: 1.025,
 			borderBottomLeftRadius: '5px',
@@ -81,7 +82,7 @@ const FromHome: React.FC<FromHomeProps> = ({ tglLogged, setRender, animating }) 
 
 	// ----RENDER----------------------------- //
 	return <motion.nav className={NAME}
-		{...navBarMotion(BACK_LINK_HEIGHT + LINK_HEIGHT * 3)}>
+		{...bouncyHeightChangeByPx({ finalHeight: BACK_LINK_HEIGHT + LINK_HEIGHT * 3 })}>
 
 		<FtMotionBtn className={LOGOUT_NAME}
 			handler={{
@@ -118,7 +119,7 @@ interface FromProfileProps {
 	animating: React.MutableRefObject<boolean>
 }
 const FromProfile: React.FC<FromProfileProps> = ({ animating }) => <motion.nav className={NAME}
-	{...navBarMotion(BACK_LINK_HEIGHT + LINK_HEIGHT * 2)}>
+	{...bouncyHeightChangeByPx({ finalHeight: BACK_LINK_HEIGHT + LINK_HEIGHT * 2 })}>
 	<NavBarLink index={0}
 		to='/'
 		content='[BACK]'
@@ -141,7 +142,7 @@ interface FromCharactersProps {
 	animating: React.MutableRefObject<boolean>
 }
 const FromCharacters: React.FC<FromCharactersProps> = ({ animating }) => <motion.nav className={NAME}
-	{...navBarMotion(BACK_LINK_HEIGHT)}>
+	{...bouncyHeightChangeByPx({ finalHeight: BACK_LINK_HEIGHT })}>
 	<NavBarLink index={0}
 		to='/'
 		content='[BACK]'
@@ -154,7 +155,7 @@ interface FromLeaderProps {
 	animating: React.MutableRefObject<boolean>
 }
 const FromLeader: React.FC<FromLeaderProps> = ({ animating }) => <motion.nav className={NAME}
-	{...navBarMotion(BACK_LINK_HEIGHT)}>
+	{...bouncyHeightChangeByPx({ finalHeight: BACK_LINK_HEIGHT })}>
 	<NavBarLink index={0}
 		to='/'
 		content='[BACK]'
@@ -167,7 +168,7 @@ interface From404Props {
 	animating: React.MutableRefObject<boolean>
 }
 const From404: React.FC<From404Props> = ({ animating }) => <motion.nav className={NAME}
-	{...navBarMotion(BACK_LINK_HEIGHT)}>
+	{...bouncyHeightChangeByPx({ finalHeight: BACK_LINK_HEIGHT })}>
 	<NavBarLink index={0}
 		to='/'
 		content='[HOME]'

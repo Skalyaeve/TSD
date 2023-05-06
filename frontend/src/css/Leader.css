@@ -28,15 +28,11 @@ ex: ".navBar-logo--pressed {}"
 	/* #1 Elements */
 	display: flex;
 	flex-direction: column;
-	overflow-y: hidden;
-	align-items: flex-start;
+	overflow: hidden;
 
-	/* #2 Form */
-	width: calc(100% - 10px);
-	height: calc(100% - 20px);
-
-	/* #3 Position */
-	align-self: center;
+	/* #4 Margin - Padding */
+	padding: 10px;
+	padding-left: 0;
 }
 
 /* ---HEAD----------------------- */
@@ -46,10 +42,6 @@ ex: ".navBar-logo--pressed {}"
 	display: flex;
 	flex-direction: row-reverse;
 	align-items: flex-end;
-
-	/* #2 Form */
-	width: 100%;
-	height: 20%;
 
 	/* #4 Margin - Padding */
 	padding: 10px;
@@ -105,8 +97,7 @@ ex: ".navBar-logo--pressed {}"
 	overflow-y: auto;
 
 	/* #2 Form */
-	width: 100%;
-	height: 80%;
+	height: 100%;
 }
 
 .leader-boardHead {
@@ -120,6 +111,7 @@ ex: ".navBar-logo--pressed {}"
 	/* #3 Position */
 	position: sticky;
 	top: 0;
+	z-index: 1;
 }
 
 .leader-col {
@@ -129,7 +121,7 @@ ex: ".navBar-logo--pressed {}"
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	overflow-x: hidden;
+	overflow: hidden;
 
 	/* #2 Form */
 	width: 14%;
@@ -155,7 +147,17 @@ ex: ".navBar-logo--pressed {}"
 	font-size: 30px;
 }
 
-/* ---USR-NAME------------------- */
+/* ---USR----------------------- */
+.leader-usr {
+	/* #1 Elements */
+	border-top: 1px solid rgb(255, 255, 0);
+	border-bottom: 1px solid rgb(255, 255, 0);
+	display: flex;
+
+	/* #2 Form */
+	height: 70px;
+}
+
 .leader-usr-rank {
 	/* #1 Elements */
 	background-color: transparent;
@@ -182,20 +184,10 @@ ex: ".navBar-logo--pressed {}"
 	text-align: start;
 
 	/* #2 Form */
-	width: calc(100% - 110px);
+	width: calc(100% - 120px);
 
 	/* #4 Margin - Padding */
 	margin-left: 10px;
-}
-
-.leader-usr {
-	/* #1 Elements */
-	border-top: 1px solid rgb(255, 255, 0);
-	border-bottom: 1px solid rgb(255, 255, 0);
-	display: flex;
-
-	/* #2 Form */
-	height: 70px;
 }
 
 /* ---BTN------------------------ */

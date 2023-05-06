@@ -3,7 +3,7 @@ import { motion } from 'framer-motion'
 
 import { FtBtn, FtMotionBtn, FtMotionInput } from '../tsx-utils/ftSam/ftBox.tsx'
 import {
-	fade, bouncyXMove, yMove, heightChangeByPercent,
+	fade, bouncyXMove, yMove, heightChangeByPx,
 	bouncyWidthChangeByPx, mergeMotions
 } from '../tsx-utils/ftSam/ftFramerMotion.tsx'
 
@@ -39,7 +39,7 @@ const UserStats: React.FC<UserStatsProps> = ({ rank }) => {
 	)
 
 	return <motion.div className={boxName}
-		{...yMove({ from: (100 * rank), inDuration: 1, outDuration: 0.7 })}>
+		{...yMove({ from: (100 * rank), inDuration: 1, outDuration: 0.5 })}>
 		<FtBtn className={COL_NAME}
 			pressedName={PRESSED_NAME}
 			content={nameBtnContent}
@@ -71,8 +71,7 @@ const Board: React.FC = () => {
 		<UserStats key={index} rank={index + 1} />
 	))
 
-	return <motion.div className={boxName}
-		{...heightChangeByPercent({ initialHeight: 100, finalHeight: 80 })}>
+	return <div className={boxName}>
 		<div className={headName}>
 			<div className={COL_NAME}>NAME</div>
 			{headCol('[MATCHES]')}
@@ -82,7 +81,7 @@ const Board: React.FC = () => {
 			{headCol('[SCORED]')}
 		</div>
 		{renderUsers}
-	</motion.div>
+	</div>
 }
 
 // --------LEADER---------------------------------------------------------- //
@@ -97,7 +96,7 @@ const Leader: React.FC = memo(() => {
 			from: 100,
 			extra: -20,
 			inDuration: 1 + 0.07 * index,
-			outDuration: 0.5 + 0.035 * index
+			outDuration: 0.3 + 0.035 * index
 		})
 	)
 
@@ -105,7 +104,7 @@ const Leader: React.FC = memo(() => {
 		bouncyWidthChangeByPx({
 			finalWidth: 325,
 			inDuration: 1 + 0.07 * 5,
-			outDuration: 0.5 + 0.035 * 5
+			outDuration: 0.3 + 0.035 * 5
 		}),
 		boxMove(5)
 	)
@@ -126,9 +125,9 @@ const Leader: React.FC = memo(() => {
 	)
 
 	return <motion.main className={boxName}
-		{...fade({ inDuration: 1, outDuration: 0.7 })}>
+		{...fade({ inDuration: 1, outDuration: 0.5 })}>
 		<motion.div className={headName}
-			{...heightChangeByPercent({ finalHeight: 20 })}>
+			{...heightChangeByPx({ finalHeight: 200 })}>
 			{headBtn(0, 'down', '[>>]')}
 			{headBtn(1, 'up', '[<<]')}
 			{headBtn(2, 'findMe', '[FIND ME]')}

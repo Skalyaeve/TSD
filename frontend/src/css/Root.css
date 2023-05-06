@@ -79,7 +79,6 @@ body * {
 	/* #1 Elements */
 	display: grid;
 	grid-template-columns: 265px auto;
-	grid-template-rows: 1fr;
 	overflow: hidden;
 
 	/* #2 Form */

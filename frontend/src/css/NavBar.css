@@ -27,7 +27,6 @@ ex: ".navBar-logo--pressed {}"
 .navBar {
 	/* #1 Elements */
 	display: grid;
-	grid-template-columns: 1fr;
 	grid-template-rows: minmax(50px, auto);
 	grid-auto-rows: minmax(75px, auto);
 

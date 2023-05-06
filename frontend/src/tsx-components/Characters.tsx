@@ -1,39 +1,78 @@
-import React, { memo, useMemo, useState } from 'react'
+import React, { memo, useState } from 'react'
 import { motion } from 'framer-motion'
 
 import { FtBtn, FtDiv } from '../tsx-utils/ftSam/ftBox.tsx'
-import { tglOnUp } from '../tsx-utils/ftSam/ftHooks.tsx'
+import { tglOnOver } from '../tsx-utils/ftSam/ftHooks.tsx'
+import { fade } from '../tsx-utils/ftSam/ftFramerMotion.tsx'
+
+// --------VALUES---------------------------------------------------------- //
+const CHAR_COUNT = 9
+
+// --------CLASSNAMES------------------------------------------------------ //
+const NAME = 'character'
+const PRESSED_NAME = `${NAME}-btn--pressed`
 
 // --------CHARACTER-BOX--------------------------------------------------- //
 interface CharBoxProps {
 	id: number
-	name: string
+	setSelected: React.Dispatch<React.SetStateAction<number>>
 }
-const CharBox: React.FC<CharBoxProps> = ({ id, name }) => {
+const CharBox: React.FC<CharBoxProps> = ({ id, setSelected }) => {
+	// ----CLASSNAMES------------------------- //
+	const boxName = `${NAME}-box`
+
 	// ----RENDER----------------------------- //
-	return <FtBtn className={`${name}-box`}
-		pressedName={`${name}-btn--pressed`}
+	return <FtBtn className={boxName}
+		pressedName={PRESSED_NAME}
+		handler={{ onMouseUp: () => setSelected(id) }}
 		content={`[Character ${id}]`}
 	/>
 }
 
-// --------CHARACTER------------------------------------------------------- //
-interface CharacterProps {
-	name: string
+// --------CHARACTER-BOXES------------------------------------------------- //
+interface CharBoxesProps {
+	setSelected: React.Dispatch<React.SetStateAction<number>>
 }
-const Character: React.FC<CharacterProps> = ({ name }) => {
+const CharBoxes: React.FC<CharBoxesProps> = memo(({ setSelected }) => {
 	// ----CLASSNAMES------------------------- //
-	const spellName = `${name}-spell`
+	const boxName = `${NAME}s-select`
 
 	// ----RENDER----------------------------- //
-	return <div className={name}>
-		<div className={`${name}-skin`}>SKIN</div>
-		<div className={`${name}-infos`}>
-			<div className={`${name}-stats`}>STATS</div>
-			<div className={`${name}-story`}>STORY</div>
-			<div className={`${spellName}s`}>
-				<Spell spellName={spellName} nameExt='A' content='ACTIVE' />
-				<Spell spellName={spellName} nameExt='B' content='PASSIVE' />
+	const renderCharPic = Array.from({ length: CHAR_COUNT }, (_, index) => (
+		<CharBox key={index + 1} id={index + 1} setSelected={setSelected} />
+	))
+
+	return <div className={boxName}>
+		{renderCharPic}
+	</div>
+})
+
+// --------CHARACTER------------------------------------------------------- //
+interface CharacterProps {
+	selected: number
+}
+const Character: React.FC<CharacterProps> = ({ selected }) => {
+	// ----CLASSNAMES------------------------- //
+	const skinName = `${NAME}-skin`
+	const infosName = `${NAME}-infos`
+	const statsName = `${NAME}-stats`
+	const storyName = `${NAME}-story`
+	const spellName = `${NAME}-spell`
+	const spellsName = `${spellName}s`
+
+	// ----RENDER----------------------------- //
+	return <div className={NAME}>
+		<div className={skinName}>CHARACTER #{selected}</div>
+		<div className={infosName}>
+			<div className={statsName}>STATS</div>
+			<div className={storyName}>STORY</div>
+			<div className={spellsName}>
+				<Spell spellName={spellName}
+					content={`ACTIVE`}
+				/>
+				<Spell spellName={spellName}
+					content={`PASSIVE`}
+				/>
 			</div>
 		</div>
 	</div>
@@ -42,23 +81,23 @@ const Character: React.FC<CharacterProps> = ({ name }) => {
 // --------SPELL----------------------------------------------------------- //
 interface SpellProps {
 	spellName: string
-	nameExt: string
 	content: string
 }
-const Spell: React.FC<SpellProps> = ({ spellName, nameExt, content }) => {
+const Spell: React.FC<SpellProps> = ({ spellName, content }) => {
 	// ----STATES----------------------------- //
-	const [tooltip, tglTooltip] = tglOnUp(false)
+	const [tooltip, tglTooltip] = tglOnOver(false)
 
 	// ----CLASSNAMES------------------------- //
 	const boxName = `${spellName}-box`
+	const tooltipName = `${spellName}-tooltip`
 
 	// ----RENDER----------------------------- //
-	return <div className={`${boxName}-${nameExt} ${boxName}`}>
-		<FtDiv className={`${spellName}-${nameExt} ${spellName}`}
+	return <div className={`${boxName} ${boxName}`}>
+		<FtDiv className={spellName}
 			handler={tglTooltip}
 			content={content}
 		/>
-		{tooltip && <div className={`${spellName}-tooltip`}>
+		{tooltip && <div className={tooltipName}>
 			TOOLTIP
 		</div>}
 	</div>
@@ -67,25 +106,16 @@ const Spell: React.FC<SpellProps> = ({ spellName, nameExt, content }) => {
 // --------CHARACTERS------------------------------------------------------ //
 const Characters: React.FC = memo(() => {
 	// ----STATES----------------------------- //
-	const [totalCharacters, setTotalCharacters] = useState(9)
+	const [selected, setSelected] = useState(1)
 
 	// ----CLASSNAMES------------------------- //
-	const name = 'character'
+	const boxName = `${NAME}s main`
 
 	// ----RENDER----------------------------- //
-	const renderFriends = useMemo(() => Array.from({ length: totalCharacters }, (_, index) => (
-		<CharBox key={index + 1} id={index + 1} name={name} />
-	)), [totalCharacters])
-
-	return <motion.main className={`${name}s main`}
-		initial={{ opacity: 0 }}
-		animate={{ opacity: 1 }}
-		exit={{ opacity: 0 }}
-	>
-		<div className={`${name}s-select`}>
-			{renderFriends}
-		</div>
-		<Character name={name} />
+	return <motion.main className={boxName}
+		{...fade({})}>
+		<CharBoxes setSelected={setSelected} />
+		<Character selected={selected} />
 	</motion.main>
 })
 export default Characters
