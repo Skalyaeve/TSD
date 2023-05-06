@@ -44,7 +44,6 @@
 		"file-loader": "^6.2.0",
 		"html-entities": "^2.3.3",
 		"html-webpack-plugin": "^5.5.0",
-		"http-proxy-middleware": "^2.0.6",
 		"jest": "^29.5.0",
 		"phaser": "^3.55.2",
 		"socket.io": "^4.6.1",
@@ -53,7 +52,6 @@
 		"stylelint": "^15.4.0",
 		"stylelint-config-standard": "^32.0.0",
 		"typescript": "^5.0.4",
-		"uuid": "^9.0.0",
 		"webpack": "^5.78.0",
 		"webpack-cli": "^5.0.1",
 		"webpack-dev-server": "^4.13.2"
