@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect } from 'react'
+import React, { useRef, useEffect } from 'react'
 import { Routes, Route, useLocation, useNavigate } from 'react-router-dom'
 import { AnimatePresence } from 'framer-motion'
 
@@ -20,9 +20,12 @@ interface LogginBtnProps {
 	tglLogged: () => void
 }
 const LoginBtn: React.FC<LogginBtnProps> = ({ tglLogged }) => {
+	// ----REFS------------------------------- //
+	const animating = useRef(false)
+
 	// ----ANIMATIONS------------------------- //
 	const btnMotion = {
-		...bouncyPopUpByPx(325, 125),
+		...bouncyPopUpByPx({ finalWidth: 325, finalHeight: 125 }),
 		whileHover: {
 			scale: 1.025,
 			transition: {
@@ -43,7 +46,14 @@ const LoginBtn: React.FC<LogginBtnProps> = ({ tglLogged }) => {
 	return <div className={parentName}>
 		<FtMotionBtn className={name}
 			pressedName={pressedName}
-			handler={{ onMouseUp: () => tglLogged() }}
+			handler={{
+				onMouseUp: () => {
+					if (!animating.current) {
+						tglLogged()
+						animating.current = true
+					}
+				}
+			}}
 			motionProps={btnMotion}
 			content='[42Auth]'
 		/>
@@ -73,6 +83,7 @@ const Root: React.FC = () => {
 	const headerName = 'header'
 
 	// ----RENDER----------------------------- //
+	console.log(logged)
 	return <AnimatePresence mode='wait'>
 		{!logged && <LoginBtn key='login' tglLogged={tglLogged} />}
 

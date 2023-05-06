@@ -1,14 +1,14 @@
-import React from 'react'
+import React, { memo } from 'react'
 import { motion } from 'framer-motion'
 
-import { fadeInOut } from '../tsx-utils/ftSam/ftFramerMotion.tsx'
+import { fade } from '../tsx-utils/ftSam/ftFramerMotion.tsx'
 
 // --------HOME------------------------------------------------------------ //
-const Home: React.FC = () => {
+const Home: React.FC = memo(() => {
 	// ----RENDER----------------------------- //
 	return <motion.main className='home main'
-		{...fadeInOut('easeInOut', 'easeInOut', 0.5)}>
+		{...fade({})}>
 		HOME
 	</motion.main>
-}
+})
 export default Home

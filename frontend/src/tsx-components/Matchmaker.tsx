@@ -4,7 +4,7 @@ import { motion } from 'framer-motion'
 
 import { FtMotionBtn } from '../tsx-utils/ftSam/ftBox.tsx'
 import { Timer } from '../tsx-utils/ftSam/ftNumbers.tsx'
-import { bouncyComeFromCol, bouncyHeightGrowByPx } from '../tsx-utils/ftSam/ftFramerMotion.tsx'
+import { bouncyYMove, bouncyHeightChangeByPx } from '../tsx-utils/ftSam/ftFramerMotion.tsx'
 
 // --------PARTY-INFOS----------------------------------------------------- //
 export const GameInfos: React.FC = () => {
@@ -17,7 +17,7 @@ export const GameInfos: React.FC = () => {
 
 	// ----RENDER----------------------------- //
 	return <motion.div className={boxName}
-		{...bouncyHeightGrowByPx(275)}>
+		{...bouncyHeightChangeByPx({ finalHeight: 275 })}>
 		<div className={playerPPName}>Player 1</div>
 		<div className={playerPPName}>Player 2</div>
 		<div className={scoreName}>0</div>
@@ -69,7 +69,7 @@ const Matchmaker: React.FC = () => {
 	// ----ANIMATIONS------------------------- //
 	const btnMotion = useMemo(() => {
 		return {
-			...bouncyComeFromCol(185, 20, 0.75, 'easeInOut', 'easeInOut', 0.9),
+			...bouncyYMove({ from: 100, extra: -20, inDuration: 0.6 }),
 			whileHover: {
 				rotate: [0, -5, 5, 0],
 				transition: { ease: 'easeIn' }

@@ -3,7 +3,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 
 import { FtBtn, FtMotionBtn } from '../tsx-utils/ftSam/ftBox.tsx'
 import { DragDrop } from '../tsx-utils/ftSam/ftDragDrop.tsx'
-import { bouncyHeightGrowByPercent, bouncyComeFromCol } from '../tsx-utils/ftSam/ftFramerMotion.tsx'
+import { bouncyHeightChangeByPercent, bouncyYMove } from '../tsx-utils/ftSam/ftFramerMotion.tsx'
 
 // --------ROOM-SETTINGS--------------------------------------------------- //
 interface RoomSettingsPos {
@@ -442,7 +442,7 @@ const MainContent: React.FC<MainContentProps> = ({
 
 	// ----RENDER----------------------------- //
 	const bouncyHeightGrowByPercentRender = useMemo(() => ({
-		...bouncyHeightGrowByPercent(100, 0.1, 0.75, 'easeInOut', 'easeInOut', 0.6, 0.9, 1)
+		...bouncyHeightChangeByPercent({})
 	}), []);
 
 	return <motion.div className={mainName}
@@ -540,7 +540,7 @@ const Chat: React.FC = memo(() => {
 
 	// ----RENDER----------------------------- //
 	const bouncyComeFromColRender = useMemo(() => (
-		bouncyComeFromCol(185, 20, 0.75, 'easeInOut', 'easeInOut', 1)
+		bouncyYMove({ from: 100, extra: -20, inDuration: 0.7, outDuration: 0.8 })
 	), [])
 
 	const mainButtonMotion = {
