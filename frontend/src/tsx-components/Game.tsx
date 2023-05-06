@@ -16,6 +16,22 @@ import black__Sheet from '../resource/assets/black.png'
 
 /* -------------------------TYPES------------------------- */
 
+// Keys interface
+interface keys {								// Keyboard keys
+	up: Phaser.Input.Keyboard.Key				// UP key
+	down: Phaser.Input.Keyboard.Key				// DOWN key
+	left: Phaser.Input.Keyboard.Key				// LEFT key
+	right: Phaser.Input.Keyboard.Key			// RIGHT key
+}
+
+// Player key states interface
+interface keyStates {
+	up: boolean									// Player UP key state
+	down: boolean								// Player DOWN key state
+	left: boolean								// Player LEFT key state
+	right: boolean								// Player RIGHT key state
+}
+
 // Skins interface
 interface skin {
 	name: string								// Skin name
@@ -37,29 +53,21 @@ interface player {
 	xPos: number								// Player initial X position
 	yPos: number								// Player initial Y position
 	xDir: string								// Player X direction (left/right)
+	keyStates: keyStates						// Player key states
+	xVel: number								// Player X velocity
+	yVel: number								// Player Y velocity
 	lastMove: string							// Player last movement state (none/idle/run)
 	move: string								// Player actual movement state (idle/run)
 	skin: string								// Player skin name
 	anim: string								// Player actual animation
 	sprite?: Phaser.Physics.Arcade.Sprite 		// Player sprite
-	colliders: Phaser.Physics.Arcade.Collider[]	// Player colliders
-}
-
-// Keys interface
-interface keys {								// Keyboard keys
-	up: Phaser.Input.Keyboard.Key				// UP key
-	down: Phaser.Input.Keyboard.Key				// DOWN key
-	left: Phaser.Input.Keyboard.Key				// LEFT key
-	right: Phaser.Input.Keyboard.Key			// RIGHT key
 }
 
 // Game canvas interface
 interface canvas {								// Scene canvas settings
 	xSize: number								// Canvas heigth
 	ySize: number								// Canvas width
-	aspectRatio: number							// Canvas aspecct 
-	leftOffset: number
-	gameSpeed: number
+	gameSpeed: number							// Game global speed
 }
 
 /* -------------------------GAME INITIALISATION------------------------- */
@@ -76,9 +84,7 @@ function Party() {
 	let canvas: canvas = {
 		xSize: 1920,
 		ySize: 1080,
-		aspectRatio: 16 / 9,
-		leftOffset: 300,
-		gameSpeed: 1000,
+		gameSpeed: 1000
 	}
 
 	// Player socket
@@ -178,6 +184,8 @@ function Party() {
 
 	/****** SCENE CREATION ******/
 
+	//WORK IN PROGRESS HERE
+
 	// Create players for this scene
 	function createPlayer(playerId: string, scene: Phaser.Scene) {
 		let player: player = players[playerId]
@@ -196,6 +204,8 @@ function Party() {
 		else if (player.xDir == 'right')
 			player.sprite.setFlipX(false)
 	}
+
+	//WORK IN PROGRESS HERE
 
 	// Create animation for this scene
 	function createAnims(scene: Phaser.Scene) {
@@ -222,6 +232,8 @@ function Party() {
 		return false
 	}
 
+	//WORK IN PROGRESS HERE
+
 	// Send player start to the server
 	const sendPlayerStart = () => {
 		let self: player = players[myId]
@@ -245,6 +257,8 @@ function Party() {
 		self.sprite?.play(self.skin + 'IdleAnim')
 		socket.emit('playerStop')
 	}
+
+	//WORK IN PROGRESS HERE
 
 	/****** SCENE UPDATE ******/
 
@@ -318,6 +332,7 @@ function Party() {
 	function checkMove() {
 		for (let queueId of moveQueue) {
 			players[queueId].sprite?.setPosition(players[queueId].xPos, players[queueId].yPos)
+			players[queueId].sprite?.setVelocityX
 		}
 		moveQueue = []
 	}
@@ -419,8 +434,8 @@ function Party() {
 		})
 		// Remove the disconnected player from the players list
 		socket.on('playerDisconnected', (playerId: string) => {
-			console.log("A player has disconnected")
 			deletionQueue[deletionQueue.length] = playerId
+			console.log("A player has disconnected")
 		});
 		return socket
 	}
