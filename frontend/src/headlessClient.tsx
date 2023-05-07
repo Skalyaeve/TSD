@@ -47,6 +47,7 @@ interface player {
 	lastMove: string							// Player last movement state (none/idle/run)
 	move: string								// Player actual movement state (idle/run)
 	skin: string								// Player skin name
+	anim: string								// Player current animation
 	sprite?: Phaser.Physics.Arcade.Sprite 		// Player sprite
 	colliders: Phaser.Physics.Arcade.Collider[]	// Player colliders
 }
@@ -80,6 +81,11 @@ let skins: { [key: string]: skin } = {}
 let creationQueue: string[] = []
 let moveQueue: string[] = []
 let deletionQueue: string[] = []
+
+// Last outgoing update timestamp
+let lastUpdateSent: number
+
+let movingPlayers: string[] = []
 
 /* -------------------------SCENE PRELOADING------------------------- */
 
@@ -193,6 +199,8 @@ function checkKeyInputs() {
 				endVelocityY = - canvas.gameSpeed
 			if (player.keyStates.down)
 				endVelocityY = endVelocityY + canvas.gameSpeed
+			if (endVelocityX || endVelocityY)
+				movingPlayers[movingPlayers.length] = playerId
 			if (player.sprite) {
 				player.sprite.setVelocity(endVelocityX, endVelocityY)
 			}
@@ -200,33 +208,29 @@ function checkKeyInputs() {
 	}
 }
 
+function checkSendUpdate() {
+	// Add check for time
+	if (parentPort){
+		parentPort.postMessage({ type: 'playerUpdate', players: players , moved: movingPlayers})
+		movingPlayers = []
+	}
+}
+
 // Create new player upon connection
 function checkNewPlayer(scene: Phaser.Scene) {
-	if (!creationQueue.length)
-		return
-	for (let queueId = 0; queueId < creationQueue.length; queueId++) {
-		createPlayer(players[creationQueue[queueId]].id, scene)
+	for (let playerId of creationQueue) {
+		createPlayer(players[playerId].id, scene)
 	}
 	creationQueue = []
 }
 
 // Delete player upon disconnection
 function checkDisconnect() {
-	if (!deletionQueue.length)
-		return
-	for (let queueId = 0; queueId < deletionQueue.length; queueId++) {
-		players[deletionQueue[queueId]].sprite?.destroy()
-		delete players[deletionQueue[queueId]]
+	for (let playerId of deletionQueue) {
+		players[playerId].sprite?.destroy()
+		delete players[playerId]
 	}
 	deletionQueue = []
-}
-
-// Set player position following xPos and yPos
-function checkMove() {
-	for (let queueId of moveQueue) {
-		players[queueId].sprite?.setPosition(players[queueId].xPos, players[queueId].yPos)
-	}
-	moveQueue = []
 }
 
 /* -------------------------PHASER FUNCTIONS------------------------- */
@@ -245,9 +249,8 @@ function update(this: Phaser.Scene) {
 	checkNewPlayer(this)
 	checkDisconnect()
 	checkKeyInputs()
-	checkMove()
 	//WORK IN PROGRESS HERE
-	//checkSendUpdate()
+	checkSendUpdate()
 }
 
 /* -------------------------MAIN FUNCTIONS------------------------- */
@@ -319,6 +322,7 @@ if (parentPort) {
 				break
 			case 'playerKeyUpdate':
 				updatePlayerKeys(data.playerId, data.keyStates)
+				break
 			default:
 				console.log("Unknown event type", data.type)
 		}

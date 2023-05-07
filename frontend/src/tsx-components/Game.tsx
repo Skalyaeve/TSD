@@ -88,7 +88,7 @@ function Party() {
 	}
 
 	// Player socket
-	let socket: Socket
+	let comSocket: Socket
 
 	// Keyboard keys
 	let keys: keys
@@ -234,14 +234,8 @@ function Party() {
 
 	//WORK IN PROGRESS HERE
 
-	// Send player start to the server
-	const sendPlayerStart = () => {
-		let self: player = players[myId]
-		self.sprite?.play(self.skin + 'RunAnim')
-		socket.emit('playerStart')
-	}
-
 	// Send player movements to the server
+	// WORKER <= BACK <= CLIENT
 	const sendPlayerMovement = () => {
 		const player = players[myId]
 		if (player.sprite && player.sprite.body) {
@@ -251,50 +245,46 @@ function Party() {
 		}
 	}
 
+	// Send player start to the server
+	// WORKER x BACK <= CLIENT
+	const sendPlayerStart = () => {
+		let self: player = players[myId]
+		self.sprite?.play(self.skin + 'RunAnim')
+		socket.emit('playerStart')
+	}
+
 	// Send player stop to the server
+	// WORKER x BACK <= CLIENT
 	const sendPlayerStop = () => {
 		let self: player = players[myId]
 		self.sprite?.play(self.skin + 'IdleAnim')
 		socket.emit('playerStop')
 	}
 
-	//WORK IN PROGRESS HERE
-
 	/****** SCENE UPDATE ******/
 
 	// Adapts player moveState and devolity following the pressed keys
 	function checkKeyInputs() {
 		let player: player = players[myId]
-		let endVelocityX: number = 0
-		let endVelocityY: number = 0
-		if (player && player.sprite && player.sprite.body) {
-			if (allKeysUp()) {
-				if (player.move == 'run') {
-					sendPlayerStop()
-					sendPlayerMovement()
-					player.move = 'idle'
-				}
+
+		player.keyStates.up = (keys.up.isDown ? true : false)
+		player.keyStates.down = (keys.down.isDown ? true : false)
+		player.keyStates.left = (keys.left.isDown ? true : false)
+		player.keyStates.right = (keys.right.isDown ? true : false)
+		if (allKeysUp()) {
+			if (player.move == 'run') {
+				sendPlayerStop()
+				sendPlayerMovement()
+				player.move = 'idle'
 			}
+		}
+		else {
+			if (player.move == 'run')
+				sendPlayerMovement()
 			else {
-				if (player.move == 'run')
-					sendPlayerMovement()
-				else {
-					sendPlayerStart()
-					sendPlayerMovement()
-					player.move = 'run'
-				}
-			}
-			if (keys.left.isDown)
-				endVelocityX = - canvas.gameSpeed
-			if (keys.right.isDown)
-				endVelocityX = endVelocityX + canvas.gameSpeed
-			if (keys.up.isDown)
-				endVelocityY = - canvas.gameSpeed
-			if (keys.down.isDown)
-				endVelocityY = endVelocityY + canvas.gameSpeed
-			if (player.sprite) {
-				player.sprite.setVelocityX(endVelocityX)
-				player.sprite.setVelocityY(endVelocityY)
+				sendPlayerStart()
+				sendPlayerMovement()
+				player.move = 'run'
 			}
 		}
 	}
@@ -332,7 +322,7 @@ function Party() {
 	function checkMove() {
 		for (let queueId of moveQueue) {
 			players[queueId].sprite?.setPosition(players[queueId].xPos, players[queueId].yPos)
-			players[queueId].sprite?.setVelocityX
+			players[queueId].sprite?.setVelocity(players[queueId].xVel, players[queueId].yVel)
 		}
 		moveQueue = []
 	}
@@ -392,7 +382,12 @@ function Party() {
 
 	// Start socket comunication with game server
 	const startSocket = () => {
-		socket = io('http://localhost:3001')
+		// Connect to the backend server
+		const socket = io('http://localhost:3001')
+
+		// ********** BACK TO CLIENT SPECIFIC EVENTS ********** //
+		// WORKER x BACK => CLIENT
+
 		// Update the players list with the received data (when connecting for the first time)
 		socket.on('currentPlayers', (playersList: player[]) => {
 			for (let queueId = 0; queueId < playersList.length; queueId++) {
@@ -402,11 +397,30 @@ function Party() {
 			}
 			console.log("Added ", playersList.length, " players to the creation queue")
 		});
+
 		// Get the player's own ID
 		socket.on('ownID', (playerId: string) => {
 			myId = playerId
 			console.log("Player's own id: ", myId)
 		})
+
+		// Changes the player's animation on movement chance
+		socket.on('playerStarted', (playerId: string) => {
+			players[playerId].anim = 'RunAnim'
+			animationQueue[animationQueue.length] = playerId
+			console.log("A player started moving:", playerId)
+		})
+
+		// Changes the player's animation on movement chance
+		socket.on('playerStoped', (playerId: string) => {
+			players[playerId].anim = 'IdleAnim'
+			animationQueue[animationQueue.length] = playerId
+			console.log("A player stoped moving:", playerId)
+		})
+
+		// ********** BACK TO ALL EVENTS ********** //
+		// WORKER <= BACK => CLIENT
+
 		// Add a new player to the players list
 		socket.on('newPlayer', (player: player) => {
 			players[player.id] = player
@@ -414,36 +428,34 @@ function Party() {
 			animationQueue[animationQueue.length] = player.id
 			console.log("A new player connected")
 		})
-		// Changes the player's animation on movement chance
-		socket.on('playerStarted', (playerId: string) => {
-			players[playerId].anim = 'RunAnim'
-			animationQueue[animationQueue.length] = playerId
-			console.log("A player started moving:", playerId)
-		})
-		// Update the moved player's velocity in the players list
-		socket.on('playerMoved', (playerId: string, xPos: number, yPos: number) => {
-			players[playerId].xPos = xPos
-			players[playerId].yPos = yPos
-			moveQueue[moveQueue.length] = playerId
-		})
-		// Changes the player's animation on movement chance
-		socket.on('playerStoped', (playerId: string) => {
-			players[playerId].anim = 'IdleAnim'
-			animationQueue[animationQueue.length] = playerId
-			console.log("A player stoped moving:", playerId)
-		})
+
 		// Remove the disconnected player from the players list
 		socket.on('playerDisconnected', (playerId: string) => {
 			deletionQueue[deletionQueue.length] = playerId
 			console.log("A player has disconnected")
 		});
+
+		// ********** WORKER TO CLIENT EVENTS ********** //
+		// WORKER => BACK => CLIENT
+
+		// Update the moved player's velocity in the players list
+		socket.on('playerMoved', (playerList: { [key: string]: player }, playerIds: string[]) => {
+			for (let playerId of playerIds) {
+				players[playerId].xPos = playerList[playerId].xPos
+				players[playerId].yPos = playerList[playerId].yPos
+				players[playerId].xVel = playerList[playerId].xVel
+				players[playerId].yVel = playerList[playerId].yVel
+				moveQueue[moveQueue.length] = playerId
+			}
+		})
+
 		return socket
 	}
 
 	// Construction of the whole page
 	useEffect(() => {
 		createGame()
-		const socket = startSocket()
+		comSocket = startSocket()
 		return () => {
 			if (game) {
 				keys.up.destroy()
@@ -454,7 +466,7 @@ function Party() {
 					players[playerId].sprite?.destroy()
 				game.destroy(true, false)
 			}
-			socket.disconnect()
+			comSocket.disconnect()
 		}
 	}, [])
 
