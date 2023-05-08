@@ -63,6 +63,7 @@ console.log(`Server listening on port ${port}`)
 
 // Starting headless client worker
 clientWorker = new Worker('./backDist/headlessClient.js')
+console.log("Started client worker")
 
 // Client worker listener
 clientWorker.on('message', (data) => {
@@ -105,10 +106,9 @@ io.on('connection', (socket) => {
 	})
 
 	// When the player is moving, update its velocity and notify other clients
-	socket.on('playerMovement', (movementData) => {
-		players[socket.id].xPos = movementData.xPos
-		players[socket.id].yPos = movementData.yPos
-		
+	socket.on('playerKeyUpdate', (movementData) => {
+		players[movementData.playerId].keyStates = movementData.keyStates
+		clientWorker.postMessage({ type: 'playerKeyUpdate', playerId: movementData.playerId, keyStates: movementData.keyStates })
 	})
 
 	// When the player stop moving, notify other clients

@@ -237,28 +237,21 @@ function Party() {
 	// Send player movements to the server
 	// WORKER <= BACK <= CLIENT
 	const sendPlayerMovement = () => {
-		const player = players[myId]
-		if (player.sprite && player.sprite.body) {
-			const xPos = player.sprite.body.x + skins[player.skin].xResize / 2 * skins[player.skin].scaleFactor
-			const yPos = player.sprite.body.y + skins[player.skin].yResize / 2 //* skins[player.skin].scaleFactor
-			socket.emit('playerMovement', { xPos, yPos })
-		}
+		comSocket.emit('playerKeyUpdate', { playerId: myId, keyStates: players[myId].keyStates })
 	}
 
 	// Send player start to the server
 	// WORKER x BACK <= CLIENT
 	const sendPlayerStart = () => {
-		let self: player = players[myId]
-		self.sprite?.play(self.skin + 'RunAnim')
-		socket.emit('playerStart')
+		players[myId].sprite?.play(players[myId].skin + 'RunAnim')
+		comSocket.emit('playerStart')
 	}
 
 	// Send player stop to the server
 	// WORKER x BACK <= CLIENT
 	const sendPlayerStop = () => {
-		let self: player = players[myId]
-		self.sprite?.play(self.skin + 'IdleAnim')
-		socket.emit('playerStop')
+		players[myId].sprite?.play(players[myId].skin + 'IdleAnim')
+		comSocket.emit('playerStop')
 	}
 
 	/****** SCENE UPDATE ******/

@@ -20,13 +20,24 @@
 		// Permet de ne pas générer de fichiers de sortie lors de la compilation
 		"noEmit": true,
 		// Dossier de sortie de transcompilation
-		"outDir": "./dist"
+		"outDir": "./backDist",
+
+		"typeRoots": [
+			"./node_modules/@types",
+			"./src/types"
+		],
+
+		"baseUrl": "./",
+
+		"paths": {
+			"*": [
+				"src/types/*",
+				"node_modules/*"
+			]
+		}
 	},
 	// Spécifie les fichiers à inclure dans la compilation
 	"include": [
-		"./src/**/*"
-	],
-	"exclude": [
-		"./src/tsx-utils/testBackend/headlessClient.tsx"
+		"./src/testBackend/headlessClient.tsx"
 	]
 }

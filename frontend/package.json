@@ -7,7 +7,7 @@
 		"start": "concurrently \"npm run dev\" \"npm run headlessClientCompile && npm run server\"",
 		"dev": "webpack serve --mode=development",
 		"prod": "webpack --mode=production",
-		"headlessClientCompile": "npx babel src/headlessClient.tsx --out-file backDist/headlessClient.js",
+		"headlessClientCompile": "tsc -p ./tsconfig.back.json",
 		"server": "node server.js",
 		"test": "jest --config=.babelrc-jest"
 	},

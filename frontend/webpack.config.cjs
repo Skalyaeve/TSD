@@ -4,9 +4,6 @@ const path = require('path');
 // Importation du plugin HtmlWebpackPlugin pour générer le fichier HTML
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 
-// Importation du proxy middleware pour forward le jeu webpack au serveur Node.js
-const { createProxyMiddleware } = require('http-proxy-middleware');
-
 // Exportation de la configuration Webpack
 module.exports = {
 	// Entrée de l'application

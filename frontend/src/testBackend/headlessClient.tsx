@@ -6,10 +6,10 @@ import { parentPort } from 'worker_threads'
 /* -------------------------ASSETS IMPORTS------------------------- */
 
 // Images && Spritesheets
-import playerIdle__Sheet from './resource/assets/playerSheet.png'
-import mageIdle__Sheet from './resource/assets/Mage/Idle.png'
-import blank__Sheet from './resource/assets/blank.png'
-import black__Sheet from './resource/assets/black.png'
+import playerIdle__Sheet from '../resource/assets/black.png'
+import mageIdle__Sheet from '../resource/assets/black.png'
+import blank__Sheet from '../resource/assets/black.png'
+import black__Sheet from '../resource/assets/black.png'
 
 /* -------------------------TYPES------------------------- */
 
@@ -180,38 +180,30 @@ function allKeysUp(player: player) {
 
 // Adapts player moveState and devolity following the pressed keys
 function checkKeyInputs() {
-	for (let playerId in players) {
+	for (let playerId of moveQueue) {
 		let player = players[playerId]
 		let endVelocityX: number = 0
 		let endVelocityY: number = 0
-		if (player && player.sprite && player.sprite.body) {
-			if (allKeysUp(player))
-				if (player.move == 'run')
-					player.move = 'idle'
-				else
-					if (player.move == 'idle')
-						player.move = 'run'
-			if (player.keyStates.left)
-				endVelocityX = - canvas.gameSpeed
-			if (player.keyStates.right)
-				endVelocityX = endVelocityX + canvas.gameSpeed
-			if (player.keyStates.up)
-				endVelocityY = - canvas.gameSpeed
-			if (player.keyStates.down)
-				endVelocityY = endVelocityY + canvas.gameSpeed
-			if (endVelocityX || endVelocityY)
-				movingPlayers[movingPlayers.length] = playerId
-			if (player.sprite) {
-				player.sprite.setVelocity(endVelocityX, endVelocityY)
-			}
+		if (player.keyStates.left)
+			endVelocityX = - canvas.gameSpeed
+		if (player.keyStates.right)
+			endVelocityX = endVelocityX + canvas.gameSpeed
+		if (player.keyStates.up)
+			endVelocityY = - canvas.gameSpeed
+		if (player.keyStates.down)
+			endVelocityY = endVelocityY + canvas.gameSpeed
+		if (endVelocityX || endVelocityY)
+			movingPlayers[movingPlayers.length] = playerId
+		if (player.sprite) {
+			player.sprite.setVelocity(endVelocityX, endVelocityY)
 		}
 	}
 }
 
 function checkSendUpdate() {
 	// Add check for time
-	if (parentPort){
-		parentPort.postMessage({ type: 'playerUpdate', players: players , moved: movingPlayers})
+	if (parentPort) {
+		parentPort.postMessage({ type: 'playerUpdate', players: players, moved: movingPlayers })
 		movingPlayers = []
 	}
 }
