@@ -1,14 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { Prisma, User } from '.prisma/client';
 import { GoogleUserDetails } from '../utils/types';
 import { FortyTwoUserDetails } from '../utils/types';
+import { JwtService } from '@nestjs/jwt';
 
-import * as crypto from 'crypto';
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private jwtService: JwtService,
+  ) {}
 
   generateFunnyNickname(): string {
     const adjectives: string[] = ['happy', 'silly', 'goofy', 'wacky', 'zany', 'quirky', 'bouncy', 'spunky', 'jolly', 'nutty'];
@@ -59,7 +61,19 @@ export class AuthService {
     }
   }
 
-  async findUser(id:number)
+  async login(user: any): Promise<any> {
+
+      const payload = {
+        id: user.id,
+      };
+
+      return {
+        id: payload.id,
+        access_token: this.jwtService.sign(payload),
+      };
+  }
+
+  async findUser(id: number)
   {
     const user = await this.prisma.user.findUnique({where: {id}});
     return user;

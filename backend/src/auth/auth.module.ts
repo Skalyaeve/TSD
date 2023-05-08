@@ -4,7 +4,7 @@ import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { GoogleStrategy } from './strategies/GoogleStrategy';
 import { FortyTwoStrategy } from './strategies/FortyTwoStrategy';
-import { SessionSerializer } from './utils/Serializer';
+import { JwtStrategy } from './strategies/JwtStrategy';
 import { PassportModule } from '@nestjs/passport';
 
 @Module({
@@ -15,11 +15,8 @@ import { PassportModule } from '@nestjs/passport';
   providers: [
     FortyTwoStrategy,
     GoogleStrategy,
-    SessionSerializer,
-    {
-      provide: 'AUTH_SERVICE',
-      useClass: AuthService,
-    }
+    JwtStrategy,
+    AuthService,
     ],
   controllers: [AuthController]
 })
