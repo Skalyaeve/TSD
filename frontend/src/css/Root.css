@@ -24,7 +24,7 @@ ex: ".navBar-logo--pressed {}"
 --------------------------------- */
 
 @import url("NavBar.css");
-@import url("./Chat/Chat.css");
+@import url("./Chat/ChatButton.css");
 /* @import url("Chat.css"); */
 @import url("Matchmaker.css");
 @import url("Home.css");

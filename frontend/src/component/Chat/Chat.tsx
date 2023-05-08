@@ -5,7 +5,7 @@ import MessageInput from './MessageInput.tsx'
 import Messages from './Messages.tsx'
 import { Link } from 'react-router-dom'
 
-function Chat({name}: {name : string}) {
+function Chat({ name }: { name: string }) {
     const [socket, setSocket] = useState<Socket>()
     const [messages, setMessages] = useState<string[]>([])
 
@@ -24,16 +24,21 @@ function Chat({name}: {name : string}) {
     }
 
     useEffect(() => {
+        console.log('messagelistener');
         socket?.on("message", messageListener)
         return () => {
             socket?.off("message", messageListener)
         }
-    }, [messageListener])
+    }, [send])
 
     return (
-        <div>
-            <MessageInput send={send}/>
-            <Messages messages={messages}/>
+        <div className='chat-container'>
+            <div className='messages'>
+                <Messages messages={messages} />
+            </div>
+            <div className='input'>
+                <MessageInput send={send} />
+            </div>
         </div>
     )
 }
