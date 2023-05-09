@@ -7,13 +7,18 @@ import { Link } from 'react-router-dom'
 
 function Chat({ name }: { name: string }) {
     const [socket, setSocket] = useState<Socket>()
-    const [messages, setMessages] = useState<{ user: string; message: string }[]>([]);
-    const [user, setUser] = useState(name);
+    const [sentMessages, setSentMessages] = useState<{user: string; message: string }[]>([]);
+    const [receivedMessages, setReceivedMessages] = useState<{user: string; message: string } []>([]);
+    // const [messages, setMessages] = useState<{ user: string; message: string }[]>([]);
+    const [user, setUser] = useState(() => `User${Math.floor(Math.random() * 10)}`);// this will change 
 
     const send = (value: string, user: string) => {
-        console.log(value);
-        console.log(user);
-        socket?.emit('message', {user, message: value});
+        console.log("value: ", value);
+        console.log("user: ", user);
+        const message = { user, message: value };
+        setSentMessages([...sentMessages, message]);
+        socket?.emit('message', message);
+        // socket?.emit('message', {user, message: value});
     };
 
     useEffect(() => {
@@ -23,8 +28,12 @@ function Chat({ name }: { name: string }) {
     }, [setSocket])
 
     const messageListener = (message: { user: string; message: string}) => {
-        setMessages([...messages, message])
-    }
+        if (message.user == user) {
+            // setSentMessages([...sentMessages, message]);
+        } else {
+            setReceivedMessages([...receivedMessages, message]);
+        }
+    };
 
     useEffect(() => {
         console.log('messagelistener');
@@ -32,12 +41,13 @@ function Chat({ name }: { name: string }) {
         return () => {
             socket?.off("message", messageListener)
         }
-    }, [messageListener])
+    }, [send])
 
     return (
         <div className='chat-container'>
             <div className='messages'>
-                <Messages messages={messages}/>
+                <Messages messages={receivedMessages} currentUser={user} />
+                <Messages messages={sentMessages} currentUser={user} ownMessages />
             </div>
             <div className='input'>
                 <MessageInput send={send} user={user} setUser={setUser} />

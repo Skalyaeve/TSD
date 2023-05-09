@@ -98,7 +98,7 @@ const Root: React.FC = () => {
 				<Route path='/characters' element={<Characters />} />
 				<Route path='/leader' element={<Leader />} />
 				<Route path='/game' element={<Party />} />
-				<Route path="/chat" element={<Chat name="Pieri"/>} />
+				<Route path="/chat" element={<Chat name="PIERINA"/>} />
 				<Route path='*' element={<ErrorPage code={404} />} />
 			</Routes>
 
