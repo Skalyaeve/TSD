@@ -1,0 +1,17 @@
+{
+	// Spécifie les options de compilation TypeScript
+	"compilerOptions": {
+		// Les modules sont résolus en utilisant la convention de résolution de modules Node.js
+		"moduleResolution": "node",
+		// Transformer les importations CommonJS en ECMAScript 
+		"esModuleInterop": true,
+		// Permet de ne pas générer de fichiers de sortie lors de la compilation
+		"noEmit": false,
+		// Dossier de sortie de transcompilation
+		"outDir": "./dist",
+	},
+	// Spécifie les fichiers à inclure dans la compilation
+	"include": [
+		"src/headlessClient.ts"
+	]
+}
