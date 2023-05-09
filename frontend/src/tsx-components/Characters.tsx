@@ -1,5 +1,5 @@
 import React, { memo, useEffect, useMemo, useState } from 'react'
-import { MotionStyle, motion } from 'framer-motion'
+import { AnimatePresence, MotionStyle, motion } from 'framer-motion'
 
 import { FtMotionBtn, FtDiv } from '../tsx-utils/ftSam/ftBox.tsx'
 import { tglOnOver } from '../tsx-utils/ftSam/ftHooks.tsx'
@@ -23,7 +23,7 @@ const Spell: React.FC<SpellProps> = ({ spellName, content, selected }) => {
 	const [tooltip, tglTooltip] = tglOnOver(false)
 
 	// ----ANIMATIONS------------------------- //
-	const boxMotion = useMemo(() => fade({ inDuration: 1, outDuration: 0.5 }), [])
+	const boxMotion = useMemo(() => fade({ inDuration: 0.2 }), [])
 
 	// ----CLASSNAMES------------------------- //
 	const boxName = `${spellName}-box`
@@ -31,15 +31,15 @@ const Spell: React.FC<SpellProps> = ({ spellName, content, selected }) => {
 
 	// ----RENDER----------------------------- //
 	return <motion.div className={boxName}
-		key={`${boxName}-${selected}`}
 		{...boxMotion}>
 		<FtDiv className={spellName}
 			handler={tglTooltip}
 			content={content}
 		/>
-		{tooltip && <div className={tooltipName}>
+		{tooltip && <motion.div className={tooltipName}
+			{...fade({})}>
 			TOOLTIP
-		</div>}
+		</motion.div>}
 	</motion.div>
 }
 
@@ -48,6 +48,9 @@ interface CharacterProps {
 	selected: number
 }
 const Character: React.FC<CharacterProps> = ({ selected }) => {
+	// ----ANIMATIONS------------------------- //
+	const contentMotionDuration = 0.2
+
 	// ----CLASSNAMES------------------------- //
 	const skinName = `${NAME}-skin`
 	const statsName = `${NAME}-stats`
@@ -57,38 +60,44 @@ const Character: React.FC<CharacterProps> = ({ selected }) => {
 
 	// ----RENDER----------------------------- //
 	return <motion.div className={NAME}
-		{...heightChangeByPercent({ inDuration: 1, outDuration: 0.5 })}>
-		<div className={skinName}>
-			<motion.div className={`${skinName}-content`}
-				key={`${skinName}-${selected}`}
-				{...fade({ inDuration: 1, outDuration: 0.5 })}>
-				CHARACTER #{selected}
-			</motion.div>
-		</div>
-		<div className={statsName}>
-			<motion.div className={`${statsName}-content`}
-				key={`${statsName}-${selected}`}
-				{...fade({ inDuration: 1, outDuration: 0.5 })}>
-				STATS
-			</motion.div>
-		</div>
-		<div className={storyName}>
-			<motion.div className={`${storyName}-content`}
-				key={`${storyName}-${selected}`}
-				{...fade({ inDuration: 1, outDuration: 0.5 })}>
-				STORY
-			</motion.div>
-		</div>
-		<div className={spellzName}>
-			<Spell spellName={spellName}
-				content='ACTIVE'
-				selected={selected}
-			/>
-			<Spell spellName={spellName}
-				content='PASSIVE'
-				selected={selected}
-			/>
-		</div>
+		{...heightChangeByPercent({
+			inDuration: 1,
+			outDuration: 0.5
+		})}>
+		<AnimatePresence mode='wait'>
+			<div className={skinName}
+				key={`${skinName}-${selected}`}>
+				<motion.div className={`${skinName}-content`}
+					{...fade({ inDuration: contentMotionDuration })}>
+					CHARACTER #{selected}
+				</motion.div>
+			</div>
+			<div className={statsName}
+				key={`${statsName}-${selected}`}>
+				<motion.div className={`${statsName}-content`}
+					{...fade({ inDuration: contentMotionDuration })}>
+					STATS
+				</motion.div>
+			</div>
+			<div className={storyName}
+				key={`${storyName}-${selected}`}>
+				<motion.div className={`${storyName}-content`}
+					{...fade({ inDuration: contentMotionDuration })}>
+					STORY
+				</motion.div>
+			</div>
+			<div className={spellzName}
+				key={`${spellzName}-${selected}`}>
+				<Spell spellName={spellName}
+					content='ACTIVE'
+					selected={selected}
+				/>
+				<Spell spellName={spellName}
+					content='PASSIVE'
+					selected={selected}
+				/>
+			</div>
+		</AnimatePresence>
 	</motion.div>
 }
 
