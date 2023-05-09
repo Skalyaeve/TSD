@@ -1,9 +1,9 @@
-import React, { memo, useState } from 'react'
-import { motion } from 'framer-motion'
+import React, { memo, useEffect, useMemo, useState } from 'react'
+import { AnimatePresence, MotionStyle, motion } from 'framer-motion'
 
 import { FtMotionBtn, FtDiv } from '../tsx-utils/ftSam/ftBox.tsx'
 import { tglOnOver } from '../tsx-utils/ftSam/ftHooks.tsx'
-import { fade, yMove, heightChangeByPercent, heightChangeByPx } from '../tsx-utils/ftSam/ftFramerMotion.tsx'
+import { fade, yMove, heightChangeByPercent } from '../tsx-utils/ftSam/ftFramerMotion.tsx'
 
 // --------VALUES---------------------------------------------------------- //
 const CHAR_COUNT = 9
@@ -16,17 +16,23 @@ const PRESSED_NAME = `${NAME}-btn--pressed`
 interface SpellProps {
 	spellName: string
 	content: string
+	selected: number
 }
-const Spell: React.FC<SpellProps> = ({ spellName, content }) => {
+const Spell: React.FC<SpellProps> = ({ spellName, content, selected }) => {
 	// ----STATES----------------------------- //
 	const [tooltip, tglTooltip] = tglOnOver(false)
+
+	// ----ANIMATIONS------------------------- //
+	const boxMotion = useMemo(() => fade({ inDuration: 1 }), [])
 
 	// ----CLASSNAMES------------------------- //
 	const boxName = `${spellName}-box`
 	const tooltipName = `${spellName}-tooltip`
 
 	// ----RENDER----------------------------- //
-	return <div className={boxName}>
+	return <motion.div className={boxName}
+		key={`${boxName}-${selected}`}
+		{...boxMotion}>
 		<FtDiv className={spellName}
 			handler={tglTooltip}
 			content={content}
@@ -34,7 +40,7 @@ const Spell: React.FC<SpellProps> = ({ spellName, content }) => {
 		{tooltip && <div className={tooltipName}>
 			TOOLTIP
 		</div>}
-	</div>
+	</motion.div>
 }
 
 // --------CHARACTER------------------------------------------------------- //
@@ -52,15 +58,35 @@ const Character: React.FC<CharacterProps> = ({ selected }) => {
 	// ----RENDER----------------------------- //
 	return <motion.div className={NAME}
 		{...heightChangeByPercent({ inDuration: 1 })}>
-		<div className={skinName}>CHARACTER #{selected}</div>
-		<div className={statsName}>STATS</div>
-		<div className={storyName}>STORY</div>
+		<div className={skinName}>
+			<motion.div className={`${skinName}-content`}
+				key={`${skinName}-${selected}`}
+				{...fade({ inDuration: 1 })}>
+				CHARACTER #{selected}
+			</motion.div>
+		</div>
+		<div className={statsName}>
+			<motion.div className={`${statsName}-content`}
+				key={`${statsName}-${selected}`}
+				{...fade({ inDuration: 1 })}>
+				STATS
+			</motion.div>
+		</div>
+		<div className={storyName}>
+			<motion.div className={`${storyName}-content`}
+				key={`${storyName}-${selected}`}
+				{...fade({ inDuration: 1 })}>
+				STORY
+			</motion.div>
+		</div>
 		<div className={spellzName}>
 			<Spell spellName={spellName}
 				content='ACTIVE'
+				selected={selected}
 			/>
 			<Spell spellName={spellName}
 				content='PASSIVE'
+				selected={selected}
 			/>
 		</div>
 	</motion.div>
@@ -89,16 +115,39 @@ interface CharBoxesProps {
 	setSelected: React.Dispatch<React.SetStateAction<number>>
 }
 const CharBoxes: React.FC<CharBoxesProps> = memo(({ setSelected }) => {
+	// ----STATES----------------------------- //
+	const [animating, setAnimating] = useState(true)
+
+	// ----EFFECTS---------------------------- //
+	useEffect(() => {
+		const timer = setTimeout(() => {
+			setAnimating(false)
+		}, 1250)
+
+		return () => clearTimeout(timer)
+	}, [])
+
+	// ----ANIMATION-------------------------- //
+	const heightChange = useMemo(() => heightChangeByPercent({ inDuration: 1 }), [])
+	const boxStyle: MotionStyle = {
+		overflowY: (animating ? 'hidden' : 'auto')
+	}
+
 	// ----CLASSNAMES------------------------- //
 	const boxName = `${NAME}s-select`
 
 	// ----RENDER----------------------------- //
-	const renderCharPic = Array.from({ length: CHAR_COUNT }, (_, index) => (
+	const renderCharPic = useMemo(() => Array.from({ length: CHAR_COUNT }, (_, index) => (
 		<CharBox key={index + 1} id={index + 1} setSelected={setSelected} />
-	))
+	)), [])
 
 	return <motion.div className={boxName}
-		{...heightChangeByPercent({ inDuration: 1 })}>
+		{...heightChange}
+		exit={{
+			...heightChange.exit,
+			overflowY: 'hidden'
+		}}
+		style={boxStyle}>
 		{renderCharPic}
 	</motion.div>
 })

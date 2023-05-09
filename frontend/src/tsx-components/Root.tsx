@@ -83,7 +83,6 @@ const Root: React.FC = () => {
 	const headerName = 'header'
 
 	// ----RENDER----------------------------- //
-	console.log(logged)
 	return <AnimatePresence mode='wait'>
 		{!logged && <LoginBtn key='login' tglLogged={tglLogged} />}
 

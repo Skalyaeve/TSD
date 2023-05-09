@@ -43,7 +43,6 @@ ex: ".navBar-logo--pressed {}"
 	align-items: center;
 	justify-content: center;
 	overflow-x: hidden;
-	overflow-y: auto;
 
 	/* #3 Position */
 	align-self: flex-end;
@@ -56,6 +55,7 @@ ex: ".navBar-logo--pressed {}"
 	/* #2 Form */
 	min-width: 200px;
 	min-height: 200px;
+	border-radius: 5px;
 
 	/* #4 Margin - Padding */
 	margin: 50px 70px;
