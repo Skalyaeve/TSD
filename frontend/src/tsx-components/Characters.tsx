@@ -1,5 +1,5 @@
 import React, { memo, useEffect, useMemo, useState } from 'react'
-import { AnimatePresence, MotionStyle, motion } from 'framer-motion'
+import { MotionStyle, motion } from 'framer-motion'
 
 import { FtMotionBtn, FtDiv } from '../tsx-utils/ftSam/ftBox.tsx'
 import { tglOnOver } from '../tsx-utils/ftSam/ftHooks.tsx'
@@ -23,7 +23,7 @@ const Spell: React.FC<SpellProps> = ({ spellName, content, selected }) => {
 	const [tooltip, tglTooltip] = tglOnOver(false)
 
 	// ----ANIMATIONS------------------------- //
-	const boxMotion = useMemo(() => fade({ inDuration: 1 }), [])
+	const boxMotion = useMemo(() => fade({ inDuration: 1, outDuration: 0.5 }), [])
 
 	// ----CLASSNAMES------------------------- //
 	const boxName = `${spellName}-box`
@@ -57,25 +57,25 @@ const Character: React.FC<CharacterProps> = ({ selected }) => {
 
 	// ----RENDER----------------------------- //
 	return <motion.div className={NAME}
-		{...heightChangeByPercent({ inDuration: 1 })}>
+		{...heightChangeByPercent({ inDuration: 1, outDuration: 0.5 })}>
 		<div className={skinName}>
 			<motion.div className={`${skinName}-content`}
 				key={`${skinName}-${selected}`}
-				{...fade({ inDuration: 1 })}>
+				{...fade({ inDuration: 1, outDuration: 0.5 })}>
 				CHARACTER #{selected}
 			</motion.div>
 		</div>
 		<div className={statsName}>
 			<motion.div className={`${statsName}-content`}
 				key={`${statsName}-${selected}`}
-				{...fade({ inDuration: 1 })}>
+				{...fade({ inDuration: 1, outDuration: 0.5 })}>
 				STATS
 			</motion.div>
 		</div>
 		<div className={storyName}>
 			<motion.div className={`${storyName}-content`}
 				key={`${storyName}-${selected}`}
-				{...fade({ inDuration: 1 })}>
+				{...fade({ inDuration: 1, outDuration: 0.5 })}>
 				STORY
 			</motion.div>
 		</div>
@@ -105,7 +105,7 @@ const CharBox: React.FC<CharBoxProps> = ({ id, setSelected }) => {
 	return <FtMotionBtn className={boxName}
 		pressedName={PRESSED_NAME}
 		handler={{ onMouseUp: () => setSelected(id) }}
-		motionProps={yMove({ from: 200 * id, inDuration: 1.25 })}
+		motionProps={yMove({ from: 200 * id, inDuration: 1.25, outDuration: 0.5 })}
 		content={`[Character #${id}]`}
 	/>
 }
@@ -128,7 +128,7 @@ const CharBoxes: React.FC<CharBoxesProps> = memo(({ setSelected }) => {
 	}, [])
 
 	// ----ANIMATION-------------------------- //
-	const heightChange = useMemo(() => heightChangeByPercent({ inDuration: 1 }), [])
+	const heightChange = useMemo(() => heightChangeByPercent({ inDuration: 1, outDuration: 0.5 }), [])
 	const boxStyle: MotionStyle = {
 		overflowY: (animating ? 'hidden' : 'auto')
 	}
@@ -162,7 +162,7 @@ const Characters: React.FC = () => {
 
 	// ----RENDER----------------------------- //
 	return <motion.main className={boxName}
-		{...fade({ inDuration: 1 })}>
+		{...fade({ inDuration: 1, outDuration: 0.5 })}>
 		<CharBoxes setSelected={setSelected} />
 		<Character selected={selected} />
 	</motion.main>
