@@ -28,7 +28,7 @@ const CharBox: React.FC<CharBoxProps> = memo(({ id, setSelected }) => {
 		motionProps={yMove({
 			from: 200 * id,
 			inDuration: 0.7 + (0.025 * id),
-			outDuration: 0.5 - (0.0125 * id)
+			outDuration: 0.5
 		})}
 		content={`[Character #${id}]`}
 	/>

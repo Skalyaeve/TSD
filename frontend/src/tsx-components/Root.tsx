@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react'
+import React, { useRef, useState, useLayoutEffect, useEffect } from 'react'
 import { Routes, Route, useLocation, useNavigate } from 'react-router-dom'
 import { AnimatePresence } from 'framer-motion'
 
@@ -70,43 +70,55 @@ const Root: React.FC = () => {
 
 	// ----STATES----------------------------- //
 	const [logged, tglLogged] = useTgl(localStorage.getItem('logged') === '1')
+	const [showHeader, setShowHeader] = useState(false)
 
 	// ----EFFECTS---------------------------- //
+	useLayoutEffect(() => {
+		localStorage.setItem('logged', logged ? '1' : '0')
+		if (logged) {
+			navigate('/')
+			if (location.pathname === '/login') {
+				const timer = setTimeout(() => setShowHeader(true), 500)
+				return () => clearTimeout(timer)
+			}
+			else setShowHeader(true)
+		}
+		else {
+			navigate('/login')
+			setShowHeader(false)
+		}
+	}, [logged])
+
 	useEffect(() => {
 		if (logged && localStorage.getItem('inGame') === '1')
 			navigate('/game')
 	}, [location.pathname])
 
-	useEffect(() => {
-		localStorage.setItem('logged', logged ? '1' : '0')
-	}, [logged])
-
 	// ----CLASSNAMES------------------------- //
 	const headerName = 'header'
 
 	// ----RENDER----------------------------- //
-	return <AnimatePresence mode='wait'>
-		{!logged && <LoginBtn key='login' tglLogged={tglLogged} />}
-
-		{logged && <>
-			<header className={headerName}>
+	return <>
+		<AnimatePresence>
+			{showHeader && <header className={headerName}>
 				<NavBar tglLogged={tglLogged} />
 				<Chat />
 				<Matchmaker />
-			</header>
+			</header>}
+		</AnimatePresence>
 
-			<AnimatePresence mode='wait'>
-				<Routes location={location} key={location.pathname}>
-					<Route path='/' element={<Home />} />
-					<Route path='/profile' element={<AccountInfos />} />
-					<Route path='/profile/friends' element={<Friends />} />
-					<Route path='/characters' element={<Characters />} />
-					<Route path='/leader' element={<Leader />} />
-					<Route path='/game' element={<Party />} />
-					<Route path='*' element={<ErrorPage code={404} />} />
-				</Routes>
-			</AnimatePresence>
-		</>}
-	</AnimatePresence>
+		<AnimatePresence mode='wait'>
+			<Routes location={location} key={location.pathname}>
+				<Route path='/login' element={<LoginBtn tglLogged={tglLogged} />} />
+				<Route path='/' element={<Home />} />
+				<Route path='/profile' element={<AccountInfos />} />
+				<Route path='/profile/friends' element={<Friends />} />
+				<Route path='/characters' element={<Characters />} />
+				<Route path='/leader' element={<Leader />} />
+				<Route path='/game' element={<Party />} />
+				<Route path='*' element={<ErrorPage code={404} />} />
+			</Routes>
+		</AnimatePresence>
+	</>
 }
 export default Root

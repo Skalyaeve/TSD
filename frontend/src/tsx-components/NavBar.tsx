@@ -81,7 +81,6 @@ const FromHome: React.FC<FromHomeProps> = ({ tglLogged, setRender, animating }) 
 	// ----RENDER----------------------------- //
 	return <motion.nav className={NAME}
 		{...bouncyHeightChangeByPx({ finalHeight: BACK_LINK_HEIGHT + LINK_HEIGHT * 3 })}>
-
 		<FtMotionBtn className={LOGOUT_NAME}
 			handler={{
 				onMouseUp: () => {
@@ -119,7 +118,6 @@ interface FromProfileProps {
 const FromProfile: React.FC<FromProfileProps> = ({ animating }) => (
 	<motion.nav className={NAME}
 		{...bouncyHeightChangeByPx({ finalHeight: BACK_LINK_HEIGHT + LINK_HEIGHT * 2 })}>
-
 		<NavBarLink index={0}
 			to='/'
 			content='[BACK]'
@@ -145,7 +143,6 @@ interface FromCharactersProps {
 const FromCharacters: React.FC<FromCharactersProps> = ({ animating }) => (
 	<motion.nav className={NAME}
 		{...bouncyHeightChangeByPx({ finalHeight: BACK_LINK_HEIGHT })}>
-
 		<NavBarLink index={0}
 			to='/'
 			content='[BACK]'
@@ -161,7 +158,6 @@ interface FromLeaderProps {
 const FromLeader: React.FC<FromLeaderProps> = ({ animating }) => (
 	<motion.nav className={NAME}
 		{...bouncyHeightChangeByPx({ finalHeight: BACK_LINK_HEIGHT })}>
-
 		<NavBarLink index={0}
 			to='/'
 			content='[BACK]'
@@ -177,7 +173,6 @@ interface From404Props {
 const From404: React.FC<From404Props> = ({ animating }) => (
 	<motion.nav className={NAME}
 		{...bouncyHeightChangeByPx({ finalHeight: BACK_LINK_HEIGHT })}>
-
 		<NavBarLink index={0}
 			to='/'
 			content='[HOME]'
@@ -203,11 +198,17 @@ const NavBar: React.FC<NavBarProps> = ({ tglLogged }) => {
 
 	// ----EFFECTS---------------------------- //
 	useEffect(() => {
-		if (previousPath.current === null
+		if (previousPath.current !== null && cutThenCompare(location.pathname, previousPath.current, '/', 1)) {
+			animating.current = true
+			const timer = setTimeout(() => { animating.current = false }, 500)
+			return () => clearTimeout(timer)
+		}
+		else if (previousPath.current === null
 			|| !cutThenCompare(location.pathname, previousPath.current, '/', 1)) {
 			animating.current = true
 			setRender(
 				<Routes location={location} key={location.pathname}>
+					<Route path='/login' element={<></>} />
 					<Route path='/' element={
 						<FromHome
 							tglLogged={tglLogged}
@@ -229,7 +230,6 @@ const NavBar: React.FC<NavBarProps> = ({ tglLogged }) => {
 	// ----RENDER----------------------------- //
 	return <AnimatePresence mode='wait'
 		onExitComplete={() => { animating.current = false }}>
-
 		{render}
 	</AnimatePresence>
 }

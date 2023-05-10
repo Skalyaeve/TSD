@@ -125,3 +125,9 @@ body * {
 	/* #4 Margin - Padding */
 	padding: 10px;
 }
+
+.main {
+	/* #3 Position */
+	grid-column: 2 / -1;
+
+}

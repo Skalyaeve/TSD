@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useMemo, memo } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 
-import { tglOnUp, tglOnOver } from '../tsx-utils/ftHooks.tsx'
-import { FtDiv, FtBtn, FtInput, FtMotionDiv, FtMotionBtn, FtMotionInput } from '../tsx-utils/ftBox.tsx'
-import { fade, bouncyWidthChangeByPx, heightChangeByPx, bouncyXMove, yMove, mergeMotions, xMove } from '../tsx-utils/ftFramerMotion.tsx'
+import { tglOnUp } from '../tsx-utils/ftHooks.tsx'
+import { FtDiv, FtBtn, FtMotionDiv, FtMotionBtn, FtMotionInput } from '../tsx-utils/ftBox.tsx'
+import { fade, bouncyWidthChangeByPx, heightChangeByPx, bouncyXMove, yMove, mergeMotions, xMove, bouncyWidthChangeByPercent } from '../tsx-utils/ftFramerMotion.tsx'
 
 // --------CLASSNAMES------------------------------------------------------ //
 const NAME = 'profile'
@@ -20,7 +20,7 @@ interface FriendNameProps {
 }
 const FriendName: React.FC<FriendNameProps> = ({ id }) => {
 	// ----STATES----------------------------- //
-	const [delBtn, toggleDelBtn] = tglOnOver(false)
+	const [delBtn, setDelBtn] = useState(false)
 
 	// ----CLASSNAMES------------------------- //
 	const mainBtnName = `${FRIEND_NAME}-name`
@@ -49,7 +49,10 @@ const FriendName: React.FC<FriendNameProps> = ({ id }) => {
 	</>
 
 	return <FtDiv className={COL_NAME}
-		handler={toggleDelBtn}
+		handler={{
+			onMouseEnter: () => setDelBtn(true),
+			onMouseLeave: () => setDelBtn(false)
+		}}
 		content={boxContent}
 	/>
 }
@@ -83,7 +86,7 @@ const Friend: React.FC<FriendProps> = memo(({ id }) => {
 // --------FRIEND-SEARCH--------------------------------------------------- //
 const FriendSearch: React.FC = memo(() => {
 	// ----STATES----------------------------- //
-	const [searchBtn, toggleSearchBtn] = tglOnOver(false)
+	const [searchBtn, setSearchBtn] = useState(false)
 	const [searchin, toggleSearchin] = tglOnUp(false)
 
 	// ----CLASSNAMES------------------------- //
@@ -98,11 +101,17 @@ const FriendSearch: React.FC = memo(() => {
 			content='[NAME]'
 		/>
 		:
-		<FtInput name={inputName} />
+		<FtMotionInput name={inputName}
+			key={inputName}
+			motionProps={xMove({ from: 50, inDuration: 0.3 })}
+		/>
 	)
 
 	const boxContent = <>
-		{childBtnContent}
+		<AnimatePresence>
+			{childBtnContent}
+		</AnimatePresence>
+
 		<AnimatePresence>
 			{(searchBtn || searchin) && <FtMotionDiv className={searchBtnName}
 				pressedName={PRESSED_NAME}
@@ -114,7 +123,10 @@ const FriendSearch: React.FC = memo(() => {
 	</>
 
 	return <FtDiv className={COL_NAME}
-		handler={toggleSearchBtn}
+		handler={{
+			onMouseEnter: () => setSearchBtn(true),
+			onMouseLeave: () => setSearchBtn(false)
+		}}
 		content={boxContent}
 	/>
 })
@@ -201,7 +213,6 @@ const Friends: React.FC = memo(() => {
 				motionProps={boxMove(1)}
 				content='[ADD]'
 			/>
-
 			<FtMotionInput name={inputName}
 				motionProps={headInputMotion}
 			/>

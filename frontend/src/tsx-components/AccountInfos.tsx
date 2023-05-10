@@ -33,7 +33,7 @@ const Match: React.FC<MatchProps> = ({ id }) => {
 		{...xMove({
 			from: -100 * (HISTORY_COUNT - id),
 			inDuration: IN_DURATION + (0.025 * (HISTORY_COUNT - id)),
-			outDuration: OUT_DURATION - (0.0125 * (HISTORY_COUNT - id)),
+			outDuration: OUT_DURATION,
 		})}>
 		MATCH #{id}
 	</motion.div>
@@ -180,6 +180,7 @@ const AccountInfos: React.FC = memo(() => {
 				<History />
 			</div>
 		</motion.div>
+
 	</motion.div>
 })
 export default AccountInfos
