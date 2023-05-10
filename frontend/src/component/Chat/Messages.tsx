@@ -1,31 +1,28 @@
 import React from "react";
 
-interface ChatProps {
-    messages: {user: string; message: string}[];
+interface MessageProps {
+    messages: {user: string; message: string; type: string}[];
     currentUser: string;
-    ownMessages?: boolean;
 }
 
-export default function Messages({messages, currentUser} : ChatProps)
+export default function Messages({messages, currentUser} : MessageProps)
 {
     return (
         <div>
-            {messages.map((message, index) => {
-            console.log("=============================");
-            console.log("User:", message.user);
-            console.log("Message:", message.message);
-            console.log("message.user", message.user);
-            console.log("currentUsser", currentUser);
-            console.log("=============================");
-            const isCurrentUSer = message.user == currentUser;
-            const messageClass = isCurrentUSer ? "sent" : "received";
+            {messages.map((messages, index) => {
+            const isCurrentUSer = messages.user == currentUser;
+            const messageClass = messages.type === "sent" ? "sent" : "received";
             return (
                 <div key={index} className={`message ${messageClass}`}>
-                    <strong>{message.user}:</strong> {message.message}
+                    {isCurrentUSer ? (
+                        <strong>You:</strong>
+                    ) : (
+                        <strong>{messages.user}:</strong>
+                    )}{" "}
+                    {messages.message}
                 </div>
-            )
-
+            );
             })}
         </div>
-    )
+    );
 }
