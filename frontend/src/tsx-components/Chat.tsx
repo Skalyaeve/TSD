@@ -1,165 +1,10 @@
-import React, {
-	useMemo, useCallback, useState, useEffect, useLayoutEffect, useRef
-} from 'react'
+import React, { useRef, useState, useLayoutEffect, useEffect, useCallback, useMemo } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 
-import { FtBtn, FtMotionBtn } from '../tsx-utils/ftSam/ftBox.tsx'
-import { DragDrop } from '../tsx-utils/ftSam/ftDragDrop.tsx'
-import { bouncyHeightChangeByPercent, bouncyYMove } from '../tsx-utils/ftSam/ftFramerMotion.tsx'
-
-// --------ROOM-SETTINGS--------------------------------------------------- //
-interface RoomSettingsPos {
-	left: string
-}
-
-interface RoomSettingsProps {
-	settingsOpen: number
-	settingsPos: RoomSettingsPos
-}
-
-const RoomSettings: React.FC<RoomSettingsProps> = (({
-	settingsOpen, settingsPos
-}) => {
-	// ----CLASSNAMES------------------------- //
-	const name = 'chat-roomSet'
-	const btnName = `${name}-btn`
-	const mainInputName = `${name}-main-input`
-	const nameInputName = `${name}-name-input`
-	const pswInputName = `${name}-psw-input`
-	const btnPressedName = 'chat-btn--pressed'
-
-	// ----RENDER----------------------------- //
-	const commitArea = useMemo(() => {
-		if (settingsOpen === 1)
-			return <FtBtn className={`${name}-create-btn ${btnName}`}
-				pressedName={btnPressedName}
-				content='[CREATE]'
-			/>
-		else return <>
-			<FtBtn className={`${name}-update-btn ${btnName}`}
-				pressedName={btnPressedName}
-				content='[SAVE]'
-			/>
-			<FtBtn className={`${name}-del-btn ${btnName}`}
-				pressedName={btnPressedName}
-				content='[DELETE]'
-			/>
-		</>
-	}, [settingsOpen])
-
-	return <div className={name}
-		style={settingsPos}>
-		<input
-			className={`${nameInputName} ${mainInputName}`}
-			id={nameInputName}
-			name={nameInputName}
-			placeholder='Name'
-		/>
-		<input
-			className={`${pswInputName} ${mainInputName}`}
-			id={pswInputName}
-			name={pswInputName}
-			placeholder='Password'
-		/>
-		<RoomMembersSet addedUsers={true} />
-		<RoomMembersSet addedUsers={false} />
-		{commitArea}
-	</div>
-})
-
-// --------ROOM-MEMBERS-SET------------------------------------------------ //
-interface RoomMembersSetProps {
-	addedUsers: boolean
-}
-
-const RoomMembersSet: React.FC<RoomMembersSetProps> = ({ addedUsers }) => {
-	// ----STATES----------------------------- //
-	const [count, setAddedCount] = useState((addedUsers ? 10 : 7))
-
-	// ----CLASSNAMES------------------------- //
-	const name = 'chat-roomSet'
-	const usersName = `${name}-users`
-	const inputName = `${name}-search-input`
-
-	// ----RENDER----------------------------- //
-	const renderUserList = useMemo(() => (count: number, addedUsers: boolean) => (
-		Array.from({ length: count }, (_, index) => (
-			<RoomMember
-				key={index + 1}
-				id={index + 1}
-				className={`${name}-usr`}
-				addedUsers={addedUsers}
-			/>
-		))
-	), [count])
-
-	return <div className={`${usersName}${(addedUsers ? '-added' : '-toAdd')} ${usersName}`}>
-		<input
-			className={inputName}
-			id={`${inputName}${(addedUsers ? '-added' : '-toAdd')}`}
-			name={`${inputName}${(addedUsers ? '-added' : '-toAdd')}`}
-			placeholder={` ${count} ${(addedUsers ? 'members' : 'friends')}`}
-		/>
-		{renderUserList(count, addedUsers)}
-	</div>
-}
-
-// --------ROOM-MEMBER----------------------------------------------------- //
-interface RoomMemberProps {
-	id: number
-	className: string
-	addedUsers: boolean
-}
-
-const RoomMember: React.FC<RoomMemberProps> = ({
-	id, className, addedUsers
-}) => {
-	// ----STATES----------------------------- //
-	const [showButton, setShowButton] = useState(false)
-
-	// ----CLASSNAMES------------------------- //
-	const btnName = `${className}-btn`
-	const btnPressedName = 'chat-btn--pressed'
-
-	// ----HANDLERS--------------------------- //
-	const enterUser = useCallback(() => setShowButton(true), [])
-	const leaveUser = useCallback(() => setShowButton(false), [])
-
-	// ----RENDER----------------------------- //
-	const btnToAdd = useMemo(() => {
-		if (!addedUsers)
-			return <FtBtn className={btnName}
-				pressedName={btnPressedName}
-				content='[/x]'
-			/>
-		else return <>
-			<FtBtn className={btnName}
-				pressedName={btnPressedName}
-				content='[up]'
-			/>
-			<FtBtn className={btnName}
-				pressedName={btnPressedName}
-				content='[/m]'
-			/>
-			<FtBtn className={btnName}
-				pressedName={btnPressedName}
-				content='[/x]'
-			/>
-		</>
-	}, [])
-
-	return <div className={className}
-		onMouseEnter={enterUser}
-		onMouseLeave={leaveUser}>
-		<FtBtn className={`${className}-link`}
-			pressedName={btnPressedName}
-			content={`[#${id}]`}
-		/>
-		{showButton && <div className={`${className}-btns`}>
-			{btnToAdd}
-		</div>}
-	</div>
-}
+import { DragDrop } from '../tsx-utils/ftDragDrop.tsx'
+import { FtBtn, FtMotionBtn } from '../tsx-utils/ftBox.tsx'
+import { bouncyHeightChangeByPercent, bouncyYMove } from '../tsx-utils/ftFramerMotion.tsx'
+import ChatSettings from '../tsx-components/ChatSettings.tsx'
 
 // --------ROOM-BOXES------------------------------------------------------ //
 interface RoomBoxesProps {
@@ -167,7 +12,6 @@ interface RoomBoxesProps {
 	setSettingsOpen: React.Dispatch<React.SetStateAction<number>>
 	setChatArea: React.Dispatch<React.SetStateAction<number>>
 }
-
 const RoomBoxes: React.FC<RoomBoxesProps> = ({
 	settingsOpen, setSettingsOpen, setChatArea
 }) => {
@@ -262,7 +106,6 @@ interface RoomBoxProps {
 	setChatArea: React.Dispatch<React.SetStateAction<number>>
 	moveItem: (draggedId: number, droppedId: number) => void
 }
-
 const RoomBox: React.FC<RoomBoxProps> = ({
 	id, isDragging, setIsDragging, settingsOpen,
 	setSettingsOpen, setChatArea, moveItem
@@ -363,7 +206,6 @@ const RoomUsers: React.FC = () => {
 interface RoomUserProps {
 	id: number
 }
-
 const RoomUser: React.FC<RoomUserProps> = ({ id }) => {
 	// ----STATES----------------------------- //
 	const [showButton, setShowButton] = useState(false)
@@ -407,7 +249,6 @@ interface TextAreaProps {
 	chatArea: number
 	showUsers: boolean
 }
-
 const TextArea: React.FC<TextAreaProps> = ({ chatArea, showUsers }) => {
 	// ----CLASSNAMES------------------------- //
 	const name = 'chat-txtArea'
@@ -431,7 +272,6 @@ interface MainContentProps {
 	settingsOpen: number
 	setSettingsOpen: React.Dispatch<React.SetStateAction<number>>
 }
-
 const MainContent: React.FC<MainContentProps> = ({
 	name, mainName, btnName, showUsers, settingsOpen, setSettingsOpen
 }) => {
@@ -582,7 +422,7 @@ const Chat: React.FC = () => {
 			</AnimatePresence>
 		</div>
 
-		{settingsOpen !== 0 && <RoomSettings
+		{settingsOpen !== 0 && <ChatSettings
 			settingsOpen={settingsOpen}
 			settingsPos={settingsPos} />
 		}

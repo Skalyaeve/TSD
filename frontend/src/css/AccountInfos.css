@@ -23,113 +23,130 @@ ex: ".navBar-logo--pressed {}"
 #5 Animations
 --------------------------------- */
 
-/* ---CHARACTERS----------------- */
-.characters {
+/* ---PROFILE-------------------- */
+.profile-btn {
+	/* #1 Éléments */
+	border: 1px solid rgb(255, 255, 0);
+
+	/* #2 Forme */
+	width: 55px;
+	height: 35px;
+}
+
+.profile-btn--pressed {
+	/* #1 Éléments */
+	background-color: rgb(255, 255, 0, 0.3);
+}
+
+/* ---PROFILE-INFOS-------------- */
+.profile-infos {
 	/* #1 Éléments */
 	display: grid;
-	grid-template-columns: 500px 1fr;
+	grid-template-columns: 1fr 1.25fr;
+	grid-template-rows: 250px 1fr;
 	grid-gap: 10px;
-	overflow: hidden;
+	overflow-y: hidden;
 
 	/* #4 Margin - Padding */
 	padding: 10px;
 	padding-left: 0;
 }
 
-.characters-select {
+.profile-accountInfos {
 	/* #1 Éléments */
 	border: 1px solid rgb(255, 255, 0);
+}
+
+.profile-picture {
+	/* #1 Éléments */
+	border: 1px solid rgb(255, 255, 0);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	/* #2 Forme */
+	width: 150px;
+	height: 150px;
+
+	/* #4 Margin - Padding */
+	margin-top: 10px;
+	margin-left: 10px;
+}
+
+/* ---PROFILE-ACHIEVEMENTS------- */
+.profile-achievements {
+	/* #1 Éléments */
+	display: grid;
+	grid-template-rows: 75px 1fr;
+	border: 1px solid rgb(255, 255, 0);
+	overflow-y: hidden;
+
+	/* #3 Position */
+	grid-column: 1 / 1;
+	grid-row: 2 / -1;
+	align-self: flex-end;
+}
+
+.profile-achievements-count {
+	/* #1 Éléments */
+	border-bottom: 1px solid rgb(255, 255, 0);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.profile-achievements-list {
+	/* #1 Éléments */
 	display: flex;
 	flex-wrap: wrap;
 	align-items: center;
 	justify-content: center;
-	overflow-x: hidden;
-
-	/* #2 Forme */
-	height: 100%;
-
-	/* #3 Position */
-	align-self: flex-end;
+	overflow-y: auto;
 }
 
-.character-box {
+.profile-achievement {
 	/* #1 Éléments */
 	border: 1px solid rgb(255, 255, 0);
+	display: flex;
+	align-items: center;
+	justify-content: center;
 
 	/* #2 Forme */
-	min-width: 200px;
-	min-height: 200px;
+	width: 300px;
+	height: 100px;
 
 	/* #4 Margin - Padding */
-	margin: 50px;
+	margin: 23px;
 }
 
-.character-box--pressed {
-	background-color: rgb(255, 255, 0, 0.3);
-}
-
-/* ---CHARACTER------------------ */
-.character {
+/* ---PROFILE-HISTORY------------ */
+.profile-history-box {
 	/* #1 Éléments */
-	border: 1px solid rgb(255, 255, 0);
 	display: grid;
-	grid-template-columns: 1fr 1fr;
-	grid-template-rows: 1.5fr 2fr 1fr;
-}
-
-.character-skin {
-	/* #1 Éléments */
-	border-bottom: 1px solid rgb(255, 255, 0);
-	display: flex;
-	align-items: center;
-	justify-content: center;
+	grid-template-rows: 200px 1fr;
 
 	/* #3 Position */
-	grid-column: 1 / -1;
+	grid-row: 1 / -1;
+	justify-self: flex-end;
 }
 
-.character-stats {
+.profile-stats {
 	/* #1 Éléments */
-	border-bottom: 1px solid rgb(255, 255, 0);
-	border-right: 1px solid rgb(255, 255, 0);
+	border: 1px solid rgb(255, 255, 0);
+	border-bottom: none;
+	text-align: center;
 	display: flex;
 	align-items: center;
 	justify-content: center;
 }
 
-.character-story {
+.profile-history {
 	/* #1 Éléments */
-	border-bottom: 1px solid rgb(255, 255, 0);
-	display: flex;
-	align-items: center;
-	justify-content: center;
+	border: 1px solid rgb(255, 255, 0);
+	overflow-y: auto;
 }
 
-/* ---CHARACTER-SPELLS----------- */
-.character-spells {
-	/* #1 Éléments */
-	border-bottom: 1px solid rgb(255, 255, 0);
-	display: flex;
-	align-items: center;
-	justify-content: center;
-
-	/* #3 Position */
-	grid-column: 1 / -1;
-}
-
-.character-spell-box {
-	/* #1 Éléments */
-	background-color: transparent;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	position: relative;
-
-	/* #4 Margin - Padding */
-	margin: 0 30px;
-}
-
-.character-spell {
+.profile-history-match {
 	/* #1 Éléments */
 	border: 1px solid rgb(255, 255, 0);
 	display: flex;
@@ -137,24 +154,5 @@ ex: ".navBar-logo--pressed {}"
 	justify-content: center;
 
 	/* #2 Forme */
-	height: 150px;
-	width: 150px;
-}
-
-.character-spell-tooltip {
-	/* #1 Éléments */
-	border: 1px solid rgb(255, 255, 0);
-	display: flex;
-	align-items: center;
-	justify-content: center;
-
-	/* #2 Forme */
-	height: 300px;
-	width: 400px;
-
-	/* #3 Position */
-	position: absolute;
-	left: 0;
-	bottom: 160px;
-	z-index: 1;
+	height: 72px;
 }

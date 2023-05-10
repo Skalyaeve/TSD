@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------------ //
-// --------ELEMENTS-------------------------------------------------------- //
+// --------Élément-------------------------------------------------------- //
 // ------------------------------------------------------------------------ //
 
 // --------OPACITY--------------------------------------------------------- //
@@ -10,6 +10,8 @@ interface fadeProps {
 	outDuration?: number
 	animateEase?: string
 	exitEase?: string
+	inDelay?: number
+	outDelay?: number
 }
 export const fade = ({
 	initialOpacity = 0,
@@ -17,7 +19,9 @@ export const fade = ({
 	inDuration = 0.5,
 	outDuration = inDuration,
 	animateEase = 'easeInOut',
-	exitEase = animateEase
+	exitEase = animateEase,
+	inDelay = 0,
+	outDelay = inDelay
 }: fadeProps) => ({
 	initial: { opacity: initialOpacity },
 	animate: {
@@ -25,7 +29,8 @@ export const fade = ({
 		transition: {
 			opacity: {
 				duration: inDuration,
-				ease: animateEase
+				ease: animateEase,
+				delay: inDelay
 			}
 		}
 	},
@@ -34,7 +39,8 @@ export const fade = ({
 		transition: {
 			opacity: {
 				duration: outDuration,
-				ease: exitEase
+				ease: exitEase,
+				delay: outDelay
 			}
 		}
 	}
@@ -54,6 +60,8 @@ interface widthChangeProps {
 	outDuration?: number
 	animateEase?: string
 	exitEase?: string
+	inDelay?: number
+	outDelay?: number
 }
 export const widthChange = ({
 	initialWidth = 0,
@@ -63,7 +71,9 @@ export const widthChange = ({
 	inDuration = 0.5,
 	outDuration = inDuration,
 	animateEase = 'easeInOut',
-	exitEase = animateEase
+	exitEase = animateEase,
+	inDelay = 0,
+	outDelay = inDelay
 }: widthChangeProps) => ({
 	initial: {
 		scaleX: initialWidth,
@@ -75,11 +85,13 @@ export const widthChange = ({
 		transition: {
 			scaleX: {
 				duration: inDuration,
-				ease: animateEase
+				ease: animateEase,
+				delay: inDelay
 			},
 			opacity: {
 				duration: inDuration,
-				ease: animateEase
+				ease: animateEase,
+				delay: inDelay
 			}
 		}
 	},
@@ -89,11 +101,13 @@ export const widthChange = ({
 		transition: {
 			scaleX: {
 				duration: outDuration,
-				ease: exitEase
+				ease: exitEase,
+				delay: outDelay
 			},
 			opacity: {
 				duration: outDuration,
-				ease: exitEase
+				ease: exitEase,
+				delay: outDelay
 			}
 		}
 	}
@@ -108,6 +122,8 @@ interface widthChangeByPercentProps {
 	outDuration?: number
 	animateEase?: string
 	exitEase?: string
+	inDelay?: number
+	outDelay?: number
 }
 export const widthChangeByPercent = ({
 	initialWidth = 0,
@@ -117,7 +133,9 @@ export const widthChangeByPercent = ({
 	inDuration = 0.5,
 	outDuration = inDuration,
 	animateEase = 'easeInOut',
-	exitEase = animateEase
+	exitEase = animateEase,
+	inDelay = 0,
+	outDelay = inDelay
 }: widthChangeByPercentProps) => ({
 	initial: {
 		width: `${initialWidth}%`,
@@ -129,11 +147,13 @@ export const widthChangeByPercent = ({
 		transition: {
 			width: {
 				duration: inDuration,
-				ease: animateEase
+				ease: animateEase,
+				delay: inDelay
 			},
 			opacity: {
 				duration: inDuration,
-				ease: animateEase
+				ease: animateEase,
+				delay: inDelay
 			}
 		}
 	},
@@ -143,11 +163,13 @@ export const widthChangeByPercent = ({
 		transition: {
 			width: {
 				duration: outDuration,
-				ease: exitEase
+				ease: exitEase,
+				delay: outDelay
 			},
 			opacity: {
 				duration: outDuration,
-				ease: exitEase
+				ease: exitEase,
+				delay: outDelay
 			}
 		}
 	}
@@ -162,6 +184,8 @@ interface widthChangeByPxProps {
 	outDuration?: number
 	animateEase?: string
 	exitEase?: string
+	inDelay?: number
+	outDelay?: number
 }
 export const widthChangeByPx = ({
 	initialWidth = 0,
@@ -171,7 +195,9 @@ export const widthChangeByPx = ({
 	inDuration = 0.5,
 	outDuration = inDuration,
 	animateEase = 'easeInOut',
-	exitEase = animateEase
+	exitEase = animateEase,
+	inDelay = 0,
+	outDelay = inDelay
 }: widthChangeByPxProps) => ({
 	initial: {
 		width: `${initialWidth}px`,
@@ -183,11 +209,13 @@ export const widthChangeByPx = ({
 		transition: {
 			width: {
 				duration: inDuration,
-				ease: animateEase
+				ease: animateEase,
+				delay: inDelay
 			},
 			opacity: {
 				duration: inDuration,
-				ease: animateEase
+				ease: animateEase,
+				delay: inDelay
 			}
 		}
 	},
@@ -197,11 +225,13 @@ export const widthChangeByPx = ({
 		transition: {
 			width: {
 				duration: outDuration,
-				ease: exitEase
+				ease: exitEase,
+				delay: outDelay
 			},
 			opacity: {
 				duration: outDuration,
-				ease: exitEase
+				ease: exitEase,
+				delay: outDelay
 			}
 		}
 	}
@@ -219,6 +249,8 @@ interface bouncyWidthChangeProps {
 	outDuration?: number
 	animateEase?: string
 	exitEase?: string
+	inDelay?: number
+	outDelay?: number
 }
 export const bouncyWidthChange = ({
 	initialWidth = 0,
@@ -230,7 +262,9 @@ export const bouncyWidthChange = ({
 	inDuration = 0.5,
 	outDuration = inDuration,
 	animateEase = 'easeInOut',
-	exitEase = animateEase
+	exitEase = animateEase,
+	inDelay = 0,
+	outDelay = inDelay
 }: bouncyWidthChangeProps) => ({
 	initial: {
 		scaleX: initialWidth,
@@ -243,11 +277,13 @@ export const bouncyWidthChange = ({
 			scaleX: {
 				duration: inDuration,
 				times: [0, maxAt, 1],
-				ease: animateEase
+				ease: animateEase,
+				delay: inDelay
 			},
 			opacity: {
 				duration: inDuration,
-				ease: animateEase
+				ease: animateEase,
+				delay: inDelay
 			}
 		}
 	},
@@ -258,11 +294,13 @@ export const bouncyWidthChange = ({
 			scaleX: {
 				duration: outDuration,
 				times: [0, 1 - maxAt, 1],
-				ease: exitEase
+				ease: exitEase,
+				delay: outDelay
 			},
 			opacity: {
 				duration: outDuration,
-				ease: exitEase
+				ease: exitEase,
+				delay: outDelay
 			}
 		}
 	}
@@ -279,6 +317,8 @@ interface bouncyWidthChangeByPercentProps {
 	outDuration?: number
 	animateEase?: string
 	exitEase?: string
+	inDelay?: number
+	outDelay?: number
 }
 export const bouncyWidthChangeByPercent = ({
 	initialWidth = 0,
@@ -290,7 +330,9 @@ export const bouncyWidthChangeByPercent = ({
 	inDuration = 0.5,
 	outDuration = inDuration,
 	animateEase = 'easeInOut',
-	exitEase = animateEase
+	exitEase = animateEase,
+	inDelay = 0,
+	outDelay = inDelay
 }: bouncyWidthChangeByPercentProps) => ({
 	initial: {
 		width: `${initialWidth}%`,
@@ -303,11 +345,13 @@ export const bouncyWidthChangeByPercent = ({
 			width: {
 				duration: inDuration,
 				times: [0, maxAt, 1],
-				ease: animateEase
+				ease: animateEase,
+				delay: inDelay
 			},
 			opacity: {
 				duration: inDuration,
-				ease: animateEase
+				ease: animateEase,
+				delay: inDelay
 			}
 		}
 	},
@@ -318,11 +362,13 @@ export const bouncyWidthChangeByPercent = ({
 			width: {
 				duration: outDuration,
 				times: [0, 1 - maxAt, 1],
-				ease: exitEase
+				ease: exitEase,
+				delay: outDelay
 			},
 			opacity: {
 				duration: outDuration,
-				ease: exitEase
+				ease: exitEase,
+				delay: outDelay
 			}
 		}
 	}
@@ -339,6 +385,8 @@ interface bouncyWidthChangeByPxProps {
 	outDuration?: number
 	animateEase?: string
 	exitEase?: string
+	inDelay?: number
+	outDelay?: number
 }
 export const bouncyWidthChangeByPx = ({
 	initialWidth = 0,
@@ -350,7 +398,9 @@ export const bouncyWidthChangeByPx = ({
 	inDuration = 0.5,
 	outDuration = inDuration,
 	animateEase = 'easeInOut',
-	exitEase = animateEase
+	exitEase = animateEase,
+	inDelay = 0,
+	outDelay = inDelay
 }: bouncyWidthChangeByPxProps) => ({
 	initial: {
 		width: `${initialWidth}px`,
@@ -363,11 +413,13 @@ export const bouncyWidthChangeByPx = ({
 			width: {
 				duration: inDuration,
 				times: [0, maxAt, 1],
-				ease: animateEase
+				ease: animateEase,
+				delay: inDelay
 			},
 			opacity: {
 				duration: inDuration,
-				ease: animateEase
+				ease: animateEase,
+				delay: inDelay
 			}
 		}
 	},
@@ -378,11 +430,13 @@ export const bouncyWidthChangeByPx = ({
 			width: {
 				duration: outDuration,
 				times: [0, 1 - maxAt, 1],
-				ease: exitEase
+				ease: exitEase,
+				delay: outDelay
 			},
 			opacity: {
 				duration: outDuration,
-				ease: exitEase
+				ease: exitEase,
+				delay: outDelay
 			}
 		}
 	}
@@ -398,6 +452,8 @@ interface heightChangeProps {
 	outDuration?: number
 	animateEase?: string
 	exitEase?: string
+	inDelay?: number
+	outDelay?: number
 }
 export const heightChange = ({
 	initialHeight = 0,
@@ -407,7 +463,9 @@ export const heightChange = ({
 	inDuration = 0.5,
 	outDuration = inDuration,
 	animateEase = 'easeInOut',
-	exitEase = animateEase
+	exitEase = animateEase,
+	inDelay = 0,
+	outDelay = inDelay
 }: heightChangeProps) => ({
 	initial: {
 		scaleY: initialHeight,
@@ -419,11 +477,13 @@ export const heightChange = ({
 		transition: {
 			scaleY: {
 				duration: inDuration,
-				ease: animateEase
+				ease: animateEase,
+				delay: inDelay
 			},
 			opacity: {
 				duration: inDuration,
-				ease: animateEase
+				ease: animateEase,
+				delay: inDelay
 			}
 		}
 	},
@@ -433,11 +493,13 @@ export const heightChange = ({
 		transition: {
 			scaleY: {
 				duration: outDuration,
-				ease: exitEase
+				ease: exitEase,
+				delay: outDelay
 			},
 			opacity: {
 				duration: outDuration,
-				ease: exitEase
+				ease: exitEase,
+				delay: outDelay
 			}
 		}
 	}
@@ -452,6 +514,8 @@ interface heightChangeByPercentProps {
 	outDuration?: number
 	animateEase?: string
 	exitEase?: string
+	inDelay?: number
+	outDelay?: number
 }
 export const heightChangeByPercent = ({
 	initialHeight = 0,
@@ -461,7 +525,9 @@ export const heightChangeByPercent = ({
 	inDuration = 0.5,
 	outDuration = inDuration,
 	animateEase = 'easeInOut',
-	exitEase = animateEase
+	exitEase = animateEase,
+	inDelay = 0,
+	outDelay = inDelay
 }: heightChangeByPercentProps) => ({
 	initial: {
 		height: `${initialHeight}%`,
@@ -473,11 +539,13 @@ export const heightChangeByPercent = ({
 		transition: {
 			height: {
 				duration: inDuration,
-				ease: animateEase
+				ease: animateEase,
+				delay: inDelay
 			},
 			opacity: {
 				duration: inDuration,
-				ease: animateEase
+				ease: animateEase,
+				delay: inDelay
 			}
 		}
 	},
@@ -487,11 +555,13 @@ export const heightChangeByPercent = ({
 		transition: {
 			height: {
 				duration: outDuration,
-				ease: exitEase
+				ease: exitEase,
+				delay: outDelay
 			},
 			opacity: {
 				duration: outDuration,
-				ease: exitEase
+				ease: exitEase,
+				delay: outDelay
 			}
 		}
 	}
@@ -506,6 +576,8 @@ interface heightChangeByPxProps {
 	outDuration?: number
 	animateEase?: string
 	exitEase?: string
+	inDelay?: number
+	outDelay?: number
 }
 export const heightChangeByPx = ({
 	initialHeight = 0,
@@ -515,7 +587,9 @@ export const heightChangeByPx = ({
 	inDuration = 0.5,
 	outDuration = inDuration,
 	animateEase = 'easeInOut',
-	exitEase = animateEase
+	exitEase = animateEase,
+	inDelay = 0,
+	outDelay = inDelay
 }: heightChangeByPxProps) => ({
 	initial: {
 		height: `${initialHeight}px`,
@@ -527,11 +601,13 @@ export const heightChangeByPx = ({
 		transition: {
 			height: {
 				duration: inDuration,
-				ease: animateEase
+				ease: animateEase,
+				delay: inDelay
 			},
 			opacity: {
 				duration: inDuration,
-				ease: animateEase
+				ease: animateEase,
+				delay: inDelay
 			}
 		}
 	},
@@ -541,11 +617,13 @@ export const heightChangeByPx = ({
 		transition: {
 			height: {
 				duration: outDuration,
-				ease: exitEase
+				ease: exitEase,
+				delay: outDelay
 			},
 			opacity: {
 				duration: outDuration,
-				ease: exitEase
+				ease: exitEase,
+				delay: outDelay
 			}
 		}
 	}
@@ -563,6 +641,8 @@ interface bouncyHeightChangeProps {
 	outDuration?: number
 	animateEase?: string
 	exitEase?: string
+	inDelay?: number
+	outDelay?: number
 }
 export const bouncyHeightChange = ({
 	initialHeight = 0,
@@ -574,7 +654,9 @@ export const bouncyHeightChange = ({
 	inDuration = 0.5,
 	outDuration = inDuration,
 	animateEase = 'easeInOut',
-	exitEase = animateEase
+	exitEase = animateEase,
+	inDelay = 0,
+	outDelay = inDelay
 }: bouncyHeightChangeProps) => ({
 	initial: {
 		scaleY: initialHeight,
@@ -587,11 +669,13 @@ export const bouncyHeightChange = ({
 			scaleY: {
 				duration: inDuration,
 				times: [0, maxAt, 1],
-				ease: animateEase
+				ease: animateEase,
+				delay: inDelay
 			},
 			opacity: {
 				duration: inDuration,
-				ease: animateEase
+				ease: animateEase,
+				delay: inDelay
 			}
 		}
 	},
@@ -602,11 +686,13 @@ export const bouncyHeightChange = ({
 			scaleY: {
 				duration: outDuration,
 				times: [0, 1 - maxAt, 1],
-				ease: exitEase
+				ease: exitEase,
+				delay: outDelay
 			},
 			opacity: {
 				duration: outDuration,
-				ease: exitEase
+				ease: exitEase,
+				delay: outDelay
 			}
 		}
 	}
@@ -623,6 +709,8 @@ interface bouncyHeightChangeByPercentProps {
 	outDuration?: number
 	animateEase?: string
 	exitEase?: string
+	inDelay?: number
+	outDelay?: number
 }
 export const bouncyHeightChangeByPercent = ({
 	initialHeight = 0,
@@ -634,7 +722,9 @@ export const bouncyHeightChangeByPercent = ({
 	inDuration = 0.5,
 	outDuration = inDuration,
 	animateEase = 'easeInOut',
-	exitEase = animateEase
+	exitEase = animateEase,
+	inDelay = 0,
+	outDelay = inDelay
 }: bouncyHeightChangeByPercentProps) => ({
 	initial: {
 		height: `${initialHeight}%`,
@@ -647,11 +737,13 @@ export const bouncyHeightChangeByPercent = ({
 			height: {
 				duration: inDuration,
 				times: [0, maxAt, 1],
-				ease: animateEase
+				ease: animateEase,
+				delay: inDelay
 			},
 			opacity: {
 				duration: inDuration,
-				ease: animateEase
+				ease: animateEase,
+				delay: inDelay
 			}
 		}
 	},
@@ -662,11 +754,13 @@ export const bouncyHeightChangeByPercent = ({
 			height: {
 				duration: outDuration,
 				times: [0, 1 - maxAt, 1],
-				ease: exitEase
+				ease: exitEase,
+				delay: outDelay
 			},
 			opacity: {
 				duration: outDuration,
-				ease: exitEase
+				ease: exitEase,
+				delay: outDelay
 			}
 		}
 	}
@@ -683,6 +777,8 @@ interface bouncyHeightChangeByPxProps {
 	outDuration?: number
 	animateEase?: string
 	exitEase?: string
+	inDelay?: number
+	outDelay?: number
 }
 export const bouncyHeightChangeByPx = ({
 	initialHeight = 0,
@@ -694,7 +790,9 @@ export const bouncyHeightChangeByPx = ({
 	inDuration = 0.5,
 	outDuration = inDuration,
 	animateEase = 'easeInOut',
-	exitEase = animateEase
+	exitEase = animateEase,
+	inDelay = 0,
+	outDelay = inDelay
 }: bouncyHeightChangeByPxProps) => ({
 	initial: {
 		height: `${initialHeight}px`,
@@ -707,11 +805,13 @@ export const bouncyHeightChangeByPx = ({
 			height: {
 				duration: inDuration,
 				times: [0, maxAt, 1],
-				ease: animateEase
+				ease: animateEase,
+				delay: inDelay
 			},
 			opacity: {
 				duration: inDuration,
-				ease: animateEase
+				ease: animateEase,
+				delay: inDelay
 			}
 		}
 	},
@@ -722,11 +822,13 @@ export const bouncyHeightChangeByPx = ({
 			height: {
 				duration: outDuration,
 				times: [0, 1 - maxAt, 1],
-				ease: exitEase
+				ease: exitEase,
+				delay: outDelay
 			},
 			opacity: {
 				duration: outDuration,
-				ease: exitEase
+				ease: exitEase,
+				delay: outDelay
 			}
 		}
 	}
@@ -742,6 +844,8 @@ interface popUpProps {
 	outDuration?: number
 	animateEase?: string
 	exitEase?: string
+	inDelay?: number
+	outDelay?: number
 }
 export const popUp = ({
 	initialSize = 0,
@@ -751,7 +855,9 @@ export const popUp = ({
 	inDuration = 0.5,
 	outDuration = inDuration,
 	animateEase = 'easeInOut',
-	exitEase = animateEase
+	exitEase = animateEase,
+	inDelay = 0,
+	outDelay = inDelay
 }: popUpProps) => ({
 	initial: {
 		scale: initialSize,
@@ -763,11 +869,13 @@ export const popUp = ({
 		transition: {
 			scale: {
 				duration: inDuration,
-				ease: animateEase
+				ease: animateEase,
+				delay: inDelay
 			},
 			opacity: {
 				duration: inDuration,
-				ease: animateEase
+				ease: animateEase,
+				delay: inDelay
 			}
 		}
 	},
@@ -777,11 +885,13 @@ export const popUp = ({
 		transition: {
 			scale: {
 				duration: outDuration,
-				ease: exitEase
+				ease: exitEase,
+				delay: outDelay
 			},
 			opacity: {
 				duration: outDuration,
-				ease: exitEase
+				ease: exitEase,
+				delay: outDelay
 			}
 		}
 	}
@@ -801,6 +911,8 @@ interface popUpByPercentProps {
 	outDuration?: number
 	animateEase?: string
 	exitEase?: string
+	inDelay?: number
+	outDelay?: number
 }
 export const popUpByPercent = ({
 	initialWidth = 0,
@@ -812,7 +924,9 @@ export const popUpByPercent = ({
 	inDuration = 0.5,
 	outDuration = inDuration,
 	animateEase = 'easeInOut',
-	exitEase = animateEase
+	exitEase = animateEase,
+	inDelay = 0,
+	outDelay = inDelay
 }: popUpByPercentProps) => ({
 	initial: {
 		width: `${initialWidth}%`,
@@ -826,15 +940,18 @@ export const popUpByPercent = ({
 		transition: {
 			width: {
 				duration: inDuration,
-				ease: animateEase
+				ease: animateEase,
+				delay: inDelay
 			},
 			height: {
 				duration: inDuration,
-				ease: animateEase
+				ease: animateEase,
+				delay: inDelay
 			},
 			opacity: {
 				duration: inDuration,
-				ease: animateEase
+				ease: animateEase,
+				delay: inDelay
 			}
 		}
 	},
@@ -845,15 +962,18 @@ export const popUpByPercent = ({
 		transition: {
 			width: {
 				duration: outDuration,
-				ease: exitEase
+				ease: exitEase,
+				delay: outDelay
 			},
 			height: {
 				duration: outDuration,
-				ease: exitEase
+				ease: exitEase,
+				delay: outDelay
 			},
 			opacity: {
 				duration: outDuration,
-				ease: exitEase
+				ease: exitEase,
+				delay: outDelay
 			}
 		}
 	}
@@ -870,6 +990,8 @@ interface popUpByPxProps {
 	outDuration?: number
 	animateEase?: string
 	exitEase?: string
+	inDelay?: number
+	outDelay?: number
 }
 export const popUpByPx = ({
 	initialWidth = 0,
@@ -881,7 +1003,9 @@ export const popUpByPx = ({
 	inDuration = 0.5,
 	outDuration = inDuration,
 	animateEase = 'easeInOut',
-	exitEase = animateEase
+	exitEase = animateEase,
+	inDelay = 0,
+	outDelay = inDelay
 }: popUpByPxProps) => ({
 	initial: {
 		width: `${initialWidth}px`,
@@ -895,15 +1019,18 @@ export const popUpByPx = ({
 		transition: {
 			width: {
 				duration: inDuration,
-				ease: animateEase
+				ease: animateEase,
+				delay: inDelay
 			},
 			height: {
 				duration: inDuration,
-				ease: animateEase
+				ease: animateEase,
+				delay: inDelay
 			},
 			opacity: {
 				duration: inDuration,
-				ease: animateEase
+				ease: animateEase,
+				delay: inDelay
 			}
 		}
 	},
@@ -914,15 +1041,18 @@ export const popUpByPx = ({
 		transition: {
 			width: {
 				duration: outDuration,
-				ease: exitEase
+				ease: exitEase,
+				delay: outDelay
 			},
 			height: {
 				duration: outDuration,
-				ease: exitEase
+				ease: exitEase,
+				delay: outDelay
 			},
 			opacity: {
 				duration: outDuration,
-				ease: exitEase
+				ease: exitEase,
+				delay: outDelay
 			}
 		}
 	}
@@ -940,6 +1070,8 @@ interface bouncyPopUpProps {
 	outDuration?: number
 	animateEase?: string
 	exitEase?: string
+	inDelay?: number
+	outDelay?: number
 }
 export const bouncyPopUp = ({
 	initialSize = 0,
@@ -951,7 +1083,9 @@ export const bouncyPopUp = ({
 	inDuration = 0.5,
 	outDuration = inDuration,
 	animateEase = 'easeInOut',
-	exitEase = animateEase
+	exitEase = animateEase,
+	inDelay = 0,
+	outDelay = inDelay
 }: bouncyPopUpProps) => ({
 	initial: {
 		scale: initialSize,
@@ -964,11 +1098,13 @@ export const bouncyPopUp = ({
 			scale: {
 				duration: inDuration,
 				times: [0, maxAt, 1],
-				ease: animateEase
+				ease: animateEase,
+				delay: inDelay
 			},
 			opacity: {
 				duration: inDuration,
-				ease: animateEase
+				ease: animateEase,
+				delay: inDelay
 			}
 		}
 	},
@@ -979,11 +1115,13 @@ export const bouncyPopUp = ({
 			scale: {
 				duration: outDuration,
 				times: [0, 1 - maxAt, 1],
-				ease: exitEase
+				ease: exitEase,
+				delay: outDelay
 			},
 			opacity: {
 				duration: outDuration,
-				ease: exitEase
+				ease: exitEase,
+				delay: outDelay
 			}
 		}
 	}
@@ -1003,6 +1141,8 @@ interface bouncyPopUpByPercentProps {
 	outDuration?: number
 	animateEase?: string
 	exitEase?: string
+	inDelay?: number
+	outDelay?: number
 }
 export const bouncyPopUpByPercent = ({
 	initialWidth = 0,
@@ -1017,7 +1157,9 @@ export const bouncyPopUpByPercent = ({
 	inDuration = 0.5,
 	outDuration = inDuration,
 	animateEase = 'easeInOut',
-	exitEase = animateEase
+	exitEase = animateEase,
+	inDelay = 0,
+	outDelay = inDelay
 }: bouncyPopUpByPercentProps) => ({
 	initial: {
 		width: `${initialWidth}%`,
@@ -1032,16 +1174,19 @@ export const bouncyPopUpByPercent = ({
 			width: {
 				duration: inDuration,
 				times: [0, maxAt, 1],
-				ease: animateEase
+				ease: animateEase,
+				delay: inDelay
 			},
 			height: {
 				duration: inDuration,
 				times: [0, maxAt, 1],
-				ease: animateEase
+				ease: animateEase,
+				delay: inDelay
 			},
 			opacity: {
 				duration: inDuration,
-				ease: animateEase
+				ease: animateEase,
+				delay: inDelay
 			}
 		}
 	},
@@ -1053,16 +1198,19 @@ export const bouncyPopUpByPercent = ({
 			width: {
 				duration: outDuration,
 				times: [0, 1 - maxAt, 1],
-				ease: exitEase
+				ease: exitEase,
+				delay: outDelay
 			},
 			height: {
 				duration: outDuration,
 				times: [0, 1 - maxAt, 1],
-				ease: exitEase
+				ease: exitEase,
+				delay: outDelay
 			},
 			opacity: {
 				duration: outDuration,
-				ease: exitEase
+				ease: exitEase,
+				delay: outDelay
 			}
 		}
 	}
@@ -1082,6 +1230,8 @@ interface bouncyPopUpByPxProps {
 	outDuration?: number
 	animateEase?: string
 	exitEase?: string
+	inDelay?: number
+	outDelay?: number
 }
 export const bouncyPopUpByPx = ({
 	initialWidth = 0,
@@ -1096,7 +1246,9 @@ export const bouncyPopUpByPx = ({
 	inDuration = 0.5,
 	outDuration = inDuration,
 	animateEase = 'easeInOut',
-	exitEase = animateEase
+	exitEase = animateEase,
+	inDelay = 0,
+	outDelay = inDelay
 }: bouncyPopUpByPxProps) => ({
 	initial: {
 		width: `${initialWidth}px`,
@@ -1111,16 +1263,19 @@ export const bouncyPopUpByPx = ({
 			width: {
 				duration: inDuration,
 				times: [0, maxAt, 1],
-				ease: animateEase
+				ease: animateEase,
+				delay: inDelay
 			},
 			height: {
 				duration: inDuration,
 				times: [0, maxAt, 1],
-				ease: animateEase
+				ease: animateEase,
+				delay: inDelay
 			},
 			opacity: {
 				duration: inDuration,
-				ease: animateEase
+				ease: animateEase,
+				delay: inDelay
 			}
 		}
 	},
@@ -1132,16 +1287,19 @@ export const bouncyPopUpByPx = ({
 			width: {
 				duration: outDuration,
 				times: [0, 1 - maxAt, 1],
-				ease: exitEase
+				ease: exitEase,
+				delay: outDelay
 			},
 			height: {
 				duration: outDuration,
 				times: [0, 1 - maxAt, 1],
-				ease: exitEase
+				ease: exitEase,
+				delay: outDelay
 			},
 			opacity: {
 				duration: outDuration,
-				ease: exitEase
+				ease: exitEase,
+				delay: outDelay
 			}
 		}
 	}
@@ -1161,6 +1319,8 @@ interface yMoveProps {
 	outDuration?: number
 	animateEase?: string
 	exitEase?: string
+	inDelay?: number
+	outDelay?: number
 }
 export const yMove = ({
 	from = -100,
@@ -1170,7 +1330,9 @@ export const yMove = ({
 	inDuration = 0.5,
 	outDuration = inDuration,
 	animateEase = 'easeInOut',
-	exitEase = animateEase
+	exitEase = animateEase,
+	inDelay = 0,
+	outDelay = inDelay
 }: yMoveProps) => ({
 	initial: {
 		y: `${from}px`,
@@ -1182,11 +1344,13 @@ export const yMove = ({
 		transition: {
 			y: {
 				duration: inDuration,
-				ease: animateEase
+				ease: animateEase,
+				delay: inDelay
 			},
 			opacity: {
 				duration: inDuration,
-				ease: animateEase
+				ease: animateEase,
+				delay: inDelay
 			}
 		}
 	},
@@ -1196,11 +1360,13 @@ export const yMove = ({
 		transition: {
 			y: {
 				duration: outDuration,
-				ease: exitEase
+				ease: exitEase,
+				delay: outDelay
 			},
 			opacity: {
 				duration: outDuration,
-				ease: exitEase
+				ease: exitEase,
+				delay: outDelay
 			}
 		}
 	}
@@ -1218,6 +1384,8 @@ interface bouncyYMoveProps {
 	outDuration?: number
 	animateEase?: string
 	exitEase?: string
+	inDelay?: number
+	outDelay?: number
 }
 export const bouncyYMove = ({
 	from = -100,
@@ -1229,7 +1397,9 @@ export const bouncyYMove = ({
 	inDuration = 0.5,
 	outDuration = inDuration,
 	animateEase = 'easeInOut',
-	exitEase = animateEase
+	exitEase = animateEase,
+	inDelay = 0,
+	outDelay = inDelay
 }: bouncyYMoveProps) => ({
 	initial: {
 		y: `${from}px`,
@@ -1242,11 +1412,13 @@ export const bouncyYMove = ({
 			y: {
 				duration: inDuration,
 				times: [0, maxAt, 1],
-				ease: animateEase
+				ease: animateEase,
+				delay: inDelay
 			},
 			opacity: {
 				duration: inDuration,
-				ease: animateEase
+				ease: animateEase,
+				delay: inDelay
 			}
 		}
 	},
@@ -1257,11 +1429,13 @@ export const bouncyYMove = ({
 			y: {
 				duration: outDuration,
 				times: [0, 1 - maxAt, 1],
-				ease: exitEase
+				ease: exitEase,
+				delay: outDelay
 			},
 			opacity: {
 				duration: outDuration,
-				ease: exitEase
+				ease: exitEase,
+				delay: outDelay
 			}
 		}
 	}
@@ -1277,6 +1451,8 @@ interface xMoveProps {
 	outDuration?: number
 	animateEase?: string
 	exitEase?: string
+	inDelay?: number
+	outDelay?: number
 }
 export const xMove = ({
 	from = -100,
@@ -1286,7 +1462,9 @@ export const xMove = ({
 	inDuration = 0.5,
 	outDuration = inDuration,
 	animateEase = 'easeInOut',
-	exitEase = animateEase
+	exitEase = animateEase,
+	inDelay = 0,
+	outDelay = inDelay
 }: xMoveProps) => ({
 	initial: {
 		x: `${from}px`,
@@ -1298,11 +1476,13 @@ export const xMove = ({
 		transition: {
 			x: {
 				duration: inDuration,
-				ease: animateEase
+				ease: animateEase,
+				delay: inDelay
 			},
 			opacity: {
 				duration: inDuration,
-				ease: animateEase
+				ease: animateEase,
+				delay: inDelay
 			}
 		}
 	},
@@ -1312,11 +1492,13 @@ export const xMove = ({
 		transition: {
 			x: {
 				duration: outDuration,
-				ease: exitEase
+				ease: exitEase,
+				delay: outDelay
 			},
 			opacity: {
 				duration: outDuration,
-				ease: exitEase
+				ease: exitEase,
+				delay: outDelay
 			}
 		}
 	}
@@ -1334,6 +1516,8 @@ interface bouncyXMoveProps {
 	outDuration?: number
 	animateEase?: string
 	exitEase?: string
+	inDelay?: number
+	outDelay?: number
 }
 export const bouncyXMove = ({
 	from = -100,
@@ -1345,7 +1529,9 @@ export const bouncyXMove = ({
 	inDuration = 0.5,
 	outDuration = inDuration,
 	animateEase = 'easeInOut',
-	exitEase = animateEase
+	exitEase = animateEase,
+	inDelay = 0,
+	outDelay = inDelay
 }: bouncyXMoveProps) => ({
 	initial: {
 		x: `${from}px`,
@@ -1358,11 +1544,13 @@ export const bouncyXMove = ({
 			x: {
 				duration: inDuration,
 				times: [0, maxAt, 1],
-				ease: animateEase
+				ease: animateEase,
+				delay: inDelay
 			},
 			opacity: {
 				duration: inDuration,
-				ease: animateEase
+				ease: animateEase,
+				delay: inDelay
 			}
 		}
 	},
@@ -1373,11 +1561,13 @@ export const bouncyXMove = ({
 			x: {
 				duration: outDuration,
 				times: [0, 1 - maxAt, 1],
-				ease: exitEase
+				ease: exitEase,
+				delay: outDelay
 			},
 			opacity: {
 				duration: outDuration,
-				ease: exitEase
+				ease: exitEase,
+				delay: outDelay
 			}
 		}
 	}

@@ -2,18 +2,20 @@ import React, { useRef, useEffect } from 'react'
 import { Routes, Route, useLocation, useNavigate } from 'react-router-dom'
 import { AnimatePresence } from 'framer-motion'
 
-import { useTgl } from '../tsx-utils/ftSam/ftHooks.tsx'
-import { FtMotionBtn } from '../tsx-utils/ftSam/ftBox.tsx'
-import { bouncyPopUpByPx } from '../tsx-utils/ftSam/ftFramerMotion.tsx'
+import { useTgl } from '../tsx-utils/ftHooks.tsx'
+import { FtMotionBtn } from '../tsx-utils/ftBox.tsx'
+import { bouncyPopUpByPx } from '../tsx-utils/ftFramerMotion.tsx'
 import NavBar from './NavBar.tsx'
 import Chat from './Chat.tsx'
 import Matchmaker from './Matchmaker.tsx'
 import Home from './Home.tsx'
-import Profile from './Profile.tsx'
+import AccountInfos from './AccountInfos.tsx'
+import Friends from './Friends.tsx'
 import Characters from './Characters.tsx'
 import Party from './Game.tsx'
 import Leader from './Leader.tsx'
 import ErrorPage from './ErrorPage.tsx'
+import '../css/Root.css'
 
 // --------LOG-SCREEN------------------------------------------------------ //
 interface LogginBtnProps {
@@ -62,7 +64,7 @@ const LoginBtn: React.FC<LogginBtnProps> = ({ tglLogged }) => {
 
 // --------ROOT------------------------------------------------------------ //
 const Root: React.FC = () => {
-	// ----LOCATION--------------------------- //
+	// ----ROUTER----------------------------- //
 	const location = useLocation()
 	const navigate = useNavigate()
 
@@ -96,7 +98,8 @@ const Root: React.FC = () => {
 			<AnimatePresence mode='wait'>
 				<Routes location={location} key={location.pathname}>
 					<Route path='/' element={<Home />} />
-					<Route path='/profile/*' element={<Profile />} />
+					<Route path='/profile' element={<AccountInfos />} />
+					<Route path='/profile/friends' element={<Friends />} />
 					<Route path='/characters' element={<Characters />} />
 					<Route path='/leader' element={<Leader />} />
 					<Route path='/game' element={<Party />} />

@@ -1,23 +1,23 @@
 /* ---------------------------------
-Méthodologie B-E--M (Bloc, Elément, Modifieur)
+Méthodologie B-E--M (Bloc, Élément, Modifieur)
 
-Block: Un composant indépendant
+Bloc: Un composant indépendant
 ex: Un bouton, une barre de navigation, un en-tête...
 ex: ".navBar {}"
 ex: ".button {}"
 
-Element: Une partie d'un Block qui a un sens uniquement dans le contexte de ce Block.
+Élément: Une partie d'un bloc qui a un sens uniquement dans le contexte de ce bloc.
 ex: ".navBar-logo {}"
 ex: ".button-icon {}"
 
-Modifier: Une variation ou un état d'un Block ou d'un élément. 
+Modifieur: Une variation ou un état d'un bloc ou d'un élément. 
 ex: ".button--large {}"
 ex: ".navBar-logo--pressed {}"
 --------------------------------- */
 
 /* ---------------------------------
-#1 Elements
-#2 Form
+#1 Éléments
+#2 Forme
 #3 Position
 #4 Margin - Padding
 #5 Animations
@@ -25,10 +25,10 @@ ex: ".navBar-logo--pressed {}"
 
 /* ---MATCHMAKER----------------- */
 .matchmaker {
-	/* #1 Elements */
+	/* #1 Éléments */
 	border: 1px solid rgb(0, 0, 255);
 
-	/* #2 Form */
+	/* #2 Forme */
 	border-radius: 5px;
 
 	/* #3 Position */
@@ -37,13 +37,13 @@ ex: ".navBar-logo--pressed {}"
 }
 
 .matchmaker--pressed {
-	/* #1 Elements */
+	/* #1 Éléments */
 	background-color: rgba(0, 0, 255, 0.3);
 }
 
 /* ---GAME-INFOS----------------- */
 .gameInfos {
-	/* #1 Elements */
+	/* #1 Éléments */
 	border: 1px solid rgb(200, 0, 0);
 	display: grid;
 	grid-template-columns: 1fr 1fr;
@@ -51,7 +51,7 @@ ex: ".navBar-logo--pressed {}"
 	grid-column-gap: 15px;
 	align-items: center;
 
-	/* #2 Form */
+	/* #2 Forme */
 	height: 275px;
 	border-radius: 5px;
 
@@ -60,13 +60,13 @@ ex: ".navBar-logo--pressed {}"
 }
 
 .gameInfo-player {
-	/* #1 Elements */
+	/* #1 Éléments */
 	border: 1px solid rgb(200, 0, 0);
 	display: flex;
 	align-items: center;
 	justify-content: center;
 
-	/* #2 Form */
+	/* #2 Forme */
 	width: 100px;
 	height: 100px;
 	border-radius: 5px;
@@ -83,7 +83,7 @@ ex: ".navBar-logo--pressed {}"
 }
 
 .gameInfo-score {
-	/* #1 Elements */
+	/* #1 Éléments */
 	font-size: 51px;
 	justify-self: center;
 }
@@ -99,7 +99,7 @@ ex: ".navBar-logo--pressed {}"
 }
 
 .gameInfo-timer {
-	/* #1 Elements */
+	/* #1 Éléments */
 	font-size: 36px;
 
 	/* #3 Position */

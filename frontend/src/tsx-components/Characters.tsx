@@ -1,112 +1,23 @@
-import React, { memo, useEffect, useMemo, useState } from 'react'
-import { AnimatePresence, MotionStyle, motion } from 'framer-motion'
+import React, { useState, useEffect, memo } from 'react'
+import { AnimatePresence, motion } from 'framer-motion'
 
-import { FtMotionBtn, FtDiv } from '../tsx-utils/ftSam/ftBox.tsx'
-import { tglOnOver } from '../tsx-utils/ftSam/ftHooks.tsx'
-import { fade, yMove, heightChangeByPercent } from '../tsx-utils/ftSam/ftFramerMotion.tsx'
+import { tglOnOver } from '../tsx-utils/ftHooks.tsx'
+import { FtDiv, FtMotionBtn } from '../tsx-utils/ftBox.tsx'
+import { fade, xMove, yMove } from '../tsx-utils/ftFramerMotion.tsx'
 
 // --------VALUES---------------------------------------------------------- //
 const CHAR_COUNT = 9
 
 // --------CLASSNAMES------------------------------------------------------ //
 const NAME = 'character'
-const PRESSED_NAME = `${NAME}-btn--pressed`
-
-// --------SPELL----------------------------------------------------------- //
-interface SpellProps {
-	spellName: string
-	content: string
-	selected: number
-}
-const Spell: React.FC<SpellProps> = ({ spellName, content, selected }) => {
-	// ----STATES----------------------------- //
-	const [tooltip, tglTooltip] = tglOnOver(false)
-
-	// ----ANIMATIONS------------------------- //
-	const boxMotion = useMemo(() => fade({ inDuration: 0.2 }), [])
-
-	// ----CLASSNAMES------------------------- //
-	const boxName = `${spellName}-box`
-	const tooltipName = `${spellName}-tooltip`
-
-	// ----RENDER----------------------------- //
-	return <motion.div className={boxName}
-		{...boxMotion}>
-		<FtDiv className={spellName}
-			handler={tglTooltip}
-			content={content}
-		/>
-		{tooltip && <motion.div className={tooltipName}
-			{...fade({})}>
-			TOOLTIP
-		</motion.div>}
-	</motion.div>
-}
-
-// --------CHARACTER------------------------------------------------------- //
-interface CharacterProps {
-	selected: number
-}
-const Character: React.FC<CharacterProps> = ({ selected }) => {
-	// ----ANIMATIONS------------------------- //
-	const contentMotionDuration = 0.2
-
-	// ----CLASSNAMES------------------------- //
-	const skinName = `${NAME}-skin`
-	const statsName = `${NAME}-stats`
-	const storyName = `${NAME}-story`
-	const spellName = `${NAME}-spell`
-	const spellzName = `${spellName}s`
-
-	// ----RENDER----------------------------- //
-	return <motion.div className={NAME}
-		{...heightChangeByPercent({
-			inDuration: 1,
-			outDuration: 0.5
-		})}>
-		<AnimatePresence mode='wait'>
-			<div className={skinName}
-				key={`${skinName}-${selected}`}>
-				<motion.div className={`${skinName}-content`}
-					{...fade({ inDuration: contentMotionDuration })}>
-					CHARACTER #{selected}
-				</motion.div>
-			</div>
-			<div className={statsName}
-				key={`${statsName}-${selected}`}>
-				<motion.div className={`${statsName}-content`}
-					{...fade({ inDuration: contentMotionDuration })}>
-					STATS
-				</motion.div>
-			</div>
-			<div className={storyName}
-				key={`${storyName}-${selected}`}>
-				<motion.div className={`${storyName}-content`}
-					{...fade({ inDuration: contentMotionDuration })}>
-					STORY
-				</motion.div>
-			</div>
-			<div className={spellzName}
-				key={`${spellzName}-${selected}`}>
-				<Spell spellName={spellName}
-					content='ACTIVE'
-					selected={selected}
-				/>
-				<Spell spellName={spellName}
-					content='PASSIVE'
-					selected={selected}
-				/>
-			</div>
-		</AnimatePresence>
-	</motion.div>
-}
+const PRESSED_NAME = `${NAME}-box--pressed`
 
 // --------CHARACTER-BOX--------------------------------------------------- //
 interface CharBoxProps {
 	id: number
 	setSelected: React.Dispatch<React.SetStateAction<number>>
 }
-const CharBox: React.FC<CharBoxProps> = ({ id, setSelected }) => {
+const CharBox: React.FC<CharBoxProps> = memo(({ id, setSelected }) => {
 	// ----CLASSNAMES------------------------- //
 	const boxName = `${NAME}-box`
 
@@ -114,10 +25,14 @@ const CharBox: React.FC<CharBoxProps> = ({ id, setSelected }) => {
 	return <FtMotionBtn className={boxName}
 		pressedName={PRESSED_NAME}
 		handler={{ onMouseUp: () => setSelected(id) }}
-		motionProps={yMove({ from: 200 * id, inDuration: 1.25, outDuration: 0.5 })}
+		motionProps={yMove({
+			from: 200 * id,
+			inDuration: 0.7 + (0.025 * id),
+			outDuration: 0.5 - (0.0125 * id)
+		})}
 		content={`[Character #${id}]`}
 	/>
-}
+})
 
 // --------CHARACTER-BOXES------------------------------------------------- //
 interface CharBoxesProps {
@@ -129,37 +44,116 @@ const CharBoxes: React.FC<CharBoxesProps> = memo(({ setSelected }) => {
 
 	// ----EFFECTS---------------------------- //
 	useEffect(() => {
-		const timer = setTimeout(() => {
-			setAnimating(false)
-		}, 1250)
-
+		const timer = setTimeout(() => setAnimating(false), 1250)
 		return () => clearTimeout(timer)
 	}, [])
-
-	// ----ANIMATION-------------------------- //
-	const heightChange = useMemo(() => heightChangeByPercent({ inDuration: 1, outDuration: 0.5 }), [])
-	const boxStyle: MotionStyle = {
-		overflowY: (animating ? 'hidden' : 'auto')
-	}
 
 	// ----CLASSNAMES------------------------- //
 	const boxName = `${NAME}s-select`
 
 	// ----RENDER----------------------------- //
-	const renderCharPic = useMemo(() => Array.from({ length: CHAR_COUNT }, (_, index) => (
+	const render = Array.from({ length: CHAR_COUNT }, (_, index) => (
 		<CharBox key={index + 1} id={index + 1} setSelected={setSelected} />
-	)), [])
+	))
 
 	return <motion.div className={boxName}
-		{...heightChange}
-		exit={{
-			...heightChange.exit,
-			overflowY: 'hidden'
-		}}
-		style={boxStyle}>
-		{renderCharPic}
+		exit={{ overflowY: 'hidden' }}
+		style={{ overflowY: (animating ? 'hidden' : 'auto') }}>
+		{render}
 	</motion.div>
 })
+
+// --------SPELL----------------------------------------------------------- //
+interface SpellProps {
+	spellName: string
+	content: string
+}
+const Spell: React.FC<SpellProps> = ({ spellName, content }) => {
+	// ----STATES----------------------------- //
+	const [tooltip, tglTooltip] = tglOnOver(false)
+
+	// ----CLASSNAMES------------------------- //
+	const boxName = `${spellName}-box`
+	const tooltipName = `${spellName}-tooltip`
+
+	// ----RENDER----------------------------- //
+	return <motion.div className={boxName}
+		{...fade({ inDuration: 0.25 })}>
+
+		<FtDiv className={spellName}
+			handler={tglTooltip}
+			content={content}
+		/>
+
+		<AnimatePresence>
+			{tooltip && <motion.div className={tooltipName}
+				{...xMove({ from: 50, inDuration: 0.3 })}>
+
+				TOOLTIP
+			</motion.div>}
+		</AnimatePresence>
+
+	</motion.div>
+}
+
+// --------CHARACTER------------------------------------------------------- //
+interface CharacterProps {
+	selected: number
+}
+const Character: React.FC<CharacterProps> = ({ selected }) => {
+	// ----ANIMATIONS------------------------- //
+	const contentMotionDuration = 0.25
+
+	// ----CLASSNAMES------------------------- //
+	const skinName = `${NAME}-skin`
+	const statsName = `${NAME}-stats`
+	const storyName = `${NAME}-story`
+	const spellName = `${NAME}-spell`
+	const spellzName = `${spellName}s`
+	const contentName = (preffix: string) => `${preffix}-content`
+
+	// ----RENDER----------------------------- //
+	return <motion.div className={NAME}
+		{...fade({ inDuration: 1, outDuration: 0.5 })}>
+		<AnimatePresence mode='wait'>
+			<div className={skinName} key={`${skinName}-${selected}`}>
+				<motion.div className={contentName(skinName)}
+					{...fade({ inDuration: contentMotionDuration })}>
+					CHARACTER #{selected}
+				</motion.div>
+			</div>
+		</AnimatePresence>
+
+		<AnimatePresence mode='wait'>
+			<div className={statsName} key={`${statsName}-${selected}`}>
+				<motion.div className={contentName(statsName)}
+					{...fade({ inDuration: contentMotionDuration })}>
+					STATS
+				</motion.div>
+			</div>
+		</AnimatePresence>
+
+		<AnimatePresence mode='wait'>
+			<div className={storyName} key={`${storyName}-${selected}`}>
+				<motion.div className={contentName(storyName)}
+					{...fade({ inDuration: contentMotionDuration })}>
+					STORY
+				</motion.div>
+			</div>
+		</AnimatePresence>
+
+		<AnimatePresence mode='wait'>
+			<div className={spellzName} key={`${spellzName}-${selected}`}>
+				<Spell spellName={spellName}
+					content='ACTIVE'
+				/>
+				<Spell spellName={spellName}
+					content='PASSIVE'
+				/>
+			</div>
+		</AnimatePresence>
+	</motion.div>
+}
 
 // --------CHARACTERS------------------------------------------------------ //
 const Characters: React.FC = () => {
@@ -172,8 +166,8 @@ const Characters: React.FC = () => {
 	// ----RENDER----------------------------- //
 	return <motion.main className={boxName}
 		{...fade({ inDuration: 1, outDuration: 0.5 })}>
-		<CharBoxes setSelected={setSelected} />
 		<Character selected={selected} />
+		<CharBoxes setSelected={setSelected} />
 	</motion.main>
 }
 export default Characters

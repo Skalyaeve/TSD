@@ -23,8 +23,8 @@ ex: ".navBar-logo--pressed {}"
 #5 Animations
 --------------------------------- */
 
-/* ---LEADER--------------------- */
-.leader {
+/* ---FRIENDS-------------------- */
+.profile-friends {
 	/* #1 Éléments */
 	display: flex;
 	flex-direction: column;
@@ -35,22 +35,8 @@ ex: ".navBar-logo--pressed {}"
 	padding-left: 0;
 }
 
-.leader-btn {
-	/* #1 Éléments */
-	border: 1px solid rgb(255, 255, 0);
-
-	/* #2 Forme */
-	width: 55px;
-	height: 35px;
-}
-
-.leader-btn--pressed {
-	/* #1 Éléments */
-	background-color: rgb(255, 255, 0, 0.3);
-}
-
-/* ---LEADER-HEAD---------------- */
-.leader-head {
+/* ---FRIENDS-HEAD--------------- */
+.profile-friends-head {
 	/* #1 Éléments */
 	border: 1px solid rgb(255, 255, 0);
 	display: flex;
@@ -61,42 +47,25 @@ ex: ".navBar-logo--pressed {}"
 	padding: 10px;
 }
 
-.leader-input {
+.profile-friends-add-input {
 	/* #1 Éléments */
 	border: 1px solid rgb(255, 255, 0);
 
 	/* #2 Forme */
 	width: 325px;
 	height: 35px;
-}
 
-.leader-input-btn {
-	/* #4 Margin - Padding */
-	margin-left: 5px;
-	margin-right: 15px;
-}
-
-.leader-findTop-btn {
-	/* #2 Forme */
-	width: 110px;
-}
-
-.leader-findMe-btn {
-	/* #2 Forme */
-	width: 110px;
-
-	/* #4 Margin - Padding */
-	margin-left: 5px;
-	margin-right: 15px;
-}
-
-.leader-up-btn {
 	/* #4 Margin - Padding */
 	margin-right: 5px;
 }
 
-/* ---LEADER-BODY---------------- */
-.leader-body {
+.profile-friends-add-input-btn {
+	/* #2 Forme */
+	width: 70px;
+}
+
+/* ---FRIENDS-LIST--------------- */
+.profile-friends-list {
 	/* #1 Éléments */
 	border: 1px solid rgb(255, 255, 0);
 	overflow-y: auto;
@@ -105,9 +74,9 @@ ex: ".navBar-logo--pressed {}"
 	height: 100%;
 }
 
-.leader-boardHead {
+.profile-friends-list-head {
 	/* #1 Éléments */
-	border-bottom: 1px solid rgb(255, 255, 0);
+	border-bottom: 1px solid rgb(255, 239, 57);
 	display: flex;
 
 	/* #2 Forme */
@@ -119,9 +88,9 @@ ex: ".navBar-logo--pressed {}"
 	z-index: 1;
 }
 
-.leader-col {
+.profile-friends-list-col {
 	/* #1 Éléments */
-	border-right: 1px solid rgb(255, 255, 0);
+	border-right: 1px solid rgb(255, 239, 57);
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -132,13 +101,21 @@ ex: ".navBar-logo--pressed {}"
 	height: 100%;
 }
 
-.leader-col:first-child {
+.profile-friends-list-col--bigFont {
+	/* #1 Éléments */
+	font-size: 30px;
+}
+
+.profile-friends-list-col:first-child {
+	/* #1 Éléments */
+	position: relative;
+
 	/* #2 Forme */
 	width: 25%;
 	min-width: 250px;
 }
 
-.leader-col:last-child {
+.profile-friends-list-col:last-child {
 	/* #1 Éléments */
 	border-right: none;
 
@@ -146,31 +123,64 @@ ex: ".navBar-logo--pressed {}"
 	width: 19%;
 }
 
-.leader-col--bigFont {
+/* ---FRIEND-SEARCH-------------- */
+.profile-friends-search {
 	/* #1 Éléments */
-	font-size: 30px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	/* #2 Forme */
+	width: 100%;
+	height: 100%;
 }
 
-/* ---LEADER-USR----------------- */
-.leader-usr {
+.profile-friends-search-btn {
 	/* #1 Éléments */
-	border-top: 1px solid rgb(255, 255, 0);
-	border-bottom: 1px solid rgb(255, 255, 0);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	/* #3 Position */
+	position: absolute;
+	right: 10px;
+}
+
+.profile-friends-search-input {
+	/* #1 Éléments */
+	border: 1px solid rgb(255, 239, 57);
+
+	/* #2 Forme */
+	width: calc(100% - 80px);
+	height: 35px;
+
+	/* #3 Position */
+	position: absolute;
+	left: 10px;
+}
+
+/* ---FRIEND--------------------- */
+.profile-friend {
+	/* #1 Éléments */
+	border-top: 1px solid rgb(255, 239, 57);
+	border-bottom: 1px solid rgb(255, 239, 57);
 	display: flex;
 
 	/* #2 Forme */
 	height: 70px;
 }
 
-.leader-usr-rank {
+.profile-friend-name {
 	/* #1 Éléments */
-	background-color: transparent;
+	display: flex;
+	align-items: center;
 
 	/* #2 Forme */
-	width: 60px;
+	width: 100%;
+	height: 100%;
 }
 
-.leader-usr-pic {
+.profile-friend-pic {
 	/* #1 Éléments */
 	border: 1px solid rgb(255, 255, 0);
 	display: flex;
@@ -180,16 +190,22 @@ ex: ".navBar-logo--pressed {}"
 	/* #2 Forme */
 	width: 50px;
 	height: 50px;
-}
-
-.leader-usr-link {
-	/* #1 Éléments */
-	background-color: transparent;
-	text-align: start;
-
-	/* #2 Forme */
-	width: calc(100% - 120px);
 
 	/* #4 Margin - Padding */
 	margin-left: 10px;
+}
+
+.profile-friend-link {
+	/* #1 Éléments */
+	background-color: transparent;
+	text-align: left;
+
+	/* #4 Margin - Padding */
+	margin-left: 10px;
+}
+
+.profile-friend-del-btn {
+	/* #3 Position */
+	position: absolute;
+	right: 10px;
 }

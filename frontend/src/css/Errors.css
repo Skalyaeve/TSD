@@ -23,8 +23,8 @@ ex: ".navBar-logo--pressed {}"
 #5 Animations
 --------------------------------- */
 
-/* ---HOME----------------------- */
-.home {
+/* ---ERROR---------------------- */
+.error {
 	/* #1 Éléments */
 	border: 1px solid rgb(255, 255, 0);
 	display: flex;

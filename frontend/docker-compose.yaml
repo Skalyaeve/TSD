@@ -7,9 +7,9 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    command: npm run dev
     ports:
       - "8080:8080"
+    command: npm run dev
 
   prod:
     image: front:prod
@@ -17,9 +17,9 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    command: npm run build
     ports:
       - "8080:8080"
+    command: npm run build
 
   test:
     image: front:test
@@ -27,6 +27,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    command: npm run test
     ports:
       - "8080:8080"
+    command: npm run test

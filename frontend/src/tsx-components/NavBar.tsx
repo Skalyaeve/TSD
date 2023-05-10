@@ -1,12 +1,10 @@
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useRef, useState, useEffect } from 'react'
 import { Routes, Route, useLocation } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 
-import { FtMotionLink, FtMotionBtn } from '../tsx-utils/ftSam/ftBox.tsx'
-import { cutThenCompare } from '../tsx-utils/ftSam/ftStrings.tsx'
-import {
-	bouncyHeightChangeByPx, bouncyHeightChangeByPercent, bouncyYMove, mergeMotions
-} from '../tsx-utils/ftSam/ftFramerMotion.tsx'
+import { FtMotionBtn, FtMotionLink } from '../tsx-utils/ftBox.tsx'
+import { cutThenCompare } from '../tsx-utils/ftStrings.tsx'
+import { bouncyHeightChangeByPercent, bouncyHeightChangeByPx, bouncyYMove, mergeMotions } from '../tsx-utils/ftFramerMotion.tsx'
 import { GameInfos } from './Matchmaker.tsx'
 
 // --------VALUES---------------------------------------------------------- //
@@ -118,70 +116,82 @@ const FromHome: React.FC<FromHomeProps> = ({ tglLogged, setRender, animating }) 
 interface FromProfileProps {
 	animating: React.MutableRefObject<boolean>
 }
-const FromProfile: React.FC<FromProfileProps> = ({ animating }) => <motion.nav className={NAME}
-	{...bouncyHeightChangeByPx({ finalHeight: BACK_LINK_HEIGHT + LINK_HEIGHT * 2 })}>
-	<NavBarLink index={0}
-		to='/'
-		content='[BACK]'
-		animating={animating}
-	/>
-	<NavBarLink index={1}
-		to='/profile'
-		content='[INFOS]'
-		animating={animating}
-	/>
-	<NavBarLink index={2}
-		to='/profile/friends'
-		content='[FRIENDS]'
-		animating={animating}
-	/>
-</motion.nav>
+const FromProfile: React.FC<FromProfileProps> = ({ animating }) => (
+	<motion.nav className={NAME}
+		{...bouncyHeightChangeByPx({ finalHeight: BACK_LINK_HEIGHT + LINK_HEIGHT * 2 })}>
+
+		<NavBarLink index={0}
+			to='/'
+			content='[BACK]'
+			animating={animating}
+		/>
+		<NavBarLink index={1}
+			to='/profile'
+			content='[INFOS]'
+			animating={animating}
+		/>
+		<NavBarLink index={2}
+			to='/profile/friends'
+			content='[FRIENDS]'
+			animating={animating}
+		/>
+	</motion.nav>
+)
 
 // --------RENDER-FROM-CHARACTERS------------------------------------------ //
 interface FromCharactersProps {
 	animating: React.MutableRefObject<boolean>
 }
-const FromCharacters: React.FC<FromCharactersProps> = ({ animating }) => <motion.nav className={NAME}
-	{...bouncyHeightChangeByPx({ finalHeight: BACK_LINK_HEIGHT })}>
-	<NavBarLink index={0}
-		to='/'
-		content='[BACK]'
-		animating={animating}
-	/>
-</motion.nav>
+const FromCharacters: React.FC<FromCharactersProps> = ({ animating }) => (
+	<motion.nav className={NAME}
+		{...bouncyHeightChangeByPx({ finalHeight: BACK_LINK_HEIGHT })}>
+
+		<NavBarLink index={0}
+			to='/'
+			content='[BACK]'
+			animating={animating}
+		/>
+	</motion.nav>
+)
 
 // --------RENDER-FROM-LEADER---------------------------------------------- //
 interface FromLeaderProps {
 	animating: React.MutableRefObject<boolean>
 }
-const FromLeader: React.FC<FromLeaderProps> = ({ animating }) => <motion.nav className={NAME}
-	{...bouncyHeightChangeByPx({ finalHeight: BACK_LINK_HEIGHT })}>
-	<NavBarLink index={0}
-		to='/'
-		content='[BACK]'
-		animating={animating}
-	/>
-</motion.nav>
+const FromLeader: React.FC<FromLeaderProps> = ({ animating }) => (
+	<motion.nav className={NAME}
+		{...bouncyHeightChangeByPx({ finalHeight: BACK_LINK_HEIGHT })}>
+
+		<NavBarLink index={0}
+			to='/'
+			content='[BACK]'
+			animating={animating}
+		/>
+	</motion.nav>
+)
 
 // --------RENDER-FROM-404------------------------------------------------- //
 interface From404Props {
 	animating: React.MutableRefObject<boolean>
 }
-const From404: React.FC<From404Props> = ({ animating }) => <motion.nav className={NAME}
-	{...bouncyHeightChangeByPx({ finalHeight: BACK_LINK_HEIGHT })}>
-	<NavBarLink index={0}
-		to='/'
-		content='[HOME]'
-		animating={animating}
-	/>
-</motion.nav>
+const From404: React.FC<From404Props> = ({ animating }) => (
+	<motion.nav className={NAME}
+		{...bouncyHeightChangeByPx({ finalHeight: BACK_LINK_HEIGHT })}>
+
+		<NavBarLink index={0}
+			to='/'
+			content='[HOME]'
+			animating={animating}
+		/>
+	</motion.nav>
+)
 
 // --------NAVBAR---------------------------------------------------------- //
 interface NavBarProps {
 	tglLogged: () => void
 }
 const NavBar: React.FC<NavBarProps> = ({ tglLogged }) => {
-	// ----LOCATION--------------------------- //
+	// ----ROUTER----------------------------- //
 	const location = useLocation()
 
 	// ----REFS------------------------------- //
@@ -198,11 +208,13 @@ const NavBar: React.FC<NavBarProps> = ({ tglLogged }) => {
 			animating.current = true
 			setRender(
 				<Routes location={location} key={location.pathname}>
-					<Route path='/' element={<FromHome
-						tglLogged={tglLogged}
-						setRender={setRender}
-						animating={animating}
-					/>} />
+					<Route path='/' element={
+						<FromHome
+							tglLogged={tglLogged}
+							setRender={setRender}
+							animating={animating}
+						/>
+					} />
 					<Route path='/profile/*' element={<FromProfile animating={animating} />} />
 					<Route path='/characters' element={<FromCharacters animating={animating} />} />
 					<Route path='/leader' element={<FromLeader animating={animating} />} />
@@ -217,6 +229,7 @@ const NavBar: React.FC<NavBarProps> = ({ tglLogged }) => {
 	// ----RENDER----------------------------- //
 	return <AnimatePresence mode='wait'
 		onExitComplete={() => { animating.current = false }}>
+
 		{render}
 	</AnimatePresence>
 }

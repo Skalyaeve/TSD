@@ -1,23 +1,23 @@
 /* ---------------------------------
-Méthodologie B-E--M (Bloc, Elément, Modifieur)
+Méthodologie B-E--M (Bloc, Élément, Modifieur)
 
-Block: Un composant indépendant
+Bloc: Un composant indépendant
 ex: Un bouton, une barre de navigation, un en-tête...
 ex: ".navBar {}"
 ex: ".button {}"
 
-Element: Une partie d'un Block qui a un sens uniquement dans le contexte de ce Block.
+Élément: Une partie d'un bloc qui a un sens uniquement dans le contexte de ce bloc.
 ex: ".navBar-logo {}"
 ex: ".button-icon {}"
 
-Modifier: Une variation ou un état d'un Block ou d'un élément. 
+Modifieur: Une variation ou un état d'un bloc ou d'un élément. 
 ex: ".button--large {}"
 ex: ".navBar-logo--pressed {}"
 --------------------------------- */
 
 /* ---------------------------------
-#1 Elements
-#2 Form
+#1 Éléments
+#2 Forme
 #3 Position
 #4 Margin - Padding
 #5 Animations
@@ -25,16 +25,19 @@ ex: ".navBar-logo--pressed {}"
 
 @import url("NavBar.css");
 @import url("Chat.css");
+@import url("ChatSettings.css");
 @import url("Matchmaker.css");
 @import url("Home.css");
-@import url("Profile.css");
+@import url("AccountInfos.css");
+@import url("Friends.css");
 @import url("Characters.css");
 @import url("Leader.css");
+@import url("Errors.css");
 @import url("Game.css");
 
 /* ---TAGS----------------------- */
 * {
-	/* #1 Elements */
+	/* #1 Éléments */
 	background-position: center;
 	box-sizing: border-box;
 	font-family: serif;
@@ -47,41 +50,41 @@ ex: ".navBar-logo--pressed {}"
 }
 
 a {
-	/* #1 Elements */
+	/* #1 Éléments */
 	text-decoration: none;
 }
 
 button {
-	/* #1 Elements */
+	/* #1 Éléments */
 	border: none;
 }
 
 input {
-	/* #1 Elements */
+	/* #1 Éléments */
 	border: none;
 
-	/* #2 Form */
+	/* #2 Forme */
 	height: 30px;
 }
 
 input:focus {
-	/* #1 Elements */
+	/* #1 Éléments */
 	outline: none;
 }
 
 body * {
-	/* #1 Elements */
+	/* #1 Éléments */
 	background-color: rgb(0, 0, 0);
 }
 
 /* ---ROOT----------------------- */
 .root {
-	/* #1 Elements */
+	/* #1 Éléments */
 	display: grid;
-	grid-template-columns: 265px auto;
+	grid-template-columns: 265px 1fr;
 	overflow: hidden;
 
-	/* #2 Form */
+	/* #2 Forme */
 	width: 100vw;
 	height: 100vh;
 	min-width: 1024px;
@@ -98,23 +101,23 @@ body * {
 }
 
 .login-btn {
-	/* #1 Elements */
+	/* #1 Éléments */
 	border: 1px solid rgb(255, 255, 255);
 	font-size: 24px;
 
-	/* #2 Form */
+	/* #2 Forme */
 	height: 100%;
 	border-radius: 5px;
 }
 
 .login-btn--pressed {
-	/* #1 Elements */
+	/* #1 Éléments */
 	background-color: rgb(255, 255, 255, 0.3);
 }
 
 /* ---HEADER--------------------- */
 .header {
-	/* #1 Elements */
+	/* #1 Éléments */
 	display: grid;
 	grid-template-columns: 1fr;
 	grid-template-rows: auto 1fr 100px;

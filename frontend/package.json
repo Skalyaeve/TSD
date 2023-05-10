@@ -1,6 +1,6 @@
 {
 	"name": "ft_transcendance",
-	"version": "1.0.0",
+	"version": "0.1.0",
 	"description": "Une fin, un début.",
 	"main": "./src/index.jsx",
 	"scripts": {

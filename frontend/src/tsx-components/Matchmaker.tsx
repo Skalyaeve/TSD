@@ -1,12 +1,12 @@
-import React, { useMemo, useCallback, useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 
-import { FtMotionBtn } from '../tsx-utils/ftSam/ftBox.tsx'
-import { Timer } from '../tsx-utils/ftSam/ftNumbers.tsx'
-import { bouncyYMove, bouncyHeightChangeByPx } from '../tsx-utils/ftSam/ftFramerMotion.tsx'
+import { Timer } from '../tsx-utils/ftNumbers.tsx'
+import { FtMotionBtn } from '../tsx-utils/ftBox.tsx'
+import { bouncyHeightChangeByPx, bouncyYMove } from '../tsx-utils/ftFramerMotion.tsx'
 
-// --------PARTY-INFOS----------------------------------------------------- //
+// --------GAME-INFOS------------------------------------------------------ //
 export const GameInfos: React.FC = () => {
 	// ----CLASSNAMES------------------------- //
 	const name = 'gameInfo'
@@ -28,7 +28,7 @@ export const GameInfos: React.FC = () => {
 
 // --------MATCHMAKER------------------------------------------------------ //
 const Matchmaker: React.FC = () => {
-	// ----LOCATION--------------------------- //
+	// ----ROUTER----------------------------- //
 	const navigate = useNavigate()
 
 	// ----STATES----------------------------- //
@@ -67,19 +67,17 @@ const Matchmaker: React.FC = () => {
 	}), [toggleMatchmaker])
 
 	// ----ANIMATIONS------------------------- //
-	const btnMotion = useMemo(() => {
-		return {
-			...bouncyYMove({ from: 100, extra: -20, inDuration: 0.6 }),
-			whileHover: {
-				rotate: [0, -5, 5, 0],
-				transition: { ease: 'easeIn' }
-			},
-			whileTap: {
-				rotate: [0, 5, -5, 5, -5, 0],
-				transition: { ease: 'easeInOut' }
-			}
+	const btnMotion = useMemo(() => ({
+		...bouncyYMove({ from: 100, extra: -20, inDuration: 0.6 }),
+		whileHover: {
+			rotate: [0, -5, 5, 0],
+			transition: { ease: 'easeIn' }
+		},
+		whileTap: {
+			rotate: [0, 5, -5, 5, -5, 0],
+			transition: { ease: 'easeInOut' }
 		}
-	}, [])
+	}), [])
 
 	// ----CLASSNAMES------------------------- //
 	const name = 'matchmaker'
@@ -99,4 +97,4 @@ const Matchmaker: React.FC = () => {
 		content={btnContent}
 	/>
 }
-export default Matchmaker	
+export default Matchmaker
