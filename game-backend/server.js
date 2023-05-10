@@ -1,20 +1,24 @@
 /* -------------------------LIBRARIES IMPORTS------------------------- */
 
-const cluster = require('cluster')
-const path = require('path')
-const { Server } = require('socket.io')
+if (cluster.isWorker) {
+	const file = process.env.file
+	(await import(file)).default()
+}
+
+import cluster from 'cluster'
+import path from 'path'
+import { Server } from 'socket.io'
+import { JSDOM } from 'jsdom'
 
 /* -------------------------CHILD CODE REDIRECION------------------------- */
 
-if (cluster.isWorker) {
-	const file = process.env.file
-	require(file).default()
-}
+
 
 /* -------------------------VARIABLES------------------------- */
 
-let port					// Listening port for socket.io
-let io						// Socket.io server
+const port = process.env.PORT || 3001
+
+let io
 let workerId = -1 			// Headless client worker thread
 let players = {}			// Player list
 let nbLeft = 0				// Number of players in the right side
@@ -57,24 +61,34 @@ function updateBackEndPlayerList(playerList, moved) {
 	}
 }
 
+function setupAuthoritativePhaser() {
+	JSDOM.fromFile(path.join(process.cwd(), 'src/index.html'), {
+		// To run the scripts in the html file
+		runScripts: "dangerously",
+		// Also load supported external resources
+		resources: "usable",
+		// So requestAnimatinFrame events fire
+		pretendToBeVisual: true
+	})
+}
+
 /* -------------------------SERVER CODE------------------------- */
 
-// Configure listening port and socket.io server
-port = process.env.PORT || 3001
+// Configure server
+setupAuthoritativePhaser()
 io = new Server(port, {
 	cors: {
 		origin: '*', // Allow any origin, you can change this to specific domains
 		methods: ['GET', 'POST'],
 	},
 })
-console.log(`Server listening on port ${port}`)
 
 // Starting headless client worker
 cluster.on('fork', (worker) => {
 	console.log(`Worker ${worker.id} created`)
 	workerId = worker.id
 })
-cluster.fork({ file: path.join(__dirname, './dist/headlessClient.js') })
+cluster.fork({ file: path.join(process.cwd(), 'src/js/headlessClient2.js') })
 console.log('Started client worker')
 
 // Client worker listener
