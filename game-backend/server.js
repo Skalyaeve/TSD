@@ -130,7 +130,6 @@ io.on('connection', (socket) => {
 		socket.broadcast.emit('playerStoped', players[socket.id].id)
 	})
 
-
 	// When the player disconnects, remove them from the players object and notify other clients
 	socket.on('disconnect', () => {
 		console.log(`Player disconnected: ${socket.id}`)
