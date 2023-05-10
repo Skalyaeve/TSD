@@ -18,9 +18,7 @@
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false
   },
-  "include": [
-    "**/*",
-    "auth/strategies/FortyTwoStrategy.ts",
-    "auth/guards/GoogleGuard.ts" // add this line to include the new file
-  ]
+  "watchOptions": {
+    "watchFile": "fixedPollingInterval"
+  },
 }
