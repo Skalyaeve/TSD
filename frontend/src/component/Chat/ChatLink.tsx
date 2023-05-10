@@ -4,7 +4,7 @@ import { NewBox } from "../utils.tsx"
 import { bouncyComeFromCol } from "../framerMotionAnime.tsx"
 import { useLocation, useNavigate } from "react-router-dom"
 
-const Chat: React.FC = memo(() => {
+const ChatLink: React.FC = memo(() => {
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -32,13 +32,16 @@ const Chat: React.FC = memo(() => {
 
 	return <motion.div
 		key={`${name}-motion`}
-		className={`${name}-motion`}
+		className={`${name}-motionsssss`}
 		{...bouncyComeFromColRender}>
-
+			<div>
+				{isInChat && (
+				<p>This is additional content that will only be displayed on the chat route.</p>
+				)}
+			</div>
 		<div className={name}>
 			<div className={`${bodyName} ${bodyName}--noResize`} >
 				<AnimatePresence>
-
 					<motion.div
 						key={`${mainName}-btn-motion`}
 						className={`${mainName}-btn-motion`}
@@ -60,4 +63,4 @@ const Chat: React.FC = memo(() => {
 
 	</motion.div >
 })
-export default Chat
+export default ChatLink
