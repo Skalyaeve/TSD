@@ -1,13 +1,15 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { motion } from 'framer-motion'
-
+import { motion, MotionProps } from 'framer-motion'
 import { Timer } from '../tsx-utils/ftNumbers.tsx'
-import { FtMotionBtn } from '../tsx-utils/ftBox.tsx'
-import { bouncyHeightChangeByPx, bouncyYMove } from '../tsx-utils/ftFramerMotion.tsx'
+import { fade, bouncyHeightChangeByPx, bouncyYMove } from '../tsx-utils/ftMotion.tsx'
 
 // --------GAME-INFOS------------------------------------------------------ //
 export const GameInfos: React.FC = () => {
+	// ----ANIMATIONS------------------------- //
+	const boxMotion = bouncyHeightChangeByPx({ finalHeight: 275, inDuration: 0.7 })
+	const childMotion = fade({ inDelay: 0.2 })
+
 	// ----CLASSNAMES------------------------- //
 	const name = 'gameInfo'
 	const boxName = `${name}s`
@@ -17,12 +19,27 @@ export const GameInfos: React.FC = () => {
 
 	// ----RENDER----------------------------- //
 	return <motion.div className={boxName}
-		{...bouncyHeightChangeByPx({ finalHeight: 275 })}>
-		<div className={playerPPName}>Player 1</div>
-		<div className={playerPPName}>Player 2</div>
-		<div className={scoreName}>0</div>
-		<div className={scoreName}>0</div>
-		<div className={timerName}><Timer /></div>
+		{...boxMotion}>
+		<motion.div className={playerPPName}
+			{...childMotion}>
+			Player 1
+		</motion.div>
+		<motion.div className={playerPPName}
+			{...childMotion}>
+			Player 2
+		</motion.div>
+		<motion.div className={scoreName}
+			{...childMotion}>
+			0
+		</motion.div>
+		<motion.div className={scoreName}
+			{...childMotion}>
+			0
+		</motion.div>
+		<motion.div className={timerName}
+			{...childMotion}>
+			<Timer />
+		</motion.div>
 	</motion.div>
 }
 
@@ -48,27 +65,23 @@ const Matchmaker: React.FC = () => {
 			setInGame(true)
 			navigate('/game')
 		}, 2000)
-
 		return () => clearTimeout(timer)
 	}, [matchmaking])
 
 	// ----HANDLERS--------------------------- //
-	const toggleMatchmaker = useCallback(() => {
+	const toggleMatchmaker = () => {
 		if (!matchmaking && !inGame) setMatchmaking(true)
 		else if (inGame) {
 			localStorage.setItem('inGame', '0')
 			setInGame(false)
 			navigate('/')
 		} else setMatchmaking(false)
-	}, [matchmaking, inGame])
-
-	const matchmakerBtnHdl = useMemo(() => ({
-		onMouseUp: toggleMatchmaker
-	}), [toggleMatchmaker])
+	}
+	const matchmakerBtnHdl = { onMouseUp: toggleMatchmaker }
 
 	// ----ANIMATIONS------------------------- //
-	const btnMotion = useMemo(() => ({
-		...bouncyYMove({ from: 100, extra: -20, inDuration: 0.6 }),
+	const boxMotion = {
+		...bouncyYMove({ from: 100, extra: -10, inDuration: 0.7 }),
 		whileHover: {
 			rotate: [0, -5, 5, 0],
 			transition: { ease: 'easeIn' }
@@ -77,24 +90,20 @@ const Matchmaker: React.FC = () => {
 			rotate: [0, 5, -5, 5, -5, 0],
 			transition: { ease: 'easeInOut' }
 		}
-	}), [])
+	}
 
 	// ----CLASSNAMES------------------------- //
 	const name = 'matchmaker'
-	const pressedName = `${name}--pressed`
 
 	// ----RENDER----------------------------- //
-	const btnContent = useMemo(() => {
-		if (!matchmaking) return inGame ? <>[EXIT]</> : <>[PLAY]</>
+	const render = () => {
+		if (!matchmaking) return (inGame ? <>[EXIT]</> : <>[PLAY]</>)
 		else return <>[STOP] <Timer /></>
-	}, [matchmaking, inGame])
-
-	return <FtMotionBtn
-		className={name}
-		pressedName={pressedName}
-		handler={matchmakerBtnHdl}
-		motionProps={btnMotion}
-		content={btnContent}
-	/>
+	}
+	return <motion.button className={name}
+		{...matchmakerBtnHdl}
+		{...boxMotion as MotionProps}>
+		{render()}
+	</motion.button>
 }
 export default Matchmaker

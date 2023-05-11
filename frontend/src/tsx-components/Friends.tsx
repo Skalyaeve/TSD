@@ -1,9 +1,6 @@
 import React, { useState, useEffect, useMemo, memo } from 'react'
-import { AnimatePresence, motion } from 'framer-motion'
-
-import { tglOnUp } from '../tsx-utils/ftHooks.tsx'
-import { FtDiv, FtBtn, FtMotionDiv, FtMotionBtn, FtMotionInput } from '../tsx-utils/ftBox.tsx'
-import { fade, bouncyWidthChangeByPx, heightChangeByPx, bouncyXMove, yMove, mergeMotions, xMove, bouncyWidthChangeByPercent } from '../tsx-utils/ftFramerMotion.tsx'
+import { AnimatePresence, MotionProps, motion } from 'framer-motion'
+import { fade, widthChangeByPx, heightChangeByPx, xMove, yMove, mergeMotions } from '../tsx-utils/ftMotion.tsx'
 
 // --------CLASSNAMES------------------------------------------------------ //
 const NAME = 'profile'
@@ -12,7 +9,6 @@ const FRIENDS_NAME = `${FRIEND_NAME}s`
 const LIST_NAME = `${FRIENDS_NAME}-list`
 const COL_NAME = `${LIST_NAME}-col`
 const BTN_NAME = `${NAME}-btn`
-const PRESSED_NAME = `${BTN_NAME}--pressed`
 
 // --------FRIEND-NAME----------------------------------------------------- //
 interface FriendNameProps {
@@ -35,26 +31,24 @@ const FriendName: React.FC<FriendNameProps> = ({ id }) => {
 	</>, [])
 
 	const boxContent = <>
-		<FtBtn className={mainBtnName}
-			pressedName={PRESSED_NAME}
-			content={btnContent}
-		/>
+		<button className={mainBtnName}>
+			{btnContent}
+		</button>
 		<AnimatePresence>
-			{delBtn === true && <FtMotionBtn className={delBtnName}
-				pressedName={PRESSED_NAME}
-				motionProps={xMove({ from: 30, inDuration: 0.25 })}
-				content='[X]'
-			/>}
+			{delBtn === true && (
+				<motion.button className={delBtnName}
+					{...xMove({ from: 30 }) as MotionProps}>
+					[X]
+				</motion.button>
+			)}
 		</AnimatePresence>
 	</>
 
-	return <FtDiv className={COL_NAME}
-		handler={{
-			onMouseEnter: () => setDelBtn(true),
-			onMouseLeave: () => setDelBtn(false)
-		}}
-		content={boxContent}
-	/>
+	return <div className={COL_NAME}
+		onMouseEnter={() => setDelBtn(true)}
+		onMouseLeave={() => setDelBtn(false)}>
+		{boxContent}
+	</div>
 }
 
 // --------FRIEND---------------------------------------------------------- //
@@ -73,7 +67,7 @@ const Friend: React.FC<FriendProps> = memo(({ id }) => {
 	)
 
 	return <motion.div className={FRIEND_NAME}
-		{...yMove({ from: (100 * id), inDuration: 1, outDuration: 0.5 })}>
+		{...yMove({ from: (100 * id) }) as MotionProps}>
 		<FriendName id={id} />
 		{friendBox('0')}
 		{friendBox('0')}
@@ -87,7 +81,12 @@ const Friend: React.FC<FriendProps> = memo(({ id }) => {
 const FriendSearch: React.FC = memo(() => {
 	// ----STATES----------------------------- //
 	const [searchBtn, setSearchBtn] = useState(false)
-	const [searchin, toggleSearchin] = tglOnUp(false)
+	const [searchin, setSearchin] = useState(false)
+
+	// ----HANDLERS--------------------------- //
+	const searchBtnHdl = {
+		onMouseUp: () => setSearchin(x => !x)
+	}
 
 	// ----CLASSNAMES------------------------- //
 	const searchName = `${FRIENDS_NAME}-search`
@@ -96,14 +95,13 @@ const FriendSearch: React.FC = memo(() => {
 
 	// ----RENDER----------------------------- //
 	const childBtnContent = (!searchin ?
-		<FtDiv className={searchName}
-			pressedName={PRESSED_NAME}
-			content='[NAME]'
-		/>
+		<div className={searchName}>
+			[NAME]
+		</div>
 		:
-		<FtMotionInput name={inputName}
+		<motion.input name={inputName}
 			key={inputName}
-			motionProps={xMove({ from: 50, inDuration: 0.3 })}
+			{...xMove({ from: 50 }) as MotionProps}
 		/>
 	)
 
@@ -113,22 +111,21 @@ const FriendSearch: React.FC = memo(() => {
 		</AnimatePresence>
 
 		<AnimatePresence>
-			{(searchBtn || searchin) && <FtMotionDiv className={searchBtnName}
-				pressedName={PRESSED_NAME}
-				handler={toggleSearchin}
-				motionProps={xMove({ from: 30, inDuration: 0.25 })}
-				content={searchin ? '[X]' : '[S]'}
-			/>}
+			{(searchBtn || searchin) && (
+				<motion.button className={searchBtnName}
+					{...searchBtnHdl}
+					{...xMove({ from: 30 }) as MotionProps}>
+					{searchin ? '[X]' : '[S]'}
+				</motion.button>
+			)}
 		</AnimatePresence>
 	</>
 
-	return <FtDiv className={COL_NAME}
-		handler={{
-			onMouseEnter: () => setSearchBtn(true),
-			onMouseLeave: () => setSearchBtn(false)
-		}}
-		content={boxContent}
-	/>
+	return <div className={COL_NAME}
+		onMouseEnter={() => setSearchBtn(true)}
+		onMouseLeave={() => setSearchBtn(false)}>
+		{boxContent}
+	</div>
 })
 
 // --------FRIENDS-LIST---------------------------------------------------- //
@@ -152,10 +149,9 @@ const FriendsList: React.FC = () => {
 	))
 
 	const listHeadCol = (content: string) => (
-		<FtBtn className={COL_NAME}
-			pressedName={PRESSED_NAME}
-			content={content}
-		/>
+		<button className={COL_NAME}>
+			{content}
+		</button>
 	)
 
 	return <motion.div className={LIST_NAME}
@@ -175,25 +171,16 @@ const FriendsList: React.FC = () => {
 }
 
 // --------FRIENDS--------------------------------------------------------- //
-// - React.memo() utilisé ici à cause de framer-motion                    - //
-// ------------------------------------------------------------------------ //
-const Friends: React.FC = memo(() => {
+const Friends: React.FC = () => {
 	// ----ANIMATIONS------------------------- //
 	const boxMove = (index: number) => (
-		bouncyXMove({
+		xMove({
 			from: 100,
-			extra: -20,
-			inDuration: 1 + 0.07 * index,
-			outDuration: 0.3 + 0.035 * index
 		})
 	)
 
 	const headInputMotion = mergeMotions(
-		bouncyWidthChangeByPx({
-			finalWidth: 325,
-			inDuration: 1 + 0.07 * 5,
-			outDuration: 0.3 + 0.035 * 5
-		}),
+		widthChangeByPx({ finalWidth: 325 }),
 		boxMove(2)
 	)
 
@@ -205,20 +192,17 @@ const Friends: React.FC = memo(() => {
 
 	// ----RENDER----------------------------- //
 	return <motion.main className={boxName}
-		{...fade({ inDuration: 1, outDuration: 0.5 })}>
+		{...fade({}) as MotionProps}>
 		<motion.div className={headName}
-			{...heightChangeByPx({ finalHeight: 200 })}>
-			<FtMotionBtn className={inputBtnName}
-				pressedName={PRESSED_NAME}
-				motionProps={boxMove(1)}
-				content='[ADD]'
-			/>
-			<FtMotionInput name={inputName}
-				motionProps={headInputMotion}
-			/>
+			{...heightChangeByPx({ finalHeight: 200 }) as MotionProps}>
+			<motion.button className={inputBtnName}
+				{...boxMove(1) as MotionProps}>
+				[ADD]
+			</motion.button>
+			<motion.input name={inputName} {...headInputMotion} />
 		</motion.div>
 
 		<FriendsList />
 	</motion.main >
-})
+}
 export default Friends

@@ -12,7 +12,7 @@ ex: ".button-icon {}"
 
 Modifieur: Une variation ou un état d'un bloc ou d'un élément. 
 ex: ".button--large {}"
-ex: ".navBar-logo--pressed {}"
+ex: ".navBar-logo--hidden {}"
 --------------------------------- */
 
 /* ---------------------------------
@@ -110,7 +110,7 @@ body * {
 	border-radius: 5px;
 }
 
-.login-btn--pressed {
+.login-btn:active {
 	/* #1 Éléments */
 	background-color: rgb(255, 255, 255, 0.3);
 }

@@ -27,11 +27,11 @@ export const getRand = (min: number, max: number) => (
 	min + Math.random() * (max - min)
 )
 
-export const getSignChangeRandXY = (min: number, max: number) => ({
+export const getSignChangingRandXY = (min: number, max: number) => ({
 	x: (min + Math.random() * (max - min)) * (Math.random() < 0.5 ? -1 : 1),
 	y: (min + Math.random() * (max - min)) * (Math.random() < 0.5 ? -1 : 1)
 })
 
-export const getSignChangeRand = (min: number, max: number) => (
+export const getSignChangingRand = (min: number, max: number) => (
 	(min + Math.random() * (max - min)) * (Math.random() < 0.5 ? -1 : 1)
 )

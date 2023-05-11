@@ -1,7 +1,5 @@
 import React, { useState, useCallback, useMemo } from 'react'
 
-import { FtBtn } from '../tsx-utils/ftBox.tsx'
-
 // --------ROOM-MEMBER----------------------------------------------------- //
 interface RoomMemberProps {
 	id: number
@@ -16,7 +14,6 @@ const RoomMember: React.FC<RoomMemberProps> = ({
 
 	// ----CLASSNAMES------------------------- //
 	const btnName = `${className}-btn`
-	const btnPressedName = 'chat-btn--pressed'
 
 	// ----HANDLERS--------------------------- //
 	const enterUser = useCallback(() => setShowButton(true), [])
@@ -25,33 +22,28 @@ const RoomMember: React.FC<RoomMemberProps> = ({
 	// ----RENDER----------------------------- //
 	const btnToAdd = useMemo(() => {
 		if (!addedUsers)
-			return <FtBtn className={btnName}
-				pressedName={btnPressedName}
-				content='[/x]'
-			/>
+			return <button className={btnName}>
+				[/x]'
+			</button>
 		else return <>
-			<FtBtn className={btnName}
-				pressedName={btnPressedName}
-				content='[up]'
-			/>
-			<FtBtn className={btnName}
-				pressedName={btnPressedName}
-				content='[/m]'
-			/>
-			<FtBtn className={btnName}
-				pressedName={btnPressedName}
-				content='[/x]'
-			/>
+			<button className={btnName}>
+				[up]'
+			</button>
+			<button className={btnName}>
+				[/m]'
+			</button>
+			<button className={btnName}>
+				[/x]'
+			</button>
 		</>
 	}, [])
 
 	return <div className={className}
 		onMouseEnter={enterUser}
 		onMouseLeave={leaveUser}>
-		<FtBtn className={`${className}-link`}
-			pressedName={btnPressedName}
-			content={`[#${id}]`}
-		/>
+		<button className={`${className}-link`}>
+			[#{id}]
+		</button>
 		{showButton && <div className={`${className}-btns`}>
 			{btnToAdd}
 		</div>}
@@ -111,24 +103,20 @@ const ChatSettings: React.FC<ChatSettingsProps> = (({
 	const mainInputName = `${name}-main-input`
 	const nameInputName = `${name}-name-input`
 	const pswInputName = `${name}-psw-input`
-	const btnPressedName = 'chat-btn--pressed'
 
 	// ----RENDER----------------------------- //
 	const commitArea = useMemo(() => {
 		if (settingsOpen === 1)
-			return <FtBtn className={`${name}-create-btn ${btnName}`}
-				pressedName={btnPressedName}
-				content='[CREATE]'
-			/>
+			return <button className={`${name}-create-btn ${btnName}`}>
+				[CREATE]
+			</button>
 		else return <>
-			<FtBtn className={`${name}-update-btn ${btnName}`}
-				pressedName={btnPressedName}
-				content='[SAVE]'
-			/>
-			<FtBtn className={`${name}-del-btn ${btnName}`}
-				pressedName={btnPressedName}
-				content='[DELETE]'
-			/>
+			<button className={`${name}-update-btn ${btnName}`}>
+				[SAVE]
+			</button>
+			<button className={`${name}-del-btn ${btnName}`}>
+				[DELETE]
+			</button>
 		</>
 	}, [settingsOpen])
 

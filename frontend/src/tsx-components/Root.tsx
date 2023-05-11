@@ -1,10 +1,7 @@
-import React, { useRef, useState, useLayoutEffect, useEffect } from 'react'
+import React, { useRef, useState, useLayoutEffect } from 'react'
 import { Routes, Route, useLocation, useNavigate } from 'react-router-dom'
-import { AnimatePresence } from 'framer-motion'
-
-import { useTgl } from '../tsx-utils/ftHooks.tsx'
-import { FtMotionBtn } from '../tsx-utils/ftBox.tsx'
-import { bouncyPopUpByPx } from '../tsx-utils/ftFramerMotion.tsx'
+import { AnimatePresence, MotionProps, motion } from 'framer-motion'
+import { bouncyPopUpByPx } from '../tsx-utils/ftMotion.tsx'
 import NavBar from './NavBar.tsx'
 import Chat from './Chat.tsx'
 import Matchmaker from './Matchmaker.tsx'
@@ -17,21 +14,31 @@ import Leader from './Leader.tsx'
 import ErrorPage from './ErrorPage.tsx'
 import '../css/Root.css'
 
-// --------LOG-SCREEN------------------------------------------------------ //
+// --------LOGIN-BTN------------------------------------------------------- //
 interface LogginBtnProps {
-	tglLogged: () => void
+	setLogged: React.Dispatch<React.SetStateAction<boolean>>
 }
-const LoginBtn: React.FC<LogginBtnProps> = ({ tglLogged }) => {
+const LoginBtn: React.FC<LogginBtnProps> = ({ setLogged }) => {
 	// ----REFS------------------------------- //
 	const animating = useRef(false)
+
+	// ----HANDLERS--------------------------- //
+	const btnHdl = {
+		onMouseUp: () => {
+			if (!animating.current) {
+				setLogged(true)
+				animating.current = true
+			}
+		}
+	}
 
 	// ----ANIMATIONS------------------------- //
 	const btnMotion = {
 		...bouncyPopUpByPx({ finalWidth: 325, finalHeight: 125 }),
 		whileHover: {
-			scale: 1.025,
+			scale: 1.05,
 			transition: {
-				duration: 1,
+				duration: 1.5,
 				repeat: Infinity,
 				repeatType: 'reverse',
 				ease: 'linear'
@@ -41,25 +48,16 @@ const LoginBtn: React.FC<LogginBtnProps> = ({ tglLogged }) => {
 
 	// ----CLASSNAMES------------------------- //
 	const name = 'login-btn'
-	const parentName = `${name}-box`
-	const pressedName = `${name}--pressed`
+	const boxName = `${name}-box`
 
 	// ----RENDER----------------------------- //
-	return <div className={parentName}>
-		<FtMotionBtn className={name}
-			pressedName={pressedName}
-			handler={{
-				onMouseUp: () => {
-					if (!animating.current) {
-						tglLogged()
-						animating.current = true
-					}
-				}
-			}}
-			motionProps={btnMotion}
-			content='[42Auth]'
-		/>
-	</div>
+	return <div className={boxName}>
+		<motion.button className={name}
+			{...btnHdl}
+			{...btnMotion as MotionProps}>
+			[42Auth]
+		</motion.button>
+	</div >
 }
 
 // --------ROOT------------------------------------------------------------ //
@@ -69,7 +67,7 @@ const Root: React.FC = () => {
 	const navigate = useNavigate()
 
 	// ----STATES----------------------------- //
-	const [logged, tglLogged] = useTgl(localStorage.getItem('logged') === '1')
+	const [logged, setLogged] = useState(localStorage.getItem('logged') === '1')
 	const [showHeader, setShowHeader] = useState(false)
 
 	// ----EFFECTS---------------------------- //
@@ -78,7 +76,9 @@ const Root: React.FC = () => {
 		if (logged) {
 			navigate('/')
 			if (location.pathname === '/login') {
-				const timer = setTimeout(() => setShowHeader(true), 500)
+				const timer = setTimeout(() => {
+					setShowHeader(true)
+				}, 500)
 				return () => clearTimeout(timer)
 			}
 			else setShowHeader(true)
@@ -89,7 +89,7 @@ const Root: React.FC = () => {
 		}
 	}, [logged])
 
-	useEffect(() => {
+	useLayoutEffect(() => {
 		if (logged && localStorage.getItem('inGame') === '1')
 			navigate('/game')
 	}, [location.pathname])
@@ -100,16 +100,18 @@ const Root: React.FC = () => {
 	// ----RENDER----------------------------- //
 	return <>
 		<AnimatePresence>
-			{showHeader && <header className={headerName}>
-				<NavBar tglLogged={tglLogged} />
-				<Chat />
-				<Matchmaker />
-			</header>}
+			{showHeader && (
+				<header className={headerName}>
+					<NavBar setLogged={setLogged} />
+					<Chat />
+					<Matchmaker />
+				</header>
+			)}
 		</AnimatePresence>
 
 		<AnimatePresence mode='wait'>
 			<Routes location={location} key={location.pathname}>
-				<Route path='/login' element={<LoginBtn tglLogged={tglLogged} />} />
+				<Route path='/login' element={<LoginBtn setLogged={setLogged} />} />
 				<Route path='/' element={<Home />} />
 				<Route path='/profile' element={<AccountInfos />} />
 				<Route path='/profile/friends' element={<Friends />} />

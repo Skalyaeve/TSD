@@ -12,7 +12,7 @@ ex: ".button-icon {}"
 
 Modifieur: Une variation ou un état d'un bloc ou d'un élément. 
 ex: ".button--large {}"
-ex: ".navBar-logo--pressed {}"
+ex: ".navBar-logo--hidden {}"
 --------------------------------- */
 
 /* ---------------------------------
@@ -52,7 +52,6 @@ ex: ".navBar-logo--pressed {}"
 	align-items: center;
 
 	/* #2 Forme */
-	height: 275px;
 	border-radius: 5px;
 
 	/* #3 Position */

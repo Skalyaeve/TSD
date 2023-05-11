@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------------ //
-// --------Élément-------------------------------------------------------- //
+// --------ELEMENTS-------------------------------------------------------- //
 // ------------------------------------------------------------------------ //
 
 // --------OPACITY--------------------------------------------------------- //
@@ -17,11 +17,11 @@ export const fade = ({
 	initialOpacity = 0,
 	finalOpacity = 1,
 	inDuration = 0.5,
-	outDuration = inDuration,
+	outDuration = 0.5,
 	animateEase = 'easeInOut',
 	exitEase = animateEase,
 	inDelay = 0,
-	outDelay = inDelay
+	outDelay = 0
 }: fadeProps) => ({
 	initial: { opacity: initialOpacity },
 	animate: {
@@ -69,11 +69,11 @@ export const widthChange = ({
 	initialOpacity = 0,
 	finalOpacity = 1,
 	inDuration = 0.5,
-	outDuration = inDuration,
+	outDuration = 0.5,
 	animateEase = 'easeInOut',
 	exitEase = animateEase,
 	inDelay = 0,
-	outDelay = inDelay
+	outDelay = 0
 }: widthChangeProps) => ({
 	initial: {
 		scaleX: initialWidth,
@@ -131,11 +131,11 @@ export const widthChangeByPercent = ({
 	initialOpacity = 0,
 	finalOpacity = 1,
 	inDuration = 0.5,
-	outDuration = inDuration,
+	outDuration = 0.5,
 	animateEase = 'easeInOut',
 	exitEase = animateEase,
 	inDelay = 0,
-	outDelay = inDelay
+	outDelay = 0
 }: widthChangeByPercentProps) => ({
 	initial: {
 		width: `${initialWidth}%`,
@@ -193,18 +193,18 @@ export const widthChangeByPx = ({
 	initialOpacity = 0,
 	finalOpacity = 1,
 	inDuration = 0.5,
-	outDuration = inDuration,
+	outDuration = 0.5,
 	animateEase = 'easeInOut',
 	exitEase = animateEase,
 	inDelay = 0,
-	outDelay = inDelay
+	outDelay = 0
 }: widthChangeByPxProps) => ({
 	initial: {
-		width: `${initialWidth}px`,
+		width: initialWidth,
 		opacity: initialOpacity
 	},
 	animate: {
-		width: `${finalWidth}px`,
+		width: finalWidth,
 		opacity: finalOpacity,
 		transition: {
 			width: {
@@ -220,7 +220,7 @@ export const widthChangeByPx = ({
 		}
 	},
 	exit: {
-		width: `${initialWidth}px`,
+		width: initialWidth,
 		opacity: initialOpacity,
 		transition: {
 			width: {
@@ -260,11 +260,11 @@ export const bouncyWidthChange = ({
 	initialOpacity = 0,
 	finalOpacity = 1,
 	inDuration = 0.5,
-	outDuration = inDuration,
+	outDuration = 0.5,
 	animateEase = 'easeInOut',
 	exitEase = animateEase,
 	inDelay = 0,
-	outDelay = inDelay
+	outDelay = 0
 }: bouncyWidthChangeProps) => ({
 	initial: {
 		scaleX: initialWidth,
@@ -328,11 +328,11 @@ export const bouncyWidthChangeByPercent = ({
 	initialOpacity = 0,
 	finalOpacity = 1,
 	inDuration = 0.5,
-	outDuration = inDuration,
+	outDuration = 0.5,
 	animateEase = 'easeInOut',
 	exitEase = animateEase,
 	inDelay = 0,
-	outDelay = inDelay
+	outDelay = 0
 }: bouncyWidthChangeByPercentProps) => ({
 	initial: {
 		width: `${initialWidth}%`,
@@ -396,18 +396,18 @@ export const bouncyWidthChangeByPx = ({
 	initialOpacity = 0,
 	finalOpacity = 1,
 	inDuration = 0.5,
-	outDuration = inDuration,
+	outDuration = 0.5,
 	animateEase = 'easeInOut',
 	exitEase = animateEase,
 	inDelay = 0,
-	outDelay = inDelay
+	outDelay = 0
 }: bouncyWidthChangeByPxProps) => ({
 	initial: {
-		width: `${initialWidth}px`,
+		width: initialWidth,
 		opacity: initialOpacity
 	},
 	animate: {
-		width: [`${initialWidth}px`, `${maxWidth}px`, `${finalWidth}px`],
+		width: [initialWidth, maxWidth, finalWidth],
 		opacity: finalOpacity,
 		transition: {
 			width: {
@@ -424,7 +424,7 @@ export const bouncyWidthChangeByPx = ({
 		}
 	},
 	exit: {
-		width: [`${finalWidth}px`, `${maxWidth}px`, `${initialWidth}px`],
+		width: [finalWidth, maxWidth, initialWidth],
 		opacity: initialOpacity,
 		transition: {
 			width: {
@@ -461,11 +461,11 @@ export const heightChange = ({
 	initialOpacity = 0,
 	finalOpacity = 1,
 	inDuration = 0.5,
-	outDuration = inDuration,
+	outDuration = 0.5,
 	animateEase = 'easeInOut',
 	exitEase = animateEase,
 	inDelay = 0,
-	outDelay = inDelay
+	outDelay = 0
 }: heightChangeProps) => ({
 	initial: {
 		scaleY: initialHeight,
@@ -523,18 +523,18 @@ export const heightChangeByPercent = ({
 	initialOpacity = 0,
 	finalOpacity = 1,
 	inDuration = 0.5,
-	outDuration = inDuration,
+	outDuration = 0.5,
 	animateEase = 'easeInOut',
 	exitEase = animateEase,
 	inDelay = 0,
-	outDelay = inDelay
+	outDelay = 0
 }: heightChangeByPercentProps) => ({
 	initial: {
-		height: `${initialHeight}%`,
+		height: `${initialHeight}% `,
 		opacity: initialOpacity
 	},
 	animate: {
-		height: `${finalHeight}%`,
+		height: `${finalHeight}% `,
 		opacity: finalOpacity,
 		transition: {
 			height: {
@@ -550,7 +550,7 @@ export const heightChangeByPercent = ({
 		}
 	},
 	exit: {
-		height: `${initialHeight}%`,
+		height: `${initialHeight}% `,
 		opacity: initialOpacity,
 		transition: {
 			height: {
@@ -585,18 +585,18 @@ export const heightChangeByPx = ({
 	initialOpacity = 0,
 	finalOpacity = 1,
 	inDuration = 0.5,
-	outDuration = inDuration,
+	outDuration = 0.5,
 	animateEase = 'easeInOut',
 	exitEase = animateEase,
 	inDelay = 0,
-	outDelay = inDelay
+	outDelay = 0
 }: heightChangeByPxProps) => ({
 	initial: {
-		height: `${initialHeight}px`,
+		height: initialHeight,
 		opacity: initialOpacity
 	},
 	animate: {
-		height: `${finalHeight}px`,
+		height: finalHeight,
 		opacity: finalOpacity,
 		transition: {
 			height: {
@@ -612,7 +612,7 @@ export const heightChangeByPx = ({
 		}
 	},
 	exit: {
-		height: `${initialHeight}px`,
+		height: initialHeight,
 		opacity: initialOpacity,
 		transition: {
 			height: {
@@ -652,11 +652,11 @@ export const bouncyHeightChange = ({
 	initialOpacity = 0,
 	finalOpacity = 1,
 	inDuration = 0.5,
-	outDuration = inDuration,
+	outDuration = 0.5,
 	animateEase = 'easeInOut',
 	exitEase = animateEase,
 	inDelay = 0,
-	outDelay = inDelay
+	outDelay = 0
 }: bouncyHeightChangeProps) => ({
 	initial: {
 		scaleY: initialHeight,
@@ -720,18 +720,18 @@ export const bouncyHeightChangeByPercent = ({
 	initialOpacity = 0,
 	finalOpacity = 1,
 	inDuration = 0.5,
-	outDuration = inDuration,
+	outDuration = 0.5,
 	animateEase = 'easeInOut',
 	exitEase = animateEase,
 	inDelay = 0,
-	outDelay = inDelay
+	outDelay = 0
 }: bouncyHeightChangeByPercentProps) => ({
 	initial: {
-		height: `${initialHeight}%`,
+		height: `${initialHeight}% `,
 		opacity: initialOpacity
 	},
 	animate: {
-		height: [`${initialHeight}%`, `${maxHeight}%`, `${finalHeight}%`],
+		height: [`${initialHeight}% `, `${maxHeight}% `, `${finalHeight}% `],
 		opacity: finalOpacity,
 		transition: {
 			height: {
@@ -748,7 +748,7 @@ export const bouncyHeightChangeByPercent = ({
 		}
 	},
 	exit: {
-		height: [`${finalHeight}%`, `${maxHeight}%`, `${initialHeight}%`],
+		height: [`${finalHeight}% `, `${maxHeight}% `, `${initialHeight}% `],
 		opacity: initialOpacity,
 		transition: {
 			height: {
@@ -788,18 +788,18 @@ export const bouncyHeightChangeByPx = ({
 	initialOpacity = 0,
 	finalOpacity = 1,
 	inDuration = 0.5,
-	outDuration = inDuration,
+	outDuration = 0.5,
 	animateEase = 'easeInOut',
 	exitEase = animateEase,
 	inDelay = 0,
-	outDelay = inDelay
+	outDelay = 0
 }: bouncyHeightChangeByPxProps) => ({
 	initial: {
-		height: `${initialHeight}px`,
+		height: initialHeight,
 		opacity: initialOpacity
 	},
 	animate: {
-		height: [`${initialHeight}px`, `${maxHeight}px`, `${finalHeight}px`],
+		height: [initialHeight, maxHeight, finalHeight],
 		opacity: finalOpacity,
 		transition: {
 			height: {
@@ -816,7 +816,7 @@ export const bouncyHeightChangeByPx = ({
 		}
 	},
 	exit: {
-		height: [`${finalHeight}px`, `${maxHeight}px`, `${initialHeight}px`],
+		height: [finalHeight, maxHeight, initialHeight],
 		opacity: initialOpacity,
 		transition: {
 			height: {
@@ -853,11 +853,11 @@ export const popUp = ({
 	initialOpacity = 0,
 	finalOpacity = 1,
 	inDuration = 0.5,
-	outDuration = inDuration,
+	outDuration = 0.5,
 	animateEase = 'easeInOut',
 	exitEase = animateEase,
 	inDelay = 0,
-	outDelay = inDelay
+	outDelay = 0
 }: popUpProps) => ({
 	initial: {
 		scale: initialSize,
@@ -922,20 +922,20 @@ export const popUpByPercent = ({
 	initialOpacity = 0,
 	finalOpacity = 1,
 	inDuration = 0.5,
-	outDuration = inDuration,
+	outDuration = 0.5,
 	animateEase = 'easeInOut',
 	exitEase = animateEase,
 	inDelay = 0,
-	outDelay = inDelay
+	outDelay = 0
 }: popUpByPercentProps) => ({
 	initial: {
-		width: `${initialWidth}%`,
-		height: `${initialHeight}%`,
+		width: `${initialWidth}% `,
+		height: `${initialHeight}% `,
 		opacity: initialOpacity
 	},
 	animate: {
-		width: `${finalWidth}%`,
-		height: `${finalHeight}%`,
+		width: `${finalWidth}% `,
+		height: `${finalHeight}% `,
 		opacity: finalOpacity,
 		transition: {
 			width: {
@@ -956,8 +956,8 @@ export const popUpByPercent = ({
 		}
 	},
 	exit: {
-		width: `${initialWidth}%`,
-		height: `${initialHeight}%`,
+		width: `${initialWidth}% `,
+		height: `${initialHeight}% `,
 		opacity: initialOpacity,
 		transition: {
 			width: {
@@ -1001,20 +1001,20 @@ export const popUpByPx = ({
 	initialOpacity = 0,
 	finalOpacity = 1,
 	inDuration = 0.5,
-	outDuration = inDuration,
+	outDuration = 0.5,
 	animateEase = 'easeInOut',
 	exitEase = animateEase,
 	inDelay = 0,
-	outDelay = inDelay
+	outDelay = 0
 }: popUpByPxProps) => ({
 	initial: {
-		width: `${initialWidth}px`,
-		height: `${initialHeight}px`,
+		width: initialWidth,
+		height: initialHeight,
 		opacity: initialOpacity
 	},
 	animate: {
-		width: `${finalWidth}px`,
-		height: `${finalHeight}px`,
+		width: finalWidth,
+		height: finalHeight,
 		opacity: finalOpacity,
 		transition: {
 			width: {
@@ -1035,8 +1035,8 @@ export const popUpByPx = ({
 		}
 	},
 	exit: {
-		width: `${initialWidth}px`,
-		height: `${initialHeight}px`,
+		width: initialWidth,
+		height: initialHeight,
 		opacity: initialOpacity,
 		transition: {
 			width: {
@@ -1081,11 +1081,11 @@ export const bouncyPopUp = ({
 	initialOpacity = 0,
 	finalOpacity = 1,
 	inDuration = 0.5,
-	outDuration = inDuration,
+	outDuration = 0.5,
 	animateEase = 'easeInOut',
 	exitEase = animateEase,
 	inDelay = 0,
-	outDelay = inDelay
+	outDelay = 0
 }: bouncyPopUpProps) => ({
 	initial: {
 		scale: initialSize,
@@ -1155,20 +1155,20 @@ export const bouncyPopUpByPercent = ({
 	initialOpacity = 0,
 	finalOpacity = 1,
 	inDuration = 0.5,
-	outDuration = inDuration,
+	outDuration = 0.5,
 	animateEase = 'easeInOut',
 	exitEase = animateEase,
 	inDelay = 0,
-	outDelay = inDelay
+	outDelay = 0
 }: bouncyPopUpByPercentProps) => ({
 	initial: {
-		width: `${initialWidth}%`,
-		height: `${initialHeight}%`,
+		width: `${initialWidth}% `,
+		height: `${initialHeight}% `,
 		opacity: initialOpacity
 	},
 	animate: {
-		width: [`${initialWidth}%`, `${maxWidth}%`, `${finalWidth}%`],
-		height: [`${initialHeight}%`, `${maxHeight}%`, `${finalHeight}%`],
+		width: [`${initialWidth}% `, `${maxWidth}% `, `${finalWidth}% `],
+		height: [`${initialHeight}% `, `${maxHeight}% `, `${finalHeight}% `],
 		opacity: finalOpacity,
 		transition: {
 			width: {
@@ -1191,8 +1191,8 @@ export const bouncyPopUpByPercent = ({
 		}
 	},
 	exit: {
-		width: [`${finalWidth}%`, `${maxWidth}%`, `${initialWidth}%`],
-		height: [`${finalHeight}%`, `${maxHeight}%`, `${initialHeight}%`],
+		width: [`${finalWidth}% `, `${maxWidth}% `, `${initialWidth}% `],
+		height: [`${finalHeight}% `, `${maxHeight}% `, `${initialHeight}% `],
 		opacity: initialOpacity,
 		transition: {
 			width: {
@@ -1244,20 +1244,20 @@ export const bouncyPopUpByPx = ({
 	initialOpacity = 0,
 	finalOpacity = 1,
 	inDuration = 0.5,
-	outDuration = inDuration,
+	outDuration = 0.5,
 	animateEase = 'easeInOut',
 	exitEase = animateEase,
 	inDelay = 0,
-	outDelay = inDelay
+	outDelay = 0
 }: bouncyPopUpByPxProps) => ({
 	initial: {
-		width: `${initialWidth}px`,
-		height: `${initialHeight}px`,
+		width: initialWidth,
+		height: initialHeight,
 		opacity: initialOpacity
 	},
 	animate: {
-		width: [`${initialWidth}px`, `${maxWidth}px`, `${finalWidth}px`],
-		height: [`${initialHeight}px`, `${maxHeight}px`, `${finalHeight}px`],
+		width: [initialWidth, maxWidth, finalWidth],
+		height: [initialHeight, maxHeight, finalHeight],
 		opacity: finalOpacity,
 		transition: {
 			width: {
@@ -1280,8 +1280,8 @@ export const bouncyPopUpByPx = ({
 		}
 	},
 	exit: {
-		width: [`${finalWidth}px`, `${maxWidth}px`, `${initialWidth}px`],
-		height: [`${finalHeight}px`, `${maxHeight}px`, `${initialHeight}px`],
+		width: [finalWidth, maxWidth, initialWidth],
+		height: [finalHeight, maxHeight, initialHeight],
 		opacity: initialOpacity,
 		transition: {
 			width: {
@@ -1328,18 +1328,18 @@ export const yMove = ({
 	initialOpacity = 0,
 	finalOpacity = 1,
 	inDuration = 0.5,
-	outDuration = inDuration,
+	outDuration = 0.5,
 	animateEase = 'easeInOut',
 	exitEase = animateEase,
 	inDelay = 0,
-	outDelay = inDelay
+	outDelay = 0
 }: yMoveProps) => ({
 	initial: {
-		y: `${from}px`,
+		y: from,
 		opacity: initialOpacity
 	},
 	animate: {
-		y: `${to}px`,
+		y: to,
 		opacity: finalOpacity,
 		transition: {
 			y: {
@@ -1355,7 +1355,7 @@ export const yMove = ({
 		}
 	},
 	exit: {
-		y: `${from}px`,
+		y: from,
 		opacity: initialOpacity,
 		transition: {
 			y: {
@@ -1395,18 +1395,18 @@ export const bouncyYMove = ({
 	initialOpacity = 0,
 	finalOpacity = 1,
 	inDuration = 0.5,
-	outDuration = inDuration,
+	outDuration = 0.5,
 	animateEase = 'easeInOut',
 	exitEase = animateEase,
 	inDelay = 0,
-	outDelay = inDelay
+	outDelay = 0
 }: bouncyYMoveProps) => ({
 	initial: {
-		y: `${from}px`,
+		y: from,
 		opacity: initialOpacity
 	},
 	animate: {
-		y: [`${from}px`, `${extra}px`, `${to}px`],
+		y: [from, extra, to],
 		opacity: finalOpacity,
 		transition: {
 			y: {
@@ -1423,7 +1423,7 @@ export const bouncyYMove = ({
 		}
 	},
 	exit: {
-		y: [`${to}px`, `${extra}px`, `${from}px`],
+		y: [to, extra, from],
 		opacity: initialOpacity,
 		transition: {
 			y: {
@@ -1460,18 +1460,18 @@ export const xMove = ({
 	initialOpacity = 0,
 	finalOpacity = 1,
 	inDuration = 0.5,
-	outDuration = inDuration,
+	outDuration = 0.5,
 	animateEase = 'easeInOut',
 	exitEase = animateEase,
 	inDelay = 0,
-	outDelay = inDelay
+	outDelay = 0
 }: xMoveProps) => ({
 	initial: {
-		x: `${from}px`,
+		x: from,
 		opacity: initialOpacity
 	},
 	animate: {
-		x: `${to}px`,
+		x: to,
 		opacity: finalOpacity,
 		transition: {
 			x: {
@@ -1487,7 +1487,7 @@ export const xMove = ({
 		}
 	},
 	exit: {
-		x: `${from}px`,
+		x: from,
 		opacity: initialOpacity,
 		transition: {
 			x: {
@@ -1527,18 +1527,18 @@ export const bouncyXMove = ({
 	initialOpacity = 0,
 	finalOpacity = 1,
 	inDuration = 0.5,
-	outDuration = inDuration,
+	outDuration = 0.5,
 	animateEase = 'easeInOut',
 	exitEase = animateEase,
 	inDelay = 0,
-	outDelay = inDelay
+	outDelay = 0
 }: bouncyXMoveProps) => ({
 	initial: {
-		x: `${from}px`,
+		x: from,
 		opacity: initialOpacity
 	},
 	animate: {
-		x: [`${from}px`, `${extra}px`, `${to}px`],
+		x: [from, extra, to],
 		opacity: finalOpacity,
 		transition: {
 			x: {
@@ -1555,7 +1555,7 @@ export const bouncyXMove = ({
 		}
 	},
 	exit: {
-		x: [`${to}px`, `${extra}px`, `${from}px`],
+		x: [to, extra, from],
 		opacity: initialOpacity,
 		transition: {
 			x: {
@@ -1596,11 +1596,11 @@ export const mergeMotions = (...motions: MotionProps[]): MotionProps => (
 			}
 		},
 		exit: {
-			...accumulator.exit,
 			...current.exit,
+			...accumulator.exit,
 			transition: {
-				...accumulator.exit.transition,
-				...current.exit.transition
+				...current.exit.transition,
+				...accumulator.exit.transition
 			}
 		}
 	}), {

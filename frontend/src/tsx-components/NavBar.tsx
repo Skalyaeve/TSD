@@ -1,21 +1,28 @@
-import React, { useRef, useState, useEffect } from 'react'
-import { Routes, Route, useLocation } from 'react-router-dom'
+import React, { useRef, useState, useLayoutEffect } from 'react'
+import { Routes, Route, useLocation, NavLink } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
-
-import { FtMotionBtn, FtMotionLink } from '../tsx-utils/ftBox.tsx'
 import { cutThenCompare } from '../tsx-utils/ftStrings.tsx'
-import { bouncyHeightChangeByPercent, bouncyHeightChangeByPx, bouncyYMove, mergeMotions } from '../tsx-utils/ftFramerMotion.tsx'
+import { bouncyHeightChangeByPercent, bouncyHeightChangeByPx, bouncyYMove, mergeMotions } from '../tsx-utils/ftMotion.tsx'
 import { GameInfos } from './Matchmaker.tsx'
 
-// --------VALUES---------------------------------------------------------- //
+// --------ANIMATIONS------------------------------------------------------ //
 const BACK_LINK_HEIGHT = 50
 const LINK_HEIGHT = 75
+
+const navBarMotion = (height: number) => (
+	bouncyHeightChangeByPx({ finalHeight: height })
+)
+const navBarLinkMotion = (from: number, extra: number) => (
+	mergeMotions(
+		bouncyHeightChangeByPercent({ finalHeight: 101 }),
+		bouncyYMove({ from: from, extra: extra })
+	)
+)
 
 // --------CLASSNAMES------------------------------------------------------ //
 const NAME = 'navBar'
 const LINK_NAME = `${NAME}-link`
-const LOGOUT_NAME = `${LINK_NAME} ${LINK_NAME}-motion`
-const PRESSED_NAME = `${LINK_NAME}--pressed`
+const MOTION_LINK_NAME = `${LINK_NAME}-motion`
 
 // --------LINK------------------------------------------------------------ //
 interface NavBarLinkProps {
@@ -25,13 +32,18 @@ interface NavBarLinkProps {
 	animating: React.MutableRefObject<boolean>
 }
 const NavBarLink: React.FC<NavBarLinkProps> = ({ index, to, content, animating }) => {
+	// ----HANDLERS--------------------------- //
+	const linkHdl = {
+		onClick: (e: React.MouseEvent) => {
+			if (animating.current || localStorage.getItem('inGame') === '1')
+				e.preventDefault()
+		}
+	}
+
 	// ----ANIMATIONS------------------------- //
 	const comeFrom = (index ? BACK_LINK_HEIGHT + LINK_HEIGHT * (index - 1) : 0)
 	const linkMotion = {
-		...mergeMotions(
-			bouncyHeightChangeByPercent({ finalHeight: 101, maxHeight: 101 }),
-			bouncyYMove({ from: -comeFrom, extra: 0 })
-		),
+		...navBarLinkMotion(-comeFrom, index ? 14 : 0),
 		whileHover: {
 			scale: 1.025,
 			borderTopLeftRadius: '5px',
@@ -43,33 +55,36 @@ const NavBarLink: React.FC<NavBarLinkProps> = ({ index, to, content, animating }
 	}
 
 	// ----RENDER----------------------------- //
-	return <FtMotionLink className={LINK_NAME}
-		pressedName={PRESSED_NAME}
-		to={to}
-		handler={{
-			onClick: (e: React.MouseEvent) => {
-				if (animating.current || localStorage.getItem('inGame') === '1')
-					e.preventDefault()
-			}
-		}}
-		motionProps={linkMotion}
-		content={content}
-	/>
+	return <motion.div className={MOTION_LINK_NAME}
+		{...linkMotion}>
+		<NavLink className={LINK_NAME}
+			to={to}
+			{...linkHdl}>
+			{content}
+		</NavLink>
+	</motion.div>
 }
 
 // --------RENDER-FROM-HOME------------------------------------------------ //
 interface FromHomeProps {
-	tglLogged: () => void
+	setLogged: React.Dispatch<React.SetStateAction<boolean>>
 	setRender: React.Dispatch<React.SetStateAction<JSX.Element>>
 	animating: React.MutableRefObject<boolean>
 }
-const FromHome: React.FC<FromHomeProps> = ({ tglLogged, setRender, animating }) => {
+const FromHome: React.FC<FromHomeProps> = ({ setLogged, setRender, animating }) => {
+	// ----HANDLERS--------------------------- //
+	const logoutBtnHdl = {
+		onMouseUp: () => {
+			if (animating.current) return
+			setLogged(false)
+			setRender(<></>)
+			animating.current = true
+		}
+	}
+
 	// ----ANIMATIONS------------------------- //
 	const logoutBtnMotion = {
-		...mergeMotions(
-			bouncyHeightChangeByPercent({ finalHeight: 101, maxHeight: 101 }),
-			bouncyYMove({ from: 0, extra: 0 })
-		),
+		...navBarLinkMotion(0, 0),
 		whileHover: {
 			scale: 1.025,
 			borderBottomLeftRadius: '5px',
@@ -78,21 +93,17 @@ const FromHome: React.FC<FromHomeProps> = ({ tglLogged, setRender, animating }) 
 		}
 	}
 
+	// ----CLASSNAMES------------------------- //
+	const logoutBtnName = `${LINK_NAME} ${MOTION_LINK_NAME}`
+
 	// ----RENDER----------------------------- //
 	return <motion.nav className={NAME}
-		{...bouncyHeightChangeByPx({ finalHeight: BACK_LINK_HEIGHT + LINK_HEIGHT * 3 })}>
-		<FtMotionBtn className={LOGOUT_NAME}
-			handler={{
-				onMouseUp: () => {
-					if (animating.current) return
-					tglLogged()
-					animating.current = true
-					setRender(<></>)
-				}
-			}}
-			motionProps={logoutBtnMotion}
-			content='[LOGOUT]'
-		/>
+		{...navBarMotion(BACK_LINK_HEIGHT + LINK_HEIGHT * 3)}>
+		<motion.button className={logoutBtnName}
+			{...logoutBtnHdl}
+			{...logoutBtnMotion}>
+			[LOGOUT]
+		</motion.button>
 		<NavBarLink index={1}
 			to='/profile'
 			content='[PROFILE]'
@@ -117,7 +128,7 @@ interface FromProfileProps {
 }
 const FromProfile: React.FC<FromProfileProps> = ({ animating }) => (
 	<motion.nav className={NAME}
-		{...bouncyHeightChangeByPx({ finalHeight: BACK_LINK_HEIGHT + LINK_HEIGHT * 2 })}>
+		{...navBarMotion(BACK_LINK_HEIGHT + LINK_HEIGHT * 2)}>
 		<NavBarLink index={0}
 			to='/'
 			content='[BACK]'
@@ -142,7 +153,7 @@ interface FromCharactersProps {
 }
 const FromCharacters: React.FC<FromCharactersProps> = ({ animating }) => (
 	<motion.nav className={NAME}
-		{...bouncyHeightChangeByPx({ finalHeight: BACK_LINK_HEIGHT })}>
+		{...navBarMotion(BACK_LINK_HEIGHT)}>
 		<NavBarLink index={0}
 			to='/'
 			content='[BACK]'
@@ -157,7 +168,7 @@ interface FromLeaderProps {
 }
 const FromLeader: React.FC<FromLeaderProps> = ({ animating }) => (
 	<motion.nav className={NAME}
-		{...bouncyHeightChangeByPx({ finalHeight: BACK_LINK_HEIGHT })}>
+		{...navBarMotion(BACK_LINK_HEIGHT)}>
 		<NavBarLink index={0}
 			to='/'
 			content='[BACK]'
@@ -172,7 +183,7 @@ interface From404Props {
 }
 const From404: React.FC<From404Props> = ({ animating }) => (
 	<motion.nav className={NAME}
-		{...bouncyHeightChangeByPx({ finalHeight: BACK_LINK_HEIGHT })}>
+		{...navBarMotion(BACK_LINK_HEIGHT)}>
 		<NavBarLink index={0}
 			to='/'
 			content='[HOME]'
@@ -183,9 +194,9 @@ const From404: React.FC<From404Props> = ({ animating }) => (
 
 // --------NAVBAR---------------------------------------------------------- //
 interface NavBarProps {
-	tglLogged: () => void
+	setLogged: React.Dispatch<React.SetStateAction<boolean>>
 }
-const NavBar: React.FC<NavBarProps> = ({ tglLogged }) => {
+const NavBar: React.FC<NavBarProps> = ({ setLogged }) => {
 	// ----ROUTER----------------------------- //
 	const location = useLocation()
 
@@ -197,8 +208,10 @@ const NavBar: React.FC<NavBarProps> = ({ tglLogged }) => {
 	const [render, setRender] = useState(<></>)
 
 	// ----EFFECTS---------------------------- //
-	useEffect(() => {
-		if (previousPath.current !== null && cutThenCompare(location.pathname, previousPath.current, '/', 1)) {
+	useLayoutEffect(() => {
+		if (previousPath.current !== null
+			&& cutThenCompare(location.pathname, previousPath.current, '/', 1)) {
+			previousPath.current = location.pathname
 			animating.current = true
 			const timer = setTimeout(() => { animating.current = false }, 500)
 			return () => clearTimeout(timer)
@@ -209,13 +222,7 @@ const NavBar: React.FC<NavBarProps> = ({ tglLogged }) => {
 			setRender(
 				<Routes location={location} key={location.pathname}>
 					<Route path='/login' element={<></>} />
-					<Route path='/' element={
-						<FromHome
-							tglLogged={tglLogged}
-							setRender={setRender}
-							animating={animating}
-						/>
-					} />
+					<Route path='/' element={<FromHome setLogged={setLogged} setRender={setRender} animating={animating} />} />
 					<Route path='/profile/*' element={<FromProfile animating={animating} />} />
 					<Route path='/characters' element={<FromCharacters animating={animating} />} />
 					<Route path='/leader' element={<FromLeader animating={animating} />} />

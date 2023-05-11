@@ -1,8 +1,6 @@
 import React from 'react'
-import { motion } from 'framer-motion'
-
-import { FtBtn, FtMotionBtn, FtMotionInput } from '../tsx-utils/ftBox.tsx'
-import { fade, bouncyWidthChangeByPx, heightChangeByPx, bouncyXMove, yMove, mergeMotions } from '../tsx-utils/ftFramerMotion.tsx'
+import { MotionProps, motion } from 'framer-motion'
+import { fade, widthChangeByPx, heightChangeByPx, xMove, yMove, mergeMotions } from '../tsx-utils/ftMotion.tsx'
 
 // --------VALUES---------------------------------------------------------- //
 const USERS_COUNT = 20
@@ -11,7 +9,6 @@ const USERS_COUNT = 20
 const NAME = 'leader'
 const COL_NAME = `${NAME}-col`
 const BTN_NAME = `${NAME}-btn`
-const PRESSED_NAME = `${BTN_NAME}--pressed`
 
 // --------USER------------------------------------------------------------ //
 interface UserStatsProps {
@@ -39,12 +36,11 @@ const UserStats: React.FC<UserStatsProps> = ({ rank }) => {
 	)
 
 	return <motion.div className={boxName}
-		{...yMove({ from: (100 * rank), inDuration: 1, outDuration: 0.5 })}>
+		{...yMove({ from: (100 * rank) }) as MotionProps}>
 
-		<FtBtn className={COL_NAME}
-			pressedName={PRESSED_NAME}
-			content={nameBtnContent}
-		/>
+		<button className={COL_NAME}>
+			{nameBtnContent}
+		</button>
 		{usrBox('0')}
 		{usrBox('0')}
 		{usrBox('0')}
@@ -62,14 +58,11 @@ const Board: React.FC = () => {
 	const renderUsers = Array.from({ length: USERS_COUNT }, (_, index) => (
 		<UserStats key={index} rank={index + 1} />
 	))
-
 	const headCol = (content: string) => (
-		<FtBtn className={COL_NAME}
-			pressedName={PRESSED_NAME}
-			content={content}
-		/>
+		<button className={COL_NAME}>
+			{content}
+		</button>
 	)
-
 	return <>
 		<div className={headName}>
 			<div className={COL_NAME}>NAME</div>
@@ -79,7 +72,6 @@ const Board: React.FC = () => {
 			{headCol('[RATIO]')}
 			{headCol('[SCORED]')}
 		</div>
-
 		{renderUsers}
 	</>
 }
@@ -88,20 +80,10 @@ const Board: React.FC = () => {
 const Leader: React.FC = () => {
 	// ----ANIMATIONS------------------------- //
 	const boxMove = (index: number) => (
-		bouncyXMove({
-			from: 100,
-			extra: -20,
-			inDuration: 1 + 0.07 * index,
-			outDuration: 0.3 + 0.035 * index
-		})
+		xMove({ from: 100 * index })
 	)
-
 	const headInputMotion = mergeMotions(
-		bouncyWidthChangeByPx({
-			finalWidth: 325,
-			inDuration: 1 + 0.07 * 5,
-			outDuration: 0.3 + 0.035 * 5
-		}),
+		widthChangeByPx({ finalWidth: 325 }),
 		boxMove(5)
 	)
 
@@ -114,26 +96,23 @@ const Leader: React.FC = () => {
 
 	// ----RENDER----------------------------- //
 	const headBtn = (index: number, nameExt: string, content: string) => (
-		<FtMotionBtn className={headBtnName(nameExt)}
-			pressedName={PRESSED_NAME}
-			motionProps={boxMove(index)}
-			content={content}
-		/>
+		<motion.button className={headBtnName(nameExt)}
+			{...boxMove(index) as MotionProps}>
+			{content}
+		</motion.button>
 	)
-
 	return <motion.main className={boxName}
-		{...fade({ inDuration: 1, outDuration: 0.5 })}>
-
+		{...fade({}) as MotionProps}>
 		<motion.div className={headName}
-			{...heightChangeByPx({ finalHeight: 200 })}>
-
+			{...heightChangeByPx({ finalHeight: 200 }) as MotionProps}>
 			{headBtn(0, 'down', '[>>]')}
 			{headBtn(1, 'up', '[<<]')}
 			{headBtn(2, 'findMe', '[FIND ME]')}
 			{headBtn(3, 'findTop', '[TOP]')}
 			{headBtn(4, 'input', '[OK]')}
-			<FtMotionInput name={inputName}
-				motionProps={headInputMotion}
+			<motion.input name={inputName}
+				placeholder=' ...'
+				{...headInputMotion}
 			/>
 		</motion.div>
 

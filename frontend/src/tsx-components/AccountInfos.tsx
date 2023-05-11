@@ -1,16 +1,10 @@
-import React, { useState, memo } from 'react'
-import { motion } from 'framer-motion'
-
-import { FtMotionDiv } from '../tsx-utils/ftBox.tsx'
-import { fade, widthChangeByPercent, heightChangeByPercent, xMove, yMove } from '../tsx-utils/ftFramerMotion.tsx'
+import React, { useState } from 'react'
+import { MotionProps, motion } from 'framer-motion'
+import { fade, widthChangeByPercent, heightChangeByPercent, xMove, yMove } from '../tsx-utils/ftMotion.tsx'
 
 // --------VALUES---------------------------------------------------------- //
 const ACHIEVEMENTS_COUNT = 18
 const HISTORY_COUNT = 20
-
-// --------ANIMATIONS------------------------------------------------------ //
-const IN_DURATION = 1
-const OUT_DURATION = 0.5
 
 // --------CLASSNAMES------------------------------------------------------ //
 const NAME = 'profile'
@@ -30,11 +24,7 @@ const Match: React.FC<MatchProps> = ({ id }) => {
 
 	// ----RENDER----------------------------- //
 	return <motion.div className={boxName}
-		{...xMove({
-			from: -100 * (HISTORY_COUNT - id),
-			inDuration: IN_DURATION + (0.025 * (HISTORY_COUNT - id)),
-			outDuration: OUT_DURATION,
-		})}>
+		{...xMove({ from: -100 * (HISTORY_COUNT - id) }) as MotionProps}>
 		MATCH #{id}
 	</motion.div>
 }
@@ -56,15 +46,11 @@ const Achievements: React.FC = () => {
 
 	// ----RENDER----------------------------- //
 	const render = Array.from({ length: ACHIEVEMENTS_COUNT }, (_, index) => (
-		<FtMotionDiv className={ACHIEVEMENT_NAME}
+		<motion.div className={ACHIEVEMENT_NAME}
 			key={`${ACHIEVEMENT_NAME}-${index + 1}`}
-			motionProps={yMove({
-				from: 300 * (index + 1),
-				inDuration: IN_DURATION + 0.25,
-				outDuration: OUT_DURATION
-			})}
-			content={`UNIT ${index + 1}`}
-		/>
+			{...yMove({ from: 300 * (index + 1) }) as MotionProps}>
+			{`UNIT ${index + 1}`}
+		</motion.div>
 	))
 
 	return <>
@@ -143,35 +129,26 @@ const Infos: React.FC = () => {
 }
 
 // --------ACCOUNT-INFOS--------------------------------------------------- //
-// - React.memo() utilisé ici à cause de framer-motion                    - //
-// ------------------------------------------------------------------------ //
-const AccountInfos: React.FC = memo(() => {
-	// ----ANIMATIONS------------------------- //
-	const fadeMotion = fade({ inDuration: IN_DURATION, outDuration: OUT_DURATION })
-
+const AccountInfos: React.FC = () => {
 	// ----CLASSNAMES------------------------- //
 	const boxName = `${NAME}-infos main`
 	const historyBoxName = `${HISTORY_NAME}-box main`
 
 	// ----RENDER----------------------------- //
 	return <motion.div className={boxName}
-		{...fadeMotion}>
+		{...fade({}) as MotionProps}>
 		<motion.div className={INFOS_NAME}
-			{...fadeMotion}>
+			{...fade({}) as MotionProps}>
 			<Infos />
 		</motion.div>
 
 		<motion.div className={ACHIEVEMENTS_NAME}
-			{...heightChangeByPercent({
-				inDuration: IN_DURATION, outDuration: OUT_DURATION
-			})}>
+			{...heightChangeByPercent({})}>
 			<Achievements />
 		</motion.div>
 
 		<motion.div className={historyBoxName}
-			{...widthChangeByPercent({
-				inDuration: IN_DURATION, outDuration: OUT_DURATION
-			})}>
+			{...widthChangeByPercent({})}>
 			<div className={STATS_NAME}>
 				0 MATCHES - 0 WINS - 0 LOSES<br />RATIO: 0% - SCORED: 0
 			</div>
@@ -182,5 +159,5 @@ const AccountInfos: React.FC = memo(() => {
 		</motion.div>
 
 	</motion.div>
-})
+}
 export default AccountInfos

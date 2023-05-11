@@ -1,9 +1,7 @@
 import React, { useRef, useState, useLayoutEffect, useEffect, useCallback, useMemo } from 'react'
-import { AnimatePresence, motion } from 'framer-motion'
-
+import { AnimatePresence, MotionProps, motion } from 'framer-motion'
 import { DragDrop } from '../tsx-utils/ftDragDrop.tsx'
-import { FtBtn, FtMotionBtn } from '../tsx-utils/ftBox.tsx'
-import { bouncyHeightChangeByPercent, bouncyYMove } from '../tsx-utils/ftFramerMotion.tsx'
+import { heightChangeByPercent, bouncyYMove } from '../tsx-utils/ftMotion.tsx'
 import ChatSettings from '../tsx-components/ChatSettings.tsx'
 
 // --------ROOM-BOXES------------------------------------------------------ //
@@ -85,11 +83,10 @@ const RoomBoxes: React.FC<RoomBoxesProps> = ({
 	), [settingsOpen])
 
 	return <>
-		<FtBtn className='chat-newRoom-btn'
-			pressedName='chat-btn--pressed'
-			handler={newRoomBtnHdl}
-			content={newRoomContent}
-		/>
+		<button className='chat-newRoom-btn'
+			{...newRoomBtnHdl}>
+			{newRoomContent}
+		</button>
 		<div className='chat-rooms'>
 			{roomContent}
 		</div>
@@ -164,17 +161,16 @@ const RoomBox: React.FC<RoomBoxProps> = ({
 		onDragStart={dragStart}
 		onDragEnd={dragEnd}
 		content={<>
-			<FtBtn className={`${name}-link`}
-				pressedName={btnPressedName}
-				handler={linkBtnHdl}
-				content={`[#${id}]`}
-			/>
-			{showRoomSet && <FtBtn className='chat-setRoom-btn'
-				pressedName={btnPressedName}
-				handler={setBtnHdl}
-				content='[*]'
-			/>}
-		</>}
+			<button className={`${name}-link`} {...linkBtnHdl}>
+				[#${id}]
+			</button>
+			{showRoomSet && (
+				<button className='chat-setRoom-btn' {...setBtnHdl}>
+					[*]
+				</button>
+			)}
+		</>
+		}
 	/>
 }
 
@@ -223,23 +219,19 @@ const RoomUser: React.FC<RoomUserProps> = ({ id }) => {
 	return <div className={name}
 		onMouseEnter={enterUser}
 		onMouseLeave={leaveUser}>
-		<FtBtn className={`${name}-link`}
-			pressedName={btnPressedName}
-			content={`[#${id}]`}
-		/>
+		<button className={`${name}-link`}>
+			[#${id}]
+		</button>
 		{showButton && <div className={`${btnName}s`}>
-			<FtBtn className={btnName}
-				pressedName={btnPressedName}
-				content='[vs]'
-			/>
-			<FtBtn className={btnName}
-				pressedName={btnPressedName}
-				content='[/w]'
-			/>
-			<FtBtn className={btnName}
-				pressedName={btnPressedName}
-				content='[/x]'
-			/>
+			<button className={btnName}>
+				[vs]
+			</button>
+			<button className={btnName}>
+				[/w]
+			</button>
+			<button className={btnName}>
+				[/x]
+			</button>
 		</div>}
 	</div>
 }
@@ -284,7 +276,7 @@ const MainContent: React.FC<MainContentProps> = ({
 
 	// ----RENDER----------------------------- //
 	const bouncyHeightGrowByPercentRender = useMemo(() => ({
-		...bouncyHeightChangeByPercent({})
+		...heightChangeByPercent({})
 	}), []);
 
 	return <motion.div className={mainName}
@@ -306,10 +298,9 @@ const MainContent: React.FC<MainContentProps> = ({
 			name={mainInputName}
 			placeholder=' ...'
 		/>
-		<FtBtn className={`${name}-sendMsg-btn ${smallBtnName}`}
-			pressedName={`${btnName}--pressed`}
-			content='[OK]'
-		/>
+		<button className={`${name}-sendMsg-btn ${smallBtnName}`}>
+			[OK]
+		</button>
 	</motion.div>
 }
 
@@ -382,7 +373,7 @@ const Chat: React.FC = () => {
 
 	// ----RENDER----------------------------- //
 	const bouncyComeFromColRender = useMemo(() => (
-		bouncyYMove({ from: 100, extra: -20, inDuration: 0.7, outDuration: 0.8 })
+		bouncyYMove({ from: 100, extra: -10, inDuration: 0.8 })
 	), [])
 
 	const mainButtonMotion = {
@@ -397,7 +388,7 @@ const Chat: React.FC = () => {
 	}
 
 	return <motion.div className={name}
-		{...bouncyComeFromColRender}>
+		{...bouncyComeFromColRender as MotionProps}>
 
 		<div className={`${bodyName}${chatOpenned === false ? ` ${bodyName}--noResize` : ''}`}
 			ref={chatRef}>
@@ -411,14 +402,12 @@ const Chat: React.FC = () => {
 					setSettingsOpen={setSettingsOpen}
 				/>}
 
-				<FtMotionBtn
+				<motion.button className={`${mainName}-btn${chatOpenned === true ? ` ${mainName}-btn--expended` : ''}`}
 					key={`${mainName}-btn`}
-					className={`${mainName}-btn${chatOpenned === true ? ` ${mainName}-btn--expended` : ''}`}
-					pressedName={`${btnName}--pressed`}
-					handler={mainBtnHdl}
-					motionProps={mainButtonMotion}
-					content='[CHAT]'
-				/>
+					{...mainBtnHdl}
+					{...mainButtonMotion}>
+					[CHAT]
+				</motion.button>
 			</AnimatePresence>
 		</div>
 
