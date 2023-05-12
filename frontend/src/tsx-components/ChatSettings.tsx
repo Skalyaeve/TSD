@@ -1,52 +1,37 @@
-import React, { useState, useCallback, useMemo } from 'react'
+import React, { useState } from 'react'
+
+// --------CLASSNAMES------------------------------------------------------ //
+const NAME = 'chat-roomSet'
+const BTN_NAME = `${NAME}-btn`
 
 // --------ROOM-MEMBER----------------------------------------------------- //
 interface RoomMemberProps {
 	id: number
-	className: string
 	addedUsers: boolean
 }
-const RoomMember: React.FC<RoomMemberProps> = ({
-	id, className, addedUsers
-}) => {
+const RoomMember: React.FC<RoomMemberProps> = ({ id, addedUsers }) => {
 	// ----STATES----------------------------- //
-	const [showButton, setShowButton] = useState(false)
+	const [showButtons, setShowButtons] = useState(false)
 
 	// ----CLASSNAMES------------------------- //
-	const btnName = `${className}-btn`
-
-	// ----HANDLERS--------------------------- //
-	const enterUser = useCallback(() => setShowButton(true), [])
-	const leaveUser = useCallback(() => setShowButton(false), [])
+	const boxName = `${NAME}-usr`
+	const linkName = `${boxName}-link`
+	const btnsName = `${BTN_NAME}s`
 
 	// ----RENDER----------------------------- //
-	const btnToAdd = useMemo(() => {
-		if (!addedUsers)
-			return <button className={btnName}>
-				[/x]'
-			</button>
+	const btnToAdd = () => {
+		if (!addedUsers) return <button className={BTN_NAME}>[/x]</button>
 		else return <>
-			<button className={btnName}>
-				[up]'
-			</button>
-			<button className={btnName}>
-				[/m]'
-			</button>
-			<button className={btnName}>
-				[/x]'
-			</button>
+			<button className={BTN_NAME}>[up]</button>
+			<button className={BTN_NAME}>[/m]</button>
+			<button className={BTN_NAME}>[/x]</button>
 		</>
-	}, [])
-
-	return <div className={className}
-		onMouseEnter={enterUser}
-		onMouseLeave={leaveUser}>
-		<button className={`${className}-link`}>
-			[#{id}]
-		</button>
-		{showButton && <div className={`${className}-btns`}>
-			{btnToAdd}
-		</div>}
+	}
+	return <div className={boxName}
+		onMouseEnter={() => setShowButtons(true)}
+		onMouseLeave={() => setShowButtons(false)}>
+		<button className={linkName}>[#{id}]</button>
+		{showButtons && <div className={btnsName}>{btnToAdd()}</div>}
 	</div>
 }
 
@@ -59,84 +44,59 @@ const RoomMembersSet: React.FC<RoomMembersSetProps> = ({ addedUsers }) => {
 	const [count, setAddedCount] = useState((addedUsers ? 10 : 7))
 
 	// ----CLASSNAMES------------------------- //
-	const name = 'chat-roomSet'
-	const usersName = `${name}-users`
-	const inputName = `${name}-search-input`
+	const boxName = `${NAME}-users${(
+		addedUsers ? ` ${NAME}-users-added` : ` ${NAME}-users-toAdd`
+	)}`
+	const inputName = `${NAME}-search-input`
 
 	// ----RENDER----------------------------- //
-	const renderUserList = useMemo(() => (count: number, addedUsers: boolean) => (
-		Array.from({ length: count }, (_, index) => (
+	const renderUserList = (count: number, addedUsers: boolean) => (
+		Array.from({ length: count }, (_, index) =>
 			<RoomMember
 				key={index + 1}
 				id={index + 1}
-				className={`${name}-usr`}
 				addedUsers={addedUsers}
 			/>
-		))
-	), [count])
-
-	return <div className={`${usersName}${(addedUsers ? '-added' : '-toAdd')} ${usersName}`}>
-		<input
-			className={inputName}
-			id={`${inputName}${(addedUsers ? '-added' : '-toAdd')}`}
-			name={`${inputName}${(addedUsers ? '-added' : '-toAdd')}`}
-			placeholder={` ${count} ${(addedUsers ? 'members' : 'friends')}`}
+		)
+	)
+	return <div className={boxName}>
+		<input className={inputName}
+			placeholder={` ${count}${(addedUsers ? ' members' : ' friends')}`}
 		/>
 		{renderUserList(count, addedUsers)}
 	</div>
 }
 
 // --------ROOM-SETTINGS--------------------------------------------------- //
-interface ChatSettingsPos {
-	left: string
-}
 interface ChatSettingsProps {
 	settingsOpen: number
-	settingsPos: ChatSettingsPos
+	settingsPos: any
 }
-const ChatSettings: React.FC<ChatSettingsProps> = (({
+const ChatSettings: React.FC<ChatSettingsProps> = ({
 	settingsOpen, settingsPos
 }) => {
 	// ----CLASSNAMES------------------------- //
-	const name = 'chat-roomSet'
-	const btnName = `${name}-btn`
-	const mainInputName = `${name}-main-input`
-	const nameInputName = `${name}-name-input`
-	const pswInputName = `${name}-psw-input`
+	const nameInputName = `${NAME}-name-input ${NAME}-main-input`
+	const pswInputName = `${NAME}-psw-input ${NAME}-main-input`
+	const createBtnName = `${NAME}-create-btn ${BTN_NAME}`
+	const saveBtnName = `${NAME}-update-btn ${BTN_NAME}`
+	const delBtnName = `${NAME}-del-btn ${BTN_NAME}`
 
 	// ----RENDER----------------------------- //
-	const commitArea = useMemo(() => {
+	const commitArea = () => {
 		if (settingsOpen === 1)
-			return <button className={`${name}-create-btn ${btnName}`}>
-				[CREATE]
-			</button>
+			return <button className={createBtnName}>[CREATE]</button>
 		else return <>
-			<button className={`${name}-update-btn ${btnName}`}>
-				[SAVE]
-			</button>
-			<button className={`${name}-del-btn ${btnName}`}>
-				[DELETE]
-			</button>
+			<button className={saveBtnName}>[SAVE]</button>
+			<button className={delBtnName}>[DELETE]</button>
 		</>
-	}, [settingsOpen])
-
-	return <div className={name}
-		style={settingsPos}>
-		<input
-			className={`${nameInputName} ${mainInputName}`}
-			id={nameInputName}
-			name={nameInputName}
-			placeholder='Name'
-		/>
-		<input
-			className={`${pswInputName} ${mainInputName}`}
-			id={pswInputName}
-			name={pswInputName}
-			placeholder='Password'
-		/>
+	}
+	return <div className={NAME} style={settingsPos}>
+		<input className={nameInputName} placeholder='Name' />
+		<input className={pswInputName} placeholder='Password' />
 		<RoomMembersSet addedUsers={true} />
 		<RoomMembersSet addedUsers={false} />
-		{commitArea}
+		{commitArea()}
 	</div>
-})
+}
 export default ChatSettings
