@@ -72,6 +72,7 @@ const NavBar: React.FC<NavBarProps> = memo(({ loggedTgl }) => {
 					<Route path='/characters' element={fromCharacters} />
 					<Route path='/leader' element={fromLeader} />
 					<Route path='/game' element={<GameInfos />} />
+					<Route path='/chat' element={fromChatBig} />
 					<Route path='*' element={from404} />
 				</Routes>
 			)
@@ -159,12 +160,22 @@ const NavBar: React.FC<NavBarProps> = memo(({ loggedTgl }) => {
 	}, [])
 
 	const from404 = useMemo(() => {
-		const navBarAnimeRender = bouncyHeightGrowByPx(backLinkHeight + linkHeight * 3, 0.2, 0.75, animeDuration)
+		const navBarAnimeRender = bouncyHeightGrowByPx(backLinkHeight, 0.2, 0.75, animeDuration)
 		return <motion.nav key={`${name}-from404`} className={name} {...navBarAnimeRender}>
 			<NavBarLink name={linkName} to='/' index={0}
 				content='[HOME]' />
 		</motion.nav>
 	}, [])
+
+	const fromChatBig = useMemo(() => {
+		const navBarAnimeRender = bouncyHeightGrowByPx(backLinkHeight, 0.2, 0.75, animeDuration)
+		return <motion.nav key={`${name}-fromChatBig`} className={name} {...navBarAnimeRender}>
+			<NavBarLink name={linkName} to='/' index={0}
+				content='[HOME]' />
+		</motion.nav>
+	}, [])
+
+
 
 	return <AnimatePresence mode='wait'>
 		{displayedElement}

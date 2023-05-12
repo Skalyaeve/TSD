@@ -88,6 +88,7 @@ const Root: React.FC = () => {
 
 			<header className='header'>
 				<NavBar loggedTgl={loggedTgl} />
+				{/* <Chat /> */}
 				<ChatLink />
 				<Matchmaker />
 			</header>
@@ -98,6 +99,7 @@ const Root: React.FC = () => {
 				<Route path='/characters' element={<Characters />} />
 				<Route path='/leader' element={<Leader />} />
 				<Route path='/game' element={<Party />} />
+				{/* <Route path="/chat" element={<Chat/>} /> */}
 				<Route path="/chat" element={<Chat name="PIERINA"/>} />
 				<Route path='*' element={<ErrorPage code={404} />} />
 			</Routes>
