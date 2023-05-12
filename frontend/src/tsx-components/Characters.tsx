@@ -1,5 +1,5 @@
-import React, { useState, useEffect, memo } from 'react'
-import { AnimatePresence, MotionProps, motion } from 'framer-motion'
+import React, { useRef, useState, useEffect, useMemo, memo } from 'react'
+import { AnimatePresence, motion } from 'framer-motion'
 import { fade, xMove, yMove } from '../tsx-utils/ftMotion.tsx'
 
 // --------VALUES---------------------------------------------------------- //
@@ -11,28 +11,46 @@ const NAME = 'character'
 // --------CHARACTER-BOX--------------------------------------------------- //
 interface CharBoxProps {
 	id: number
+	swapping: React.MutableRefObject<boolean>
 	setSelected: React.Dispatch<React.SetStateAction<number>>
 }
-const CharBox: React.FC<CharBoxProps> = memo(({ id, setSelected }) => {
+const CharBox: React.FC<CharBoxProps> = ({ id, swapping, setSelected }) => {
 	// ----HANDLERS--------------------------- //
-	const boxHdl = { onMouseUp: () => setSelected(id) }
+	const boxHdl = {
+		onMouseUp: () => {
+			if (!swapping.current) {
+				setSelected(id)
+				swapping.current = true
+				const timer = setTimeout(() => swapping.current = false, 300)
+				return () => clearTimeout(timer)
+			}
+		}
+	}
+
+	// ----ANIMATIONS------------------------- //
+	const boxMotion = yMove({
+		from: 200 * id,
+		inDuration: 0.7 + 0.02 * id,
+		outDuration: 0.5 - 0.01 * id
+	})
 
 	// ----CLASSNAMES------------------------- //
 	const boxName = `${NAME}-box`
 
 	// ----RENDER----------------------------- //
-	return <motion.button className={boxName}
+	return <motion.div className={boxName}
 		{...boxHdl}
-		{...yMove({ from: 200 * id }) as MotionProps}>
-		[Character #${id}]
-	</motion.button>
-})
+		{...boxMotion}>
+		[Character #{id}]
+	</motion.div>
+}
 
 // --------CHARACTER-BOXES------------------------------------------------- //
 interface CharBoxesProps {
+	swapping: React.MutableRefObject<boolean>
 	setSelected: React.Dispatch<React.SetStateAction<number>>
 }
-const CharBoxes: React.FC<CharBoxesProps> = memo(({ setSelected }) => {
+const CharBoxes: React.FC<CharBoxesProps> = memo(({ swapping, setSelected }) => {
 	// ----STATES----------------------------- //
 	const [animating, setAnimating] = useState(true)
 
@@ -46,10 +64,13 @@ const CharBoxes: React.FC<CharBoxesProps> = memo(({ setSelected }) => {
 	const boxName = `${NAME}s-select`
 
 	// ----RENDER----------------------------- //
-	const render = Array.from({ length: CHAR_COUNT }, (_, index) => (
-		<CharBox key={index + 1} id={index + 1} setSelected={setSelected} />
-	))
-
+	const render = useMemo(() => Array.from({ length: CHAR_COUNT }, (_, index) => (
+		<CharBox key={index + 1}
+			id={index + 1}
+			swapping={swapping}
+			setSelected={setSelected}
+		/>
+	)), [])
 	return <motion.div className={boxName}
 		exit={{ overflowY: 'hidden' }}
 		style={{ overflowY: (animating ? 'hidden' : 'auto') }}>
@@ -63,8 +84,20 @@ interface SpellProps {
 	content: string
 }
 const Spell: React.FC<SpellProps> = ({ spellName, content }) => {
+	// ----REFS------------------------------- //
+	const spellNameRef = useRef<HTMLDivElement | null>(null)
+
 	// ----STATES----------------------------- //
 	const [tooltip, setToolTip] = useState(false)
+	const [position, setPosition] = useState({ x: 0, y: 0 })
+
+	// ----EFFECTS----------------------------//
+	useEffect(() => {
+		if (spellNameRef.current) {
+			const rect = spellNameRef.current.getBoundingClientRect()
+			setPosition({ x: rect.left, y: rect.top })
+		}
+	}, [])
 
 	// ----HANDLERS--------------------------- //
 	const boxHdl = {
@@ -72,26 +105,35 @@ const Spell: React.FC<SpellProps> = ({ spellName, content }) => {
 		onMouseLeave: () => setToolTip(false)
 	}
 
+	// ----ANIMATIONS------------------------- //
+	const boxMotion = fade({ inDuration: 0.3, outDuration: 0.3 })
+	const tooltipMotion = xMove({
+		from: 50,
+		inDuration: 0.3,
+		outDuration: 0.3
+	})
+
 	// ----CLASSNAMES------------------------- //
-	const boxName = `${spellName}-box`
 	const tooltipName = `${spellName}-tooltip`
 
 	// ----RENDER----------------------------- //
-	return <motion.div className={boxName}
-		{...fade({}) as MotionProps}>
+	return <>
 		<motion.div className={spellName}
-			{...boxHdl}>
+			ref={spellNameRef}
+			{...boxHdl}
+			{...boxMotion}>
 			{content}
 		</motion.div>
-
 		<AnimatePresence>
-			{tooltip && <motion.div className={tooltipName}
-				{...xMove({ from: 50 }) as MotionProps}>
-
-				TOOLTIP
-			</motion.div>}
+			{tooltip && (
+				<motion.div className={tooltipName}
+					{...tooltipMotion}
+					style={{ top: `${position.y - 305}px`, left: `${position.x}px` }}>
+					TOOLTIP
+				</motion.div>
+			)}
 		</AnimatePresence>
-	</motion.div>
+	</>
 }
 
 // --------CHARACTER------------------------------------------------------- //
@@ -100,7 +142,7 @@ interface CharacterProps {
 }
 const Character: React.FC<CharacterProps> = ({ selected }) => {
 	// ----ANIMATIONS------------------------- //
-	const boxMotion = fade({})
+	const boxMotion = fade({ inDuration: 0.3, outDuration: 0.3 })
 
 	// ----CLASSNAMES------------------------- //
 	const skinName = `${NAME}-skin`
@@ -111,35 +153,31 @@ const Character: React.FC<CharacterProps> = ({ selected }) => {
 	const contentName = (preffix: string) => `${preffix}-content`
 
 	// ----RENDER----------------------------- //
-	return <motion.div className={NAME}
-		{...boxMotion as MotionProps}>
+	return <motion.div className={NAME}>
 		<AnimatePresence mode='wait'>
 			<div className={skinName} key={`${skinName}-${selected}`}>
 				<motion.div className={contentName(skinName)}
-					{...boxMotion as MotionProps}>
+					{...boxMotion}>
 					CHARACTER #{selected}
 				</motion.div>
 			</div>
 		</AnimatePresence>
-
 		<AnimatePresence mode='wait'>
 			<div className={statsName} key={`${statsName}-${selected}`}>
 				<motion.div className={contentName(statsName)}
-					{...boxMotion as MotionProps}>
+					{...boxMotion}>
 					STATS
 				</motion.div>
 			</div>
 		</AnimatePresence>
-
 		<AnimatePresence mode='wait'>
 			<div className={storyName} key={`${storyName}-${selected}`}>
 				<motion.div className={contentName(storyName)}
-					{...boxMotion as MotionProps}>
+					{...boxMotion}>
 					STORY
 				</motion.div>
 			</div>
 		</AnimatePresence>
-
 		<AnimatePresence mode='wait'>
 			<div className={spellzName} key={`${spellzName}-${selected}`}>
 				<Spell spellName={spellName}
@@ -155,17 +193,23 @@ const Character: React.FC<CharacterProps> = ({ selected }) => {
 
 // --------CHARACTERS------------------------------------------------------ //
 const Characters: React.FC = () => {
+	// ----REFS------------------------------- //
+	const swapping = useRef(false)
+
 	// ----STATES----------------------------- //
 	const [selected, setSelected] = useState(1)
+
+	// ----ANIMATIONS------------------------- //
+	const boxMotion = fade({ inDuration: 1 })
 
 	// ----CLASSNAMES------------------------- //
 	const boxName = `${NAME}s main`
 
 	// ----RENDER----------------------------- //
 	return <motion.main className={boxName}
-		{...fade({}) as MotionProps}>
+		{...boxMotion}>
 		<Character selected={selected} />
-		<CharBoxes setSelected={setSelected} />
+		<CharBoxes swapping={swapping} setSelected={setSelected} />
 	</motion.main>
 }
 export default Characters

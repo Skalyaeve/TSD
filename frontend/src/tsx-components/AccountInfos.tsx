@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { MotionProps, motion } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { fade, widthChangeByPercent, heightChangeByPercent, xMove, yMove } from '../tsx-utils/ftMotion.tsx'
 
 // --------VALUES---------------------------------------------------------- //
@@ -19,12 +19,19 @@ interface MatchProps {
 	id: number
 }
 const Match: React.FC<MatchProps> = ({ id }) => {
+	// ----ANIMATIONS------------------------- //
+	const boxMotion = xMove({
+		from: -200 * (HISTORY_COUNT - id),
+		inDuration: 0.5 + 0.04 * (HISTORY_COUNT - id),
+		outDuration: 0.5 - 0.01 * (HISTORY_COUNT - id)
+	})
+
 	// ----CLASSNAMES------------------------- //
 	const boxName = `${HISTORY_NAME}-match`
 
 	// ----RENDER----------------------------- //
 	return <motion.div className={boxName}
-		{...xMove({ from: -100 * (HISTORY_COUNT - id) }) as MotionProps}>
+		{...boxMotion}>
 		MATCH #{id}
 	</motion.div>
 }
@@ -40,6 +47,15 @@ const History: React.FC = () => {
 
 // --------ACHIEVEMENTS---------------------------------------------------- //
 const Achievements: React.FC = () => {
+	// ----ANIMATIONS------------------------- //
+	const achievementMotion = (index: number) => (
+		yMove({
+			from: 400 * index,
+			inDuration: 0.9 + 0.02 * index,
+			outDuration: 0.5 - 0.01 * index
+		})
+	)
+
 	// ----CLASSNAMES------------------------- //
 	const countName = `${ACHIEVEMENTS_NAME}-count`
 	const listName = `${ACHIEVEMENTS_NAME}-list`
@@ -48,11 +64,10 @@ const Achievements: React.FC = () => {
 	const render = Array.from({ length: ACHIEVEMENTS_COUNT }, (_, index) => (
 		<motion.div className={ACHIEVEMENT_NAME}
 			key={`${ACHIEVEMENT_NAME}-${index + 1}`}
-			{...yMove({ from: 300 * (index + 1) }) as MotionProps}>
-			{`UNIT ${index + 1}`}
+			{...achievementMotion(index + 1)}>
+			UNIT {index + 1}
 		</motion.div>
 	))
-
 	return <>
 		<div className={countName}>
 			ACHIEVEMENTS
@@ -130,34 +145,35 @@ const Infos: React.FC = () => {
 
 // --------ACCOUNT-INFOS--------------------------------------------------- //
 const AccountInfos: React.FC = () => {
+	// ----ANIMATIONS------------------------- //
+	const boxMotion = fade({ inDuration: 1 })
+	const achievementsMotion = heightChangeByPercent({ inDuration: 0.8 })
+	const historyMotion = widthChangeByPercent({ inDuration: 0.8 })
+
 	// ----CLASSNAMES------------------------- //
 	const boxName = `${NAME}-infos main`
-	const historyBoxName = `${HISTORY_NAME}-box main`
+	const historyBoxName = `${HISTORY_NAME}-box`
 
 	// ----RENDER----------------------------- //
 	return <motion.div className={boxName}
-		{...fade({}) as MotionProps}>
+		{...boxMotion}>
 		<motion.div className={INFOS_NAME}
-			{...fade({}) as MotionProps}>
+			{...boxMotion}>
 			<Infos />
 		</motion.div>
-
 		<motion.div className={ACHIEVEMENTS_NAME}
-			{...heightChangeByPercent({})}>
+			{...achievementsMotion}>
 			<Achievements />
 		</motion.div>
-
 		<motion.div className={historyBoxName}
-			{...widthChangeByPercent({})}>
+			{...historyMotion}>
 			<div className={STATS_NAME}>
 				0 MATCHES - 0 WINS - 0 LOSES<br />RATIO: 0% - SCORED: 0
 			</div>
-
 			<div className={HISTORY_NAME}>
 				<History />
 			</div>
 		</motion.div>
-
 	</motion.div>
 }
 export default AccountInfos

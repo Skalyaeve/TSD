@@ -36,7 +36,7 @@ ex: ".navBar-logo--hidden {}"
 	z-index: 3;
 }
 
-.matchmaker--pressed {
+.matchmaker:active {
 	/* #1 Éléments */
 	background-color: rgba(0, 0, 255, 0.3);
 }

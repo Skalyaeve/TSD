@@ -24,20 +24,16 @@ ex: ".navBar-logo--hidden {}"
 --------------------------------- */
 
 /* ---CHAT----------------------- */
-.chat {
+.chat-box {
 	/* #1 Éléments */
 	position: relative;
-
-	/* #2 Forme */
-	width: 100%;
-	height: 100%;
 
 	/* #3 Position */
 	grid-row: 2 / 2;
 	z-index: 2;
 }
 
-.chat-body {
+.chat {
 	/* #1 Éléments */
 	background-color: transparent;
 	display: flex;
@@ -59,7 +55,7 @@ ex: ".navBar-logo--hidden {}"
 	padding-bottom: 10px;
 }
 
-.chat-body--noResize {
+.chat--noResize {
 	/* #2 Forme */
 	resize: none;
 }
@@ -276,7 +272,7 @@ ex: ".navBar-logo--hidden {}"
 	font-size: 15px;
 }
 
-.chat-btn--pressed {
+.chat-btn:active {
 	/* #1 Éléments */
 	background-color: rgba(0, 122, 6, 0.3);
 }

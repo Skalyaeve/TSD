@@ -33,7 +33,7 @@ ex: ".navBar-logo--hidden {}"
 	height: 35px;
 }
 
-.profile-btn--pressed {
+.profile-btn:active {
 	/* #1 Éléments */
 	background-color: rgb(255, 255, 0, 0.3);
 }
@@ -55,6 +55,9 @@ ex: ".navBar-logo--hidden {}"
 .profile-accountInfos {
 	/* #1 Éléments */
 	border: 1px solid rgb(255, 255, 0);
+	display: grid;
+	grid-template-columns: 175px auto;
+	grid-template-rows: 175px auto;
 }
 
 .profile-picture {
@@ -64,13 +67,8 @@ ex: ".navBar-logo--hidden {}"
 	align-items: center;
 	justify-content: center;
 
-	/* #2 Forme */
-	width: 150px;
-	height: 150px;
-
 	/* #4 Margin - Padding */
-	margin-top: 10px;
-	margin-left: 10px;
+	margin: 10px;
 }
 
 /* ---PROFILE-ACHIEVEMENTS------- */
@@ -82,7 +80,6 @@ ex: ".navBar-logo--hidden {}"
 	overflow-y: hidden;
 
 	/* #3 Position */
-	grid-column: 1 / 1;
 	grid-row: 2 / -1;
 	align-self: flex-end;
 }
@@ -99,7 +96,6 @@ ex: ".navBar-logo--hidden {}"
 	/* #1 Éléments */
 	display: flex;
 	flex-wrap: wrap;
-	align-items: center;
 	align-content: flex-start;
 	justify-content: center;
 	overflow-y: auto;
@@ -135,6 +131,7 @@ ex: ".navBar-logo--hidden {}"
 	/* #1 Éléments */
 	border: 1px solid rgb(255, 255, 0);
 	border-bottom: none;
+	font-size: 27px;
 	text-align: center;
 	display: flex;
 	align-items: center;

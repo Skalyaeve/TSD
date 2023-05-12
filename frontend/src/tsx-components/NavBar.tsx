@@ -10,12 +10,15 @@ const BACK_LINK_HEIGHT = 50
 const LINK_HEIGHT = 75
 
 const navBarMotion = (height: number) => (
-	bouncyHeightChangeByPx({ finalHeight: height })
+	bouncyHeightChangeByPx({
+		finalHeight: height,
+		maxHeight: height + height * 0.3
+	})
 )
-const navBarLinkMotion = (from: number, extra: number) => (
+const navBarLinkMotion = (from: number) => (
 	mergeMotions(
-		bouncyHeightChangeByPercent({ finalHeight: 101 }),
-		bouncyYMove({ from: from, extra: extra })
+		bouncyHeightChangeByPercent({ finalHeight: 101, maxHeight: 101 }),
+		bouncyYMove({ from: from, extra: 0 })
 	)
 )
 
@@ -43,7 +46,7 @@ const NavBarLink: React.FC<NavBarLinkProps> = ({ index, to, content, animating }
 	// ----ANIMATIONS------------------------- //
 	const comeFrom = (index ? BACK_LINK_HEIGHT + LINK_HEIGHT * (index - 1) : 0)
 	const linkMotion = {
-		...navBarLinkMotion(-comeFrom, index ? 14 : 0),
+		...navBarLinkMotion(-comeFrom),
 		whileHover: {
 			scale: 1.025,
 			borderTopLeftRadius: '5px',
@@ -76,6 +79,7 @@ const FromHome: React.FC<FromHomeProps> = ({ setLogged, setRender, animating }) 
 	const logoutBtnHdl = {
 		onMouseUp: () => {
 			if (animating.current) return
+
 			setLogged(false)
 			setRender(<></>)
 			animating.current = true
@@ -84,7 +88,7 @@ const FromHome: React.FC<FromHomeProps> = ({ setLogged, setRender, animating }) 
 
 	// ----ANIMATIONS------------------------- //
 	const logoutBtnMotion = {
-		...navBarLinkMotion(0, 0),
+		...navBarLinkMotion(0),
 		whileHover: {
 			scale: 1.025,
 			borderBottomLeftRadius: '5px',
@@ -211,9 +215,9 @@ const NavBar: React.FC<NavBarProps> = ({ setLogged }) => {
 	useLayoutEffect(() => {
 		if (previousPath.current !== null
 			&& cutThenCompare(location.pathname, previousPath.current, '/', 1)) {
-			previousPath.current = location.pathname
 			animating.current = true
-			const timer = setTimeout(() => { animating.current = false }, 500)
+			previousPath.current = location.pathname
+			const timer = setTimeout(() => { animating.current = false }, 550)
 			return () => clearTimeout(timer)
 		}
 		else if (previousPath.current === null
@@ -236,7 +240,7 @@ const NavBar: React.FC<NavBarProps> = ({ setLogged }) => {
 
 	// ----RENDER----------------------------- //
 	return <AnimatePresence mode='wait'
-		onExitComplete={() => { animating.current = false }}>
+		onExitComplete={() => animating.current = false}>
 		{render}
 	</AnimatePresence>
 }

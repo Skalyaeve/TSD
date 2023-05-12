@@ -44,7 +44,7 @@ ex: ".navBar-logo--hidden {}"
 	height: 35px;
 }
 
-.leader-btn--pressed {
+.leader-btn:active {
 	/* #1 Éléments */
 	background-color: rgb(255, 255, 0, 0.3);
 }
@@ -66,7 +66,6 @@ ex: ".navBar-logo--hidden {}"
 	border: 1px solid rgb(255, 255, 0);
 
 	/* #2 Forme */
-	width: 325px;
 	height: 35px;
 }
 
@@ -99,6 +98,7 @@ ex: ".navBar-logo--hidden {}"
 .leader-body {
 	/* #1 Éléments */
 	border: 1px solid rgb(255, 255, 0);
+	border-top: none;
 	overflow-y: auto;
 
 	/* #2 Forme */
@@ -121,6 +121,7 @@ ex: ".navBar-logo--hidden {}"
 
 .leader-col {
 	/* #1 Éléments */
+	border: none;
 	border-right: 1px solid rgb(255, 255, 0);
 	display: flex;
 	align-items: center;
@@ -159,12 +160,13 @@ ex: ".navBar-logo--hidden {}"
 	display: flex;
 
 	/* #2 Forme */
-	height: 70px;
+	height: 70.25px;
 }
 
 .leader-usr-rank {
 	/* #1 Éléments */
 	background-color: transparent;
+	text-align: center;
 
 	/* #2 Forme */
 	width: 60px;

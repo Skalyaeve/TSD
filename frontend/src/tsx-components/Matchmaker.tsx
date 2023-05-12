@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { motion, MotionProps } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { Timer } from '../tsx-utils/ftNumbers.tsx'
 import { fade, bouncyHeightChangeByPx, bouncyYMove } from '../tsx-utils/ftMotion.tsx'
 
 // --------GAME-INFOS------------------------------------------------------ //
 export const GameInfos: React.FC = () => {
 	// ----ANIMATIONS------------------------- //
-	const boxMotion = bouncyHeightChangeByPx({ finalHeight: 275, inDuration: 0.7 })
+	const boxMotion = bouncyHeightChangeByPx({
+		finalHeight: 275,
+		inDuration: 0.7
+	})
 	const childMotion = fade({ inDelay: 0.2 })
 
 	// ----CLASSNAMES------------------------- //
@@ -61,9 +64,9 @@ const Matchmaker: React.FC = () => {
 
 		const timer = setTimeout(() => {
 			setMatchmaking(false)
-			localStorage.setItem('inGame', '1')
 			setInGame(true)
 			navigate('/game')
+			localStorage.setItem('inGame', '1')
 		}, 2000)
 		return () => clearTimeout(timer)
 	}, [matchmaking])
@@ -72,16 +75,22 @@ const Matchmaker: React.FC = () => {
 	const toggleMatchmaker = () => {
 		if (!matchmaking && !inGame) setMatchmaking(true)
 		else if (inGame) {
-			localStorage.setItem('inGame', '0')
 			setInGame(false)
 			navigate('/')
-		} else setMatchmaking(false)
+			localStorage.setItem('inGame', '0')
+		}
+		else setMatchmaking(false)
 	}
 	const matchmakerBtnHdl = { onMouseUp: toggleMatchmaker }
 
 	// ----ANIMATIONS------------------------- //
 	const boxMotion = {
-		...bouncyYMove({ from: 100, extra: -10, inDuration: 0.7 }),
+		...bouncyYMove({
+			from: 100,
+			extra: -10,
+			inDuration: 0.7,
+			outDuration: 0.4,
+		}),
 		whileHover: {
 			rotate: [0, -5, 5, 0],
 			transition: { ease: 'easeIn' }
@@ -98,11 +107,11 @@ const Matchmaker: React.FC = () => {
 	// ----RENDER----------------------------- //
 	const render = () => {
 		if (!matchmaking) return (inGame ? <>[EXIT]</> : <>[PLAY]</>)
-		else return <>[STOP] <Timer /></>
+		else return <> [STOP] < Timer /></>
 	}
 	return <motion.button className={name}
 		{...matchmakerBtnHdl}
-		{...boxMotion as MotionProps}>
+		{...boxMotion}>
 		{render()}
 	</motion.button>
 }

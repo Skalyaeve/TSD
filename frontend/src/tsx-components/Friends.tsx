@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useMemo, memo } from 'react'
-import { AnimatePresence, MotionProps, motion } from 'framer-motion'
-import { fade, widthChangeByPx, heightChangeByPx, xMove, yMove, mergeMotions } from '../tsx-utils/ftMotion.tsx'
+import React, { useState, useEffect, useMemo } from 'react'
+import { AnimatePresence, motion } from 'framer-motion'
+import { fade, bouncyWidthChangeByPx, heightChangeByPx, xMove, bouncyXMove, yMove, mergeMotions } from '../tsx-utils/ftMotion.tsx'
 
 // --------CLASSNAMES------------------------------------------------------ //
 const NAME = 'profile'
@@ -18,6 +18,13 @@ const FriendName: React.FC<FriendNameProps> = ({ id }) => {
 	// ----STATES----------------------------- //
 	const [delBtn, setDelBtn] = useState(false)
 
+	// ----ANIMATIONS------------------------- //
+	const delbtnMotion = xMove({
+		from: 30,
+		inDuration: 0.3,
+		outDuration: 0.3
+	})
+
 	// ----CLASSNAMES------------------------- //
 	const mainBtnName = `${FRIEND_NAME}-name`
 	const ppName = `${FRIEND_NAME}-pic`
@@ -29,21 +36,19 @@ const FriendName: React.FC<FriendNameProps> = ({ id }) => {
 		<div className={ppName}>PP</div>
 		<div className={linkName}>[FRIEND #{id}]<br />online</div>
 	</>, [])
-
 	const boxContent = <>
-		<button className={mainBtnName}>
+		<div className={mainBtnName}>
 			{btnContent}
-		</button>
+		</div>
 		<AnimatePresence>
 			{delBtn === true && (
 				<motion.button className={delBtnName}
-					{...xMove({ from: 30 }) as MotionProps}>
+					{...delbtnMotion}>
 					[X]
 				</motion.button>
 			)}
 		</AnimatePresence>
 	</>
-
 	return <div className={COL_NAME}
 		onMouseEnter={() => setDelBtn(true)}
 		onMouseLeave={() => setDelBtn(false)}>
@@ -55,8 +60,15 @@ const FriendName: React.FC<FriendNameProps> = ({ id }) => {
 interface FriendProps {
 	id: number
 }
-const Friend: React.FC<FriendProps> = memo(({ id }) => {
-	// ----RENDER----------------------------- //
+const Friend: React.FC<FriendProps> = ({ id }) => {
+	// ----ANIMATIONS------------------------- //
+	const boxMotion = yMove({
+		from: 100 * id,
+		inDuration: 0.6 + 0.01 * id,
+		outDuration: 0.5 - 0.01 * id
+	})
+
+	// ----CLASSNAMES------------------------- //
 	const childBoxName = `${COL_NAME} ${COL_NAME}--bigFont`
 
 	// ----RENDER----------------------------- //
@@ -65,9 +77,8 @@ const Friend: React.FC<FriendProps> = memo(({ id }) => {
 			{content}
 		</div>
 	)
-
 	return <motion.div className={FRIEND_NAME}
-		{...yMove({ from: (100 * id) }) as MotionProps}>
+		{...boxMotion}>
 		<FriendName id={id} />
 		{friendBox('0')}
 		{friendBox('0')}
@@ -75,18 +86,23 @@ const Friend: React.FC<FriendProps> = memo(({ id }) => {
 		{friendBox('0')}
 		{friendBox('0')}
 	</motion.div>
-})
+}
 
 // --------FRIEND-SEARCH--------------------------------------------------- //
-const FriendSearch: React.FC = memo(() => {
+const FriendSearch: React.FC = () => {
 	// ----STATES----------------------------- //
 	const [searchBtn, setSearchBtn] = useState(false)
 	const [searchin, setSearchin] = useState(false)
 
 	// ----HANDLERS--------------------------- //
-	const searchBtnHdl = {
-		onMouseUp: () => setSearchin(x => !x)
-	}
+	const searchBtnHdl = { onMouseUp: () => setSearchin(x => !x) }
+
+	// ----ANIMATIONS------------------------- //
+	const childMotion = xMove({
+		from: 30,
+		inDuration: 0.3,
+		outDuration: 0.3
+	})
 
 	// ----CLASSNAMES------------------------- //
 	const searchName = `${FRIENDS_NAME}-search`
@@ -99,34 +115,31 @@ const FriendSearch: React.FC = memo(() => {
 			[NAME]
 		</div>
 		:
-		<motion.input name={inputName}
+		<motion.input className={inputName}
 			key={inputName}
-			{...xMove({ from: 50 }) as MotionProps}
+			{...childMotion}
 		/>
 	)
-
 	const boxContent = <>
 		<AnimatePresence>
 			{childBtnContent}
 		</AnimatePresence>
-
 		<AnimatePresence>
 			{(searchBtn || searchin) && (
 				<motion.button className={searchBtnName}
 					{...searchBtnHdl}
-					{...xMove({ from: 30 }) as MotionProps}>
+					{...childMotion}>
 					{searchin ? '[X]' : '[S]'}
 				</motion.button>
 			)}
 		</AnimatePresence>
 	</>
-
 	return <div className={COL_NAME}
 		onMouseEnter={() => setSearchBtn(true)}
 		onMouseLeave={() => setSearchBtn(false)}>
 		{boxContent}
 	</div>
-})
+}
 
 // --------FRIENDS-LIST---------------------------------------------------- //
 const FriendsList: React.FC = () => {
@@ -142,18 +155,19 @@ const FriendsList: React.FC = () => {
 
 	// ----CLASSNAMES------------------------- //
 	const listHeadName = `${LIST_NAME}-head`
+	const headColName = `${COL_NAME} ${BTN_NAME}`
 
 	// ----RENDER----------------------------- //
-	const renderFriends = Array.from({ length: count }, (_, index) => (
-		<Friend key={index + 1} id={index + 1} />
-	))
-
+	const renderFriends = useMemo(() => (
+		Array.from({ length: count }, (_, index) => (
+			<Friend key={index + 1} id={index + 1} />
+		))
+	), [])
 	const listHeadCol = (content: string) => (
-		<button className={COL_NAME}>
+		<div className={headColName}>
 			{content}
-		</button>
+		</div>
 	)
-
 	return <motion.div className={LIST_NAME}
 		exit={{ overflowY: 'hidden' }}
 		style={{ overflowY: (animating ? 'hidden' : 'auto') }}>
@@ -165,7 +179,6 @@ const FriendsList: React.FC = () => {
 			{listHeadCol('[RATIO]')}
 			{listHeadCol('[SCORED]')}
 		</div>
-
 		{renderFriends}
 	</motion.div>
 }
@@ -174,14 +187,21 @@ const FriendsList: React.FC = () => {
 const Friends: React.FC = () => {
 	// ----ANIMATIONS------------------------- //
 	const boxMove = (index: number) => (
-		xMove({
+		bouncyXMove({
 			from: 100,
+			extra: -10,
+			inDuration: 0.8 + 0.01 * index,
+			outDuration: 0.5 - 0.01 * index
 		})
 	)
-
+	const boxMotion = fade({ inDuration: 1 })
+	const headMotion = heightChangeByPx({
+		finalHeight: 200,
+		inDuration: 0.6
+	})
 	const headInputMotion = mergeMotions(
-		widthChangeByPx({ finalWidth: 325 }),
-		boxMove(2)
+		bouncyWidthChangeByPx({ finalWidth: 325, inDuration: 1 }),
+		boxMove(6)
 	)
 
 	// ----CLASSNAMES------------------------- //
@@ -192,16 +212,17 @@ const Friends: React.FC = () => {
 
 	// ----RENDER----------------------------- //
 	return <motion.main className={boxName}
-		{...fade({}) as MotionProps}>
+		{...boxMotion}>
 		<motion.div className={headName}
-			{...heightChangeByPx({ finalHeight: 200 }) as MotionProps}>
+			{...headMotion}>
 			<motion.button className={inputBtnName}
-				{...boxMove(1) as MotionProps}>
+				{...boxMove(1)}>
 				[ADD]
 			</motion.button>
-			<motion.input name={inputName} {...headInputMotion} />
+			<motion.input className={inputName}
+				{...headInputMotion}
+			/>
 		</motion.div>
-
 		<FriendsList />
 	</motion.main >
 }

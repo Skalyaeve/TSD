@@ -1,18 +1,86 @@
-import React, { useRef, useState, useLayoutEffect, useEffect, useCallback, useMemo } from 'react'
-import { AnimatePresence, MotionProps, motion } from 'framer-motion'
+import React, { useRef, useState, useLayoutEffect, useEffect } from 'react'
+import { AnimatePresence, motion } from 'framer-motion'
 import { DragDrop } from '../tsx-utils/ftDragDrop.tsx'
 import { heightChangeByPercent, bouncyYMove } from '../tsx-utils/ftMotion.tsx'
 import ChatSettings from '../tsx-components/ChatSettings.tsx'
 
-// --------ROOM-BOXES------------------------------------------------------ //
-interface RoomBoxesProps {
+// --------CLASSNAMES------------------------------------------------------ //
+const NAME = 'chat'
+const MAIN_NAME = `${NAME}-main`
+
+// --------ROOM-BOX-------------------------------------------------------- //
+interface RoomBoxProps {
+	id: number
+	setChatArea: React.Dispatch<React.SetStateAction<number>>
 	settingsOpen: number
 	setSettingsOpen: React.Dispatch<React.SetStateAction<number>>
-	setChatArea: React.Dispatch<React.SetStateAction<number>>
+	moveItem: (draggedId: number, droppedId: number) => void
+	isDragging: boolean
+	setIsDragging: React.Dispatch<React.SetStateAction<boolean>>
 }
-const RoomBoxes: React.FC<RoomBoxesProps> = ({
-	settingsOpen, setSettingsOpen, setChatArea
+const RoomBox: React.FC<RoomBoxProps> = ({
+	id, setChatArea, settingsOpen, setSettingsOpen,
+	moveItem, isDragging, setIsDragging
 }) => {
+	// ----STATES----------------------------- //
+	const [showRoomSet, setShowRoomSet] = useState(false)
+
+	// ----HANDLERS--------------------------- //
+	const boxMouseEnter = () => { isDragging && setShowRoomSet(true) }
+	const boxMouseLeave = () => setShowRoomSet(false)
+	const boxDragStart = () => {
+		setIsDragging(true)
+		setShowRoomSet(false)
+	}
+	const boxDragEnd = () => {
+		setIsDragging(false)
+		setShowRoomSet(false)
+	}
+	const setBtnUp = () => {
+		if (settingsOpen != id + 1) {
+			setSettingsOpen(id + 1)
+			settingsOpen = id + 1
+		}
+		else {
+			setSettingsOpen(0)
+			settingsOpen = 0
+		}
+	}
+
+	// ----CLASSNAMES------------------------- //
+	const boxName = `${NAME}-room`
+	const linkName = `${boxName}-link`
+	const setBtnName = `${NAME}-setRoom-btn`
+
+	// ----RENDER----------------------------- //
+	const boxContent = <>
+		<button className={linkName}
+			onMouseUp={() => setChatArea(id)}>
+			[#{id}]
+		</button>
+		{showRoomSet && <button className={setBtnName}
+			onMouseUp={setBtnUp}>
+			[*]
+		</button>}
+	</>
+	return <DragDrop
+		itemId={id}
+		className={boxName}
+		onMouseEnter={boxMouseEnter}
+		onMouseLeave={boxMouseLeave}
+		onDragStart={boxDragStart}
+		onDragEnd={boxDragEnd}
+		content={boxContent}
+		moveItem={moveItem}
+	/>
+}
+
+// --------ROOM-BOXES------------------------------------------------------ //
+interface RoomBoxesProps {
+	setChatArea: React.Dispatch<React.SetStateAction<number>>
+	chatRef: React.MutableRefObject<HTMLDivElement | null>
+}
+const RoomBoxes: React.FC<RoomBoxesProps> = ({ setChatArea, chatRef }) => {
 	// ----TYPES------------------------------ //
 	interface RoomBoxType {
 		id: number
@@ -22,6 +90,8 @@ const RoomBoxes: React.FC<RoomBoxesProps> = ({
 	// ----STATES----------------------------- //
 	const [roomz, setRoomz] = useState<RoomBoxType[]>([])
 	const [isDragging, setIsDragging] = useState(false)
+	const [settingsOpen, setSettingsOpen] = useState(0)
+	const [settingsPos, setSettingsPos] = useState({ left: '100%' })
 
 	// ----EFFECTS---------------------------- //
 	useEffect(() => {
@@ -29,6 +99,8 @@ const RoomBoxes: React.FC<RoomBoxesProps> = ({
 		updateRoomBoxes(1, 1, { id: 2 })
 		updateRoomBoxes(2, 1, { id: 3 })
 	}, [])
+
+	useLayoutEffect(() => moveSettings(), [settingsOpen])
 
 	// ----HANDLERS--------------------------- //
 	const updateRoomBoxes = (index: number, rm: number, tab: RoomBoxType) => {
@@ -42,160 +114,55 @@ const RoomBoxes: React.FC<RoomBoxesProps> = ({
 			return newRoomBoxes
 		})
 	}
+	const moveSettings = () => {
+		if (!chatRef.current) return
 
-	const moveItem = useCallback((draggedId: number, droppedId: number) => {
+		const chatForm = chatRef.current.getBoundingClientRect()
+		setSettingsPos({ left: `${chatForm.right}px` })
+	}
+	const moveItem = (draggedId: number, droppedId: number) => {
 		const dragged = roomz.findIndex((item) => item.id === draggedId)
 		const dropped = roomz.findIndex((item) => item.id === droppedId)
-
 		const newItems = [...roomz]
 		newItems.splice(dragged, 1)
 		newItems.splice(dropped, 0, roomz[dragged])
-
 		setRoomz(newItems)
-	}, [roomz])
+	}
 
-	const newRoomUp = useCallback(() => {
-		settingsOpen === 0 ? setSettingsOpen(1) : setSettingsOpen(0)
-	}, [settingsOpen])
-
-	const newRoomBtnHdl = useMemo(() => ({
-		onMouseUp: newRoomUp
-	}), [newRoomUp])
+	// ----CLASSNAMES------------------------- //
+	const boxName = `${NAME}-rooms`
+	const btnName = `${NAME}-newRoom-btn`
 
 	// ----RENDER----------------------------- //
 	const newRoomBox = (box: RoomBoxType) => <RoomBox
 		key={box.id}
 		id={box.id}
+		setChatArea={setChatArea}
 		settingsOpen={settingsOpen}
 		setSettingsOpen={setSettingsOpen}
-		setChatArea={setChatArea}
 		moveItem={moveItem}
 		isDragging={isDragging}
 		setIsDragging={setIsDragging}
 	/>
-
-	const roomContent = useMemo(() => (
-		roomz.map(box => newRoomBox(box))
-	), [roomz, settingsOpen, isDragging])
-
-	const newRoomContent = useMemo(() => (
-		settingsOpen === 0 ? '[+]' : '[-]'
-	), [settingsOpen])
-
 	return <>
-		<button className='chat-newRoom-btn'
-			{...newRoomBtnHdl}>
-			{newRoomContent}
-		</button>
-		<div className='chat-rooms'>
-			{roomContent}
-		</div>
-	</>
-}
-
-// --------ROOM-BOX-------------------------------------------------------- //
-interface RoomBoxProps {
-	id: number
-	isDragging: boolean
-	setIsDragging: React.Dispatch<React.SetStateAction<boolean>>
-	settingsOpen: number
-	setSettingsOpen: React.Dispatch<React.SetStateAction<number>>
-	setChatArea: React.Dispatch<React.SetStateAction<number>>
-	moveItem: (draggedId: number, droppedId: number) => void
-}
-const RoomBox: React.FC<RoomBoxProps> = ({
-	id, isDragging, setIsDragging, settingsOpen,
-	setSettingsOpen, setChatArea, moveItem
-}) => {
-	// ----STATES----------------------------- //
-	const [showRoomSet, setShowRoomSet] = useState(false)
-
-	// ----HANDLERS--------------------------- //
-	const showIt = useCallback(() => {
-		if (!isDragging) setShowRoomSet(true)
-	}, [isDragging])
-
-	const hideIt = useCallback(() => setShowRoomSet(false), [])
-
-	const dragStart = useCallback(() => {
-		setIsDragging(true)
-		hideIt()
-	}, [])
-
-	const dragEnd = useCallback(() => {
-		setIsDragging(false)
-		hideIt()
-	}, [])
-
-	const handleSetChatArea = useCallback(() => setChatArea(id), [id])
-
-	const roomSetUp = useCallback(() => {
-		if (settingsOpen != id + 1) {
-			setSettingsOpen(id + 1)
-			settingsOpen = id + 1
-		} else {
-			setSettingsOpen(0)
-			settingsOpen = 0
-		}
-	}, [settingsOpen, id])
-
-	const linkBtnHdl = useMemo(() => ({
-		onMouseUp: handleSetChatArea
-	}), [])
-
-	const setBtnHdl = useMemo(() => ({
-		onMouseUp: roomSetUp
-	}), [roomSetUp])
-
-	// ----CLASSNAMES------------------------- //
-	const name = 'chat-room'
-	const btnPressedName = 'chat-btn--pressed'
-
-	// ----RENDER----------------------------- //
-	return <DragDrop
-		itemId={id}
-		className={name}
-		moveItem={moveItem}
-		onMouseEnter={showIt}
-		onMouseLeave={hideIt}
-		onDragStart={dragStart}
-		onDragEnd={dragEnd}
-		content={<>
-			<button className={`${name}-link`} {...linkBtnHdl}>
-				[#${id}]
+		<div className={boxName}>
+			{roomz.map(box => newRoomBox(box))}
+			<button className={btnName}
+				onMouseUp={() => (settingsOpen === 0 ?
+					setSettingsOpen(1)
+					: setSettingsOpen(0)
+				)}>
+				{settingsOpen === 0 ? '[+]' : '[-]'}
 			</button>
-			{showRoomSet && (
-				<button className='chat-setRoom-btn' {...setBtnHdl}>
-					[*]
-				</button>
-			)}
-		</>
-		}
-	/>
-}
-
-// --------USERS----------------------------------------------------------- //
-const RoomUsers: React.FC = () => {
-	// ----STATES----------------------------- //
-	const [userCount, setUserCount] = useState(11)
-
-	// ----CLASSNAMES------------------------- //
-	const name = 'chat-roomUsers'
-
-	// ----RENDER----------------------------- //
-	const renderBoxes = useMemo(() => Array.from({ length: userCount }, (_, index) => (
-		<RoomUser key={index + 1} id={index + 1} />
-	)), [userCount])
-
-	return <div className={name}>
-		<input
-			className={`${name}-input`}
-			id={`${name}-input`}
-			name={`${name}-input`}
-			placeholder={` ${userCount} online`}
-		/>
-		{renderBoxes}
-	</div>
+		</div>
+		<AnimatePresence>
+			{settingsOpen !== 0 && <ChatSettings
+				key='ChatSettings'
+				settingsOpen={settingsOpen}
+				settingsPos={settingsPos}
+			/>}
+		</AnimatePresence>
+	</>
 }
 
 // --------USER------------------------------------------------------------ //
@@ -204,103 +171,112 @@ interface RoomUserProps {
 }
 const RoomUser: React.FC<RoomUserProps> = ({ id }) => {
 	// ----STATES----------------------------- //
-	const [showButton, setShowButton] = useState(false)
-
-	// ----HANDLERS--------------------------- //
-	const enterUser = useCallback(() => setShowButton(true), [])
-	const leaveUser = useCallback(() => setShowButton(false), [])
+	const [showButtons, setShowButtons] = useState(false)
 
 	// ----CLASSNAMES------------------------- //
-	const name = 'chat-roomUsr'
-	const btnName = `${name}-btn`
-	const btnPressedName = 'chat-btn--pressed'
+	const boxName = `${NAME}-roomUsr`
+	const linkName = `${boxName}-link`
+	const btnName = `${boxName}-btn`
+	const btnsName = `${btnName}s`
 
 	// ----RENDER----------------------------- //
-	return <div className={name}
-		onMouseEnter={enterUser}
-		onMouseLeave={leaveUser}>
-		<button className={`${name}-link`}>
-			[#${id}]
-		</button>
-		{showButton && <div className={`${btnName}s`}>
-			<button className={btnName}>
-				[vs]
-			</button>
-			<button className={btnName}>
-				[/w]
-			</button>
-			<button className={btnName}>
-				[/x]
-			</button>
+	return <div className={boxName}
+		onMouseEnter={() => setShowButtons(true)}
+		onMouseLeave={() => setShowButtons(false)}>
+		<button className={linkName}>[#{id}]</button>
+		{showButtons && <div className={btnsName}>
+			<button className={btnName}>[vs]</button>
+			<button className={btnName}>[/w]</button>
+			<button className={btnName}>[/x]</button>
 		</div>}
+	</div>
+}
+
+// --------USERS----------------------------------------------------------- //
+const RoomUsers: React.FC = () => {
+	// ----STATES----------------------------- //
+	const [userCount, setUserCount] = useState(11)
+
+	// ----CLASSNAMES------------------------- //
+	const boxName = `${NAME}-roomUsers`
+	const inputName = `${boxName}-input`
+
+	// ----RENDER----------------------------- //
+	const renderBoxes = Array.from({ length: userCount }, (_, index) =>
+		<RoomUser key={index + 1} id={index + 1} />
+	)
+	return <div className={boxName}>
+		<input className={inputName} placeholder={` ${userCount} online`} />
+		{renderBoxes}
 	</div>
 }
 
 // --------TEXT-AREA------------------------------------------------------- //
 interface TextAreaProps {
 	chatArea: number
-	showUsers: boolean
 }
-const TextArea: React.FC<TextAreaProps> = ({ chatArea, showUsers }) => {
+const TextArea: React.FC<TextAreaProps> = ({ chatArea }) => {
 	// ----CLASSNAMES------------------------- //
-	const name = 'chat-txtArea'
+	const boxName = `${NAME}-txtArea`
 
 	// ----RENDER----------------------------- //
-	const updateChatArea = <>
-		Content of chat #{chatArea}
-	</>
-
-	return <div className={`${name}${showUsers === true ? ` ${name}--shorten` : ''}`}>
-		{updateChatArea}
-	</div>
+	return <div className={boxName}>Content of chat #{chatArea}</div>
 }
 
 // --------MAIN-CONTENT---------------------------------------------------- //
 interface MainContentProps {
-	name: string
-	mainName: string
-	btnName: string
-	showUsers: boolean
-	settingsOpen: number
-	setSettingsOpen: React.Dispatch<React.SetStateAction<number>>
+	chatRef: React.MutableRefObject<HTMLDivElement | null>
 }
-const MainContent: React.FC<MainContentProps> = ({
-	name, mainName, btnName, showUsers, settingsOpen, setSettingsOpen
-}) => {
+const MainContent: React.FC<MainContentProps> = ({ chatRef }) => {
+	// ----REFS------------------------------- //
+	const showUsersRef = useRef(false)
+
 	// ----STATES----------------------------- //
 	const [chatArea, setChatArea] = useState(1)
+	const [showUsers, setShowUsers] = useState(false)
+
+	// ----EFFECTS---------------------------- //
+	useEffect(() => {
+		const chatSizeObserver = new ResizeObserver(resize)
+		chatRef.current && chatSizeObserver.observe(chatRef.current)
+
+		return () => {
+			chatRef.current && chatSizeObserver.unobserve(chatRef.current)
+		}
+	}, [])
+
+	// ----HANDLERS--------------------------- //
+	const resize = () => {
+		if (!chatRef.current) return
+
+		const chatRefBCR = chatRef.current.getBoundingClientRect()
+		if (chatRefBCR.width >= 450) {
+			if (showUsersRef.current === false) {
+				setShowUsers(true)
+				showUsersRef.current = true
+			}
+		}
+		else if (chatRefBCR.width < 450 && showUsersRef.current === true) {
+			setShowUsers(false)
+			showUsersRef.current = false
+		}
+	}
+
+	// ----ANIMATIONS------------------------- //
+	const boxMotion = heightChangeByPercent({})
 
 	// ----CLASSNAMES------------------------- //
-	const mainInputName = `${mainName}-input`
-	const smallBtnName = `${btnName}--small`
+	const inputName = `${MAIN_NAME}-input`
+	const btnName = `${NAME}-sendMsg-btn`
 
 	// ----RENDER----------------------------- //
-	const bouncyHeightGrowByPercentRender = useMemo(() => ({
-		...heightChangeByPercent({})
-	}), []);
-
-	return <motion.div className={mainName}
-		key={mainName}
-		{...bouncyHeightGrowByPercentRender}>
-		<RoomBoxes
-			settingsOpen={settingsOpen}
-			setSettingsOpen={setSettingsOpen}
-			setChatArea={setChatArea}
-		/>
-		<TextArea
-			chatArea={chatArea}
-			showUsers={showUsers}
-		/>
+	return <motion.div className={MAIN_NAME} key={MAIN_NAME} {...boxMotion}>
+		<RoomBoxes setChatArea={setChatArea} chatRef={chatRef} />
 		{showUsers === true && <RoomUsers />}
-		<input
-			className={mainInputName}
-			id={mainInputName}
-			name={mainInputName}
-			placeholder=' ...'
-		/>
-		<button className={`${name}-sendMsg-btn ${smallBtnName}`}>
-			[OK]
-		</button>
+
+		<TextArea chatArea={chatArea} />
+		<input className={inputName} placeholder=' ...' />
+		<button className={btnName}>[OK]</button>
 	</motion.div>
 }
 
@@ -310,73 +286,18 @@ const Chat: React.FC = () => {
 	const chatRef = useRef<HTMLDivElement | null>(null)
 
 	// ----STATES----------------------------- //
-	const [chatOpenned, setChatOpenned] = useState(false)
-	const [chatWidth, setChatWidth] = useState(0)
-	const [showUsers, setShowUsers] = useState(false)
-
-	const [settingsOpen, setSettingsOpen] = useState(0)
-	const [settingsPos, setSettingsPos] = useState({ left: '100%' })
-
-	// ----EFFECTS---------------------------- //
-	useEffect(() => {
-		const chatSizeObserver = new ResizeObserver(resize)
-		if (chatRef.current) chatSizeObserver.observe(chatRef.current)
-
-		return () => { chatRef.current && chatSizeObserver.unobserve(chatRef.current) }
-	}, [])
-
-	useEffect(() => {
-		if (chatWidth >= 450) {
-			if (showUsers === false) setShowUsers(true)
-		}
-		else if (chatWidth < 450 && showUsers === true)
-			setShowUsers(false)
-
-		if (settingsOpen) moveSettings()
-	}, [chatWidth])
-
-	useLayoutEffect(() => moveSettings(), [settingsOpen])
+	const [chatOpen, setChatOpen] = useState(false)
 
 	// ----HANDLERS--------------------------- //
-	const resize = useCallback(() => {
-		if (!chatRef.current) return
+	const toggleChatContent = () => {
+		setChatOpen(x => !x)
+		if (chatRef.current)
+			chatRef.current.setAttribute('style', 'width: 100%')
+	}
 
-		const chatForm = chatRef.current.getBoundingClientRect()
-		if (chatForm.width !== chatWidth) setChatWidth(chatForm.width)
-	}, [chatWidth])
-
-	const moveSettings = useCallback(() => {
-		if (!chatRef.current) return
-
-		const chatForm = chatRef.current.getBoundingClientRect()
-		setSettingsPos({ left: `${chatForm.right}px` })
-	}, [])
-
-	const toggleChatContent = useCallback(() => {
-		setChatOpenned(prevChatOpenned => !prevChatOpenned)
-		setSettingsOpen(0)
-		if (chatRef.current) {
-			const element = chatRef.current
-			element.setAttribute('style', 'width: 100%')
-		}
-	}, [chatOpenned])
-
-	const mainBtnHdl = useMemo(() => ({
-		onMouseUp: toggleChatContent
-	}), [toggleChatContent])
-
-	// ----CLASSNAMES------------------------- //
-	const name = 'chat'
-	const bodyName = `${name}-body`
-	const mainName = `${name}-main`
-	const btnName = `${name}-btn`
-
-	// ----RENDER----------------------------- //
-	const bouncyComeFromColRender = useMemo(() => (
-		bouncyYMove({ from: 100, extra: -10, inDuration: 0.8 })
-	), [])
-
-	const mainButtonMotion = {
+	// ----ANIMATIONS------------------------- //
+	const boxMotion = bouncyYMove({ from: 100, extra: -10, inDuration: 0.8 })
+	const btnMotion = {
 		whileHover: {
 			y: [0, -5, 0],
 			transition: {
@@ -387,35 +308,28 @@ const Chat: React.FC = () => {
 		}
 	}
 
-	return <motion.div className={name}
-		{...bouncyComeFromColRender as MotionProps}>
+	// ----CLASSNAMES------------------------- //
+	const parentName = `${NAME}-box`
+	const boxName = `${NAME}${(
+		!chatOpen ? ` ${NAME}--noResize` : ''
+	)}`
+	const btnName = `${MAIN_NAME}-btn${(
+		chatOpen ? ` ${MAIN_NAME}-btn--expended` : ''
+	)}`
 
-		<div className={`${bodyName}${chatOpenned === false ? ` ${bodyName}--noResize` : ''}`}
-			ref={chatRef}>
+	// ----RENDER----------------------------- //
+	return <motion.div className={parentName} {...boxMotion}>
+		<div className={boxName} ref={chatRef}>
 			<AnimatePresence>
-				{chatOpenned === true && <MainContent
-					name={name}
-					mainName={mainName}
-					btnName={btnName}
-					showUsers={showUsers}
-					settingsOpen={settingsOpen}
-					setSettingsOpen={setSettingsOpen}
-				/>}
-
-				<motion.button className={`${mainName}-btn${chatOpenned === true ? ` ${mainName}-btn--expended` : ''}`}
-					key={`${mainName}-btn`}
-					{...mainBtnHdl}
-					{...mainButtonMotion}>
-					[CHAT]
-				</motion.button>
+				{chatOpen && <MainContent chatRef={chatRef} />}
 			</AnimatePresence>
+
+			<motion.button className={btnName}
+				onMouseUp={toggleChatContent}
+				{...btnMotion}>
+				[CHAT]
+			</motion.button>
 		</div>
-
-		{settingsOpen !== 0 && <ChatSettings
-			settingsOpen={settingsOpen}
-			settingsPos={settingsPos} />
-		}
-
-	</motion.div >
+	</motion.div>
 }
 export default Chat

@@ -41,31 +41,27 @@ ex: ".navBar-logo--hidden {}"
 	border: 1px solid rgb(255, 255, 0);
 	display: flex;
 	flex-wrap: wrap;
-	align-items: center;
 	align-content: flex-start;
 	justify-content: center;
 	overflow-x: hidden;
-
-	/* #2 Forme */
-	height: 100%;
-
-	/* #3 Position */
-	align-self: flex-end;
 }
 
 .character-box {
 	/* #1 Éléments */
 	border: 1px solid rgb(255, 255, 0);
+	display: flex;
+	align-items: center;
+	justify-content: center;
 
 	/* #2 Forme */
 	min-width: 200px;
 	min-height: 200px;
 
 	/* #4 Margin - Padding */
-	margin: 50px;
+	margin: 53px;
 }
 
-.character-box--pressed {
+.character-box:active {
 	background-color: rgb(255, 255, 0, 0.3);
 }
 
@@ -75,7 +71,8 @@ ex: ".navBar-logo--hidden {}"
 	border: 1px solid rgb(255, 255, 0);
 	display: grid;
 	grid-template-columns: 1fr 1fr;
-	grid-template-rows: 1.5fr 2fr 1fr;
+	grid-template-rows: 300px 400px auto;
+	overflow-y: auto;
 }
 
 .character-skin {
@@ -111,23 +108,12 @@ ex: ".navBar-logo--hidden {}"
 	/* #1 Éléments */
 	border-bottom: 1px solid rgb(255, 255, 0);
 	display: flex;
-	align-items: center;
+	flex-wrap: wrap;
+	align-content: flex-start;
 	justify-content: center;
 
 	/* #3 Position */
 	grid-column: 1 / -1;
-}
-
-.character-spell-box {
-	/* #1 Éléments */
-	background-color: transparent;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	position: relative;
-
-	/* #4 Margin - Padding */
-	margin: 0 30px;
 }
 
 .character-spell {
@@ -140,6 +126,9 @@ ex: ".navBar-logo--hidden {}"
 	/* #2 Forme */
 	height: 150px;
 	width: 150px;
+
+	/* #4 Margin - Padding */
+	margin: 33px;
 }
 
 .character-spell-tooltip {
@@ -154,8 +143,6 @@ ex: ".navBar-logo--hidden {}"
 	width: 400px;
 
 	/* #3 Position */
-	position: absolute;
-	left: 0;
-	bottom: 160px;
+	position: fixed;
 	z-index: 1;
 }

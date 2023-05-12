@@ -108,7 +108,6 @@ const Root: React.FC = () => {
 				</header>
 			)}
 		</AnimatePresence>
-
 		<AnimatePresence mode='wait'>
 			<Routes location={location} key={location.pathname}>
 				<Route path='/login' element={<LoginBtn setLogged={setLogged} />} />
