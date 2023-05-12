@@ -20,10 +20,13 @@
 		// Permet de ne pas générer de fichiers de sortie lors de la compilation
 		"noEmit": true,
 		// Dossier de sortie de transcompilation
-		"outDir": "tsdist"
+		"outDir": "server/tsdist"
 	},
 	// Spécifie les fichiers à inclure dans la compilation
 	"include": [
-		"./src/**/*"
+		"server/index.ts"
 	],
+	"exclude": [
+		"node_modules"
+	]
 }

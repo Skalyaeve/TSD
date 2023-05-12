@@ -1,11 +1,8 @@
-import { path } from 'path';
+import * as path from 'path';
 
-import { Server } from 'socket.io'
+import { Server } from 'socket.io';
 
 import { JSDOM } from 'jsdom';
-
-let port					// Listening port for socket.io
-let io						// Socket.io server
 
 function setupAuthoritativePhaser() {
 	JSDOM.fromFile(path.join(__dirname, 'authoritative_server/dist/index.html'), {
@@ -18,8 +15,8 @@ function setupAuthoritativePhaser() {
 	})
 }
 
-port = process.env.PORT || 3001
-io = new Server(port, {
+const port = 3001
+const io = new Server(port, {
 	cors: {
 		origin: '*', // Allow any origin, you can change this to specific domains
 		methods: ['GET', 'POST'],

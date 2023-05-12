@@ -22,13 +22,15 @@ module.exports = [
 		module: {
 			rules: [
 				{
-					test: /\.(js|ts|tsx)$/,
+					test: /\.(js)$/,
 					include: [/server\/authoritative_server/],
+					exclude: [/node_modules/],
 					use: { loader: 'babel-loader' }
 				},
 				{
 					test: /\.(png)$/i,
-					include: [/server\/public/],
+					include: [/server\/authoritative_server/],
+					exclude: [/node_modules/],
 					use: { loader: 'file-loader' }
 				}
 			]
@@ -59,7 +61,7 @@ module.exports = [
 		module: {
 			rules: [
 				{
-					test: /\.(js|ts|tsx)$/,
+					test: /\.(js)$/,
 					include: [/server\/public/],
 					use: { loader: 'babel-loader' }
 				},
