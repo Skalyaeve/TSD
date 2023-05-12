@@ -8,7 +8,4 @@ export class CreateUserDto {
     @IsString()
     nickname: string;
 
-    @IsString()
-    avatarURL: string;
-
 }

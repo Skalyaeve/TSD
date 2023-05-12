@@ -20,7 +20,6 @@ export class FortyTwoStrategy extends PassportStrategy(Strategy) {
     const user = await this.userService.findOrCreateOne({
         email: profile.emails[0].value,
         nickname: profile.username,
-        avatarURL: profile._json.image.link
     });
 
     return user;

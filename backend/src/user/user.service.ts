@@ -1,4 +1,4 @@
-import { Injectable, Param } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'nestjs-prisma';
 import { CreateUserDto } from './dto';
 import { User } from '@prisma/client';
@@ -14,6 +14,13 @@ export class UserService {
     return user;
   }
 
+  async findOneByIdOrThrow(id: number): Promise<User|null> {
+    const user = await this.prisma.user.findUniqueOrThrow({
+      where: { id },
+    });
+    return user;
+  }
+
   async findOneByEmail(email: string): Promise<User|null> {
     const user = await this.prisma.user.findUnique({
       where: { email },
@@ -23,7 +30,7 @@ export class UserService {
 
   async findOrCreateOne(createUserDto: CreateUserDto): Promise<User> {
 
-    const { email, avatarURL } = createUserDto;
+    const { email } = createUserDto;
   
     let user = await this.findOneByEmail(email);
     if (user) {
@@ -34,7 +41,6 @@ export class UserService {
     user = await this.createOne({
       email,
       nickname,
-      avatarURL,
     });
   
     return user;
@@ -55,6 +61,16 @@ export class UserService {
   async deleteOneById(id: number): Promise<User> {
     const user = await this.prisma.user.delete({
       where: { id },
+    });
+    return user;
+  }
+
+  async updateAvatar(id: number, filename: string): Promise<User> {
+    const user = await this.prisma.user.update({
+      where: { id },
+      data: {
+        avatarFilename: filename,
+      }
     });
     return user;
   }

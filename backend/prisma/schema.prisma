@@ -14,7 +14,7 @@ model User {
   id        Int       @id @default(autoincrement())
   email     String   @unique
 	nickname  String		@unique
-  avatarURL String
+	avatarFilename	String	@default("default.png")
 
 	requester	Friend[]	@relation("requester")
 	requestee	Friend[]	@relation("requestee")
@@ -22,7 +22,7 @@ model User {
 	blocker		Blocked[]	@relation("blocker")
 	blockee		Blocked[]	@relation("blockee")
 
-	owner		Channel[]
+	chanOwner		Channel[]
 
 	member		ChanMember[]
 
@@ -60,8 +60,8 @@ model Blocked {
 model Channel {
 	id			Int			@id @default(autoincrement())
 	name		String  @unique
-	ownerRef	User		@relation(fields: [owner], references: [id])
-	owner		Int
+	chanOwnerRef	User		@relation(fields: [chanOwner], references: [id])
+	chanOwner		Int
 	type		ChanType	@default(PUBLIC)
 	passwd		String?
 
@@ -113,7 +113,7 @@ model PrivMessage {
 }
 
 model MatchHistory {
-	id			Int			@id
+	id			Int			@id @default(autoincrement())
 	player1Ref	User		@relation("player1", fields: [player1], references: [id])
 	player1		Int
 	player2Ref	User		@relation("player2", fields: [player2], references: [id])

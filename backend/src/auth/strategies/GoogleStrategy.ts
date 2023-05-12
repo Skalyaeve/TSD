@@ -21,7 +21,6 @@ export class GoogleStrategy extends PassportStrategy(Strategy) {
         const user = await this.userService.findOrCreateOne({
             email: profile.emails[0].value,
             nickname: profile.displayName,
-            avatarURL: profile.photos[0].value
         });
 
         return user;
