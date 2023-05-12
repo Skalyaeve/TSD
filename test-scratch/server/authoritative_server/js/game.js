@@ -1,4 +1,5 @@
 import Phaser from 'phaser'
+import { io } from 'socket.io-client'
 
 const config = {
 	type: Phaser.HEADLESS,
@@ -23,4 +24,4 @@ function preload() { }
 function create() { }
 function update() { }
 const game = new Phaser.Game(config);
-window.gameLoaded();
+const socket = io('http://localhost:3001')

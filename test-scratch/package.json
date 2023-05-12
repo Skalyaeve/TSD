@@ -2,12 +2,14 @@
 	"name": "test-scratch",
 	"version": "1.0.0",
 	"description": "",
-	"main": "./server/index.js",
+	"main": "./server/index.ts",
 	"scripts": {
-		"start": "npm run clean && npm run build && npm run run",
+		"start": "npm run clean && npm run build && npm run build && npm run run",
 		"clean": "(yes | rm -rf server/authoritative_server/dist/*) && (yes | rm -rf server/public/dist/*)",
-		"build": "webpack --mode=development",
-		"run": "node --inspect server/index.js"
+		"build": "webpack --config-name=back-client --mode=development",
+		"run": "concurrently \"npm run run-back\" \"npm run run-front\"",
+		"run-back": "node --inspect server/index.js",
+		"run-front": "webpack serve --config-name=front-client --mode=development"
 	},
 	"author": "",
 	"license": "ISC",
@@ -16,11 +18,16 @@
 		"@babel/preset-env": "^7.21.5",
 		"babel-loader": "^9.1.2",
 		"canvas": "^2.11.2",
+		"concurrently": "^8.0.1",
 		"express": "^4.18.2",
 		"file-loader": "^6.2.0",
+		"html-webpack-plugin": "^5.5.1",
 		"jsdom": "^22.0.0",
 		"phaser": "^3.60.0",
+		"socket.io": "^4.6.1",
+		"socket.io-client": "^4.6.1",
 		"webpack": "^5.82.1",
-		"webpack-cli": "^5.1.1"
+		"webpack-cli": "^5.1.1",
+		"webpack-dev-server": "^4.15.0"
 	}
 }
