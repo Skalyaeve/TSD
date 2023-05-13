@@ -1,10 +1,11 @@
-import { Controller, Delete, FileTypeValidator, Get, MaxFileSizeValidator, Param, ParseFilePipe, ParseIntPipe, Post, Request, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
+import { Controller, Delete, FileTypeValidator, Get, MaxFileSizeValidator, Param, ParseFilePipe, ParseIntPipe, Post, Request, StreamableFile, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
 import { UserService } from "./user.service";
 import { JwtGuard } from "src/auth/guards/JwtGuard";
 import { User } from "@prisma/client";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { Express } from 'express';
-import { diskStorage } from "multer";
+import * as fs from 'fs';
+import { join } from "path";
 
 @Controller('users')
 export class UserController {
@@ -16,28 +17,31 @@ export class UserController {
         return this.userService.findAll();
     }
 
+    @Get('avatar/download')
+    @UseGuards(JwtGuard)
+    async getAvatar(@Request() req: any): Promise<StreamableFile> {
+        const user = await this.userService.findOneByIdOrThrow(req.user.id);
+        const path = 'upload/avatars/' + user.avatarFilename;
+        const file = fs.createReadStream(join(process.cwd(), path))
+        return new StreamableFile(file);
+    }
+
     @Post('avatar/upload')
     @UseGuards(JwtGuard)
-    @UseInterceptors(FileInterceptor('file', {
-        storage: diskStorage({
-            destination: 'upload/avatars',
-            filename: function(req, file, cb) {
-
-            }
-        })
-         }))
+    @UseInterceptors(FileInterceptor('file', { dest: 'upload/avatars' }))
     async uploadAvatar(
         @UploadedFile(new ParseFilePipe({
             validators: [
                 new MaxFileSizeValidator({ maxSize: 2097152 }),
-                new FileTypeValidator({ fileType: 'image/jpeg' }),
-                new FileTypeValidator({ fileType: 'image/png' }),
             ]})) file: Express.Multer.File,
         @Request() req: any): Promise<User> {
-
         const user = await this.userService.findOneByIdOrThrow(req.user.id);
         if (user.avatarFilename !== 'default.png') {
-           fs.unlink
+            const path = 'upload/avatars/' + user.avatarFilename;
+            fs.unlink(path, (err) => {
+            if (err) throw err;
+            console.log(path + ' was deleted');
+        });
         }
         return this.userService.updateAvatar(req.user.id, file.filename);
     }
