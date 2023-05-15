@@ -4,7 +4,7 @@ import {
   MessageBody,
   WebSocketServer,
   ConnectedSocket
-} from '@nestjs/websockets';
+} from '@nestjs/websockets';  
 
 import { Socket, Server } from "socket.io";
 
@@ -18,6 +18,14 @@ export class ChatGateway {
     console.log(data.user);
     console.log(data.message);
     client.broadcast.emit('message', data); // Use broadcast.emit() to send the message to all clients except the sender
+  }
+
+  handleConnection(client: Socket, ...args:any[])
+  {
+    console.log('success');
+    console.log(client.handshake);
+
+    client.emit('connectionResult', { msg: 'helloworld'})
   }
 }
 // import {
