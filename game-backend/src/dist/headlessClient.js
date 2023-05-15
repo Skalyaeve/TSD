@@ -1,5 +1,5 @@
 /* -------------------------LIBRARIES IMPORTS------------------------- */
-
+import Phaser from 'phaser';
 /* -------------------------ASSETS IMPORTS------------------------- */
 // Images && Spritesheets
 const playerIdle__Sheet = '../resource/assets/black.png';
