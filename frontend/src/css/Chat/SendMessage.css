@@ -27,3 +27,18 @@ balise: key to call an html element (e.g div, input, form, button, etc)
     padding-left: 10px;
 
 }
+
+/* 
+
+// return (
+    //     <div className='chat-container'>
+    //         <div className='messages'>
+    //             {allMessages.map((message, index) => (
+    //             <Messages key={index} messages={[message]} currentUser={user} />
+    //             ))}
+    //         </div>
+    //         <div className='input'>
+    //             <MessageInput send={send} user={user} setUser={setUser} />
+    //         </div>
+    //     </div>
+    // ) */

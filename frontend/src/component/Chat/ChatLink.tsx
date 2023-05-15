@@ -36,7 +36,14 @@ const ChatLink: React.FC = memo(() => {
 		{...bouncyComeFromColRender}>
 			<div>
 				{isInChat && (
-				<p>This is additional content that will only be displayed on the chat route.</p>
+					<div>
+						<div>
+							.
+						</div>
+						<div>
+							.
+						</div>				
+					</div>
 				)}
 			</div>
 		<div className={name}>

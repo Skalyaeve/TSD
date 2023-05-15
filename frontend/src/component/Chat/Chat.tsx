@@ -4,6 +4,7 @@ import io, { Socket } from "socket.io-client"
 import MessageInput from './MessageInput.tsx'
 import Messages from './Messages.tsx'
 import { Link } from 'react-router-dom'
+import "../../css/Chat/ChatMainGrid.css"
 
 function Chat({ name }: { name: string }) {
     const [socket, setSocket] = useState<Socket>();
@@ -20,7 +21,7 @@ function Chat({ name }: { name: string }) {
 
     useEffect(() => {
         console.log("NEW CONNECTION")
-        const newSocket = io("http://localhost:8001", { transports: ["websocket"] })
+        const newSocket = io("http://localhost:8001", { transports: ["websocket"], withCredentials: true })
         setSocket(newSocket)
     }, [setSocket])
 
@@ -28,6 +29,20 @@ function Chat({ name }: { name: string }) {
         const newMessage = {...message, type: "received"};
         setAllMessages([...allMessages, newMessage]);
     };
+
+    const connectionResult = (message: { msg: string}) => {
+        const newMessage = {...message};
+        console.log(newMessage);
+    }
+
+
+    useEffect(() => {
+        // console.log('heree');
+        socket?.on("connectionResult", connectionResult);
+        return () => {
+            socket?.off("connectionResult");
+          };
+    });
 
     useEffect(() => {
         console.log('messagelistener');
@@ -37,18 +52,40 @@ function Chat({ name }: { name: string }) {
         }
     }, [send])
 
+
     return (
-        <div className='chat-container'>
-            <div className='messages'>
-                {allMessages.map((message, index) => (
-                <Messages key={index} messages={[message]} currentUser={user} />
-                ))}
+        <div className="chat-main-grid">
+            <div className="manage-rooms">
+                <div className='channels'>
+                  <p>Channels</p>
+                </div>
+                <div className='direct-messages'>
+                    <p>Direct Messages</p>
+                </div>
             </div>
-            <div className='input'>
-                <MessageInput send={send} user={user} setUser={setUser} />
+            <div className="chatbox">
+                <div className='chat-header'>
+                    <p>chat header</p>
+                </div>
+                <div className='chat-messages'>
+                    {allMessages.map((message, index) => (
+                    <Messages key={index} messages={[message]} currentUser={user} />
+                    ))}
+                </div>
+                <div className='chat-input-text'>
+                    <MessageInput send={send} user={user} setUser={setUser} />
+                </div>
+            </div>
+            <div className="contact-info">
+                <div className='header-contact'>
+                    <p>header of the contact info</p>
+                </div>
+                <div className='body-contact'>
+                    <p>body of contact info</p>
+                </div>
             </div>
         </div>
-    )
+      );
 }
 
 export default Chat;

@@ -1,0 +1,21 @@
+/*Column showing the actual chat, header, messages and text input*/
+
+.chat-main-grid .chatbox {
+    display: grid;
+    grid-template-rows: 0.5fr 6.5fr 0.5fr;
+    border: 1px solid green;
+    height: 100%;
+}
+
+.chat-main-grid .chatbox .chat-header{
+    border: 1px solid yellowgreen;
+}
+
+.chat-main-grid .chatbox .chat-messages{
+    border: 1px solid yellowgreen;
+    overflow: auto;
+}
+
+.chat-main-grid .chatbox .chat-input-text{
+    border: 1px solid yellowgreen;
+}
