@@ -32,6 +32,12 @@ interface SocketData {
 	age: number;
 }
 
+// Socket and socket type for server
+interface socketInfo {
+	socket: Socket
+	type: string
+}
+
 // Player key states interface
 interface keyStates {
 	up: boolean									// Player UP key state
@@ -72,11 +78,10 @@ const headlessIDLogin: string = "PHASER-HEADLESS-CLIENT"
 const controlerIDLogin: string = "CONTROLER"
 
 let io: Server
-let state: string = 'up'
+let sockets: { [id: string]: socketInfo } = {}
 
-let players: { [key: string]: player } = {}
+let players: { [id: string]: player } = {}
 let headless: string[] = []
-let connectionTypes: { [key: string]: string } = {}
 let matchQueue: string[] = []
 
 let nbRight: number = 0
@@ -126,23 +131,47 @@ function setupAuthoritativePhaser() {
 }
 
 // Setup for client socket listeners
-function setupClientListeners(socket: Socket){
-	socket.on('', () => {})
+function setupClientListeners(socket: Socket) {
+	socket.on('', () => { })
 }
 
 // Setup for headless client socket listeners\
-function setupHeadlessListeners(socket: Socket){
-	socket.on('', () => {})
+function setupHeadlessListeners(socket: Socket) {
+	socket.on('', () => { })
 }
 
 // Setup for controler socket listeners
-function setupControlerListeners(socket: Socket){
-	socket.on('stop', () => {})
+function setupControlerListeners(socket: Socket) {
+	socket.on('stop', () => { 
+
+	})
 	socket.on('newHeadless', () => {
 		console.log("New headless")
 		setupAuthoritativePhaser();
 	})
-	socket.on('deleteHeadless', () => {})
+	socket.on('displaySocket', (socketId: string) => {
+		if (sockets[socketId]){
+			console.log("Socket:", socketId, "type:", sockets[socketId].type)
+		}
+	})
+	socket.on('displayAllSockets', () => { 
+		for (let socketId in sockets) {
+			console.log("Socket:", socketId, "type:", sockets[socketId].type)
+		}
+	})
+	socket.on('closeParty', (socketId: string) => {
+		if (sockets[socketId]) {
+			sockets[socketId].socket.disconnect()
+			delete sockets[socketId]
+		}
+	})
+	socket.on('closeAllParties', () => {
+		for (let socketId in sockets) {
+			sockets[socketId].socket.disconnect()
+			delete sockets[socketId]
+			console.log("Socket destroyed by server:", socketId)
+		}
+	})
 }
 
 /* -------------------------MAIN CODE------------------------- */
@@ -162,31 +191,30 @@ console.log("listening on port:", port)
 // Connection handler
 io.on('connection', (socket) => {
 	socket.emit('ownID', `${socket.id}`)
-
+	sockets[socket.id].socket = socket
 	// Identification handler
 	socket.on('identification', (socketLoginID: string) => {
 		switch (socketLoginID) {
 			case clientIDLogin:
 				players[socket.id] = createNewPlayer()
 				matchQueue[matchQueue.length] = socket.id
-				connectionTypes[socket.id] = 'client'
+				sockets[socket.id].type = 'client'
 				setupClientListeners(socket)
 				console.log("Player logging in:", socket.id)
 				break
 			case headlessIDLogin:
 				headless[headless.length] = socket.id
-				connectionTypes[socket.id] = 'headless'
+				sockets[socket.id].type = 'headless'
 				setupHeadlessListeners(socket)
 				console.log("New headless session:", socket.id)
 				break
 			case controlerIDLogin:
-				connectionTypes[socket.id] = 'controler'
-				console.log("New controler:", socket.id)
+				sockets[socket.id].type = 'controler'
 				setupControlerListeners(socket)
+				console.log("New controler:", socket.id)
 				break
 			default:
 				socket.disconnect()
 		}
 	})
-		
 })

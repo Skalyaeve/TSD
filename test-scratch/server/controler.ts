@@ -19,26 +19,47 @@ let rl = readline.createInterface({
 
 /* -------------------------FUNCTIONS------------------------- */
 
-function prompt() {
+function prompt(socket: Socket) {
 	rl.question('[TSD]>$ ', (answer) => {
 		switch (answer.toLowerCase()) {
+
 			case 'exit':
 				socket.disconnect()
 				process.exit()
 				break
+			
 			case 'stop':
 				socket.emit('stop')
 				break
+			
 			case 'party':
 				socket.emit('newHeadless')
 				break
+			
 			case 'unparty':
-				socket.emit('deleteHeadless')
+				rl.question('Id?>$', (id) => {
+					socket.emit('closeParty', id)
+				})
 				break
+			
+			case 'unparty all':
+				socket.emit('closeAllParties')
+				break
+			
+			case 'display':
+				rl.question('Id?>$', (id) => {
+					socket.emit('displaySocket', id)
+				})
+				break
+			
+			case 'display all':
+				socket.emit('displayAllSockets')
+				break
+			
 			default:
 				console.log('Unknown command')
 		}
-		prompt()
+		prompt(socket)
 	})
 }
 
@@ -50,5 +71,5 @@ socket.on('ownID', (playerId) => {
 	ownId = playerId
 	console.log("Own id:", ownId)
 	socket.emit('identification', loginID)
-	prompt()
+	prompt(socket)
 })
