@@ -108,7 +108,7 @@ const Spell: React.FC<SpellProps> = ({ spellName, content }) => {
 	// ----ANIMATIONS------------------------- //
 	const boxMotion = fade({ inDuration: 0.3, outDuration: 0.3 })
 	const tooltipMotion = xMove({
-		from: 50,
+		from: -50,
 		inDuration: 0.3,
 		outDuration: 0.3
 	})
@@ -128,7 +128,7 @@ const Spell: React.FC<SpellProps> = ({ spellName, content }) => {
 			{tooltip && (
 				<motion.div className={tooltipName}
 					{...tooltipMotion}
-					style={{ top: `${position.y - 305}px`, left: `${position.x}px` }}>
+					style={{ top: `${position.y - 305}px`, left: `${position.x - 250}px` }}>
 					TOOLTIP
 				</motion.div>
 			)}
@@ -208,8 +208,8 @@ const Characters: React.FC = () => {
 	// ----RENDER----------------------------- //
 	return <motion.main className={boxName}
 		{...boxMotion}>
-		<Character selected={selected} />
 		<CharBoxes swapping={swapping} setSelected={setSelected} />
+		<Character selected={selected} />
 	</motion.main>
 }
 export default Characters

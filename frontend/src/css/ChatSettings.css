@@ -33,12 +33,11 @@ ex: ".navBar-logo--hidden {}"
 
 	/* #2 Forme */
 	width: 400px;
-	height: 467px;
+	height: 463px;
 	border-radius: 5px;
 
 	/* #3 Position */
-	position: absolute;
-	top: 10px;
+	position: fixed;
 }
 
 .chat-roomSet-main-input {
@@ -72,6 +71,7 @@ ex: ".navBar-logo--hidden {}"
 	/* #1 Éléments */
 	border-top: 1px solid rgb(0, 128, 0);
 	border-bottom: 1px solid rgb(0, 128, 0);
+	font-size: 18px;
 
 	/* #2 Forme */
 	flex-shrink: 0;
@@ -82,6 +82,7 @@ ex: ".navBar-logo--hidden {}"
 	border-bottom: 1px solid rgb(0, 128, 0);
 	display: flex;
 	flex-direction: column;
+	overflow-x: hidden;
 	overflow-y: auto;
 }
 
@@ -142,17 +143,20 @@ ex: ".navBar-logo--hidden {}"
 /* ---ROOM-USR-SET--------------- */
 .chat-roomSet-usr {
 	/* #1 Éléments */
+	border-top: 1px solid rgb(0, 128, 0);
 	border-bottom: 1px solid rgb(0, 128, 0);
 	display: flex;
 	position: relative;
 
 	/* #2 Forme */
 	flex-shrink: 0;
-	height: 31.45px;
+	height: 31px;
 }
 
 .chat-roomSet-usr-link {
 	/* #1 Éléments */
+	border: none;
+	font-size: 18px;
 	text-align: start;
 
 	/* #2 Forme */
@@ -165,6 +169,7 @@ ex: ".navBar-logo--hidden {}"
 
 .chat-roomSet-usr-btns {
 	/* #1 Éléments */
+	background-color: transparent;
 	display: flex;
 
 	/* #3 Position */
@@ -174,11 +179,16 @@ ex: ".navBar-logo--hidden {}"
 
 .chat-roomSet-usr-btn {
 	/* #1 Éléments */
-	border-left: 1px solid rgb(0, 128, 0);
-	border-bottom: 1px solid rgb(0, 128, 0);
-	font-size: 18px;
+	border-top: none;
+	border-right: none;
+	font-size: 15px;
 
 	/* #2 Forme */
-	width: 31.45px;
-	height: 31.45px;
+	width: 30px;
+	height: 30px;
+}
+
+.chat-roomSet-btn:active {
+	/* #1 Éléments */
+	background-color: rgba(0, 122, 6, 0.3);
 }
