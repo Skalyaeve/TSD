@@ -24,6 +24,7 @@
 	},
 	// Spécifie les fichiers à inclure dans la compilation
 	"include": [
-		"server/index.ts"
+		"server/index.ts",
+		"server/controler.ts"
 	],
 }

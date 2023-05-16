@@ -16,7 +16,8 @@
 		"run-back": "node --inspect server/dist/index.js",
 		"bundle-run-back": "npm run bundle-back && npm run run-back",
 		"bundle-run-front": "webpack serve --config-name=front-client --mode=development",
-		"bundle-run": "concurrently \"npm run bundle-run-back\" \"npm run bundle-run-front\""
+		"bundle-run": "concurrently \"npm run bundle-run-back\" \"npm run bundle-run-front\" \"npm run start-controler\"",
+		"start-controler": "terminator -e \"node server/dist/controler.js\""
 	},
 	"devDependencies": {
 		"@babel/core": "^7.21.8",

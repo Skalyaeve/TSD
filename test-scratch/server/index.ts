@@ -3,7 +3,7 @@
 import * as path from 'path';
 import { dirname } from 'path';
 import { fileURLToPath } from 'url';
-import { Server } from 'socket.io';
+import { Socket, Server } from 'socket.io';
 import { JSDOM } from 'jsdom';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -32,12 +32,6 @@ interface SocketData {
 	age: number;
 }
 
-// Backend server login informations
-interface socketLogin {
-	socketLoginID: string
-	playerId: string
-}
-
 // Player key states interface
 interface keyStates {
 	up: boolean									// Player UP key state
@@ -61,18 +55,29 @@ interface player {
 	anim: string								// Player current animation
 }
 
+interface party {
+	id: string
+	size: number
+	playerIDs: string[]
+	hostID: string
+}
+
 /* -------------------------VARIABLES------------------------- */
 
 const __filename: string = fileURLToPath(import.meta.url)
 const __dirname: string = dirname(__filename)
 const port: number = 3001
-const clientIDLogin: string = "a52b4f5d-f4e8-40bd-8d49-fda62e74d859"
-const headlessIDLogin: string = "b300c0f7-f8e4-4604-a514-cdf28b1d21ba"
+const clientIDLogin: string = "PHASER-WEB-CLIENT"
+const headlessIDLogin: string = "PHASER-HEADLESS-CLIENT"
+const controlerIDLogin: string = "CONTROLER"
 
 let io: Server
+let state: string = 'up'
 
 let players: { [key: string]: player } = {}
-let headless: { [key: string]: player } = {}
+let headless: string[] = []
+let connectionTypes: { [key: string]: string } = {}
+let matchQueue: string[] = []
 
 let nbRight: number = 0
 let nbLeft: number = 0
@@ -82,14 +87,13 @@ let nbLeft: number = 0
 function createNewPlayer(): player {
 	let newPlayer: player
 	let finalSide = (nbRight > nbLeft ? 'left' : 'right')
-	console.log(finalSide + " connected")
 	if (nbRight > nbLeft)
 		nbLeft = nbLeft + 1
 	else
 		nbRight = nbRight + 1
-	console.log("r:", nbRight, "l:", nbLeft)
+	console.log(finalSide + " connected", "r:", nbRight, "l:", nbLeft)
 	newPlayer = {
-		id: uuidv4(), 
+		id: uuidv4(),
 		xPos: (finalSide == 'left' ? 250 : 1670),
 		yPos: 250 + Math.random() * 580,
 		xDir: (finalSide == 'left' ? 'right' : 'left'),
@@ -106,10 +110,10 @@ function createNewPlayer(): player {
 		skin: 'mage',
 		anim: 'IdleAnim'
 	}
-
 	return newPlayer
 }
 
+// Starts a new headless session
 function setupAuthoritativePhaser() {
 	JSDOM.fromFile(path.join(__dirname, '../authoritative_server/dist/index.html'), {
 		// To run the scripts in the html file
@@ -119,6 +123,26 @@ function setupAuthoritativePhaser() {
 		// So requestAnimatinFrame events fire
 		pretendToBeVisual: true
 	})
+}
+
+// Setup for client socket listeners
+function setupClientListeners(socket: Socket){
+	socket.on('', () => {})
+}
+
+// Setup for headless client socket listeners\
+function setupHeadlessListeners(socket: Socket){
+	socket.on('', () => {})
+}
+
+// Setup for controler socket listeners
+function setupControlerListeners(socket: Socket){
+	socket.on('stop', () => {})
+	socket.on('newHeadless', () => {
+		console.log("New headless")
+		setupAuthoritativePhaser();
+	})
+	socket.on('deleteHeadless', () => {})
 }
 
 /* -------------------------MAIN CODE------------------------- */
@@ -137,23 +161,32 @@ console.log("listening on port:", port)
 
 // Connection handler
 io.on('connection', (socket) => {
-	console.log(`Player connected: ${socket.id}`)
 	socket.emit('ownID', `${socket.id}`)
-	socket.emit('currentPlayers', Object.values(players))
-})
 
-// Identification handler
-io.on('identification', (loginInfo: socketLogin) => {
-	console.log("Player logging in:", loginInfo.playerId)
-	if (loginInfo.socketLoginID == "PHASER-WEB-CLIENT") {
-		players[loginInfo.playerId] = createNewPlayer()
-		console.log("A new player has connected")
-	}
-	else if (loginInfo.socketLoginID == "PHASER-HEADLESS-CLIENT") {
-		headless[loginInfo.playerId] = createNewPlayer()
-		console.log("A new headless client has connected")
-	}
+	// Identification handler
+	socket.on('identification', (socketLoginID: string) => {
+		switch (socketLoginID) {
+			case clientIDLogin:
+				players[socket.id] = createNewPlayer()
+				matchQueue[matchQueue.length] = socket.id
+				connectionTypes[socket.id] = 'client'
+				setupClientListeners(socket)
+				console.log("Player logging in:", socket.id)
+				break
+			case headlessIDLogin:
+				headless[headless.length] = socket.id
+				connectionTypes[socket.id] = 'headless'
+				setupHeadlessListeners(socket)
+				console.log("New headless session:", socket.id)
+				break
+			case controlerIDLogin:
+				connectionTypes[socket.id] = 'controler'
+				console.log("New controler:", socket.id)
+				setupControlerListeners(socket)
+				break
+			default:
+				socket.disconnect()
+		}
+	})
+		
 })
-
-// Start a new headless client
-setupAuthoritativePhaser();

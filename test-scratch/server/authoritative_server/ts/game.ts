@@ -5,12 +5,6 @@ import { Socket, io } from 'socket.io-client'
 
 /* -------------------------TYPES------------------------- */
 
-// Backend server login informations
-interface socketLogin {
-	socketLoginID: string
-	playerId: string
-}
-
 // Player key states interface
 interface keyStates {
 	up: boolean									// Player UP key state
@@ -71,12 +65,8 @@ function startSocket(){
 
 	socket.on('ownID', (playerId) => {
 		ownId = playerId
-		const loginInfo: socketLogin = {
-			socketLoginID: loginID,
-			playerId: ownId
-		}
 		console.log("Own id:", ownId)
-		socket.emit('identification', loginInfo)
+		socket.emit('identification', loginID)
 	})
 }
 

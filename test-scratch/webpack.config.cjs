@@ -11,8 +11,6 @@ module.exports = [
 		entry: './server/authoritative_server/bundling/game.js',
 		// Activation du plugin HTML Webpack
 		plugins: [new HtmlWebpackPlugin()],
-		// Permet aux navigateurs d'afficher des messages d'erreur de débogage plus précis
-		devtool: 'source-map',
 		// Dossier et fichier de sortie pour le bundle
 		output: {
 			path: path.resolve(__dirname, 'server/authoritative_server/dist'),

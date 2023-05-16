@@ -5,12 +5,6 @@ import { Socket, io } from 'socket.io-client'
 
 /* -------------------------TYPES------------------------- */
 
-// Backend server login informations
-interface socketLogin {
-	socketLoginID: string
-	playerId: string
-}
-
 // Player key states interface
 interface keyStates {
 	up: boolean									// Player UP key state
@@ -59,7 +53,6 @@ const config = {
 let game: Phaser.Game
 let socket: Socket
 let ownId: string
-let loggedIn: boolean = false
 
 /* -------------------------FUNCTIONS------------------------- */
 
@@ -73,19 +66,8 @@ function startSocket(){
 	socket.on('ownID', (playerId) => {
 		ownId = playerId
 		console.log("Own id:", ownId)
+		socket.emit('identification', loginID)
 	})
-
-	socket.on('currentPlayers', (playerList: player[]) => {
-		
-	})
-}
-
-async function identification(){
-	const loginInfo: socketLogin = {
-		socketLoginID: loginID,
-		playerId: ownId
-	}
-	socket.emit('identification', loginInfo)
 }
 
 /* -------------------------PHASER FUNCTIONS------------------------- */
