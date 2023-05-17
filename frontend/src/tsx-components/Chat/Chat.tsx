@@ -24,9 +24,6 @@ function Chat({}) {
         const newSocket = io("http://localhost:8001", { 
             transports: ["websocket"], 
             withCredentials: true
-            // auth: {
-            //     token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNjg0MjU0OTE3LCJleHAiOjE2ODQzNDEzMTd9.1xlgLDxoV62cZ1qI3LJATCJphouRufnGp_lo9xX7iaM" // Replace with the actual token value
-            // }
         })
         setSocket(newSocket)
     }, [])
