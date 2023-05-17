@@ -142,7 +142,7 @@ function setupHeadlessListeners(socket: Socket) {
 
 // Setup for controler socket listeners
 function setupControlerListeners(socket: Socket) {
-	socket.on('stop', () => { 
+	socket.on('stop', () => {
 
 	})
 	socket.on('newHeadless', () => {
@@ -150,26 +150,52 @@ function setupControlerListeners(socket: Socket) {
 		setupAuthoritativePhaser();
 	})
 	socket.on('displaySocket', (socketId: string) => {
-		if (sockets[socketId]){
-			console.log("Socket:", socketId, "type:", sockets[socketId].type)
-		}
+		if (sockets[socketId])
+			socket.emit('displayLine', "Socket: " + socketId + " type: " + sockets[socketId].type)
+		else
+			socket.emit('displayLine', "Unknown socket " + socketId)
+		socket.emit('endOfDisplay', {})
 	})
-	socket.on('displayAllSockets', () => { 
+	socket.on('displayAllSockets', () => {
 		for (let socketId in sockets) {
-			console.log("Socket:", socketId, "type:", sockets[socketId].type)
+			socket.emit('displayLine', "Socket: " + socketId + " type: " + sockets[socketId].type)
 		}
+		socket.emit('endOfDisplay', {})
 	})
 	socket.on('closeParty', (socketId: string) => {
-		if (sockets[socketId]) {
-			sockets[socketId].socket.disconnect()
-			delete sockets[socketId]
-		}
-	})
-	socket.on('closeAllParties', () => {
-		for (let socketId in sockets) {
+		if (sockets[socketId] && sockets[socketId].type == 'headless') {
 			sockets[socketId].socket.disconnect()
 			delete sockets[socketId]
 			console.log("Socket destroyed by server:", socketId)
+		}
+		else
+			console.log("Can't destroy unknown socket:", socketId)
+	})
+	socket.on('closeAllParties', () => {
+		for (let socketId in sockets) {
+			if (sockets[socketId].type == 'headless'){
+				sockets[socketId].socket.disconnect()
+				delete sockets[socketId]
+				console.log("Socket destroyed by server:", socketId)
+			}
+		}
+	})
+	socket.on('kickPlayer', (socketId: string) => {
+		if (sockets[socketId]) {
+			sockets[socketId].socket.disconnect()
+			delete sockets[socketId]
+			console.log("Socket destroyed by server:", socketId)
+		}
+		else
+			console.log("Can't destroy unknown socket:", socketId)
+	})
+	socket.on('kickAllPlayers', () => {
+		for (let socketId in sockets) {
+			if (sockets[socketId].type != 'controler'){
+				sockets[socketId].socket.disconnect()
+				delete sockets[socketId]
+				console.log("Socket destroyed by server:", socketId)
+			}
 		}
 	})
 }
@@ -191,7 +217,10 @@ console.log("listening on port:", port)
 // Connection handler
 io.on('connection', (socket) => {
 	socket.emit('ownID', `${socket.id}`)
-	sockets[socket.id].socket = socket
+	sockets[socket.id] = {
+		socket: socket,
+		type: 'unknown'
+	}
 	// Identification handler
 	socket.on('identification', (socketLoginID: string) => {
 		switch (socketLoginID) {
@@ -216,5 +245,6 @@ io.on('connection', (socket) => {
 			default:
 				socket.disconnect()
 		}
+
 	})
 })

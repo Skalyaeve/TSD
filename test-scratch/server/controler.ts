@@ -27,39 +27,55 @@ function prompt(socket: Socket) {
 				socket.disconnect()
 				process.exit()
 				break
-			
+
 			case 'stop':
 				socket.emit('stop')
+				prompt(socket)
 				break
-			
+
 			case 'party':
 				socket.emit('newHeadless')
+				prompt(socket)
 				break
-			
+
 			case 'unparty':
-				rl.question('Id?>$', (id) => {
+				rl.question('Id?>$ ', (id) => {
 					socket.emit('closeParty', id)
+					prompt(socket)
 				})
 				break
-			
+
 			case 'unparty all':
 				socket.emit('closeAllParties')
+				prompt(socket)
 				break
-			
+
 			case 'display':
-				rl.question('Id?>$', (id) => {
+				rl.question('Id?>$ ', (id) => {
 					socket.emit('displaySocket', id)
 				})
 				break
-			
+
 			case 'display all':
 				socket.emit('displayAllSockets')
 				break
-			
+
+			case 'kick':
+				rl.question('Id?>$ ', (id) => {
+					socket.emit('kickPlayer', id)
+					prompt(socket)
+				})
+				break
+
+			case 'kick all':
+				socket.emit('kickAllPlayers')
+				prompt(socket)
+				break
+
 			default:
 				console.log('Unknown command')
+				prompt(socket)
 		}
-		prompt(socket)
 	})
 }
 
@@ -73,3 +89,12 @@ socket.on('ownID', (playerId) => {
 	socket.emit('identification', loginID)
 	prompt(socket)
 })
+
+socket.on('displayLine', (line: string) => {
+	console.log(line)
+})
+
+socket.on('endOfDisplay', () => {
+	prompt(socket)
+})
+
