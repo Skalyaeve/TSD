@@ -26,15 +26,16 @@ const LoginBtn: React.FC<LogginBtnProps> = ({ setLogged }) => {
 	const connect = async () => {
 		try {
 			const response = await fetch(
-				`http://10.11.4.2:3000/auth/42/login`,
+				`http://localhost:3000/auth/42/login`,
 				{ mode: 'no-cors' }
 			)
-			const txt = await response.text()
+			const txt = response.status
 			console.log(`[DONE] ${txt}`)
 		}
 		catch (error) {
 			console.error('[ERROR] ', error)
 		}
+		setLogged(true)
 	}
 	const btnHdl = { onMouseUp: () => !animating.current && connect() }
 

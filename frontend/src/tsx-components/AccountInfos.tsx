@@ -94,7 +94,7 @@ const ProfilePicture: React.FC = () => {
 		const fetchData = async () => {
 			try {
 				const userId = 'users/avatar/download'
-				const response = await fetch(`http://10.11.4.2:3000/${userId}`)
+				const response = await fetch(`http://localhost:3000/${userId}`)
 				if (response.ok) {
 					const blob = await response.blob()
 					const base64Image = await blobToBase64(blob)
