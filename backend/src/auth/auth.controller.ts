@@ -1,6 +1,6 @@
-import { Controller, Get, UseGuards, Req, Post, Body } from '@nestjs/common';
+import { Controller, Get, UseGuards, Req, Post, Body, Res } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { Request } from 'express';
+import { Request, Response } from 'express';
 import { GoogleAuthGuard } from './guards/GoogleGuard';
 import { FortyTwoAuthGuard } from './guards/FortyTwoGuard';
 import { CreateUserDto } from 'src/user/dto';
@@ -19,8 +19,12 @@ export class AuthController {
 
     @Get('42/callback')
     @UseGuards(FortyTwoAuthGuard)
-    handle42Redirect(@Req() req: Request) {
-        return this.authService.login(req.user);
+    async handle42Redirect(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
+        const access_token = await this.authService.login(req.user);
+        res.cookie('access_token', access_token, {
+            httpOnly: true,
+            maxAge: 60 * 60 * 24 * 7,
+        });
     }
 
     @Get('google/login')
@@ -29,18 +33,26 @@ export class AuthController {
 
     @Get('google/redirect')
     @UseGuards(GoogleAuthGuard)
-    handleRedirect(@Req() req: Request) {
-        return this.authService.login(req.user);
+    async handleRedirect(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
+        const access_token = await this.authService.login(req.user);
+        res.cookie('access_token', access_token, {
+            httpOnly: true,
+            maxAge: 60 * 60 * 24 * 7,
+        });
     }
 
     // DEBUGGING
     @Post('new')
-    async createOneUser(@Body() createUserDto: CreateUserDto) {
+    async createOneUser(@Body() createUserDto: CreateUserDto, @Res({ passthrough: true }) res: Response) {
 
         console.log(createUserDto);
         const user = await this.userService.findOrCreateOne(createUserDto);
 
-        return this.authService.login(user);
+        const access_token = await this.authService.login(user);
+        res.cookie('access_token', access_token, {
+            httpOnly: true,
+            maxAge: 60 * 60 * 24 * 7,
+        });
     }
 
     /*
