@@ -6,7 +6,7 @@ import Messages from './Messages.tsx'
 import { Link } from 'react-router-dom'
 import "../../css/Chat/ChatMainGrid.css"
 
-function Chat({ name }: { name: string }) {
+function Chat({}) {
     const [socket, setSocket] = useState<Socket>();
     const [allMessages, setAllMessages] = useState<{user: string; message: string; type: string}[]>([]);
     const [user, setUser] = useState(() => `User${Math.floor(Math.random() * 10)}`);// this will change 

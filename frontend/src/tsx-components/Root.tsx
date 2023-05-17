@@ -3,7 +3,7 @@ import { Routes, Route, useLocation, useNavigate } from 'react-router-dom'
 import { AnimatePresence, MotionProps, motion } from 'framer-motion'
 import { bouncyPopUpByPx } from '../tsx-utils/ftMotion.tsx'
 import NavBar from './NavBar.tsx'
-import Chat from './Chat.tsx'
+import SideChat from './Chat.tsx'
 import Matchmaker from './Matchmaker.tsx'
 import Home from './Home.tsx'
 import AccountInfos from './AccountInfos.tsx'
@@ -12,6 +12,7 @@ import Characters from './Characters.tsx'
 import Party from './Game.tsx'
 import Leader from './Leader.tsx'
 import ErrorPage from './ErrorPage.tsx'
+import Chat from '../component/Chat/Chat.tsx'
 import '../css/Root.css'
 
 // --------LOGIN-BTN------------------------------------------------------- //
@@ -103,7 +104,7 @@ const Root: React.FC = () => {
 			{showHeader && (
 				<header className={headerName}>
 					<NavBar setLogged={setLogged} />
-					<Chat />
+					<SideChat />
 					<Matchmaker />
 				</header>
 			)}
@@ -117,6 +118,7 @@ const Root: React.FC = () => {
 				<Route path='/characters' element={<Characters />} />
 				<Route path='/leader' element={<Leader />} />
 				<Route path='/game' element={<Party />} />
+				<Route path='/chat' element={<Chat />} />
 				<Route path='*' element={<ErrorPage code={404} />} />
 			</Routes>
 		</AnimatePresence>

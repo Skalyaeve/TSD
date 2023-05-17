@@ -1,4 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
 import { AnimatePresence, MotionProps, motion } from 'framer-motion'
 import { DragDrop } from '../tsx-utils/ftDragDrop.tsx'
 import { widthChangeByPx, bouncyHeightChangeByPercent, xMove, bouncyYMove } from '../tsx-utils/ftMotion.tsx'
@@ -322,7 +323,7 @@ const MainContent: React.FC<MainContentProps> = ({ chatRef }) => {
 }
 
 // --------CHAT------------------------------------------------------------ //
-const Chat: React.FC = () => {
+const SideChat: React.FC = () => {
 	// ----REFS------------------------------- //
 	const chatRef = useRef<HTMLDivElement | null>(null)
 
@@ -336,6 +337,7 @@ const Chat: React.FC = () => {
 		if (chatRef.current)
 			chatRef.current.setAttribute('style', 'width: 100%')
 	}
+
 
 	// ----ANIMATIONS------------------------- //
 	const boxMotion = bouncyYMove({ from: 100, extra: -10, inDuration: 0.8 })
@@ -390,12 +392,13 @@ const Chat: React.FC = () => {
 					onMouseUp={toggleChatContent}>
 					[CHAT]
 				</button>
-				<motion.button className={fullPageBtnName}
-					{...fullPageBtnMotion as MotionProps}>
+				<Link
+					className={fullPageBtnName}
+					to={'/chat'}>
 					[&gt;&gt;]
-				</motion.button>
+				</Link>
 			</motion.div>
 		</div>
 	</motion.div>
 }
-export default Chat
+export default SideChat
