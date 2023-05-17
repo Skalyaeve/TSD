@@ -1,13 +1,13 @@
 
 import { PassportStrategy } from '@nestjs/passport';
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Profile, Strategy } from 'passport-42';
-import { AuthService } from '../auth.service';
+import { User } from '@prisma/client';
+import { UserService } from 'src/user/user.service';
 
 @Injectable()
 export class FortyTwoStrategy extends PassportStrategy(Strategy) {
-  constructor(
-    @Inject('AUTH_SERVICE') private readonly authService: AuthService,) {
+  constructor(private readonly userService: UserService) {
     super({
       clientID: process.env.FortyTwoClientID,
       clientSecret: process.env.FortyTwoSecret,
@@ -15,18 +15,13 @@ export class FortyTwoStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(accessToken: string, refreshToken: string, profile: Profile) {
-    console.log(accessToken);
-    console.log(refreshToken);
-    console.log(profile);
-    const user = await this.authService.validateFortyTwoUser({
+  async validate(accessToken: string, refreshToken: string, profile: Profile): Promise<User> {
+
+    const user = await this.userService.findOrCreateOne({
         email: profile.emails[0].value,
         nickname: profile.username,
-        login: profile.username,
-        avatarURL: profile._json.image.link
     });
-    console.log('Validate');
-    console.log(user);
-    return user || null;
+
+    return user;
   }
 }

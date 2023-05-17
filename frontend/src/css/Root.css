@@ -24,7 +24,8 @@ ex: ".navBar-logo--hidden {}"
 --------------------------------- */
 
 @import url("NavBar.css");
-@import url("Chat.css");
+@import url("./Chat/ChatButton.css");
+/* @import url("Chat.css"); */
 @import url("ChatSettings.css");
 @import url("Matchmaker.css");
 @import url("Home.css");

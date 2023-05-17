@@ -1,0 +1,10 @@
+@import url("ContactInfo.css");
+@import url("ChatBox.css");
+@import url("ManageRooms.css");
+
+.chat-main-grid {
+    display: grid;
+    grid-template-columns: 1.1fr 3fr 1fr;
+    gap: 1px;
+    height: 100vh;
+}
