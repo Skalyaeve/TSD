@@ -33,6 +33,10 @@ ex: ".navBar-logo--hidden {}"
 	/* #3 Position */
 	grid-row: 1 / 1;
 	z-index: 3;
+
+	/* #4 Margin - Padding */
+	margin: 10px;
+	margin-bottom: 0;
 }
 
 .navBar-link-motion {

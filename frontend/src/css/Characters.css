@@ -27,7 +27,7 @@ ex: ".navBar-logo--hidden {}"
 .characters {
 	/* #1 Éléments */
 	display: grid;
-	grid-template-columns: 500px 1fr;
+	grid-template-columns: 1fr 500px;
 	grid-gap: 10px;
 	overflow: hidden;
 

@@ -2,9 +2,22 @@ import React, { useState, useLayoutEffect, useEffect } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { xMove, yMove } from '../tsx-utils/ftMotion.tsx'
 
+// --------ANIMATIONS------------------------------------------------------ //
+const mainBoxMotion = xMove({
+	from: 50,
+	inDuration: 0.3,
+	outDuration: 0.15
+})
+
 // --------CLASSNAMES------------------------------------------------------ //
-const NAME = 'chat-roomSet'
-const BTN_NAME = `${NAME}-btn`
+const NAME = 'chat'
+const SETTINGS_NAME = `${NAME}-settings`
+const ROOMSET_NAME = `${NAME}-roomSet`
+const BTN_NAME = `${ROOMSET_NAME}-btn`
+const OPTIONS_NAME = `${SETTINGS_NAME}-option ${BTN_NAME}`
+const NAME_INPUT_NAME = `${ROOMSET_NAME}-name-input ${ROOMSET_NAME}-main-input`
+const PSW_INPUT_NAME = `${ROOMSET_NAME}-psw-input ${ROOMSET_NAME}-main-input`
+const COMMIT_BTN = `${ROOMSET_NAME}-commit-btn ${BTN_NAME}`
 
 // --------ROOM-MEMBER----------------------------------------------------- //
 interface RoomMemberProps {
@@ -19,7 +32,7 @@ const RoomMember: React.FC<RoomMemberProps> = ({ id, addedUsers }) => {
 	const boxMotion = yMove({
 		from: 40 * id,
 		inDuration: 0.7 + 0.01 * id,
-		outDuration: 0.5 - 0.01 * id
+		outDuration: 0.3 - 0.01 * id
 	})
 	const btnMotion = (nbr: number) => xMove({
 		from: 10 * nbr,
@@ -28,7 +41,7 @@ const RoomMember: React.FC<RoomMemberProps> = ({ id, addedUsers }) => {
 	})
 
 	// ----CLASSNAMES------------------------- //
-	const boxName = `${NAME}-usr`
+	const boxName = `${ROOMSET_NAME}-usr`
 	const linkName = `${boxName}-link  ${BTN_NAME}`
 	const btnName = `${boxName}-btn  ${BTN_NAME}`
 	const btnsName = `${boxName}-btns `
@@ -56,7 +69,7 @@ const RoomMember: React.FC<RoomMemberProps> = ({ id, addedUsers }) => {
 		onMouseLeave={() => setShowButtons(false)}
 		{...boxMotion}>
 
-		<button className={linkName}>[#{id}]</button>
+		<div className={linkName}>[#{id}]</div>
 		<AnimatePresence>
 			{showButtons && <div className={btnsName}>{btnToAdd()}</div>}
 		</AnimatePresence>
@@ -72,10 +85,10 @@ const RoomMembersSet: React.FC<RoomMembersSetProps> = ({ addedUsers }) => {
 	const [count, setAddedCount] = useState(addedUsers ? 10 : 7)
 
 	// ----CLASSNAMES------------------------- //
-	const boxName = `${NAME}-users${(
-		addedUsers ? ` ${NAME}-users-added` : ` ${NAME}-users-toAdd`
+	const boxName = `${ROOMSET_NAME}-users${(
+		addedUsers ? ` ${ROOMSET_NAME}-users-added` : ` ${ROOMSET_NAME}-users-toAdd`
 	)}`
-	const inputName = `${NAME}-search-input`
+	const inputName = `${ROOMSET_NAME}-search-input`
 
 	// ----RENDER----------------------------- //
 	const renderUserList = (count: number, addedUsers: boolean) => (
@@ -95,6 +108,108 @@ const RoomMembersSet: React.FC<RoomMembersSetProps> = ({ addedUsers }) => {
 	</div>
 }
 
+// --------ROOM-SETTINGS--------------------------------------------------- //
+interface RoomSettingsProps {
+	settingsOpen: number
+	settingsPos: {}
+	setCreating: React.Dispatch<React.SetStateAction<number>>
+	isPublic?: boolean
+}
+const RoomSettings: React.FC<RoomSettingsProps> = ({
+	settingsOpen, settingsPos, setCreating, isPublic
+}) => {
+	// ----RENDER----------------------------- //
+	const commitArea = () => {
+		if (settingsOpen === 1)
+			return <>
+				<button className={COMMIT_BTN}>
+					[CREATE]
+				</button>
+				<button className={COMMIT_BTN}
+					onMouseUp={() => setCreating(1)}>
+					[BACK]
+				</button>
+			</>
+		else return <>
+			<button className={COMMIT_BTN}>
+				[SAVE]
+			</button>
+			<button className={COMMIT_BTN}>
+				[DELETE]
+			</button>
+		</>
+	}
+	return <motion.div
+		className={ROOMSET_NAME}
+		style={settingsPos}
+		{...mainBoxMotion}>
+
+		<input className={NAME_INPUT_NAME} placeholder='Name' />
+		<input className={PSW_INPUT_NAME} placeholder='Password' />
+		<RoomMembersSet addedUsers={true} />
+		<RoomMembersSet addedUsers={false} />
+		{commitArea()}
+	</motion.div>
+}
+
+// --------JOIN-ROOM------------------------------------------------------- //
+interface JoinRoomProps {
+	settingsPos: {}
+	setJoining: React.Dispatch<React.SetStateAction<boolean>>
+}
+const JoinRoom: React.FC<JoinRoomProps> = ({ settingsPos, setJoining }) => {
+	// ----CLASSNAMES------------------------- //
+	const boxName = `${SETTINGS_NAME}-join`
+	const commitAreaName = `${boxName}-commit`
+	const commitBtnName = `${COMMIT_BTN} ${ROOMSET_NAME}-commit-btn--radius`
+
+	// ----RENDER----------------------------- //
+	return <motion.div className={boxName}
+		style={settingsPos}
+		{...mainBoxMotion}>
+
+		<input className={NAME_INPUT_NAME} placeholder='Name' />
+		<input className={PSW_INPUT_NAME} placeholder='Password' />
+		<div className={commitAreaName}>
+			<button className={commitBtnName}>
+				[JOIN]
+			</button>
+			<button className={commitBtnName}
+				onMouseUp={() => setJoining(false)}>
+				[BACK]
+			</button>
+		</div>
+	</motion.div>
+}
+
+// --------CREATE-ROOM----------------------------------------------------- //
+interface CreateRoomProps {
+	settingsPos: {}
+	setCreating: React.Dispatch<React.SetStateAction<number>>
+}
+const CreateRoom: React.FC<CreateRoomProps> = ({
+	settingsPos, setCreating
+}) => {
+	// ----RENDER----------------------------- //
+	return <motion.div className={SETTINGS_NAME}
+		style={settingsPos}
+		{...mainBoxMotion}>
+
+		<button className={OPTIONS_NAME}
+			onMouseUp={() => setCreating(0)}>
+			[BACK]
+		</button>
+		<button className={OPTIONS_NAME}
+			onMouseUp={() => setCreating(2)}>
+			[PUBLIC]
+		</button>
+		<button className={OPTIONS_NAME}
+			onMouseUp={() => setCreating(3)}>
+			[PRIVATE]
+		</button>
+	</motion.div>
+}
+
 // --------CHAT-SETTINGS--------------------------------------------------- //
 interface ChatSettingsProps {
 	settingsOpen: number
@@ -105,6 +220,8 @@ const ChatSettings: React.FC<ChatSettingsProps> = ({
 }) => {
 	// ----STATES----------------------------- //
 	const [settingsPos, setSettingsPos] = useState({})
+	const [creating, setCreating] = useState(0)
+	const [joining, setJoining] = useState(false)
 
 	// ----EFFECTS---------------------------- //
 	useLayoutEffect(() => moveSettings(), [])
@@ -125,43 +242,62 @@ const ChatSettings: React.FC<ChatSettingsProps> = ({
 		const chatForm = chatRef.current.getBoundingClientRect()
 		setSettingsPos({
 			top: `${chatForm.top + 10}px`,
-			left: `${chatForm.right + 10}px`
+			left: `${chatForm.right}px`
 		})
 	}
 
-	// ----ANIMATIONS------------------------- //
-	const boxMotion = xMove({
-		from: 50,
-		inDuration: 0.3,
-		outDuration: 0.3
-	})
-
 	// ----CLASSNAMES------------------------- //
-	const nameInputName = `${NAME}-name-input ${NAME}-main-input`
-	const pswInputName = `${NAME}-psw-input ${NAME}-main-input`
-	const createBtnName = `${NAME}-create-btn ${BTN_NAME}`
-	const saveBtnName = `${NAME}-update-btn ${BTN_NAME}`
-	const delBtnName = `${NAME}-del-btn ${BTN_NAME}`
+	const boxName = `${SETTINGS_NAME}-box`
 
 	// ----RENDER----------------------------- //
-	const commitArea = () => {
-		if (settingsOpen === 1)
-			return <button className={createBtnName}>[CREATE]</button>
-		else return <>
-			<button className={saveBtnName}>[SAVE]</button>
-			<button className={delBtnName}>[DELETE]</button>
-		</>
+	const render = () => {
+		if (creating === 1) return <CreateRoom
+			key={`${SETTINGS_NAME}-CreateRoom`}
+			settingsPos={settingsPos}
+			setCreating={setCreating}
+		/>
+		if (creating) return <RoomSettings
+			key={`${SETTINGS_NAME}-RoomSettings`}
+			settingsOpen={settingsOpen}
+			settingsPos={settingsPos}
+			setCreating={setCreating}
+			isPublic={creating === 2 ? true : false}
+		/>
+		if (joining) return <JoinRoom
+			key={`${SETTINGS_NAME}-JoinRoom`}
+			settingsPos={settingsPos}
+			setJoining={setJoining}
+		/>
+		return <motion.div
+			className={SETTINGS_NAME}
+			key={`${SETTINGS_NAME}-Main`}
+			style={settingsPos}
+			{...mainBoxMotion}>
+
+			<button className={OPTIONS_NAME}
+				onMouseUp={() => setCreating(1)}>
+				[CREATE]
+			</button>
+			<button className={OPTIONS_NAME}
+				onMouseUp={() => setJoining(true)}>
+				[JOIN]
+			</button>
+		</motion.div>
 	}
 	return <motion.div
-		className={NAME}
+		className={boxName}
 		style={settingsPos}
-		{...boxMotion}>
+		{...mainBoxMotion}>
 
-		<input className={nameInputName} placeholder='Name' />
-		<input className={pswInputName} placeholder='Password' />
-		<RoomMembersSet addedUsers={true} />
-		<RoomMembersSet addedUsers={false} />
-		{commitArea()}
+		{settingsOpen === 1 && <AnimatePresence mode='wait'>
+			{render()}
+		</AnimatePresence>}
+
+		{settingsOpen !== 1 && <RoomSettings
+			settingsOpen={settingsOpen}
+			settingsPos={settingsPos}
+			setCreating={setCreating}
+		/>}
 	</motion.div>
 }
 export default ChatSettings

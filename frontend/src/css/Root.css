@@ -120,9 +120,6 @@ body * {
 	display: grid;
 	grid-template-columns: 1fr;
 	grid-template-rows: auto 1fr 100px;
-
-	/* #4 Margin - Padding */
-	padding: 10px;
 }
 
 /* ---MAIN----------------------- */

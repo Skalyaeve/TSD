@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react'
-import { AnimatePresence, motion } from 'framer-motion'
+import { AnimatePresence, MotionProps, motion } from 'framer-motion'
 import { DragDrop } from '../tsx-utils/ftDragDrop.tsx'
 import { widthChangeByPx, bouncyHeightChangeByPercent, xMove, bouncyYMove } from '../tsx-utils/ftMotion.tsx'
 import ChatSettings from '../tsx-components/ChatSettings.tsx'
@@ -61,9 +61,9 @@ const RoomBox: React.FC<RoomBoxProps> = ({
 
 	// ----RENDER----------------------------- //
 	const boxContent = <>
-		<button className={linkName} onMouseUp={() => setChatArea(id)}>
+		<div className={linkName} onMouseUp={() => setChatArea(id)}>
 			[#{id}]
-		</button>
+		</div>
 		<AnimatePresence>
 			{showRoomSet && <motion.button
 				className={setBtnName}
@@ -155,6 +155,7 @@ const RoomBoxes: React.FC<RoomBoxesProps> = ({ setChatArea, chatRef }) => {
 		</button>
 		<AnimatePresence>
 			{settingsOpen !== 0 && <ChatSettings
+				key={`${NAME}-roomSet-${settingsOpen}`}
 				settingsOpen={settingsOpen}
 				chatRef={chatRef}
 			/>}
@@ -327,6 +328,7 @@ const Chat: React.FC = () => {
 
 	// ----STATES----------------------------- //
 	const [chatOpen, setChatOpen] = useState(false)
+	const [animeMainBtn, setAnimeMainBtn] = useState(false)
 
 	// ----HANDLERS--------------------------- //
 	const toggleChatContent = () => {
@@ -338,12 +340,24 @@ const Chat: React.FC = () => {
 	// ----ANIMATIONS------------------------- //
 	const boxMotion = bouncyYMove({ from: 100, extra: -10, inDuration: 0.8 })
 	const btnMotion = {
+		y: [0, -5, 0],
+		transition: {
+			times: [0, 0.75, 1],
+			repeat: Infinity,
+			ease: 'easeOut'
+		}
+	}
+	const fullPageBtnMotion = {
 		whileHover: {
-			y: [0, -5, 0],
+			scale: [1, 1.1],
+			borderTopLeftRadius: [0, 5],
+			borderBottomLeftRadius: [0, 5],
+			borderBottomRightRadius: [0, 5],
 			transition: {
-				times: [0, 0.75, 1],
+				duration: 0.5,
 				repeat: Infinity,
-				ease: 'easeOut'
+				repeatType: 'reverse',
+				ease: 'linear'
 			}
 		}
 	}
@@ -353,8 +367,12 @@ const Chat: React.FC = () => {
 	const boxName = `${NAME}${(
 		!chatOpen ? ` ${NAME}--noResize` : ''
 	)}`
-	const btnName = ` ${BTN_NAME} ${MAIN_NAME}-btn${(
-		chatOpen ? ` ${MAIN_NAME}-btn--expended` : ''
+	const btnName = ` ${MAIN_NAME}-btn`
+	const extendBtnName = `${MAIN_NAME}-expend-btn${(
+		chatOpen ? ` ${MAIN_NAME}-expend-btn--expended` : ''
+	)}`
+	const fullPageBtnName = `${MAIN_NAME}-fullPage-btn${(
+		chatOpen ? ` ${MAIN_NAME}-fullPage-btn--expended` : ''
 	)}`
 
 	// ----RENDER----------------------------- //
@@ -364,11 +382,19 @@ const Chat: React.FC = () => {
 				{chatOpen && <MainContent chatRef={chatRef} />}
 			</AnimatePresence>
 
-			<motion.button className={btnName}
-				onMouseUp={toggleChatContent}
-				{...btnMotion}>
-				[CHAT]
-			</motion.button>
+			<motion.div className={btnName}
+				animate={animeMainBtn ? btnMotion : {}}>
+				<button className={extendBtnName}
+					onMouseEnter={() => setAnimeMainBtn(true)}
+					onMouseLeave={() => setAnimeMainBtn(false)}
+					onMouseUp={toggleChatContent}>
+					[CHAT]
+				</button>
+				<motion.button className={fullPageBtnName}
+					{...fullPageBtnMotion as MotionProps}>
+					[&gt;&gt;]
+				</motion.button>
+			</motion.div>
 		</div>
 	</motion.div>
 }
