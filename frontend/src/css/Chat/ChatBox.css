@@ -2,7 +2,7 @@
 
 .chat-main-grid .chatbox {
     display: grid;
-    grid-template-rows: 0.5fr 6.5fr 0.5fr;
+    grid-template-rows: 0.5fr 6.5fr 0.7fr;
     border: 1px solid green;
     height: 100%;
 }
@@ -13,7 +13,10 @@
 
 .chat-main-grid .chatbox .chat-messages{
     border: 1px solid yellowgreen;
+    max-height: 800px;
     overflow: auto;
+    /* overflow-y: scroll; */
+    scroll-behavior: smooth;
 }
 
 .chat-main-grid .chatbox .chat-input-text{

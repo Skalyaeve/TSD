@@ -37,12 +37,7 @@ const ChatLink: React.FC = memo(() => {
 			<div>
 				{isInChat && (
 					<div>
-						<div>
-							.
-						</div>
-						<div>
-							.
-						</div>				
+					.			
 					</div>
 				)}
 			</div>
