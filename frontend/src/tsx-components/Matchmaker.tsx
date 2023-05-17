@@ -21,26 +21,20 @@ export const GameInfos: React.FC = () => {
 	const timerName = `${name}-timer`
 
 	// ----RENDER----------------------------- //
-	return <motion.div className={boxName}
-		{...boxMotion}>
-		<motion.div className={playerPPName}
-			{...childMotion}>
+	return <motion.div className={boxName} {...boxMotion}>
+		<motion.div className={playerPPName} {...childMotion}>
 			Player 1
 		</motion.div>
-		<motion.div className={playerPPName}
-			{...childMotion}>
+		<motion.div className={playerPPName} {...childMotion}>
 			Player 2
 		</motion.div>
-		<motion.div className={scoreName}
-			{...childMotion}>
+		<motion.div className={scoreName} {...childMotion}>
 			0
 		</motion.div>
-		<motion.div className={scoreName}
-			{...childMotion}>
+		<motion.div className={scoreName} {...childMotion}>
 			0
 		</motion.div>
-		<motion.div className={timerName}
-			{...childMotion}>
+		<motion.div className={timerName} {...childMotion}>
 			<Timer />
 		</motion.div>
 	</motion.div>
@@ -61,7 +55,6 @@ const Matchmaker: React.FC = () => {
 	// ----EFFECTS---------------------------- //
 	useEffect(() => {
 		if (!matchmaking) return
-
 		const timer = setTimeout(() => {
 			setMatchmaking(false)
 			setInGame(true)
@@ -109,7 +102,8 @@ const Matchmaker: React.FC = () => {
 		if (!matchmaking) return (inGame ? <>[EXIT]</> : <>[PLAY]</>)
 		else return <> [STOP] < Timer /></>
 	}
-	return <motion.button className={name}
+	return <motion.button
+		className={name}
 		{...matchmakerBtnHdl}
 		{...boxMotion}>
 		{render()}

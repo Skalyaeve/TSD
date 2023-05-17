@@ -43,9 +43,12 @@ const RoomBox: React.FC<RoomBoxProps> = ({
 		setIsDragging(false)
 		setShowRoomSet(false)
 	}
-	const setBtnUp = () => {
-		if (settingsOpen != id + 1) setSettingsOpen(id + 1)
-		else setSettingsOpen(0)
+	const linkHdl = { onMouseUp: () => setChatArea(id) }
+	const setBtnHdl = {
+		onMouseUp: () => {
+			if (settingsOpen != id + 1) setSettingsOpen(id + 1)
+			else setSettingsOpen(0)
+		}
 	}
 
 	// ----ANIMATIONS------------------------- //
@@ -62,13 +65,13 @@ const RoomBox: React.FC<RoomBoxProps> = ({
 
 	// ----RENDER----------------------------- //
 	const boxContent = <>
-		<div className={linkName} onMouseUp={() => setChatArea(id)}>
+		<div className={linkName} {...linkHdl}>
 			[#{id}]
 		</div>
 		<AnimatePresence>
 			{showRoomSet && <motion.button
 				className={setBtnName}
-				onMouseUp={setBtnUp}
+				{...setBtnHdl}
 				{...setBtnMotion}>
 				[*]
 			</motion.button>}
@@ -115,10 +118,8 @@ const RoomBoxes: React.FC<RoomBoxesProps> = ({ setChatArea, chatRef }) => {
 		setRoomz(prevRoomBox => {
 			const newRoomBoxes = [...prevRoomBox]
 			if (index < 0 || index > newRoomBoxes.length) return prevRoomBox
-
 			if (tab) newRoomBoxes.splice(index, rm, tab)
 			else newRoomBoxes.splice(index, rm)
-
 			return newRoomBoxes
 		})
 	}
@@ -129,6 +130,11 @@ const RoomBoxes: React.FC<RoomBoxesProps> = ({ setChatArea, chatRef }) => {
 		newItems.splice(dragged, 1)
 		newItems.splice(dropped, 0, roomz[dragged])
 		setRoomz(newItems)
+	}
+	const btnHdl = {
+		onMouseUp: () => {
+			!settingsOpen ? setSettingsOpen(1) : setSettingsOpen(0)
+		}
 	}
 
 	// ----CLASSNAMES------------------------- //
@@ -148,14 +154,11 @@ const RoomBoxes: React.FC<RoomBoxesProps> = ({ setChatArea, chatRef }) => {
 	/>
 	return <>
 		<div className={boxName}>{roomz.map(box => newRoomBox(box))}</div>
-		<button className={btnName}
-			onMouseUp={() =>
-				settingsOpen === 0 ? setSettingsOpen(1) : setSettingsOpen(0)
-			}>
-			{settingsOpen === 0 ? '[+]' : '[-]'}
+		<button className={btnName} {...btnHdl}>
+			{!settingsOpen ? '[+]' : '[-]'}
 		</button>
 		<AnimatePresence>
-			{settingsOpen !== 0 && <ChatSettings
+			{settingsOpen && <ChatSettings
 				key={`${NAME}-roomSet-${settingsOpen}`}
 				settingsOpen={settingsOpen}
 				chatRef={chatRef}
@@ -171,6 +174,12 @@ interface RoomUserProps {
 const RoomUser: React.FC<RoomUserProps> = ({ id }) => {
 	// ----STATES----------------------------- //
 	const [showButtons, setShowButtons] = useState(false)
+
+	// ----HANDLERS--------------------------- //
+	const boxHdl = {
+		onMouseEnter: () => setShowButtons(true),
+		onMouseLeave: () => setShowButtons(false)
+	}
 
 	// ----ANIMATIONS------------------------- //
 	const boxMotion = xMove({
@@ -191,11 +200,7 @@ const RoomUser: React.FC<RoomUserProps> = ({ id }) => {
 	const btnsName = `${boxName}-btns`
 
 	// ----RENDER----------------------------- //
-	return <motion.div className={boxName}
-		onMouseEnter={() => setShowButtons(true)}
-		onMouseLeave={() => setShowButtons(false)}
-		{...boxMotion}>
-
+	return <motion.div className={boxName} {...boxHdl} {...boxMotion}>
 		<div className={linkName}>[#{id}]</div>
 		<AnimatePresence>
 			{showButtons && <div className={btnsName}>
@@ -223,7 +228,6 @@ const RoomUsers: React.FC = () => {
 		finalWidth: 200,
 		initialOpacity: 1,
 	})
-	const inputMotion = xMove({ from: 100 })
 
 	// ----CLASSNAMES------------------------- //
 	const boxName = `${NAME}-roomUsers`
@@ -233,8 +237,7 @@ const RoomUsers: React.FC = () => {
 	const renderBoxes = Array.from({ length: userCount }, (_, index) =>
 		<RoomUser key={index + 1} id={index + 1} />
 	)
-	return <motion.div className={boxName}
-		{...boxMotion}>
+	return <motion.div className={boxName} {...boxMotion}>
 		<motion.input
 			className={inputName}
 			placeholder={` ${userCount} online`}
@@ -282,15 +285,14 @@ const MainContent: React.FC<MainContentProps> = ({ chatRef }) => {
 	// ----HANDLERS--------------------------- //
 	const resize = () => {
 		if (!chatRef.current) return
-
 		const chatRefBCR = chatRef.current.getBoundingClientRect()
 		if (chatRefBCR.width >= 450) {
-			if (showUsersRef.current === false) {
+			if (!showUsersRef.current) {
 				setShowUsers(true)
 				showUsersRef.current = true
 			}
 		}
-		else if (chatRefBCR.width < 450 && showUsersRef.current === true) {
+		else if (chatRefBCR.width < 450 && showUsersRef.current) {
 			setShowUsers(false)
 			showUsersRef.current = false
 		}
@@ -311,9 +313,8 @@ const MainContent: React.FC<MainContentProps> = ({ chatRef }) => {
 	return <motion.div className={MAIN_NAME} {...boxMotion}>
 		<RoomBoxes setChatArea={setChatArea} chatRef={chatRef} />
 		<AnimatePresence>
-			{showUsers === true && <RoomUsers />}
+			{showUsers && <RoomUsers />}
 		</AnimatePresence>
-
 		<TextArea chatArea={chatArea} showUsers={showUsers} />
 		<div className={inputBoxName}>
 			<input className={inputName} placeholder=' ...' />
@@ -337,7 +338,11 @@ const SideChat: React.FC = () => {
 		if (chatRef.current)
 			chatRef.current.setAttribute('style', 'width: 100%')
 	}
-
+	const extendBtnHdl = {
+		onMouseEnter: () => setAnimeMainBtn(true),
+		onMouseLeave: () => setAnimeMainBtn(false),
+		onMouseUp: toggleChatContent
+	}
 
 	// ----ANIMATIONS------------------------- //
 	const boxMotion = bouncyYMove({ from: 100, extra: -10, inDuration: 0.8 })
@@ -366,15 +371,15 @@ const SideChat: React.FC = () => {
 
 	// ----CLASSNAMES------------------------- //
 	const parentName = `${NAME}-box`
-	const boxName = `${NAME}${(
-		!chatOpen ? ` ${NAME}--noResize` : ''
+	const boxName = `${NAME}${(!chatOpen ?
+		` ${NAME}--noResize` : ''
 	)}`
 	const btnName = ` ${MAIN_NAME}-btn`
-	const extendBtnName = `${MAIN_NAME}-expend-btn${(
-		chatOpen ? ` ${MAIN_NAME}-expend-btn--expended` : ''
+	const extendBtnName = `${MAIN_NAME}-expend-btn${(chatOpen ?
+		` ${MAIN_NAME}-expend-btn--expended` : ''
 	)}`
-	const fullPageBtnName = `${MAIN_NAME}-fullPage-btn${(
-		chatOpen ? ` ${MAIN_NAME}-fullPage-btn--expended` : ''
+	const fullPageBtnName = `${MAIN_NAME}-fullPage-btn${(chatOpen ?
+		` ${MAIN_NAME}-fullPage-btn--expended` : ''
 	)}`
 
 	// ----RENDER----------------------------- //
@@ -383,13 +388,10 @@ const SideChat: React.FC = () => {
 			<AnimatePresence>
 				{chatOpen && <MainContent chatRef={chatRef} />}
 			</AnimatePresence>
-
-			<motion.div className={btnName}
+			<motion.div
+				className={btnName}
 				animate={animeMainBtn ? btnMotion : {}}>
-				<button className={extendBtnName}
-					onMouseEnter={() => setAnimeMainBtn(true)}
-					onMouseLeave={() => setAnimeMainBtn(false)}
-					onMouseUp={toggleChatContent}>
+				<button className={extendBtnName} {...extendBtnHdl}>
 					[CHAT]
 				</button>
 				<Link

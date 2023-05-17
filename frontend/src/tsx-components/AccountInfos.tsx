@@ -1,10 +1,6 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { fade, widthChangeByPercent, heightChangeByPercent, xMove, yMove } from '../tsx-utils/ftMotion.tsx'
-
-// --------VALUES---------------------------------------------------------- //
-const ACHIEVEMENTS_COUNT = 18
-const HISTORY_COUNT = 20
 
 // --------CLASSNAMES------------------------------------------------------ //
 const NAME = 'profile'
@@ -17,64 +13,65 @@ const HISTORY_NAME = `${NAME}-history`
 // --------MATCH----------------------------------------------------------- //
 interface MatchProps {
 	id: number
+	count: number
 }
-const Match: React.FC<MatchProps> = ({ id }) => {
+const Match: React.FC<MatchProps> = ({ id, count }) => {
 	// ----ANIMATIONS------------------------- //
 	const boxMotion = xMove({
-		from: -200 * (HISTORY_COUNT - id),
-		inDuration: 0.5 + 0.04 * (HISTORY_COUNT - id),
-		outDuration: 0.5 - 0.01 * (HISTORY_COUNT - id)
+		from: -200 * (count - id),
+		inDuration: 0.5 + 0.04 * (count - id),
+		outDuration: 0.5 - 0.01 * (count - id)
 	})
 
 	// ----CLASSNAMES------------------------- //
 	const boxName = `${HISTORY_NAME}-match`
 
 	// ----RENDER----------------------------- //
-	return <motion.div className={boxName}
-		{...boxMotion}>
+	return <motion.div className={boxName} {...boxMotion}>
 		MATCH #{id}
 	</motion.div>
 }
 
 // --------HISTORY--------------------------------------------------------- //
 const History: React.FC = () => {
+	// ----VALUES----------------------------- //
+	const count = 20
+
 	// ----RENDER----------------------------- //
-	const render = Array.from({ length: HISTORY_COUNT }, (_, index) => (
-		<Match key={index + 1} id={index + 1} />
-	))
+	const render = Array.from({ length: count }, (_, index) =>
+		<Match key={index + 1} id={index + 1} count={count} />
+	)
 	return <>{render}</>
 }
 
 // --------ACHIEVEMENTS---------------------------------------------------- //
 const Achievements: React.FC = () => {
+	// ----VALUES----------------------------- //
+	const count = 18
+
 	// ----ANIMATIONS------------------------- //
-	const achievementMotion = (index: number) => (
-		yMove({
-			from: 400 * index,
-			inDuration: 0.9 + 0.02 * index,
-			outDuration: 0.5 - 0.01 * index
-		})
-	)
+	const achievementMotion = (index: number) => yMove({
+		from: 400 * index,
+		inDuration: 0.9 + 0.02 * index,
+		outDuration: 0.5 - 0.01 * index
+	})
 
 	// ----CLASSNAMES------------------------- //
 	const countName = `${ACHIEVEMENTS_NAME}-count`
 	const listName = `${ACHIEVEMENTS_NAME}-list`
 
 	// ----RENDER----------------------------- //
-	const render = Array.from({ length: ACHIEVEMENTS_COUNT }, (_, index) => (
-		<motion.div className={ACHIEVEMENT_NAME}
+	const render = Array.from({ length: count }, (_, index) =>
+		<motion.div
+			className={ACHIEVEMENT_NAME}
 			key={`${ACHIEVEMENT_NAME}-${index + 1}`}
 			{...achievementMotion(index + 1)}>
 			UNIT {index + 1}
 		</motion.div>
-	))
+	)
 	return <>
-		<div className={countName}>
-			ACHIEVEMENTS
-		</div>
-		<div className={listName}>
-			{render}
-		</div>
+		<div className={countName}>ACHIEVEMENTS</div>
+		<div className={listName}>{render}</div>
 	</>
 }
 
@@ -85,7 +82,6 @@ const ProfilePicture: React.FC = () => {
 	const [loading, setLoading] = useState(true)
 
 	// ----EFFECTS---------------------------- //
-	/*
 	useEffect(() => {
 		const blobToBase64 = (blob: Blob): Promise<string> => {
 			return new Promise((resolve, reject) => {
@@ -95,16 +91,14 @@ const ProfilePicture: React.FC = () => {
 				reader.readAsDataURL(blob)
 			})
 		}
-
 		const fetchData = async () => {
 			try {
-				const userId = 'users/0'
-				const response = await fetch(`http://10.11.12.2:3000/${userId}`)
+				const userId = 'users/avatar/download'
+				const response = await fetch(`http://10.11.4.2:3000/${userId}`)
 				if (response.ok) {
-					// const blob = await response.blob()
-					// const base64Image = await blobToBase64(blob)
-					const txt = await response.text()
-					setProfilePicture(txt)
+					const blob = await response.blob()
+					const base64Image = await blobToBase64(blob)
+					setProfilePicture(base64Image)
 					setLoading(false)
 				} else {
 					console.error(`[ERROR] fetch('http://10.11.12.2:3000/${userId}') failed`)
@@ -115,19 +109,12 @@ const ProfilePicture: React.FC = () => {
 				setLoading(false)
 			}
 		}
-
 		fetchData()
 	}, [])
-	*/
+
 
 	// ----RENDER----------------------------- //
-	return <>
-		{loading ?
-			<>Loading...</>
-			:
-			<>{profilePicture}</>
-		}
-	</>
+	return <>{loading ? <>Loading...</> : <>{profilePicture}</>}</>
 }
 
 // --------INFOS----------------------------------------------------------- //
@@ -136,11 +123,7 @@ const Infos: React.FC = () => {
 	const boxName = `${NAME}-picture`
 
 	// ----RENDER----------------------------- //
-	return <>
-		<div className={boxName}>
-			<ProfilePicture />
-		</div >
-	</>
+	return <><div className={boxName}><ProfilePicture /></div ></>
 }
 
 // --------ACCOUNT-INFOS--------------------------------------------------- //
@@ -155,24 +138,18 @@ const AccountInfos: React.FC = () => {
 	const historyBoxName = `${HISTORY_NAME}-box`
 
 	// ----RENDER----------------------------- //
-	return <motion.div className={boxName}
-		{...boxMotion}>
-		<motion.div className={INFOS_NAME}
-			{...boxMotion}>
+	return <motion.div className={boxName} {...boxMotion}>
+		<motion.div className={INFOS_NAME} {...boxMotion}>
 			<Infos />
 		</motion.div>
-		<motion.div className={ACHIEVEMENTS_NAME}
-			{...achievementsMotion}>
+		<motion.div className={ACHIEVEMENTS_NAME} {...achievementsMotion}>
 			<Achievements />
 		</motion.div>
-		<motion.div className={historyBoxName}
-			{...historyMotion}>
+		<motion.div className={historyBoxName} {...historyMotion}>
 			<div className={STATS_NAME}>
 				0 MATCHES - 0 WINS - 0 LOSES<br />RATIO: 0% - SCORED: 0
 			</div>
-			<div className={HISTORY_NAME}>
-				<History />
-			</div>
+			<div className={HISTORY_NAME}><History /></div>
 		</motion.div>
 	</motion.div>
 }

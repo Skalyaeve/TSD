@@ -11,8 +11,7 @@ const Home: React.FC = () => {
 	const boxName = 'home main'
 
 	// ----RENDER----------------------------- //
-	return <motion.main className={boxName}
-		{...boxMotion}>
+	return <motion.main className={boxName} {...boxMotion}>
 		HOME
 	</motion.main>
 }
