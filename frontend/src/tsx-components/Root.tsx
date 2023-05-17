@@ -27,11 +27,18 @@ const LoginBtn: React.FC<LogginBtnProps> = ({ setLogged }) => {
 	const connect = async () => {
 		try {
 			const response = await fetch(
-				`http://10.11.4.2:3000/auth/42/login`,
+				`http://localhost:3000/auth/42/login`,
 				{ mode: 'no-cors' }
 			)
-			const txt = await response.text()
-			console.log(`[DONE] ${txt}`)
+			if (response.ok) {
+				const txt = await response.text()
+				console.log(`[DONE] ${txt}`)
+				setLogged(true)
+			}
+			else {
+				const txt = await response.text()
+				console.log('[ERROR]')
+			}
 		}
 		catch (error) {
 			console.error('[ERROR] ', error)
