@@ -29,13 +29,19 @@ const LoginBtn: React.FC<LogginBtnProps> = ({ setLogged }) => {
 				`http://localhost:3000/auth/42/login`,
 				{ mode: 'no-cors' }
 			)
-			const txt = response.status
-			console.log(`[DONE] ${txt}`)
+			if (response.ok) {
+				const txt = await response.text()
+				console.log(`[DONE] ${txt}`)
+				setLogged(true)
+			}
+			else {
+				const txt = await response.text()
+				console.log('[ERROR]')
+			}
 		}
 		catch (error) {
 			console.error('[ERROR] ', error)
 		}
-		setLogged(true)
 	}
 	const btnHdl = { onMouseUp: () => !animating.current && connect() }
 
