@@ -63,7 +63,7 @@ module.exports = {
 		// Activation de la fonctionnalité de rechargement en direct
 		hot: true,
 		// Permet de refresh nos pages (Ctrl+F5 ou bouton 'Actualiser')
-		historyApiFallback: true,
+		historyApiFallback: true
 	},
 
 	// Output de Webpack: JSX traduit en JS

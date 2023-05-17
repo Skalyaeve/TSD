@@ -28,6 +28,12 @@ const RoomMember: React.FC<RoomMemberProps> = ({ id, addedUsers }) => {
 	// ----STATES----------------------------- //
 	const [showButtons, setShowButtons] = useState(false)
 
+	// ----HANDLERS--------------------------- //
+	const boxHdl = {
+		onMouseEnter: () => setShowButtons(true),
+		onMouseLeave: () => setShowButtons(false)
+	}
+
 	// ----ANIMATIONS------------------------- //
 	const boxMotion = yMove({
 		from: 40 * id,
@@ -64,11 +70,7 @@ const RoomMember: React.FC<RoomMemberProps> = ({ id, addedUsers }) => {
 			</motion.button>
 		</>
 	}
-	return <motion.div className={boxName}
-		onMouseEnter={() => setShowButtons(true)}
-		onMouseLeave={() => setShowButtons(false)}
-		{...boxMotion}>
-
+	return <motion.div className={boxName} {...boxHdl} {...boxMotion}>
 		<div className={linkName}>[#{id}]</div>
 		<AnimatePresence>
 			{showButtons && <div className={btnsName}>{btnToAdd()}</div>}
@@ -85,8 +87,8 @@ const RoomMembersSet: React.FC<RoomMembersSetProps> = ({ addedUsers }) => {
 	const [count, setAddedCount] = useState(addedUsers ? 10 : 7)
 
 	// ----CLASSNAMES------------------------- //
-	const boxName = `${ROOMSET_NAME}-users${(
-		addedUsers ? ` ${ROOMSET_NAME}-users-added` : ` ${ROOMSET_NAME}-users-toAdd`
+	const boxName = `${ROOMSET_NAME}-users${(addedUsers ?
+		` ${ROOMSET_NAME}-users-added` : ` ${ROOMSET_NAME}-users-toAdd`
 	)}`
 	const inputName = `${ROOMSET_NAME}-search-input`
 
@@ -118,6 +120,9 @@ interface RoomSettingsProps {
 const RoomSettings: React.FC<RoomSettingsProps> = ({
 	settingsOpen, settingsPos, setCreating, isPublic
 }) => {
+	// ----HANDLERS--------------------------- //
+	const backBtnHdl = { onMouseUp: () => setCreating(1) }
+
 	// ----RENDER----------------------------- //
 	const commitArea = () => {
 		if (settingsOpen === 1)
@@ -125,8 +130,7 @@ const RoomSettings: React.FC<RoomSettingsProps> = ({
 				<button className={COMMIT_BTN}>
 					[CREATE]
 				</button>
-				<button className={COMMIT_BTN}
-					onMouseUp={() => setCreating(1)}>
+				<button className={COMMIT_BTN} {...backBtnHdl}>
 					[BACK]
 				</button>
 			</>
@@ -143,7 +147,6 @@ const RoomSettings: React.FC<RoomSettingsProps> = ({
 		className={ROOMSET_NAME}
 		style={settingsPos}
 		{...mainBoxMotion}>
-
 		<input className={NAME_INPUT_NAME} placeholder='Name' />
 		<input className={PSW_INPUT_NAME} placeholder='Password' />
 		<RoomMembersSet addedUsers={true} />
@@ -158,6 +161,9 @@ interface JoinRoomProps {
 	setJoining: React.Dispatch<React.SetStateAction<boolean>>
 }
 const JoinRoom: React.FC<JoinRoomProps> = ({ settingsPos, setJoining }) => {
+	// ----HANDLERS--------------------------- //
+	const backBtnHdl = { onMouseUp: () => setJoining(false) }
+
 	// ----CLASSNAMES------------------------- //
 	const boxName = `${SETTINGS_NAME}-join`
 	const commitAreaName = `${boxName}-commit`
@@ -167,15 +173,13 @@ const JoinRoom: React.FC<JoinRoomProps> = ({ settingsPos, setJoining }) => {
 	return <motion.div className={boxName}
 		style={settingsPos}
 		{...mainBoxMotion}>
-
 		<input className={NAME_INPUT_NAME} placeholder='Name' />
 		<input className={PSW_INPUT_NAME} placeholder='Password' />
 		<div className={commitAreaName}>
 			<button className={commitBtnName}>
-				[JOIN]
+				[ENTER]
 			</button>
-			<button className={commitBtnName}
-				onMouseUp={() => setJoining(false)}>
+			<button className={commitBtnName} {...backBtnHdl}>
 				[BACK]
 			</button>
 		</div>
@@ -190,21 +194,22 @@ interface CreateRoomProps {
 const CreateRoom: React.FC<CreateRoomProps> = ({
 	settingsPos, setCreating
 }) => {
+	// ----HANDLERS--------------------------- //
+	const backBtnHdl = { onMouseUp: () => setCreating(0) }
+	const publicBtnHdl = { onMouseUp: () => setCreating(2) }
+	const privateBtnHdl = { onMouseUp: () => setCreating(3) }
+
 	// ----RENDER----------------------------- //
 	return <motion.div className={SETTINGS_NAME}
 		style={settingsPos}
 		{...mainBoxMotion}>
-
-		<button className={OPTIONS_NAME}
-			onMouseUp={() => setCreating(0)}>
+		<button className={OPTIONS_NAME} {...backBtnHdl}>
 			[BACK]
 		</button>
-		<button className={OPTIONS_NAME}
-			onMouseUp={() => setCreating(2)}>
+		<button className={OPTIONS_NAME} {...publicBtnHdl}>
 			[PUBLIC]
 		</button>
-		<button className={OPTIONS_NAME}
-			onMouseUp={() => setCreating(3)}>
+		<button className={OPTIONS_NAME} {...privateBtnHdl}>
 			[PRIVATE]
 		</button>
 	</motion.div>
@@ -238,13 +243,14 @@ const ChatSettings: React.FC<ChatSettingsProps> = ({
 	// ----HANDLERS--------------------------- //
 	const moveSettings = () => {
 		if (!chatRef.current) return
-
 		const chatForm = chatRef.current.getBoundingClientRect()
 		setSettingsPos({
 			top: `${chatForm.top + 10}px`,
 			left: `${chatForm.right}px`
 		})
 	}
+	const createBtnHdl = { onMouseUp: () => setCreating(1) }
+	const joinBtnHdl = { onMouseUp: () => setJoining(true) }
 
 	// ----CLASSNAMES------------------------- //
 	const boxName = `${SETTINGS_NAME}-box`
@@ -273,13 +279,10 @@ const ChatSettings: React.FC<ChatSettingsProps> = ({
 			key={`${SETTINGS_NAME}-Main`}
 			style={settingsPos}
 			{...mainBoxMotion}>
-
-			<button className={OPTIONS_NAME}
-				onMouseUp={() => setCreating(1)}>
+			<button className={OPTIONS_NAME} {...createBtnHdl}>
 				[CREATE]
 			</button>
-			<button className={OPTIONS_NAME}
-				onMouseUp={() => setJoining(true)}>
+			<button className={OPTIONS_NAME} {...joinBtnHdl}>
 				[JOIN]
 			</button>
 		</motion.div>
@@ -288,11 +291,9 @@ const ChatSettings: React.FC<ChatSettingsProps> = ({
 		className={boxName}
 		style={settingsPos}
 		{...mainBoxMotion}>
-
 		{settingsOpen === 1 && <AnimatePresence mode='wait'>
 			{render()}
 		</AnimatePresence>}
-
 		{settingsOpen !== 1 && <RoomSettings
 			settingsOpen={settingsOpen}
 			settingsPos={settingsPos}

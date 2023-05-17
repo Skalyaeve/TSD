@@ -2,9 +2,6 @@ import React, { useRef, useState, useEffect, useMemo, memo } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { fade, xMove, yMove } from '../tsx-utils/ftMotion.tsx'
 
-// --------VALUES---------------------------------------------------------- //
-const CHAR_COUNT = 9
-
 // --------CLASSNAMES------------------------------------------------------ //
 const NAME = 'character'
 
@@ -38,9 +35,7 @@ const CharBox: React.FC<CharBoxProps> = ({ id, swapping, setSelected }) => {
 	const boxName = `${NAME}-box`
 
 	// ----RENDER----------------------------- //
-	return <motion.div className={boxName}
-		{...boxHdl}
-		{...boxMotion}>
+	return <motion.div className={boxName} {...boxHdl} {...boxMotion}>
 		[Character #{id}]
 	</motion.div>
 }
@@ -50,7 +45,12 @@ interface CharBoxesProps {
 	swapping: React.MutableRefObject<boolean>
 	setSelected: React.Dispatch<React.SetStateAction<number>>
 }
-const CharBoxes: React.FC<CharBoxesProps> = memo(({ swapping, setSelected }) => {
+const CharBoxes: React.FC<CharBoxesProps> = memo(({
+	swapping, setSelected
+}) => {
+	// ----VALUES----------------------------- //
+	const count = 9
+
 	// ----STATES----------------------------- //
 	const [animating, setAnimating] = useState(true)
 
@@ -64,14 +64,18 @@ const CharBoxes: React.FC<CharBoxesProps> = memo(({ swapping, setSelected }) => 
 	const boxName = `${NAME}s-select`
 
 	// ----RENDER----------------------------- //
-	const render = useMemo(() => Array.from({ length: CHAR_COUNT }, (_, index) => (
-		<CharBox key={index + 1}
-			id={index + 1}
-			swapping={swapping}
-			setSelected={setSelected}
-		/>
-	)), [])
-	return <motion.div className={boxName}
+	const render = useMemo(() => (
+		Array.from({ length: count }, (_, index) =>
+			<CharBox
+				key={index + 1}
+				id={index + 1}
+				swapping={swapping}
+				setSelected={setSelected}
+			/>
+		)
+	), [])
+	return <motion.div
+		className={boxName}
 		exit={{ overflowY: 'hidden' }}
 		style={{ overflowY: (animating ? 'hidden' : 'auto') }}>
 		{render}
@@ -118,20 +122,23 @@ const Spell: React.FC<SpellProps> = ({ spellName, content }) => {
 
 	// ----RENDER----------------------------- //
 	return <>
-		<motion.div className={spellName}
+		<motion.div
+			className={spellName}
 			ref={spellNameRef}
 			{...boxHdl}
 			{...boxMotion}>
 			{content}
 		</motion.div>
 		<AnimatePresence>
-			{tooltip && (
-				<motion.div className={tooltipName}
-					{...tooltipMotion}
-					style={{ top: `${position.y - 305}px`, left: `${position.x - 250}px` }}>
-					TOOLTIP
-				</motion.div>
-			)}
+			{tooltip && <motion.div
+				className={tooltipName}
+				{...tooltipMotion}
+				style={{
+					top: `${position.y - 305}px`,
+					left: `${position.x - 250}px`
+				}}>
+				TOOLTIP
+			</motion.div>}
 		</AnimatePresence>
 	</>
 }
@@ -156,7 +163,8 @@ const Character: React.FC<CharacterProps> = ({ selected }) => {
 	return <motion.div className={NAME}>
 		<AnimatePresence mode='wait'>
 			<div className={skinName} key={`${skinName}-${selected}`}>
-				<motion.div className={contentName(skinName)}
+				<motion.div
+					className={contentName(skinName)}
 					{...boxMotion}>
 					CHARACTER #{selected}
 				</motion.div>
@@ -164,7 +172,8 @@ const Character: React.FC<CharacterProps> = ({ selected }) => {
 		</AnimatePresence>
 		<AnimatePresence mode='wait'>
 			<div className={statsName} key={`${statsName}-${selected}`}>
-				<motion.div className={contentName(statsName)}
+				<motion.div
+					className={contentName(statsName)}
 					{...boxMotion}>
 					STATS
 				</motion.div>
@@ -172,7 +181,8 @@ const Character: React.FC<CharacterProps> = ({ selected }) => {
 		</AnimatePresence>
 		<AnimatePresence mode='wait'>
 			<div className={storyName} key={`${storyName}-${selected}`}>
-				<motion.div className={contentName(storyName)}
+				<motion.div
+					className={contentName(storyName)}
 					{...boxMotion}>
 					STORY
 				</motion.div>
@@ -180,12 +190,8 @@ const Character: React.FC<CharacterProps> = ({ selected }) => {
 		</AnimatePresence>
 		<AnimatePresence mode='wait'>
 			<div className={spellzName} key={`${spellzName}-${selected}`}>
-				<Spell spellName={spellName}
-					content='ACTIVE'
-				/>
-				<Spell spellName={spellName}
-					content='PASSIVE'
-				/>
+				<Spell spellName={spellName} content='ACTIVE' />
+				<Spell spellName={spellName} content='PASSIVE' />
 			</div>
 		</AnimatePresence>
 	</motion.div>
@@ -206,8 +212,7 @@ const Characters: React.FC = () => {
 	const boxName = `${NAME}s main`
 
 	// ----RENDER----------------------------- //
-	return <motion.main className={boxName}
-		{...boxMotion}>
+	return <motion.main className={boxName} {...boxMotion}>
 		<CharBoxes swapping={swapping} setSelected={setSelected} />
 		<Character selected={selected} />
 	</motion.main>

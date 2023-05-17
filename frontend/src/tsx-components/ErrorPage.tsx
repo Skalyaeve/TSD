@@ -14,8 +14,7 @@ const ErrorPage: React.FC<ErrorPageProps> = ({ code }) => {
 	const boxName = 'error main'
 
 	// ----RENDER----------------------------- //
-	return <motion.main className={boxName}
-		{...boxMotion}>
+	return <motion.main className={boxName} {...boxMotion}>
 		{code === 403 && <>403 Forbidden</>}
 		{code === 404 && <>404 Not found</>}
 	</motion.main>

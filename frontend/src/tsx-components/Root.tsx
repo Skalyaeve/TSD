@@ -23,14 +23,20 @@ const LoginBtn: React.FC<LogginBtnProps> = ({ setLogged }) => {
 	const animating = useRef(false)
 
 	// ----HANDLERS--------------------------- //
-	const btnHdl = {
-		onMouseUp: () => {
-			if (!animating.current) {
-				setLogged(true)
-				animating.current = true
-			}
+	const connect = async () => {
+		try {
+			const response = await fetch(
+				`http://10.11.4.2:3000/auth/42/login`,
+				{ mode: 'no-cors' }
+			)
+			const txt = await response.text()
+			console.log(`[DONE] ${txt}`)
+		}
+		catch (error) {
+			console.error('[ERROR] ', error)
 		}
 	}
+	const btnHdl = { onMouseUp: () => !animating.current && connect() }
 
 	// ----ANIMATIONS------------------------- //
 	const btnMotion = {
@@ -52,7 +58,8 @@ const LoginBtn: React.FC<LogginBtnProps> = ({ setLogged }) => {
 
 	// ----RENDER----------------------------- //
 	return <div className={boxName}>
-		<motion.button className={name}
+		<motion.button
+			className={name}
 			{...btnHdl}
 			{...btnMotion as MotionProps}>
 			[42Auth]
@@ -71,6 +78,8 @@ const Root: React.FC = () => {
 	const [showHeader, setShowHeader] = useState(false)
 
 	// ----EFFECTS---------------------------- //
+	useLayoutEffect(() => navigate('/login'), [])
+
 	useLayoutEffect(() => {
 		localStorage.setItem('logged', logged ? '1' : '0')
 		if (logged) {
@@ -100,13 +109,11 @@ const Root: React.FC = () => {
 	// ----RENDER----------------------------- //
 	return <>
 		<AnimatePresence>
-			{showHeader && (
-				<header className={headerName}>
-					<NavBar setLogged={setLogged} />
-					<Chat />
-					<Matchmaker />
-				</header>
-			)}
+			{showHeader && <header className={headerName}>
+				<NavBar setLogged={setLogged} />
+				<Chat />
+				<Matchmaker />
+			</header>}
 		</AnimatePresence>
 		<AnimatePresence mode='wait'>
 			<Routes location={location} key={location.pathname}>

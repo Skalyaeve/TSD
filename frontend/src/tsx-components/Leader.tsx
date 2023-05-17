@@ -2,9 +2,6 @@ import React from 'react'
 import { motion } from 'framer-motion'
 import { fade, bouncyWidthChangeByPx, heightChangeByPx, bouncyXMove, yMove, mergeMotions } from '../tsx-utils/ftMotion.tsx'
 
-// --------VALUES---------------------------------------------------------- //
-const USERS_COUNT = 20
-
 // --------CLASSNAMES------------------------------------------------------ //
 const NAME = 'leader'
 const COL_NAME = `${NAME}-col`
@@ -36,16 +33,11 @@ const UserStats: React.FC<UserStatsProps> = ({ rank }) => {
 		<div className={ppName}>PP</div>
 		<div className={linkName}>[NAME]</div>
 	</>
-	const usrBox = (content: string) => (
-		<div className={colName}>
-			{content}
-		</div>
-	)
-	return <motion.div className={boxName}
-		{...boxMotion}>
-		<div className={COL_BTN_NAME}>
-			{nameBtnContent}
-		</div>
+	const usrBox = (content: string) => <div className={colName}>
+		{content}
+	</div>
+	return <motion.div className={boxName} {...boxMotion}>
+		<div className={COL_BTN_NAME}>{nameBtnContent}</div>
 		{usrBox('0')}
 		{usrBox('0')}
 		{usrBox('0')}
@@ -56,18 +48,19 @@ const UserStats: React.FC<UserStatsProps> = ({ rank }) => {
 
 // --------BOARD----------------------------------------------------------- //
 const Board: React.FC = () => {
+	// ----VALUES----------------------------- //
+	const count = 20
+
 	// ----CLASSNAMES------------------------- //
 	const headName = `${NAME}-boardHead`
 
 	// ----RENDER----------------------------- //
-	const renderUsers = Array.from({ length: USERS_COUNT }, (_, index) => (
+	const renderUsers = Array.from({ length: count }, (_, index) =>
 		<UserStats key={index} rank={index + 1} />
-	))
-	const headCol = (content: string) => (
-		<div className={COL_BTN_NAME}>
-			{content}
-		</div>
 	)
+	const headCol = (content: string) => <div className={COL_BTN_NAME}>
+		{content}
+	</div>
 	return <>
 		<div className={headName}>
 			<div className={COL_NAME}>NAME</div>
@@ -84,19 +77,14 @@ const Board: React.FC = () => {
 // --------LEADER---------------------------------------------------------- //
 const Leader: React.FC = () => {
 	// ----ANIMATIONS------------------------- //
-	const boxMove = (index: number) => (
-		bouncyXMove({
-			from: 100 * index,
-			extra: -10,
-			inDuration: 0.8 + 0.02 * index,
-			outDuration: 0.5 - 0.01 * index
-		})
-	)
-	const boxMotion = fade({ inDuration: 1 })
-	const headMotion = heightChangeByPx({
-		finalHeight: 200,
-		inDuration: 0.6
+	const boxMove = (index: number) => bouncyXMove({
+		from: 100 * index,
+		extra: -10,
+		inDuration: 0.8 + 0.02 * index,
+		outDuration: 0.5 - 0.01 * index
 	})
+	const boxMotion = fade({ inDuration: 1 })
+	const headMotion = heightChangeByPx({ finalHeight: 200, inDuration: 0.6 })
 	const headInputMotion = mergeMotions(
 		bouncyWidthChangeByPx({ finalWidth: 325, inDuration: 1 }),
 		boxMove(6)
@@ -106,33 +94,31 @@ const Leader: React.FC = () => {
 	const boxName = `${NAME} main`
 	const inputName = `${NAME}-input`
 	const headName = `${NAME}-head`
-	const headBtnName = (nameExt: string) => `${NAME}-${nameExt}-btn ${BTN_NAME}`
+	const headBtnName = (nameExt: string) => (
+		`${NAME}-${nameExt}-btn ${BTN_NAME}`
+	)
 	const bodyName = `${NAME}-body`
 
 	// ----RENDER----------------------------- //
 	const headBtn = (index: number, nameExt: string, content: string) => (
-		<motion.button className={headBtnName(nameExt)}
-			{...boxMove(index)}>
+		<motion.button className={headBtnName(nameExt)} {...boxMove(index)}>
 			{content}
 		</motion.button>
 	)
-	return <motion.main className={boxName}
-		{...boxMotion}>
-		<motion.div className={headName}
-			{...headMotion}>
+	return <motion.main className={boxName} {...boxMotion}>
+		<motion.div className={headName} {...headMotion}>
 			{headBtn(1, 'down', '[>>]')}
 			{headBtn(2, 'up', '[<<]')}
 			{headBtn(3, 'findMe', '[FIND ME]')}
 			{headBtn(4, 'findTop', '[TOP]')}
 			{headBtn(5, 'input', '[OK]')}
-			<motion.input className={inputName}
+			<motion.input
+				className={inputName}
 				placeholder=' ...'
 				{...headInputMotion}
 			/>
 		</motion.div>
-		<div className={bodyName}>
-			<Board />
-		</div>
+		<div className={bodyName}><Board /></div>
 	</motion.main >
 }
 export default Leader
