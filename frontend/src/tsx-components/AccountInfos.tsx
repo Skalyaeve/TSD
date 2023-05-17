@@ -100,10 +100,8 @@ const ProfilePicture: React.FC = () => {
 					const base64Image = await blobToBase64(blob)
 					setProfilePicture(base64Image)
 					setLoading(false)
-				} else {
-					console.error(`[ERROR] fetch('http://10.11.12.2:3000/${userId}') failed`)
-					setLoading(false)
-				}
+				} else
+					console.error(`[ERROR] fetch('http://localhost:3000/${userId}') failed`)
 			} catch (error) {
 				console.error('[ERROR] ', error)
 				setLoading(false)
@@ -111,7 +109,6 @@ const ProfilePicture: React.FC = () => {
 		}
 		fetchData()
 	}, [])
-
 
 	// ----RENDER----------------------------- //
 	return <>{loading ? <>Loading...</> : <>{profilePicture}</>}</>

@@ -24,9 +24,8 @@ ex: ".navBar-logo--hidden {}"
 --------------------------------- */
 
 @import url("NavBar.css");
-@import url("./Chat/ChatButton.css");
-@import url("Chat.css");
-@import url("ChatSettings.css");
+@import url("SideChat.css");
+@import url("SideChatSettings.css");
 @import url("Matchmaker.css");
 @import url("Home.css");
 @import url("AccountInfos.css");
@@ -121,6 +120,13 @@ body * {
 	display: grid;
 	grid-template-columns: 1fr;
 	grid-template-rows: auto 1fr 100px;
+}
+
+.header-middleContent {
+	/* #3 Position */
+	grid-row: 2 / 2;
+	z-index: 2;
+	position: relative;
 }
 
 /* ---MAIN----------------------- */

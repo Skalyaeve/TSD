@@ -3,7 +3,7 @@ import { Routes, Route, useLocation, useNavigate } from 'react-router-dom'
 import { AnimatePresence, MotionProps, motion } from 'framer-motion'
 import { bouncyPopUpByPx } from '../tsx-utils/ftMotion.tsx'
 import NavBar from './NavBar.tsx'
-import SideChat from './Chat.tsx'
+import SideChat from './SideChat.tsx'
 import Matchmaker from './Matchmaker.tsx'
 import Home from './Home.tsx'
 import AccountInfos from './AccountInfos.tsx'
@@ -12,7 +12,7 @@ import Characters from './Characters.tsx'
 import Party from './Game.tsx'
 import Leader from './Leader.tsx'
 import ErrorPage from './ErrorPage.tsx'
-import Chat from '../component/Chat/Chat.tsx'
+import Chat from './Chat/Chat.tsx'
 import '../css/Root.css'
 
 // --------LOGIN-BTN------------------------------------------------------- //
@@ -33,16 +33,16 @@ const LoginBtn: React.FC<LogginBtnProps> = ({ setLogged }) => {
 			if (response.ok) {
 				const txt = await response.text()
 				console.log(`[DONE] ${txt}`)
-				setLogged(true)
 			}
 			else {
 				const txt = await response.text()
-				console.log('[ERROR]')
+				console.log(`[ERROR] ${txt}`)
 			}
 		}
 		catch (error) {
 			console.error('[ERROR] ', error)
 		}
+		setLogged(true)
 	}
 	const btnHdl = { onMouseUp: () => !animating.current && connect() }
 
@@ -113,17 +113,20 @@ const Root: React.FC = () => {
 
 	// ----CLASSNAMES------------------------- //
 	const headerName = 'header'
+	const headerMiddleName = `${headerName}-middleContent`
 
 	// ----RENDER----------------------------- //
 	return <>
 		<AnimatePresence>
-			{showHeader && (
-				<header className={headerName}>
-					<NavBar setLogged={setLogged} />
-					<SideChat />
-					<Matchmaker />
-				</header>
-			)}
+			{showHeader && <header className={headerName}>
+				<NavBar setLogged={setLogged} />
+				<div className={headerMiddleName}>
+					<AnimatePresence>
+						{location.pathname !== '/chat' && <SideChat />}
+					</AnimatePresence>
+				</div>
+				<Matchmaker />
+			</header>}
 		</AnimatePresence>
 		<AnimatePresence mode='wait'>
 			<Routes location={location} key={location.pathname}>

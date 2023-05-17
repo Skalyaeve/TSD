@@ -22,9 +22,9 @@ export class AuthController {
     async handle42Redirect(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
         const access_token = await this.authService.login(req.user);
         res.cookie('access_token', access_token, {
-            httpOnly: true,
             maxAge: 60 * 60 * 24 * 7,
         });
+        res.redirect('http://localhost:8080');
     }
 
     @Get('google/login')

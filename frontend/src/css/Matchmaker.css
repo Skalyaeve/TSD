@@ -30,7 +30,6 @@ ex: ".navBar-logo--hidden {}"
 
 	/* #2 Forme */
 	border-radius: 5px;
-	border-top-right-radius: 0;
 
 	/* #3 Position */
 	grid-row: 3 / 3;

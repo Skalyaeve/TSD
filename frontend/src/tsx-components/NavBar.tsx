@@ -202,6 +202,21 @@ const From404: React.FC<From404Props> = ({ animating }) => (
 	</motion.nav>
 )
 
+// --------RENDER-FROM-CHAT------------------------------------------------ //
+interface FromChatProps {
+	animating: React.MutableRefObject<boolean>
+}
+const FromChat: React.FC<FromChatProps> = ({ animating }) => (
+	<motion.nav className={NAME} {...navBarMotion(BACK_LINK_HEIGHT)}>
+		<NavBarLink
+			index={0}
+			to='/'
+			content='[HOME]'
+			animating={animating}
+		/>
+	</motion.nav>
+)
+
 // --------NAVBAR---------------------------------------------------------- //
 interface NavBarProps {
 	setLogged: React.Dispatch<React.SetStateAction<boolean>>
@@ -236,6 +251,7 @@ const NavBar: React.FC<NavBarProps> = ({ setLogged }) => {
 				<Route path='/characters' element={<FromCharacters animating={animating} />} />
 				<Route path='/leader' element={<FromLeader animating={animating} />} />
 				<Route path='/game' element={<GameInfos />} />
+				<Route path='/chat' element={<FromChat animating={animating} />} />
 				<Route path='*' element={<From404 animating={animating} />} />
 			</Routes>)
 		}

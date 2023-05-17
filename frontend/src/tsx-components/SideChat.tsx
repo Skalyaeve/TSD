@@ -3,10 +3,10 @@ import { Link } from 'react-router-dom'
 import { AnimatePresence, MotionProps, motion } from 'framer-motion'
 import { DragDrop } from '../tsx-utils/ftDragDrop.tsx'
 import { widthChangeByPx, bouncyHeightChangeByPercent, xMove, bouncyYMove } from '../tsx-utils/ftMotion.tsx'
-import ChatSettings from '../tsx-components/ChatSettings.tsx'
+import ChatSettings from './SideChatSettings.tsx'
 
 // --------CLASSNAMES------------------------------------------------------ //
-const NAME = 'chat'
+const NAME = 'sideChat'
 const MAIN_NAME = `${NAME}-main`
 const BTN_NAME = `${NAME}-btn`
 
@@ -323,7 +323,7 @@ const MainContent: React.FC<MainContentProps> = ({ chatRef }) => {
 	</motion.div>
 }
 
-// --------CHAT------------------------------------------------------------ //
+// --------SIDE-CHAT------------------------------------------------------- //
 const SideChat: React.FC = () => {
 	// ----REFS------------------------------- //
 	const chatRef = useRef<HTMLDivElement | null>(null)
@@ -356,10 +356,10 @@ const SideChat: React.FC = () => {
 	}
 	const fullPageBtnMotion = {
 		whileHover: {
-			scale: [1, 1.1],
-			borderTopLeftRadius: [0, 5],
-			borderBottomLeftRadius: [0, 5],
-			borderBottomRightRadius: [0, 5],
+			scale: [1, 1.1, 1],
+			borderTopLeftRadius: [0, 5, 0],
+			borderBottomLeftRadius: [0, 5, 0],
+			borderBottomRightRadius: [0, 5, 0],
 			transition: {
 				duration: 0.5,
 				repeat: Infinity,
@@ -369,38 +369,44 @@ const SideChat: React.FC = () => {
 		}
 	}
 
+	// ----STYLES----------------------------- //
+	const extendBtnStyle = {
+		borderBottomLeftRadius: '0px'
+	}
+	const fullPageBtnStyle = {
+		borderBottomRightRadius: '0px'
+	}
+
 	// ----CLASSNAMES------------------------- //
-	const parentName = `${NAME}-box`
-	const boxName = `${NAME}${(!chatOpen ?
-		` ${NAME}--noResize` : ''
-	)}`
+	const boxName = `${NAME}${(!chatOpen ? ` ${NAME}--noResize` : '')}`
 	const btnName = ` ${MAIN_NAME}-btn`
-	const extendBtnName = `${MAIN_NAME}-expend-btn${(chatOpen ?
-		` ${MAIN_NAME}-expend-btn--expended` : ''
-	)}`
-	const fullPageBtnName = `${MAIN_NAME}-fullPage-btn${(chatOpen ?
-		` ${MAIN_NAME}-fullPage-btn--expended` : ''
-	)}`
+	const extendBtnName = `${MAIN_NAME}-expend-btn`
+	const fullPageBtnName = `${MAIN_NAME}-fullPage-btn`
+	const fullPageLinkName = `${MAIN_NAME}-fullPage-link`
 
 	// ----RENDER----------------------------- //
-	return <motion.div className={parentName} {...boxMotion}>
-		<div className={boxName} ref={chatRef}>
-			<AnimatePresence>
-				{chatOpen && <MainContent chatRef={chatRef} />}
-			</AnimatePresence>
-			<motion.div
-				className={btnName}
-				animate={animeMainBtn ? btnMotion : {}}>
-				<button className={extendBtnName} {...extendBtnHdl}>
-					[CHAT]
-				</button>
-				<Link
-					className={fullPageBtnName}
-					to={'/chat'}>
+	return <motion.div className={boxName} ref={chatRef} {...boxMotion}>
+		<AnimatePresence>
+			{chatOpen && <MainContent chatRef={chatRef} />}
+		</AnimatePresence>
+		<motion.div
+			className={btnName}
+			animate={animeMainBtn ? btnMotion : {}}>
+			<button
+				style={chatOpen ? extendBtnStyle : {}}
+				className={extendBtnName}
+				{...extendBtnHdl}>
+				[CHAT]
+			</button>
+			<motion.button
+				style={chatOpen ? fullPageBtnStyle : {}}
+				className={fullPageBtnName}
+				{...fullPageBtnMotion as MotionProps}>
+				<Link className={fullPageLinkName} to={'/chat'}>
 					[&gt;&gt;]
 				</Link>
-			</motion.div>
-		</div>
+			</motion.button>
+		</motion.div>
 	</motion.div>
 }
 export default SideChat

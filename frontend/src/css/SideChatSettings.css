@@ -28,7 +28,7 @@ import
 --------------------------------- */
 
 /* ---ROOM-SETTINGS-------------- */
-.chat-roomSet-btn {
+.sideChat-roomSet-btn {
 	/* #1 Éléments */
 	border: 1px solid rgb(0, 128, 0);
 
@@ -40,7 +40,7 @@ import
 	align-self: center;
 }
 
-.chat-settings-box {
+.sideChat-settings-box {
 	/* #1 Éléments */
 	background-color: transparent;
 
@@ -48,7 +48,7 @@ import
 	position: fixed;
 }
 
-.chat-settings {
+.sideChat-settings {
 	/* #1 Éléments */
 	border: 1px solid rgb(0, 128, 0);
 	display: flex;
@@ -63,7 +63,7 @@ import
 	padding: 5px;
 }
 
-.chat-settings-option {
+.sideChat-settings-option {
 	/* #1 Éléments */
 	border: 1px solid rgb(0, 128, 0);
 
@@ -76,7 +76,7 @@ import
 	margin: 5px;
 }
 
-.chat-settings-join {
+.sideChat-settings-join {
 	/* #1 Éléments */
 	border: 1px solid rgb(0, 128, 0);
 	display: grid;
@@ -91,14 +91,14 @@ import
 	padding: 5px;
 }
 
-.chat-settings-join-commit {
+.sideChat-settings-join-commit {
 	/* #3 Position */
 	grid-column: 1 / -1;
 	align-self: center;
 	justify-self: center;
 }
 
-.chat-roomSet {
+.sideChat-roomSet {
 	/* #1 Éléments */
 	border: 1px solid rgb(0, 128, 0);
 	display: grid;
@@ -111,7 +111,7 @@ import
 	border-radius: 5px;
 }
 
-.chat-roomSet-main-input {
+.sideChat-roomSet-main-input {
 	/* #1 Éléments */
 	border: 1px solid rgb(0, 128, 0);
 	text-align: center;
@@ -125,12 +125,12 @@ import
 	justify-self: center;
 }
 
-.chat-roomSet-name-input {
+.sideChat-roomSet-name-input {
 	/* #4 Margin - Padding */
 	margin-top: 5px;
 }
 
-.chat-roomSet-psw-input {
+.sideChat-roomSet-psw-input {
 	/* #3 Position */
 	align-self: flex-end;
 
@@ -138,7 +138,7 @@ import
 	margin-bottom: 5px;
 }
 
-.chat-roomSet-search-input {
+.sideChat-roomSet-search-input {
 	/* #1 Éléments */
 	border-top: 1px solid rgb(0, 128, 0);
 	border-bottom: 1px solid rgb(0, 128, 0);
@@ -148,7 +148,7 @@ import
 	flex-shrink: 0;
 }
 
-.chat-roomSet-users {
+.sideChat-roomSet-users {
 	/* #1 Éléments */
 	border-bottom: 1px solid rgb(0, 128, 0);
 	display: flex;
@@ -157,7 +157,7 @@ import
 	overflow-y: auto;
 }
 
-.chat-roomSet-users-added {
+.sideChat-roomSet-users-added {
 	/* #1 Éléments */
 	border-right: 1px solid rgb(0, 128, 0);
 
@@ -166,13 +166,13 @@ import
 	grid-row: 2 / 2;
 }
 
-.chat-roomSet-users-toAdd {
+.sideChat-roomSet-users-toAdd {
 	/* #3 Position */
 	grid-column: 2 / -1;
 	grid-row: 2 / 2;
 }
 
-.chat-roomSet-commit-btn:nth-of-type(1) {
+.sideChat-roomSet-commit-btn:nth-of-type(1) {
 	/* #3 Position */
 	grid-column: 1 / 1;
 	grid-row: 3 / -1;
@@ -182,7 +182,7 @@ import
 	margin-right: 20px;
 }
 
-.chat-roomSet-commit-btn:nth-of-type(2) {
+.sideChat-roomSet-commit-btn:nth-of-type(2) {
 	/* #3 Position */
 	grid-column: 2 / 2;
 	grid-row: 3 / -1;
@@ -192,13 +192,13 @@ import
 	margin-left: 20px;
 }
 
-.chat-roomSet-commit-btn--radius {
+.sideChat-roomSet-commit-btn--radius {
 	/* #2 Forme */
 	border-radius: 5px;
 }
 
 /* ---ROOM-USR-SET--------------- */
-.chat-roomSet-usr {
+.sideChat-roomSet-usr {
 	/* #1 Éléments */
 	border-top: 1px solid rgb(0, 128, 0);
 	border-bottom: 1px solid rgb(0, 128, 0);
@@ -210,7 +210,7 @@ import
 	height: 31px;
 }
 
-.chat-roomSet-usr-link {
+.sideChat-roomSet-usr-link {
 	/* #1 Éléments */
 	border: none;
 	font-size: 18px;
@@ -225,7 +225,7 @@ import
 	padding-left: 5px;
 }
 
-.chat-roomSet-usr-btns {
+.sideChat-roomSet-usr-btns {
 	/* #1 Éléments */
 	background-color: transparent;
 	display: flex;
@@ -235,7 +235,7 @@ import
 	right: 0;
 }
 
-.chat-roomSet-usr-btn {
+.sideChat-roomSet-usr-btn {
 	/* #1 Éléments */
 	border-top: none;
 	border-right: none;
@@ -246,7 +246,7 @@ import
 	height: 30px;
 }
 
-.chat-roomSet-btn:active {
+.sideChat-roomSet-btn:active {
 	/* #1 Éléments */
 	background-color: rgba(0, 122, 6, 0.3);
 }

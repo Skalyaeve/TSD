@@ -10,7 +10,7 @@ const mainBoxMotion = xMove({
 })
 
 // --------CLASSNAMES------------------------------------------------------ //
-const NAME = 'chat'
+const NAME = 'sideChat'
 const SETTINGS_NAME = `${NAME}-settings`
 const ROOMSET_NAME = `${NAME}-roomSet`
 const BTN_NAME = `${ROOMSET_NAME}-btn`
@@ -215,12 +215,12 @@ const CreateRoom: React.FC<CreateRoomProps> = ({
 	</motion.div>
 }
 
-// --------CHAT-SETTINGS--------------------------------------------------- //
-interface ChatSettingsProps {
+// --------SIDE-CHAT-SETTINGS---------------------------------------------- //
+interface SideChatSettingsProps {
 	settingsOpen: number
 	chatRef: React.MutableRefObject<HTMLDivElement | null>
 }
-const ChatSettings: React.FC<ChatSettingsProps> = ({
+const SideChatSettings: React.FC<SideChatSettingsProps> = ({
 	settingsOpen, chatRef
 }) => {
 	// ----STATES----------------------------- //
@@ -301,4 +301,4 @@ const ChatSettings: React.FC<ChatSettingsProps> = ({
 		/>}
 	</motion.div>
 }
-export default ChatSettings
+export default SideChatSettings
