@@ -8,6 +8,9 @@ import { FortyTwoStrategy } from './strategies/FortyTwoStrategy';
 import { JwtStrategy } from './strategies/JwtStrategy';
 import { PassportModule } from '@nestjs/passport';
 import { UserModule } from 'src/user/user.module';
+import { UserService } from 'src/user/user.service';
+import { ConfigModule } from '@nestjs/config';
+import { PrismaService } from 'nestjs-prisma';
 
 @Module({
   imports: [
@@ -17,6 +20,7 @@ import { UserModule } from 'src/user/user.module';
       secret: process.env.jwtSecret,
       signOptions: { expiresIn: '1d' },
     }),
+    ConfigModule,
     UserModule,
   ],
   providers: [
@@ -24,6 +28,8 @@ import { UserModule } from 'src/user/user.module';
     GoogleStrategy,
     JwtStrategy,
     AuthService,
+    UserService,
+    PrismaService
   ],
   controllers: [AuthController],
 })
