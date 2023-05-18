@@ -1,7 +1,7 @@
 import React, { useRef, useState, useLayoutEffect } from 'react'
 import { Routes, Route, useLocation, useNavigate } from 'react-router-dom'
 import { AnimatePresence, MotionProps, motion } from 'framer-motion'
-import { bouncyPopUpByPx } from '../tsx-utils/ftMotion.tsx'
+import { bouncyPopUpByPx, bouncyYMove } from '../tsx-utils/ftMotion.tsx'
 import NavBar from './NavBar.tsx'
 import SideChat from './SideChat.tsx'
 import Matchmaker from './Matchmaker.tsx'
@@ -14,6 +14,27 @@ import Leader from './Leader.tsx'
 import ErrorPage from './ErrorPage.tsx'
 import Chat from './Chat/Chat.tsx'
 import '../css/Root.css'
+
+// --------IS-CONNECTED---------------------------------------------------- //
+const isConnected = async () => {
+	const servID = 'http://localhost:3000'
+	const path = '/users/connected'
+	try {
+		const response = await fetch(`${servID}${path}`, {
+			method: 'GET',
+			mode: 'cors',
+			credentials: 'include'
+		})
+		if (response.ok) {
+			const txt = await response.json()
+			console.log(txt)
+			return true
+		}
+		else console.error(`[ERROR] ${response.status}`)
+	}
+	catch { console.error('[ERROR] fetch() failed') }
+	return false
+}
 
 // --------LOGIN-BTN------------------------------------------------------- //
 interface LogginBtnProps {
@@ -30,15 +51,8 @@ const LoginBtn: React.FC<LogginBtnProps> = ({ setLogged }) => {
 		const redirectURI = 'http%3A%2F%2Flocalhost%3A3000%2Fauth%2F42%2Fcallback'
 		const url = `${address}/oauth/authorize?response_type=code&redirect_uri=${redirectURI}&client_id=${clientID}`
 		window.location.href = url
-
-		const servID = 'http://localhost:3000'
-		const path = '/users/connected'
-		try {
-			const response = await fetch(`${servID}${path}`)
-			if (response.ok) setLogged(true)
-			else console.error(`[ERROR] ${response.status}`)
-		}
-		catch { console.error('[ERROR] fetch() failed') }
+		const connected = await isConnected()
+		if (connected) setLogged(true)
 	}
 	const btnHdl = { onMouseUp: () => !animating.current && connect() }
 
@@ -78,26 +92,33 @@ const Root: React.FC = () => {
 	const navigate = useNavigate()
 
 	// ----STATES----------------------------- //
-	const [logged, setLogged] = useState(localStorage.getItem('logged') === '1')
+	const [logged, setLogged] = useState(false)
 	const [showHeader, setShowHeader] = useState(false)
 
 	// ----EFFECTS---------------------------- //
-	useLayoutEffect(() => navigate('/login'), [])
+	useLayoutEffect(() => {
+		const checkConnection = async () => {
+			if (!logged) {
+				const connected = await isConnected()
+				if (connected) setLogged(true)
+				else navigate('/login')
+			}
+		}
+		checkConnection()
+	}, [])
 
 	useLayoutEffect(() => {
-		localStorage.setItem('logged', logged ? '1' : '0')
+		console.log(location.pathname)
 		if (logged) {
-			navigate('/')
+			location.pathname !== '/' && navigate('/')
 			if (location.pathname === '/login') {
-				const timer = setTimeout(() => {
-					setShowHeader(true)
-				}, 500)
+				const timer = setTimeout(() => { setShowHeader(true) }, 500)
 				return () => clearTimeout(timer)
 			}
 			else setShowHeader(true)
 		}
-		else {
-			navigate('/login')
+		else if (!logged) {
+			location.pathname !== '/login' && navigate('/login')
 			setShowHeader(false)
 		}
 	}, [logged])
@@ -106,6 +127,9 @@ const Root: React.FC = () => {
 		if (logged && localStorage.getItem('inGame') === '1')
 			navigate('/game')
 	}, [location.pathname])
+
+	// ----ANIMATIONS------------------------- //
+	const boxMotion = bouncyYMove({ from: 100, extra: -10, inDuration: 0.8 })
 
 	// ----CLASSNAMES------------------------- //
 	const headerName = 'header'
@@ -116,11 +140,11 @@ const Root: React.FC = () => {
 		<AnimatePresence>
 			{showHeader && <header className={headerName}>
 				<NavBar setLogged={setLogged} />
-				<div className={headerMiddleName}>
+				<motion.div className={headerMiddleName} {...boxMotion}>
 					<AnimatePresence>
 						{location.pathname !== '/chat' && <SideChat />}
 					</AnimatePresence>
-				</div>
+				</motion.div>
 				<Matchmaker />
 			</header>}
 		</AnimatePresence>
