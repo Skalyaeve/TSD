@@ -5,6 +5,7 @@ import MessageInput from './MessageInput.tsx'
 import Messages from './Messages.tsx'
 import { Link } from 'react-router-dom'
 import "../../css/Chat/ChatMainGrid.css"
+import ChatHeader from './ChatHeader.tsx'
 
 function Chat({}) {
     const [allMessages, setAllMessages] = useState<{user: string; message: string; type: string}[]>([]);
@@ -66,9 +67,7 @@ function Chat({}) {
                 </div>
             </div>
             <div className="chatbox">
-                <div className='chat-header'>
-                    <p>chat header</p>
-                </div>
+                <ChatHeader contactName='Shupo'/>
                 <div className='chat-messages' id="chat-messages">
                     {allMessages.map((message, index) => (
                     <Messages key={index} messages={[message]} currentUser={user} />

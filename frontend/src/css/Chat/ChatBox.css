@@ -8,7 +8,20 @@
 }
 
 .chat-main-grid .chatbox .chat-header{
+    display: grid;
+    grid-template-columns: 0.1fr 1fr;
     border: 1px solid yellowgreen;
+    align-items: center;
+}
+
+.chat-header-buton{
+    border-radius: 50%;
+}
+.chat-header-photo{
+
+    border-radius: 50%;
+    width: 80px;
+    height: 80px;
 }
 
 .chat-main-grid .chatbox .chat-messages{

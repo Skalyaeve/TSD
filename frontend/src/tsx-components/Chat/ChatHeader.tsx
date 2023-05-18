@@ -1,7 +1,21 @@
 import React, { useState } from "react";
+import defaultPhoto from "./kitty.png";
 
-export default function chatHeader() {
+interface ChatHeaderProps {
+    photo?: string;
+    contactName: string;
+}
 
-    const [chatPhoto, setHeaderPhoto] = useState();
-    const [contactName, setContactName] = useState<string>('ContactName');
+export default function ChatHeader({photo = defaultPhoto, contactName} : ChatHeaderProps) {
+
+    return (
+        <div className='chat-header'>
+            <button className="chat-header-buton">
+                <img className="chat-header-photo" src={photo} alt='contactPhoto'/>
+            </button>
+            <div>
+                <h3 className="chat-header-name">{contactName}</h3>
+            </div>
+        </div>
+    )
 }
