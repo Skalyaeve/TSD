@@ -53,6 +53,8 @@ ex: ".navBar-logo--hidden {}"
 
 	/* #2 Forme */
 	height: 35px;
+	border-top-left-radius: 5px;
+	border-bottom-left-radius: 5px;
 
 	/* #4 Margin - Padding */
 	margin-right: 5px;
@@ -61,6 +63,8 @@ ex: ".navBar-logo--hidden {}"
 .profile-friends-add-input-btn {
 	/* #2 Forme */
 	width: 70px;
+	border-top-right-radius: 5px;
+	border-bottom-right-radius: 5px;
 }
 
 /* ---FRIENDS-LIST--------------- */
@@ -158,10 +162,15 @@ ex: ".navBar-logo--hidden {}"
 	/* #2 Forme */
 	width: calc(100% - 80px);
 	height: 35px;
+	border-top-left-radius: 5px;
+	border-bottom-left-radius: 5px;
 
 	/* #3 Position */
 	position: absolute;
 	left: 10px;
+
+	/* #5 Animations */
+	transform-origin: right;
 }
 
 /* ---FRIEND--------------------- */

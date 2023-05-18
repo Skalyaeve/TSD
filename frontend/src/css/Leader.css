@@ -67,9 +67,15 @@ ex: ".navBar-logo--hidden {}"
 
 	/* #2 Forme */
 	height: 35px;
+	border-top-left-radius: 5px;
+	border-bottom-left-radius: 5px;
 }
 
 .leader-input-btn {
+	/* #2 Forme */
+	border-top-right-radius: 5px;
+	border-bottom-right-radius: 5px;
+
 	/* #4 Margin - Padding */
 	margin-left: 5px;
 	margin-right: 15px;
@@ -78,11 +84,15 @@ ex: ".navBar-logo--hidden {}"
 .leader-findTop-btn {
 	/* #2 Forme */
 	width: 110px;
+	border-top-left-radius: 5px;
+	border-bottom-left-radius: 5px;
 }
 
 .leader-findMe-btn {
 	/* #2 Forme */
 	width: 110px;
+	border-top-right-radius: 5px;
+	border-bottom-right-radius: 5px;
 
 	/* #4 Margin - Padding */
 	margin-left: 5px;
@@ -90,6 +100,19 @@ ex: ".navBar-logo--hidden {}"
 }
 
 .leader-up-btn {
+	/* #2 Forme */
+	border-top-left-radius: 5px;
+	border-bottom-left-radius: 5px;
+
+	/* #4 Margin - Padding */
+	margin-right: 5px;
+}
+
+.leader-down-btn {
+	/* #2 Forme */
+	border-top-right-radius: 5px;
+	border-bottom-right-radius: 5px;
+
 	/* #4 Margin - Padding */
 	margin-right: 5px;
 }
