@@ -8,11 +8,8 @@ import {
   OnGatewayDisconnect,
   OnGatewayInit
 } from '@nestjs/websockets';  
-import { JwtPayload } from 'jsonwebtoken';
-import * as jwt from 'jsonwebtoken';
 import { Socket, Server } from "socket.io";
 import * as cookieParser from 'cookie-parser';
-import { parse } from 'cookie';
 import { User } from '@prisma/client';
 import { UserService } from 'src/user/user.service';
 import { ChatService } from './chat.service';
