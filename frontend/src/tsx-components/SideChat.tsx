@@ -356,10 +356,10 @@ const SideChat: React.FC = () => {
 	}
 	const fullPageBtnMotion = {
 		whileHover: {
-			scale: [1, 1.1, 1],
-			borderTopLeftRadius: [0, 5, 0],
-			borderBottomLeftRadius: [0, 5, 0],
-			borderBottomRightRadius: [0, 5, 0],
+			scale: 1.1,
+			borderTopLeftRadius: 5,
+			borderBottomLeftRadius: 5,
+			borderBottomRightRadius: 5,
 			transition: {
 				duration: 0.5,
 				repeat: Infinity,

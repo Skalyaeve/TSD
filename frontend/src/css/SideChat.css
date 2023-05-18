@@ -64,6 +64,7 @@ ex: ".navBar-logo--hidden {}"
 
 	/* #2 Forme */
 	border-bottom-left-radius: 5px;
+	border-bottom-right-radius: 5px;
 }
 
 .sideChat-main-btn {
@@ -128,6 +129,9 @@ ex: ".navBar-logo--hidden {}"
 	/* #1 Éléments */
 	border: 1px solid rgb(0, 128, 0);
 	font-size: 15px;
+
+	/* #2 Forme */
+	border-bottom-right-radius: 5px;
 }
 
 .sideChat-txtArea {
