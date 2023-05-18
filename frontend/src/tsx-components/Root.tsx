@@ -39,6 +39,7 @@ const LoginBtn: React.FC<LogginBtnProps> = ({ setLogged }) => {
 			else console.error(`[ERROR] ${response.status}`)
 		}
 		catch { console.error('[ERROR] fetch() failed') }
+		setLogged(true)
 	}
 	const btnHdl = { onMouseUp: () => !animating.current && connect() }
 
