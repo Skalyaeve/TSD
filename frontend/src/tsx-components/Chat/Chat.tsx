@@ -81,10 +81,10 @@ function Chat({}) {
             </div>
             <div className={`contact-info ${isOpen?"open":"close"}`}>
                 <div className='header-contact'>
-                    <p>header of the contact info</p>
+                    header of the contact info
                 </div>
                 <div className='body-contact'>
-                    <p>body of contact info</p>
+                    body of contact info
                 </div>
             </div>
         </div>
