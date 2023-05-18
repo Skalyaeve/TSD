@@ -4,7 +4,7 @@ import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 import { ChatGateway } from './chat/chat.gateway';
 import { ChatService } from './chat/chat.service';
-import { GameService } from './game/game.service';
+import { GameModule } from './game/game.module';
 import { ChatModule } from './chat/chat.module';
 import { AuthService } from './auth/auth.service';
 import { JwtModule } from '@nestjs/jwt';
@@ -25,7 +25,7 @@ import { PrismaService } from 'nestjs-prisma';
   providers: [
     ChatGateway, 
     ChatService, 
-    GameService, 
+    GameModule, 
     AuthService,
     ConfigService,
     PrismaService
