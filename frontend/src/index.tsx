@@ -12,7 +12,6 @@ const testMode = false
 const Test: React.FC = () => {
 	return <></>
 }
-
 if (root) {
 	if (strictMode) createRoot(root).render(
 		<React.StrictMode>

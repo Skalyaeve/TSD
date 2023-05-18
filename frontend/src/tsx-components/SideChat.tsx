@@ -133,7 +133,8 @@ const RoomBoxes: React.FC<RoomBoxesProps> = ({ setChatArea, chatRef }) => {
 	}
 	const btnHdl = {
 		onMouseUp: () => {
-			!settingsOpen ? setSettingsOpen(1) : setSettingsOpen(0)
+			if (settingsOpen != 1) setSettingsOpen(1)
+			else setSettingsOpen(0)
 		}
 	}
 
@@ -155,7 +156,7 @@ const RoomBoxes: React.FC<RoomBoxesProps> = ({ setChatArea, chatRef }) => {
 	return <>
 		<div className={boxName}>{roomz.map(box => newRoomBox(box))}</div>
 		<button className={btnName} {...btnHdl}>
-			{!settingsOpen ? '[+]' : '[-]'}
+			{settingsOpen !== 1 ? '[+]' : '[-]'}
 		</button>
 		<AnimatePresence>
 			{settingsOpen && <ChatSettings
@@ -331,6 +332,7 @@ const SideChat: React.FC = () => {
 	// ----STATES----------------------------- //
 	const [chatOpen, setChatOpen] = useState(false)
 	const [animeMainBtn, setAnimeMainBtn] = useState(false)
+	const [animeFullPageBtn, setAnimeFullPageBtn] = useState(false)
 
 	// ----HANDLERS--------------------------- //
 	const toggleChatContent = () => {
@@ -342,6 +344,10 @@ const SideChat: React.FC = () => {
 		onMouseEnter: () => setAnimeMainBtn(true),
 		onMouseLeave: () => setAnimeMainBtn(false),
 		onMouseUp: toggleChatContent
+	}
+	const fullPageBtnHdl = {
+		onMouseEnter: () => setAnimeFullPageBtn(true),
+		onMouseLeave: () => setAnimeFullPageBtn(false),
 	}
 
 	// ----ANIMATIONS------------------------- //
@@ -356,12 +362,12 @@ const SideChat: React.FC = () => {
 	}
 	const fullPageBtnMotion = {
 		whileHover: {
-			scale: 1.1,
-			borderTopLeftRadius: 5,
-			borderBottomLeftRadius: 5,
-			borderBottomRightRadius: 5,
+			scale: [1, 1.1, 1],
+			borderTopLeftRadius: [0, 5, 0],
+			borderBottomLeftRadius: [0, 5, 0],
+			borderBottomRightRadius: [chatOpen ? 0 : 5, 5, chatOpen ? 0 : 5],
 			transition: {
-				duration: 0.5,
+				duration: 1,
 				repeat: Infinity,
 				repeatType: 'reverse',
 				ease: 'linear'
@@ -369,19 +375,18 @@ const SideChat: React.FC = () => {
 		}
 	}
 
-	// ----STYLES----------------------------- //
-	const extendBtnStyle = {
-		borderBottomLeftRadius: '0px'
-	}
-	const fullPageBtnStyle = {
-		borderBottomRightRadius: '0px'
-	}
-
 	// ----CLASSNAMES------------------------- //
-	const boxName = `${NAME}${(!chatOpen ? ` ${NAME}--noResize` : '')}`
+	const boxName = `${NAME}${!chatOpen ? ` ${NAME}--noResize` : ''}`
 	const btnName = ` ${MAIN_NAME}-btn`
-	const extendBtnName = `${MAIN_NAME}-expend-btn`
-	const fullPageBtnName = `${MAIN_NAME}-fullPage-btn`
+	const extendBtnName = `${BTN_NAME}  ${MAIN_NAME}-extend-btn${(
+		chatOpen ? ` ${MAIN_NAME}-extend-btn--extend` : ''
+	)}`
+	const fullPageBtnName = `${BTN_NAME}  ${MAIN_NAME}-fullPage-btn${(
+		chatOpen ?
+			(!animeFullPageBtn ? ` ${MAIN_NAME}-fullPage-btn--extend` : '')
+			:
+			` ${MAIN_NAME}-fullPage-btn--noextend`
+	)}`
 	const fullPageLinkName = `${MAIN_NAME}-fullPage-link`
 
 	// ----RENDER----------------------------- //
@@ -390,17 +395,17 @@ const SideChat: React.FC = () => {
 			{chatOpen && <MainContent chatRef={chatRef} />}
 		</AnimatePresence>
 		<motion.div
-			className={btnName}
-			animate={animeMainBtn ? btnMotion : {}}>
-			<button
-				style={chatOpen ? extendBtnStyle : {}}
+			className={btnName}>
+			<motion.button
 				className={extendBtnName}
+				animate={animeMainBtn ? btnMotion : {}}
 				{...extendBtnHdl}>
 				[CHAT]
-			</button>
+			</motion.button>
 			<motion.button
-				style={chatOpen ? fullPageBtnStyle : {}}
 				className={fullPageBtnName}
+				animate={animeMainBtn ? btnMotion : {}}
+				{...fullPageBtnHdl}
 				{...fullPageBtnMotion as MotionProps}>
 				<Link className={fullPageLinkName} to={'/chat'}>
 					[&gt;&gt;]

@@ -167,7 +167,7 @@ const JoinRoom: React.FC<JoinRoomProps> = ({ settingsPos, setJoining }) => {
 	// ----CLASSNAMES------------------------- //
 	const boxName = `${SETTINGS_NAME}-join`
 	const commitAreaName = `${boxName}-commit`
-	const commitBtnName = `${COMMIT_BTN} ${ROOMSET_NAME}-commit-btn--radius`
+	const commitBtnName = `${COMMIT_BTN}`
 
 	// ----RENDER----------------------------- //
 	return <motion.div className={boxName}

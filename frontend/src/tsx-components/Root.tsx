@@ -25,25 +25,13 @@ const LoginBtn: React.FC<LogginBtnProps> = ({ setLogged }) => {
 
 	// ----HANDLERS--------------------------- //
 	const connect = async () => {
-		try {
-			const response = await fetch(
-				`http://localhost:3000/auth/42/login`,
-				{ mode: 'no-cors' }
-			)
-			if (response.ok) {
-				const txt = await response.text()
-				console.log(`[DONE] ${txt}`)
-			}
-			else {
-				const txt = await response.text()
-				console.log(`[ERROR] ${txt}`)
-			}
-		}
-		catch (error) {
-			console.error('[ERROR] ', error)
-		}
-		setLogged(true)
+		const address = 'https://api.intra.42.fr'
+		const clientID = 'u-s4t2ud-a460194637c8c56d45ed62db554eb664f3c2f05ad3bdcd5021f4f213fcda2bef'
+		const redirectURI = 'http%3A%2F%2Flocalhost%3A3000%2Fauth%2F42%2Fcallback'
+		const url = `${address}/oauth/authorize?response_type=code&redirect_uri=${redirectURI}&client_id=${clientID}`
+		window.location.href = url
 	}
+
 	const btnHdl = { onMouseUp: () => !animating.current && connect() }
 
 	// ----ANIMATIONS------------------------- //
