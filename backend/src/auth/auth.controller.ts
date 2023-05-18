@@ -20,6 +20,7 @@ export class AuthController {
     @Get('42/callback')
     @UseGuards(FortyTwoAuthGuard)
     async handle42Redirect(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
+        console.log(req.user);
         const access_token = await this.authService.login(req.user);
         res.cookie('access_token', access_token, {
             maxAge: 60 * 60 * 24 * 7,

@@ -64,15 +64,19 @@ ex: ".navBar-logo--hidden {}"
 
 	/* #2 Forme */
 	border-bottom-left-radius: 5px;
+	border-bottom-right-radius: 5px;
 }
 
 .sideChat-main-btn {
+	/* #1 Éléments */
+	display: flex;
+
 	/* #2 Forme */
 	height: 50px;
 	border-radius: 5px;
 }
 
-.sideChat-main-expend-btn {
+.sideChat-main-extend-btn {
 	/* #1 Éléments */
 	border: 1px solid rgb(0, 128, 0);
 	border-right: none;
@@ -84,21 +88,42 @@ ex: ".navBar-logo--hidden {}"
 	border-bottom-left-radius: 5px;
 }
 
+.sideChat-main-extend-btn--extend {
+	/* #2 Forme */
+	border-bottom-left-radius: 0;
+}
+
 .sideChat-main-fullPage-btn {
 	/* #1 Éléments */
 	border: 1px solid rgb(0, 128, 0);
+	display: flex;
 
 	/* #2 Forme */
 	width: 60px;
 	height: 100%;
 	border-top-right-radius: 5px;
-	border-bottom-right-radius: 5px;
+}
+
+.sideChat-main-fullPage-btn--extend {
+	/* #2 Forme */
+	border-bottom-right-radius: 0 !important;
+}
+
+.sideChat-main-fullPage-btn--noextend {
+	/* #2 Forme */
+	border-bottom-right-radius: 5px !important;
 }
 
 .sideChat-main-fullPage-link {
+	/* #1 Éléments */
+	background-color: transparent;
+
 	/* #2 Forme */
 	width: 100%;
 	height: 100%;
+
+	/* #4 Margin - Padding */
+	padding-top: 12px;
 }
 
 .sideChat-main-input-box {
@@ -128,6 +153,9 @@ ex: ".navBar-logo--hidden {}"
 	/* #1 Éléments */
 	border: 1px solid rgb(0, 128, 0);
 	font-size: 15px;
+
+	/* #2 Forme */
+	border-bottom-right-radius: 5px;
 }
 
 .sideChat-txtArea {

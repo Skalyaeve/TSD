@@ -26,17 +26,6 @@ module.exports = {
 			}
 		]
 	},
-	resolve: {
-		extensions: [
-			'.js',
-			'.ts',
-			'.tsx',
-			'.mjs',
-			'.cjs',
-			'.json',
-			'.wasm'
-		]
-	},
 	plugins: [
 		new HtmlWebpackPlugin({
 			template: './src/index.html',

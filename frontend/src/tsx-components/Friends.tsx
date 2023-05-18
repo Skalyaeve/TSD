@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { fade, bouncyWidthChangeByPx, heightChangeByPx, xMove, bouncyXMove, yMove, mergeMotions } from '../tsx-utils/ftMotion.tsx'
+import { fade, bouncyWidthChangeByPx, heightChangeByPx, xMove, bouncyXMove, yMove, mergeMotions, widthChange } from '../tsx-utils/ftMotion.tsx'
 
 // --------CLASSNAMES------------------------------------------------------ //
 const NAME = 'profile'
@@ -94,7 +94,16 @@ const FriendSearch: React.FC = () => {
 	const searchBtnHdl = { onMouseUp: () => setSearchin(x => !x) }
 
 	// ----ANIMATIONS------------------------- //
-	const childMotion = xMove({ from: 30, inDuration: 0.3, outDuration: 0.3 })
+	const movetMotion = xMove({ from: 30, inDuration: 0.3, outDuration: 0.3 })
+	const inputMotion = widthChange({})
+	const btnMotion = {
+		...movetMotion,
+		animate: {
+			...movetMotion.animate,
+			borderTopRightRadius: searchin ? 5 : 0,
+			borderBottomRightRadius: searchin ? 5 : 0
+		}
+	}
 
 	// ----CLASSNAMES------------------------- //
 	const searchName = `${FRIENDS_NAME}-search`
@@ -108,7 +117,7 @@ const FriendSearch: React.FC = () => {
 		<motion.input
 			className={inputName}
 			key={inputName}
-			{...childMotion}
+			{...inputMotion}
 		/>
 	)
 	const boxContent = <>
@@ -117,7 +126,7 @@ const FriendSearch: React.FC = () => {
 			{(searchBtn || searchin) && <motion.button
 				className={searchBtnName}
 				{...searchBtnHdl}
-				{...childMotion}>
+				{...btnMotion}>
 				{searchin ? '[X]' : '[S]'}
 			</motion.button>}
 		</AnimatePresence>

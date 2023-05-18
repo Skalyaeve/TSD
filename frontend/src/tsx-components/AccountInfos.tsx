@@ -82,6 +82,7 @@ const ProfilePicture: React.FC = () => {
 	const [loading, setLoading] = useState(true)
 
 	// ----EFFECTS---------------------------- //
+	/*
 	useEffect(() => {
 		const blobToBase64 = (blob: Blob): Promise<string> => {
 			return new Promise((resolve, reject) => {
@@ -109,6 +110,7 @@ const ProfilePicture: React.FC = () => {
 		}
 		fetchData()
 	}, [])
+	*/
 
 	// ----RENDER----------------------------- //
 	return <>{loading ? <>Loading...</> : <>{profilePicture}</>}</>
