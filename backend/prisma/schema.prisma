@@ -33,9 +33,9 @@ model User {
 	privSender	PrivMessage[]	@relation("privSender")
 	privReceipt	PrivMessage[]	@relation("privReceipt")
 
-	player1		MatchHistory[]	@relation("player1")
-	player2		MatchHistory[]	@relation("player2")
-	winner		MatchHistory[]	@relation("winner")
+	player1		Game[]	@relation("player1")
+	player2		Game[]	@relation("player2")
+	winner		Game[]	@relation("winner")
 }
 
 model Friend {
@@ -112,7 +112,7 @@ model PrivMessage {
 	@@id([sender, recipient, timeSent])
 }
 
-model MatchHistory {
+model Game {
 	id			Int			@id @default(autoincrement())
 	player1Ref	User		@relation("player1", fields: [player1], references: [id])
 	player1		Int
