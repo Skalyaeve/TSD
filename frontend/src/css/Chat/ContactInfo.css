@@ -6,6 +6,10 @@
     border: 1px solid green;
     border-radius: 5px;
     height: 100%;
+    overflow: hidden;
+
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
 .chat-main-grid .contact-info .header-contact

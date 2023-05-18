@@ -9,8 +9,9 @@ import ChatHeader from './ChatHeader.tsx'
 
 function Chat({}) {
     const [allMessages, setAllMessages] = useState<{user: string; message: string; type: string}[]>([]);
-    const [user, setUser] = useState(() => `User${Math.floor(Math.random() * 10)}`);// this will change 
-    
+    const [user, setUser] = useState(() => `User${Math.floor(Math.random() * 10)}`); // this will change 
+    const [isOpen, setIsOpen] = useState<boolean>(false);
+
     const socket = useMemo(()=>{
         console.log("NEW CONNECTION")
         return io("http://localhost:8001", { 
@@ -55,9 +56,10 @@ function Chat({}) {
         }
       }, [allMessages]);
 
+    
 
     return (
-        <div className="chat-main-grid">
+        <div className={`chat-main-grid ${isOpen?"open":"close"}`}>
             <div className="manage-rooms">
                 <div className='channels'>
                   <p>Channels</p>
@@ -67,7 +69,7 @@ function Chat({}) {
                 </div>
             </div>
             <div className="chatbox">
-                <ChatHeader contactName='Shupo'/>
+                <ChatHeader contactName='Shupo' setIsOpen={setIsOpen}/>
                 <div className='chat-messages' id="chat-messages">
                     {allMessages.map((message, index) => (
                     <Messages key={index} messages={[message]} currentUser={user} />
@@ -77,7 +79,7 @@ function Chat({}) {
                     <MessageInput send={send} user={user} setUser={setUser} />
                 </div>
             </div>
-            <div className="contact-info">
+            <div className={`contact-info ${isOpen?"open":"close"}`}>
                 <div className='header-contact'>
                     <p>header of the contact info</p>
                 </div>
