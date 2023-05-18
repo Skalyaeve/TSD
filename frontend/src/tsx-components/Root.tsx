@@ -30,8 +30,16 @@ const LoginBtn: React.FC<LogginBtnProps> = ({ setLogged }) => {
 		const redirectURI = 'http%3A%2F%2Flocalhost%3A3000%2Fauth%2F42%2Fcallback'
 		const url = `${address}/oauth/authorize?response_type=code&redirect_uri=${redirectURI}&client_id=${clientID}`
 		window.location.href = url
-	}
 
+		const servID = 'http://localhost:3000'
+		const path = '/users/connected'
+		try {
+			const response = await fetch(`${servID}${path}`)
+			if (response.ok) setLogged(true)
+			else console.error(`[ERROR] ${response.status}`)
+		}
+		catch { console.error('[ERROR] fetch() failed') }
+	}
 	const btnHdl = { onMouseUp: () => !animating.current && connect() }
 
 	// ----ANIMATIONS------------------------- //
