@@ -1,5 +1,6 @@
 import React, { useRef, useState, useLayoutEffect } from 'react'
 import { Routes, Route, useLocation, useNavigate } from 'react-router-dom'
+import Cookies from 'js-cookie';
 import { AnimatePresence, MotionProps, motion } from 'framer-motion'
 import { bouncyPopUpByPx, bouncyYMove } from '../tsx-utils/ftMotion.tsx'
 import NavBar from './NavBar.tsx'
@@ -17,6 +18,8 @@ import '../css/Root.css'
 
 // --------IS-CONNECTED---------------------------------------------------- //
 const isConnected = async () => {
+	if (!Cookies.get('access_token')) return false
+
 	const servID = 'http://localhost:3000'
 	const path = '/users/connected'
 	try {
@@ -27,12 +30,12 @@ const isConnected = async () => {
 		})
 		if (response.ok) {
 			const txt = await response.json()
-			console.log(txt)
+			console.log(`[SUCCESS] isConnected(): fetch() -> ${txt}`)
 			return true
 		}
-		else console.error(`[ERROR] ${response.status}`)
+		else console.error(`[ERROR] isConnected(): fetch() -> ${response.status}`)
 	}
-	catch { console.error('[ERROR] fetch() failed') }
+	catch { console.error('[ERROR] isConnected(): fetch() -> failed') }
 	return false
 }
 
@@ -108,7 +111,6 @@ const Root: React.FC = () => {
 	}, [])
 
 	useLayoutEffect(() => {
-		console.log(location.pathname)
 		if (logged) {
 			location.pathname !== '/' && navigate('/')
 			if (location.pathname === '/login') {

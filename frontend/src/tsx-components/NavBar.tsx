@@ -1,5 +1,6 @@
 import React, { useRef, useState, useLayoutEffect } from 'react'
 import { Routes, Route, useLocation, NavLink } from 'react-router-dom'
+import Cookies from 'js-cookie';
 import { AnimatePresence, motion } from 'framer-motion'
 import { cutThenCompare } from '../tsx-utils/ftStrings.tsx'
 import { bouncyHeightChangeByPercent, bouncyHeightChangeByPx, bouncyYMove, mergeMotions } from '../tsx-utils/ftMotion.tsx'
@@ -78,6 +79,7 @@ const FromHome: React.FC<FromHomeProps> = ({
 	const logoutBtnHdl = {
 		onMouseUp: () => {
 			if (animating.current) return
+			Cookies.remove('access_token', { path: '/', domain: 'localhost' })
 			setLogged(false)
 			setRender(<></>)
 			animating.current = true
