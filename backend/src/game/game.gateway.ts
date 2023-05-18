@@ -151,9 +151,39 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	/* -------------------------CONTROLLER EVENT LISTENERS------------------------- */
 
 	@SubscribeMessage('newParty')
-	handleCoucou(client: Socket, payload: any) {
+	handleNewParty(client: Socket) {
 		if (this.sockets[client.id].type == this.controllerIDLogin) {
-			//Do da ting
+			console.log("New Headless Session")
+			this.setupAuthoritativePhaser()
+		}
+	}
+
+	@SubscribeMessage('displaySocket')
+	handleDisplaySocket(client: Socket, payload: string) {
+		if (this.sockets[client.id].type == this.controllerIDLogin) {
+			if (this.sockets[payload])
+				client.emit('displayLine', "Socket: " + payload + " type: " + this.sockets[payload].type)
+			else
+				client.emit('displayLine', "Unknown socket: " + payload)
+			client.emit('endOfDisplay')
+		}
+	}
+
+	@SubscribeMessage('displayAllSocket')
+	handleDisplayAllSocket(client: Socket) {
+		if (this.sockets[client.id].type == this.controllerIDLogin) {
+			for (let socketId in this.sockets)
+				client.emit('displayLine', "Socket: " + socketId + " type: " + this.sockets[socketId].type)
+			client.emit('endOfDisplay')
+		}
+	}
+
+	@SubscribeMessage('displayAllSocket')
+	handleDisplayAllSocket(client: Socket) {
+		if (this.sockets[client.id].type == this.controllerIDLogin) {
+			for (let socketId in this.sockets)
+				client.emit('displayLine', "Socket: " + socketId + " type: " + this.sockets[socketId].type)
+			client.emit('endOfDisplay')
 		}
 	}
 }
