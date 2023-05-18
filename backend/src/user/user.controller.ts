@@ -1,4 +1,4 @@
-import { Controller, Delete, FileTypeValidator, Get, MaxFileSizeValidator, Param, ParseFilePipe, ParseIntPipe, Post, Request, StreamableFile, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
+import { Controller, Delete, Get, MaxFileSizeValidator, Param, ParseFilePipe, ParseIntPipe, Post, Request, StreamableFile, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
 import { UserService } from "./user.service";
 import { JwtGuard } from "src/auth/guards/JwtGuard";
 import { User } from "@prisma/client";
@@ -10,6 +10,12 @@ import { join } from "path";
 @Controller('users')
 export class UserController {
     constructor(private userService: UserService) {}
+
+    @Get('connected')
+    @UseGuards(JwtGuard)
+    IsConnected(@Request() req: any) {
+        return req.user;
+    }
 
     @Get('all')
     @UseGuards(JwtGuard)
