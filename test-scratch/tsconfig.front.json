@@ -9,8 +9,6 @@
 		"jsx": "react-jsx",
 		// Les modules sont résolus en utilisant la convention de résolution de modules Node.js
 		"moduleResolution": "node16",
-		// Nous permet d'importer nos composants avec l'extension .tsx
-		"allowImportingTsExtensions": true,
 		// Transformer les importations CommonJS en ECMAScript 
 		"esModuleInterop": true,
 		// Le compilateur vérifiera la cohérence des nom de fichiers
@@ -18,15 +16,14 @@
 		// Active un ensemble de vérifications de type strict
 		"strict": true,
 		// Permet de ne pas générer de fichiers de sortie lors de la compilation
-		"noEmit": true,
+		"noEmit": false,
 		// Dossier de sortie de transcompilation
-		"outDir": "./dist"
+		"outDir": "server/public/bundling",
+		// Removes 'any' type error due to packages
+		"noImplicitAny": false
 	},
 	// Spécifie les fichiers à inclure dans la compilation
 	"include": [
-		"./src/**/*"
+		"server/public/ts/game.ts"
 	],
-	"exclude": [
-		"./src/tsx-utils/testBackend/headlessClient.tsx"
-	]
 }

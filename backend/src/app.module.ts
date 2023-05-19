@@ -20,12 +20,12 @@ import { PrismaService } from 'nestjs-prisma';
     PrismaModule,
     UserModule,
     ChatModule,
-    ConfigModule
+    ConfigModule,
+	GameModule
   ],
   providers: [
     ChatGateway, 
     ChatService, 
-    GameModule, 
     AuthService,
     ConfigService,
     PrismaService

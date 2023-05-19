@@ -16,6 +16,22 @@ import black__Sheet from '../resource/assets/black.png'
 
 /* -------------------------TYPES------------------------- */
 
+// Keys interface
+interface keys {								// Keyboard keys
+	up: Phaser.Input.Keyboard.Key				// UP key
+	down: Phaser.Input.Keyboard.Key				// DOWN key
+	left: Phaser.Input.Keyboard.Key				// LEFT key
+	right: Phaser.Input.Keyboard.Key			// RIGHT key
+}
+
+// Player key states interface
+interface keyStates {
+	up: boolean									// Player UP key state
+	down: boolean								// Player DOWN key state
+	left: boolean								// Player LEFT key state
+	right: boolean								// Player RIGHT key state
+}
+
 // Skins interface
 interface skin {
 	name: string								// Skin name
@@ -37,29 +53,21 @@ interface player {
 	xPos: number								// Player initial X position
 	yPos: number								// Player initial Y position
 	xDir: string								// Player X direction (left/right)
+	keyStates: keyStates						// Player key states
+	xVel: number								// Player X velocity
+	yVel: number								// Player Y velocity
 	lastMove: string							// Player last movement state (none/idle/run)
 	move: string								// Player actual movement state (idle/run)
 	skin: string								// Player skin name
 	anim: string								// Player actual animation
 	sprite?: Phaser.Physics.Arcade.Sprite 		// Player sprite
-	colliders: Phaser.Physics.Arcade.Collider[]	// Player colliders
-}
-
-// Keys interface
-interface keys {								// Keyboard keys
-	up: Phaser.Input.Keyboard.Key				// UP key
-	down: Phaser.Input.Keyboard.Key				// DOWN key
-	left: Phaser.Input.Keyboard.Key				// LEFT key
-	right: Phaser.Input.Keyboard.Key			// RIGHT key
 }
 
 // Game canvas interface
 interface canvas {								// Scene canvas settings
 	xSize: number								// Canvas heigth
 	ySize: number								// Canvas width
-	aspectRatio: number							// Canvas aspecct 
-	leftOffset: number
-	gameSpeed: number
+	gameSpeed: number							// Game global speed
 }
 
 /* -------------------------GAME INITIALISATION------------------------- */
@@ -72,17 +80,18 @@ function Party() {
 	const gameRef = useRef<HTMLDivElement>(null)
 	let game: Phaser.Game
 
+	// Client type
+	const loginID: string = "PHASER-WEB-CLIENT"
+
 	// Canvas constants
 	let canvas: canvas = {
 		xSize: 1920,
 		ySize: 1080,
-		aspectRatio: 16 / 9,
-		leftOffset: 300,
-		gameSpeed: 1000,
+		gameSpeed: 1000
 	}
 
 	// Player socket
-	let socket: Socket
+	let comSocket: Socket
 
 	// Keyboard keys
 	let keys: keys
@@ -178,6 +187,8 @@ function Party() {
 
 	/****** SCENE CREATION ******/
 
+	//WORK IN PROGRESS HERE
+
 	// Create players for this scene
 	function createPlayer(playerId: string, scene: Phaser.Scene) {
 		let player: player = players[playerId]
@@ -196,6 +207,8 @@ function Party() {
 		else if (player.xDir == 'right')
 			player.sprite.setFlipX(false)
 	}
+
+	//WORK IN PROGRESS HERE
 
 	// Create animation for this scene
 	function createAnims(scene: Phaser.Scene) {
@@ -222,65 +235,53 @@ function Party() {
 		return false
 	}
 
-	// Send player start to the server
-	const sendPlayerStart = () => {
-		let self: player = players[myId]
-		self.sprite?.play(self.skin + 'RunAnim')
-		socket.emit('playerStart')
-	}
+	//WORK IN PROGRESS HERE
 
 	// Send player movements to the server
+	// WORKER <= BACK <= CLIENT
 	const sendPlayerMovement = () => {
-		const player = players[myId]
-		if (player.sprite && player.sprite.body) {
-			const xPos = player.sprite.body.x + skins[player.skin].xResize / 2 * skins[player.skin].scaleFactor
-			const yPos = player.sprite.body.y + skins[player.skin].yResize / 2 //* skins[player.skin].scaleFactor
-			socket.emit('playerMovement', { xPos, yPos })
-		}
+		comSocket.emit('playerKeyUpdate', { keyStates: players[myId].keyStates })
+	}
+
+	// Send player start to the server
+	// WORKER x BACK <= CLIENT
+	const sendPlayerStart = () => {
+		players[myId].sprite?.play(players[myId].skin + 'RunAnim')
+		comSocket.emit('playerStart')
 	}
 
 	// Send player stop to the server
+	// WORKER x BACK <= CLIENT
 	const sendPlayerStop = () => {
-		let self: player = players[myId]
-		self.sprite?.play(self.skin + 'IdleAnim')
-		socket.emit('playerStop')
+		players[myId].sprite?.play(players[myId].skin + 'IdleAnim')
+		comSocket.emit('playerStop')
 	}
 
 	/****** SCENE UPDATE ******/
 
 	// Adapts player moveState and devolity following the pressed keys
 	function checkKeyInputs() {
+		if (!players.length)
+			return
 		let player: player = players[myId]
-		let endVelocityX: number = 0
-		let endVelocityY: number = 0
-		if (player && player.sprite && player.sprite.body) {
-			if (allKeysUp()) {
-				if (player.move == 'run') {
-					sendPlayerStop()
-					sendPlayerMovement()
-					player.move = 'idle'
-				}
+		player.keyStates.up = (keys.up.isDown ? true : false)
+		player.keyStates.down = (keys.down.isDown ? true : false)
+		player.keyStates.left = (keys.left.isDown ? true : false)
+		player.keyStates.right = (keys.right.isDown ? true : false)
+		if (allKeysUp()) {
+			if (player.move == 'run') {
+				sendPlayerStop()
+				sendPlayerMovement()
+				player.move = 'idle'
 			}
+		}
+		else {
+			if (player.move == 'run')
+				sendPlayerMovement()
 			else {
-				if (player.move == 'run')
-					sendPlayerMovement()
-				else {
-					sendPlayerStart()
-					sendPlayerMovement()
-					player.move = 'run'
-				}
-			}
-			if (keys.left.isDown)
-				endVelocityX = - canvas.gameSpeed
-			if (keys.right.isDown)
-				endVelocityX = endVelocityX + canvas.gameSpeed
-			if (keys.up.isDown)
-				endVelocityY = - canvas.gameSpeed
-			if (keys.down.isDown)
-				endVelocityY = endVelocityY + canvas.gameSpeed
-			if (player.sprite) {
-				player.sprite.setVelocityX(endVelocityX)
-				player.sprite.setVelocityY(endVelocityY)
+				sendPlayerStart()
+				sendPlayerMovement()
+				player.move = 'run'
 			}
 		}
 	}
@@ -316,8 +317,11 @@ function Party() {
 
 	// Set player position following xPos and yPos
 	function checkMove() {
+		if (!animationQueue.length)
+			return
 		for (let queueId of moveQueue) {
 			players[queueId].sprite?.setPosition(players[queueId].xPos, players[queueId].yPos)
+			players[queueId].sprite?.setVelocity(players[queueId].xVel, players[queueId].yVel)
 		}
 		moveQueue = []
 	}
@@ -377,7 +381,12 @@ function Party() {
 
 	// Start socket comunication with game server
 	const startSocket = () => {
-		socket = io('http://localhost:3001')
+		// Connect to the backend server
+		const socket = io('http://localhost:3000/game')
+
+		// ********** BACK TO CLIENT SPECIFIC EVENTS ********** //
+		// WORKER x BACK => CLIENT
+
 		// Update the players list with the received data (when connecting for the first time)
 		socket.on('currentPlayers', (playersList: player[]) => {
 			for (let queueId = 0; queueId < playersList.length; queueId++) {
@@ -387,11 +396,31 @@ function Party() {
 			}
 			console.log("Added ", playersList.length, " players to the creation queue")
 		});
+
 		// Get the player's own ID
-		socket.on('ownID', (playerId: string) => {
+		socket.on('ownID', (playerId) => {
 			myId = playerId
-			console.log("Player's own id: ", myId)
+			console.log("My id:", myId)
+			socket.emit('identification', loginID)
 		})
+
+		// Changes the player's animation on movement chance
+		socket.on('playerStarted', (playerId: string) => {
+			players[playerId].anim = 'RunAnim'
+			animationQueue[animationQueue.length] = playerId
+			console.log("A player started moving:", playerId)
+		})
+
+		// Changes the player's animation on movement chance
+		socket.on('playerStoped', (playerId: string) => {
+			players[playerId].anim = 'IdleAnim'
+			animationQueue[animationQueue.length] = playerId
+			console.log("A player stoped moving:", playerId)
+		})
+
+		// ********** BACK TO ALL EVENTS ********** //
+		// WORKER <= BACK => CLIENT
+
 		// Add a new player to the players list
 		socket.on('newPlayer', (player: player) => {
 			players[player.id] = player
@@ -399,36 +428,34 @@ function Party() {
 			animationQueue[animationQueue.length] = player.id
 			console.log("A new player connected")
 		})
-		// Changes the player's animation on movement chance
-		socket.on('playerStarted', (playerId: string) => {
-			players[playerId].anim = 'RunAnim'
-			animationQueue[animationQueue.length] = playerId
-			console.log("A player started moving:", playerId)
-		})
-		// Update the moved player's velocity in the players list
-		socket.on('playerMoved', (playerId: string, xPos: number, yPos: number) => {
-			players[playerId].xPos = xPos
-			players[playerId].yPos = yPos
-			moveQueue[moveQueue.length] = playerId
-		})
-		// Changes the player's animation on movement chance
-		socket.on('playerStoped', (playerId: string) => {
-			players[playerId].anim = 'IdleAnim'
-			animationQueue[animationQueue.length] = playerId
-			console.log("A player stoped moving:", playerId)
-		})
+
 		// Remove the disconnected player from the players list
 		socket.on('playerDisconnected', (playerId: string) => {
-			console.log("A player has disconnected")
 			deletionQueue[deletionQueue.length] = playerId
+			console.log("A player has disconnected")
 		});
+
+		// ********** WORKER TO CLIENT EVENTS ********** //
+		// WORKER => BACK => CLIENT
+
+		// Update the moved player's velocity in the players list
+		socket.on('playerMoved', (playerList: { [key: string]: player }, playerIds: string[]) => {
+			for (let playerId of playerIds) {
+				players[playerId].xPos = playerList[playerId].xPos
+				players[playerId].yPos = playerList[playerId].yPos
+				players[playerId].xVel = playerList[playerId].xVel
+				players[playerId].yVel = playerList[playerId].yVel
+				moveQueue[moveQueue.length] = playerId
+			}
+		})
+
 		return socket
 	}
 
 	// Construction of the whole page
 	useEffect(() => {
 		createGame()
-		const socket = startSocket()
+		comSocket = startSocket()
 		return () => {
 			if (game) {
 				keys.up.destroy()
@@ -439,7 +466,7 @@ function Party() {
 					players[playerId].sprite?.destroy()
 				game.destroy(true, false)
 			}
-			socket.disconnect()
+			comSocket.disconnect()
 		}
 	}, [])
 
