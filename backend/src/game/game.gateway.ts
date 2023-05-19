@@ -10,8 +10,8 @@ import * as path from 'path';
 
 // Socket and socket type for server
 interface socketInfo {
-	socket: Socket
-	type: string
+	socket: Socket								// Socket
+	type: string								// Socket type
 }
 
 // Player key states interface

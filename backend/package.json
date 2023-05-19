@@ -6,12 +6,16 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
-    "buildHeadless": "npm run cleanHeadless && npx tsc -p tsconfig.headless.json && webpack --config-name=back-client --mode=development",
-    "cleanHeadless": "npm run cleanHeadlessDist && npm run cleanHeadlessBundle",
-    "cleanHeadlessDist": "(yes | rm -rf headless/dist/*)",
-    "cleanHeadlessBundle": "(yes | rm -rf headless/bundle/*)",
-	"startController": "node headless/dist/controller.js",
-    "jchene": "npm run buildHeadless && npm run start:dev",
+    "cleanBackend":     "(yes | rm -rf dist/*)",
+    "cleanHeadless":    "(yes | rm -rf headless/dist/*) && (yes | rm -rf headless/bundle/*)",
+    "cleanController":  "(yes | rm -rf controller/dist/*)",
+    "buildHeadless":    "npm run cleanHeadless; npx tsc -p tsconfig.headless.json && webpack --config-name=back-client --mode=development && (yes | rm -rf headless/dist/*)",
+    "buildController":  "npm run cleanController; npx tsc -p tsconfig.controller.json",
+    "backend":          "npm run buildHeadless && nest start --watch",
+    "controller":       "npm run buildController && node controller/dist/controller.js",
+    "clean":            "npm run cleanBackend; npm run cleanHeadless; npm run cleanController",
+
+  
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",

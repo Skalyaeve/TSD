@@ -24,7 +24,6 @@
 	},
 	// Spécifie les fichiers à inclure dans la compilation
 	"include": [
-		"headless/ts/headless.ts",
-		"headless/ts/controller.ts"
+		"headless/ts/headless.ts"
 	],
 }

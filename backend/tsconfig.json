@@ -18,4 +18,12 @@
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false
   },
+  "exclude": [
+    "node_modules",
+    "test", 
+    "dist", 
+    "**/*spec.ts",
+    "headless",
+    "controller"
+  ]
 }
