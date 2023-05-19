@@ -6,6 +6,9 @@ import Messages from './Messages.tsx'
 import { Link } from 'react-router-dom'
 import "../../css/Chat/ChatMainGrid.css"
 import ChatHeader from './ChatHeader.tsx'
+import HeaderContactInfo from './HeaderContactInfo.tsx'
+import ChatChannels from './ChatChannels.tsx'
+import DmHandler from './DmHandler.tsx'
 
 function Chat({}) {
     const [allMessages, setAllMessages] = useState<{user: string; message: string; type: string}[]>([]);
@@ -61,12 +64,8 @@ function Chat({}) {
     return (
         <div className={`chat-main-grid ${isOpen?"open":"close"}`}>
             <div className="manage-rooms">
-                <div className='channels'>
-                  <p>Channels</p>
-                </div>
-                <div className='direct-messages'>
-                    <p>Direct Messages</p>
-                </div>
+                <DmHandler/>
+                <ChatChannels/>
             </div>
             <div className="chatbox">
                 <ChatHeader contactName='Shupo' setIsOpen={setIsOpen}/>
@@ -80,9 +79,7 @@ function Chat({}) {
                 </div>
             </div>
             <div className={`contact-info ${isOpen?"open":"close"}`}>
-                <div className='header-contact'>
-                    header of the contact info
-                </div>
+                <HeaderContactInfo/>
                 <div className='body-contact'>
                     body of contact info
                 </div>
