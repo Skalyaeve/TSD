@@ -178,12 +178,12 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		}
 	}
 
-	@SubscribeMessage('displayAllSocket')
+	/*@SubscribeMessage('displayAllSocket')
 	handleDisplayAllSocket(client: Socket) {
 		if (this.sockets[client.id].type == this.controllerIDLogin) {
 			for (let socketId in this.sockets)
 				client.emit('displayLine', "Socket: " + socketId + " type: " + this.sockets[socketId].type)
 			client.emit('endOfDisplay')
 		}
-	}
+	}*/
 }
