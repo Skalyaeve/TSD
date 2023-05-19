@@ -18,6 +18,7 @@ import '../css/Root.css'
 
 // --------IS-CONNECTED---------------------------------------------------- //
 const isConnected = async () => {
+	return true
 	if (!Cookies.get('access_token')) return false
 
 	const servID = 'http://localhost:3000'

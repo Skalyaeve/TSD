@@ -80,6 +80,9 @@ function Party() {
 	const gameRef = useRef<HTMLDivElement>(null)
 	let game: Phaser.Game
 
+	// Client type
+	const loginID: string = "PHASER-WEB-CLIENT"
+
 	// Canvas constants
 	let canvas: canvas = {
 		xSize: 1920,
@@ -237,7 +240,7 @@ function Party() {
 	// Send player movements to the server
 	// WORKER <= BACK <= CLIENT
 	const sendPlayerMovement = () => {
-		comSocket.emit('playerKeyUpdate', { playerId: myId, keyStates: players[myId].keyStates })
+		comSocket.emit('playerKeyUpdate', { keyStates: players[myId].keyStates })
 	}
 
 	// Send player start to the server
@@ -258,8 +261,9 @@ function Party() {
 
 	// Adapts player moveState and devolity following the pressed keys
 	function checkKeyInputs() {
+		if (!players.length)
+			return
 		let player: player = players[myId]
-
 		player.keyStates.up = (keys.up.isDown ? true : false)
 		player.keyStates.down = (keys.down.isDown ? true : false)
 		player.keyStates.left = (keys.left.isDown ? true : false)
@@ -313,6 +317,8 @@ function Party() {
 
 	// Set player position following xPos and yPos
 	function checkMove() {
+		if (!animationQueue.length)
+			return
 		for (let queueId of moveQueue) {
 			players[queueId].sprite?.setPosition(players[queueId].xPos, players[queueId].yPos)
 			players[queueId].sprite?.setVelocity(players[queueId].xVel, players[queueId].yVel)
@@ -376,7 +382,7 @@ function Party() {
 	// Start socket comunication with game server
 	const startSocket = () => {
 		// Connect to the backend server
-		const socket = io('http://localhost:3001')
+		const socket = io('http://localhost:3000/game')
 
 		// ********** BACK TO CLIENT SPECIFIC EVENTS ********** //
 		// WORKER x BACK => CLIENT
@@ -392,9 +398,10 @@ function Party() {
 		});
 
 		// Get the player's own ID
-		socket.on('ownID', (playerId: string) => {
+		socket.on('ownID', (playerId) => {
 			myId = playerId
-			console.log("Player's own id: ", myId)
+			console.log("My id:", myId)
+			socket.emit('identification', loginID)
 		})
 
 		// Changes the player's animation on movement chance

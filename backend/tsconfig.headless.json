@@ -2,10 +2,12 @@
 	// Spécifie les options de compilation TypeScript
 	"compilerOptions": {
 		// Le code sera compilé en utilisant la syntaxe ECMAScript 2022
-		"module": "es2022",
+		"module": "commonjs",
 		// Définit la version d'ECMAScript que le compilateur TypeScript doit générer en JavaScript
-		"target": "es2022",
+		"target": "es2017",
 		// La syntaxe JSX est utilisée via React
+		"jsx": "react-jsx",
+		// Les modules sont résolus en utilisant la convention de résolution de modules Node.js
 		"moduleResolution": "node16",
 		// Transformer les importations CommonJS en ECMAScript 
 		"esModuleInterop": true,
@@ -16,10 +18,13 @@
 		// Permet de ne pas générer de fichiers de sortie lors de la compilation
 		"noEmit": false,
 		// Dossier de sortie de transcompilation
-		"outDir": "./src/dist"
+		"outDir": "headless/dist",
+		// Removes 'any' type error due to packages
+		"noImplicitAny": false
 	},
 	// Spécifie les fichiers à inclure dans la compilation
 	"include": [
-		"src/ts/**/*"
+		"headless/ts/headless.ts",
+		"headless/ts/controller.ts"
 	],
 }
