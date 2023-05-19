@@ -1,0 +1,315 @@
+/* ---------------------------------
+Méthodologie B-E--M (Bloc, Élément, Modifieur)
+
+Bloc: Un composant indépendant
+ex: Un bouton, une barre de navigation, un en-tête...
+ex: ".navBar {}"
+ex: ".button {}"
+
+Élément: Une partie d'un bloc qui a un sens uniquement dans le contexte de ce bloc.
+ex: ".navBar-logo {}"
+ex: ".button-icon {}"
+
+Modifieur: Une variation ou un état d'un bloc ou d'un élément. 
+ex: ".button--large {}"
+ex: ".navBar-logo--hidden {}"
+--------------------------------- */
+
+/* ---------------------------------
+#1 Éléments
+#2 Forme
+#3 Position
+#4 Margin - Padding
+#5 Animations
+--------------------------------- */
+
+/* ---CHAT----------------------- */
+.sideChat {
+	/* #1 Éléments */
+	background-color: transparent;
+	display: flex;
+	flex-direction: column-reverse;
+	overflow-x: auto;
+
+	/* #2 Forme */
+	resize: horizontal;
+	height: 100%;
+	min-width: 100%;
+	max-width: 243%;
+
+	/* #3 Position */
+	position: absolute;
+
+	/* #4 Margin - Padding */
+	padding: 10px;
+}
+
+.sideChat--noResize {
+	/* #2 Forme */
+	resize: none;
+}
+
+.sideChat-btn:active {
+	/* #1 Éléments */
+	background-color: rgba(0, 122, 6, 0.3);
+}
+
+.sideChat-main {
+	/* #1 Éléments */
+	border: 1px solid rgb(0, 128, 0);
+	display: grid;
+	grid-template-columns: 1fr 40px;
+	grid-template-rows: 40px 1fr 40px;
+	position: relative;
+
+	/* #2 Forme */
+	border-bottom-left-radius: 5px;
+	border-bottom-right-radius: 5px;
+}
+
+.sideChat-main-btn {
+	/* #1 Éléments */
+	display: flex;
+
+	/* #2 Forme */
+	height: 50px;
+	border-radius: 5px;
+}
+
+.sideChat-main-extend-btn {
+	/* #1 Éléments */
+	border: 1px solid rgb(0, 128, 0);
+	border-right: none;
+
+	/* #2 Forme */
+	width: calc(100% - 60px);
+	height: 100%;
+	border-top-left-radius: 5px;
+	border-bottom-left-radius: 5px;
+}
+
+.sideChat-main-extend-btn--extend {
+	/* #2 Forme */
+	border-bottom-left-radius: 0;
+}
+
+.sideChat-main-fullPage-btn {
+	/* #1 Éléments */
+	border: 1px solid rgb(0, 128, 0);
+	display: flex;
+
+	/* #2 Forme */
+	width: 60px;
+	height: 100%;
+	border-top-right-radius: 5px;
+}
+
+.sideChat-main-fullPage-btn--extend {
+	/* #2 Forme */
+	border-bottom-right-radius: 0 !important;
+}
+
+.sideChat-main-fullPage-btn--noextend {
+	/* #2 Forme */
+	border-bottom-right-radius: 5px !important;
+}
+
+.sideChat-main-fullPage-link {
+	/* #1 Éléments */
+	background-color: transparent;
+
+	/* #2 Forme */
+	width: 100%;
+	height: 100%;
+
+	/* #4 Margin - Padding */
+	padding-top: 12px;
+}
+
+.sideChat-main-input-box {
+	/* #1 Éléments */
+	background-color: transparent;
+	border-top: 1px solid rgb(0, 128, 0);
+	display: grid;
+	grid-template-columns: calc(100% - 45px) 40px;
+	grid-gap: 5px;
+
+	/* #2 Forme */
+	grid-column: 1 / -1;
+
+	/* #4 Margin - Padding */
+	padding: 5px;
+}
+
+.sideChat-main-input {
+	/* #1 Éléments */
+	border: 1px solid rgb(0, 128, 0);
+
+	/* #2 Forme */
+	border-bottom-left-radius: 5px;
+}
+
+.sideChat-main-input-btn {
+	/* #1 Éléments */
+	border: 1px solid rgb(0, 128, 0);
+	font-size: 15px;
+
+	/* #2 Forme */
+	border-bottom-right-radius: 5px;
+}
+
+.sideChat-txtArea {
+	/* #1 Éléments */
+	display: flex;
+	align-items: flex-end;
+
+	/* #3 Position */
+	grid-column: 1 / -1;
+	grid-row: 2 / 2;
+
+	/* #4 Margin - Padding */
+	padding: 5px;
+}
+
+.sideChat-txtArea--shorten {
+	/* #2 Forme */
+	width: calc(100% - 200px);
+}
+
+/* ---USERS---------------------- */
+.sideChat-roomUsers {
+	/* #1 Éléments */
+	background-color: transparent;
+	border-left: 1px solid rgb(0, 128, 0);
+	display: flex;
+	flex-direction: column;
+	overflow-x: hidden;
+	overflow-y: auto;
+
+	/* #2 Forme */
+	height: 100%;
+
+	/* #3 Position */
+	grid-column: 1 / -1;
+	grid-row: 2 / 2;
+	position: absolute;
+	right: 0%;
+}
+
+.sideChat-roomUsers-input {
+	/* #1 Éléments */
+	font-size: 18px;
+	border-bottom: 1px solid rgb(0, 128, 0);
+	border-left: 1px solid rgb(0, 128, 0);
+
+	/* #2 Forme */
+	flex-shrink: 0;
+}
+
+.sideChat-roomUsr {
+	/* #1 Éléments */
+	border-bottom: 1px solid rgb(0, 128, 0);
+	border-left: 1px solid rgb(0, 128, 0);
+	display: flex;
+	position: relative;
+
+	/* #2 Forme */
+	flex-shrink: 0;
+	height: 34px;
+}
+
+.sideChat-roomUsr-link {
+	/* #1 Éléments */
+	text-align: start;
+	font-size: 18px;
+
+	/* #2 Forme */
+	width: 100%;
+	height: 100%;
+
+	/* #4 Margin - Padding */
+	padding-top: 5px;
+	padding-left: 5px;
+}
+
+.sideChat-roomUsr-btns {
+	/* #1 Éléments */
+	background-color: transparent;
+	display: flex;
+
+	/* #3 Position */
+	position: absolute;
+	right: 0;
+}
+
+.sideChat-roomUsr-btn {
+	/* #1 Éléments */
+	border-left: 1px solid rgb(0, 128, 0);
+	font-size: 15px;
+
+	/* #2 Forme */
+	width: 32px;
+	height: 32px;
+}
+
+/* ---ROOM-BOXES----------------- */
+.sideChat-rooms {
+	/* #1 Éléments */
+	border-bottom: 1px solid rgb(0, 128, 0);
+	display: flex;
+	overflow-x: auto;
+
+	/* #3 Position */
+	grid-column: 1 / 1;
+	grid-row: 1 / 1;
+}
+
+.sideChat-room {
+	/* #1 Éléments */
+	position: relative;
+
+	/* #2 Forme */
+	flex-shrink: 0;
+	width: calc(57.5px + 5%);
+}
+
+.sideChat-room-link {
+	/* #1 Éléments */
+	border-right: 1px solid rgb(0, 128, 0);
+	text-align: start;
+	font-size: 18px;
+
+	/* #2 Forme */
+	width: 100%;
+	height: 100%;
+
+	/* #4 Margin - Padding */
+	padding-top: 14px;
+	padding-left: 4px;
+}
+
+.sideChat-setRoom-btn {
+	/* #1 Éléments */
+	border-bottom: 1px solid rgb(0, 128, 0);
+	border-right: 1px solid rgb(0, 128, 0);
+	font-size: 15px;
+
+	/* #2 Forme */
+	width: 20px;
+	height: 20px;
+
+	/* #3 Position */
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+
+.sideChat-newRoom-btn {
+	/* #1 Éléments */
+	border-bottom: 1px solid rgb(0, 128, 0);
+	border-left: 1px solid rgb(0, 128, 0);
+
+	/* #3 Position */
+	grid-column: 2 / 2;
+	grid-row: 1 / 1;
+}

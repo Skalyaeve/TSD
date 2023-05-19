@@ -1,30 +1,30 @@
 /* ---------------------------------
-Méthodologie B-E--M (Bloc, Elément, Modifieur)
+Méthodologie B-E--M (Bloc, Élément, Modifieur)
 
-Block: Un composant indépendant
+Bloc: Un composant indépendant
 ex: Un bouton, une barre de navigation, un en-tête...
 ex: ".navBar {}"
 ex: ".button {}"
 
-Element: Une partie d'un Block qui a un sens uniquement dans le contexte de ce Block.
+Élément: Une partie d'un bloc qui a un sens uniquement dans le contexte de ce bloc.
 ex: ".navBar-logo {}"
 ex: ".button-icon {}"
 
-Modifier: Une variation ou un état d'un Block ou d'un élément. 
+Modifieur: Une variation ou un état d'un bloc ou d'un élément. 
 ex: ".button--large {}"
-ex: ".navBar-logo--pressed {}"
+ex: ".navBar-logo--hidden {}"
 --------------------------------- */
 
 /* ---------------------------------
-#1 Elements
-#2 Form
+#1 Éléments
+#2 Forme
 #3 Position
 #4 Margin - Padding
 --------------------------------- */
 
 /* ------CLASS-------------------- */
 .game {
-	/* #1 Elements */
+	/* #1 Éléments */
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -36,10 +36,10 @@ ex: ".navBar-logo--pressed {}"
 }
 
 .game canvas {
-	/* #1 Elements */
+	/* #1 Éléments */
 	border: 1px solid rgb(255, 255, 0);
 
-	/* #2 Form */
+	/* #2 Forme */
 	width: 100%;
 	max-width: 1920px;
 	max-height: 1080px;

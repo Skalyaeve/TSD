@@ -1,0 +1,156 @@
+/* ---------------------------------
+Méthodologie B-E--M (Bloc, Élément, Modifieur)
+
+Bloc: Un composant indépendant
+ex: Un bouton, une barre de navigation, un en-tête...
+ex: ".navBar {}"
+ex: ".button {}"
+
+Élément: Une partie d'un bloc qui a un sens uniquement dans le contexte de ce bloc.
+ex: ".navBar-logo {}"
+ex: ".button-icon {}"
+
+Modifieur: Une variation ou un état d'un bloc ou d'un élément. 
+ex: ".button--large {}"
+ex: ".navBar-logo--hidden {}"
+--------------------------------- */
+
+/* ---------------------------------
+#1 Éléments
+#2 Forme
+#3 Position
+#4 Margin - Padding
+#5 Animations
+--------------------------------- */
+
+/* ---PROFILE-------------------- */
+.profile-btn {
+	/* #1 Éléments */
+	border: 1px solid rgb(255, 255, 0);
+
+	/* #2 Forme */
+	width: 55px;
+	height: 35px;
+}
+
+.profile-btn:active {
+	/* #1 Éléments */
+	background-color: rgb(255, 255, 0, 0.3);
+}
+
+/* ---PROFILE-INFOS-------------- */
+.profile-infos {
+	/* #1 Éléments */
+	display: grid;
+	grid-template-columns: 1fr 1.25fr;
+	grid-template-rows: 250px 1fr;
+	grid-gap: 10px;
+	overflow-y: hidden;
+
+	/* #4 Margin - Padding */
+	padding: 10px;
+	padding-left: 0;
+}
+
+.profile-accountInfos {
+	/* #1 Éléments */
+	border: 1px solid rgb(255, 255, 0);
+	display: grid;
+	grid-template-columns: 175px auto;
+	grid-template-rows: 175px auto;
+}
+
+.profile-picture {
+	/* #1 Éléments */
+	border: 1px solid rgb(255, 255, 0);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	/* #4 Margin - Padding */
+	margin: 10px;
+}
+
+/* ---PROFILE-ACHIEVEMENTS------- */
+.profile-achievements {
+	/* #1 Éléments */
+	display: grid;
+	grid-template-rows: 75px 1fr;
+	border: 1px solid rgb(255, 255, 0);
+	overflow-y: hidden;
+
+	/* #3 Position */
+	grid-row: 2 / -1;
+	align-self: flex-end;
+}
+
+.profile-achievements-count {
+	/* #1 Éléments */
+	border-bottom: 1px solid rgb(255, 255, 0);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.profile-achievements-list {
+	/* #1 Éléments */
+	display: flex;
+	flex-wrap: wrap;
+	align-content: flex-start;
+	justify-content: center;
+	overflow-y: auto;
+}
+
+.profile-achievement {
+	/* #1 Éléments */
+	border: 1px solid rgb(255, 255, 0);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	/* #2 Forme */
+	width: 300px;
+	height: 100px;
+
+	/* #4 Margin - Padding */
+	margin: 23px;
+}
+
+/* ---PROFILE-HISTORY------------ */
+.profile-history-box {
+	/* #1 Éléments */
+	display: grid;
+	grid-template-rows: 200px 1fr;
+
+	/* #3 Position */
+	grid-row: 1 / -1;
+	justify-self: flex-end;
+}
+
+.profile-stats {
+	/* #1 Éléments */
+	border: 1px solid rgb(255, 255, 0);
+	border-bottom: none;
+	font-size: 27px;
+	text-align: center;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.profile-history {
+	/* #1 Éléments */
+	border: 1px solid rgb(255, 255, 0);
+	overflow-y: auto;
+}
+
+.profile-history-match {
+	/* #1 Éléments */
+	border: 1px solid rgb(255, 255, 0);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	/* #2 Forme */
+	height: 72px;
+}

@@ -1,0 +1,230 @@
+/* ---------------------------------
+Méthodologie B-E--M (Bloc, Élément, Modifieur)
+
+Bloc: Un composant indépendant
+ex: Un bouton, une barre de navigation, un en-tête...
+ex: ".navBar {}"
+ex: ".button {}"
+
+Élément: Une partie d'un bloc qui a un sens uniquement dans le contexte de ce bloc.
+ex: ".navBar-logo {}"
+ex: ".button-icon {}"
+
+Modifieur: Une variation ou un état d'un bloc ou d'un élément. 
+ex: ".button--large {}"
+ex: ".navBar-logo--hidden {}"
+--------------------------------- */
+
+/* ---------------------------------
+#1 Éléments
+#2 Forme
+#3 Position
+#4 Margin - Padding
+#5 Animations
+--------------------------------- */
+
+/* ---FRIENDS-------------------- */
+.profile-friends {
+	/* #1 Éléments */
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+
+	/* #4 Margin - Padding */
+	padding: 10px;
+	padding-left: 0;
+}
+
+/* ---FRIENDS-HEAD--------------- */
+.profile-friends-head {
+	/* #1 Éléments */
+	border: 1px solid rgb(255, 255, 0);
+	display: flex;
+	flex-direction: row-reverse;
+	align-items: flex-end;
+
+	/* #4 Margin - Padding */
+	padding: 10px;
+}
+
+.profile-friends-add-input {
+	/* #1 Éléments */
+	border: 1px solid rgb(255, 255, 0);
+
+	/* #2 Forme */
+	height: 35px;
+	border-top-left-radius: 5px;
+	border-bottom-left-radius: 5px;
+
+	/* #4 Margin - Padding */
+	margin-right: 5px;
+}
+
+.profile-friends-add-input-btn {
+	/* #2 Forme */
+	width: 70px;
+	border-top-right-radius: 5px;
+	border-bottom-right-radius: 5px;
+}
+
+/* ---FRIENDS-LIST--------------- */
+.profile-friends-list {
+	/* #1 Éléments */
+	border: 1px solid rgb(255, 255, 0);
+	border-top: none;
+
+	/* #2 Forme */
+	height: 100%;
+}
+
+.profile-friends-list-head {
+	/* #1 Éléments */
+	border-bottom: 1px solid rgb(255, 255, 0);
+	display: flex;
+
+	/* #2 Forme */
+	height: 50px;
+
+	/* #3 Position */
+	position: sticky;
+	top: 0;
+	z-index: 1;
+}
+
+.profile-friends-list-col {
+	/* #1 Éléments */
+	border: none;
+	border-right: 1px solid rgb(255, 255, 0);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	overflow: hidden;
+
+	/* #2 Forme */
+	width: 14%;
+	height: 100%;
+}
+
+.profile-friends-list-col--bigFont {
+	/* #1 Éléments */
+	font-size: 30px;
+}
+
+.profile-friends-list-col:first-child {
+	/* #1 Éléments */
+	position: relative;
+
+	/* #2 Forme */
+	width: 25%;
+	min-width: 250px;
+}
+
+.profile-friends-list-col:last-child {
+	/* #1 Éléments */
+	border-right: none;
+
+	/* #2 Forme */
+	width: 19%;
+}
+
+/* ---FRIEND-SEARCH-------------- */
+.profile-friends-search {
+	/* #1 Éléments */
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	/* #2 Forme */
+	width: 100%;
+	height: 100%;
+}
+
+.profile-friends-search:active {
+	/* #1 Éléments */
+	background-color: rgb(255, 255, 0, 0.3);
+}
+
+.profile-friends-search-btn {
+	/* #1 Éléments */
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	/* #3 Position */
+	position: absolute;
+	right: 10px;
+}
+
+.profile-friends-search-input {
+	/* #1 Éléments */
+	border: 1px solid rgb(255, 255, 0);
+
+	/* #2 Forme */
+	width: calc(100% - 80px);
+	height: 35px;
+	border-top-left-radius: 5px;
+	border-bottom-left-radius: 5px;
+
+	/* #3 Position */
+	position: absolute;
+	left: 10px;
+
+	/* #5 Animations */
+	transform-origin: right;
+}
+
+/* ---FRIEND--------------------- */
+.profile-friend {
+	/* #1 Éléments */
+	border-top: 1px solid rgb(255, 255, 0);
+	border-bottom: 1px solid rgb(255, 255, 0);
+	display: flex;
+
+	/* #2 Forme */
+	height: 70.25px;
+}
+
+.profile-friend-name {
+	/* #1 Éléments */
+	display: flex;
+	align-items: center;
+
+	/* #2 Forme */
+	width: 100%;
+	height: 100%;
+}
+
+.profile-friend-name:active {
+	/* #1 Éléments */
+	background-color: rgb(255, 255, 0, 0.3);
+}
+
+.profile-friend-pic {
+	/* #1 Éléments */
+	border: 1px solid rgb(255, 255, 0);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	/* #2 Forme */
+	width: 50px;
+	height: 50px;
+
+	/* #4 Margin - Padding */
+	margin-left: 10px;
+}
+
+.profile-friend-link {
+	/* #1 Éléments */
+	background-color: transparent;
+	text-align: left;
+
+	/* #4 Margin - Padding */
+	margin-left: 10px;
+}
+
+.profile-friend-del-btn {
+	/* #3 Position */
+	position: absolute;
+	right: 10px;
+}

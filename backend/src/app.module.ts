@@ -1,17 +1,34 @@
 import { Module } from '@nestjs/common';
-import { PassportModule } from '@nestjs/passport';
 import { PrismaModule } from './prisma/prisma.module';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
+import { UserModule } from './user/user.module';
+import { ChatGateway } from './chat/chat.gateway';
+import { ChatService } from './chat/chat.service';
+import { GameModule } from './game/game.module';
+import { ChatModule } from './chat/chat.module';
+import { AuthService } from './auth/auth.service';
+import { JwtModule } from '@nestjs/jwt';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { PrismaService } from 'nestjs-prisma';
 
 @Module({
   imports: [
+    JwtModule.register({
+      secret: process.env.jwtSecret,
+    }),
     AuthModule,
     PrismaModule,
-    PassportModule.register({ session: true }),
+    UserModule,
+    ChatModule,
+    ConfigModule
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    ChatGateway, 
+    ChatService, 
+    GameModule, 
+    AuthService,
+    ConfigService,
+    PrismaService
+  ],
 })
 export class AppModule {}

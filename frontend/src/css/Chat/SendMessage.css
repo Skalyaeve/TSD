@@ -1,0 +1,44 @@
+/*
+
+component is a react function that will return an html element
+
+element is an html object 
+
+
+CSS can style class, id or balise
+class:
+id: a unique key that you can attribute to any element
+balise: key to call an html element (e.g div, input, form, button, etc)
+*/
+
+/*styling a class*/
+
+.chat-container {
+    display: grid;
+    padding: 10px 10px 10px 0;
+    gap: 15px;
+    grid-template-rows: auto 100px;
+    max-height: 100vh;
+}
+.chat-container .messages {
+    border: 1px solid green;
+    border-radius: 5px;
+    overflow: auto;
+    padding-left: 10px;
+
+}
+
+/* 
+
+// return (
+    //     <div className='chat-container'>
+    //         <div className='messages'>
+    //             {allMessages.map((message, index) => (
+    //             <Messages key={index} messages={[message]} currentUser={user} />
+    //             ))}
+    //         </div>
+    //         <div className='input'>
+    //             <MessageInput send={send} user={user} setUser={setUser} />
+    //         </div>
+    //     </div>
+    // ) */

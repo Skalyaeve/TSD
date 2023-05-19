@@ -1,0 +1,28 @@
+.input_text {
+    position: relative;
+}
+
+.input_text button {
+    position: absolute;
+    right: 5px;
+    top: 50%;
+    transform: translate(0, -50%);
+}
+
+.input_text {
+    border: 1px solid green;
+    height: 100px;
+    width: 100%;
+    border-radius: 5px;
+}
+
+.input_text input {
+    height: calc(100px - 1px * 2);
+    width: calc(100% - 25px - 1px);
+    border-radius: 10px;
+    padding-left: 10px;
+}
+
+.input_text input::placeholder{
+    text-indent: 5px;
+}

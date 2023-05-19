@@ -12,10 +12,9 @@ datasource db {
 
 model User {
   id        Int       @id @default(autoincrement())
-	login		  String?		@unique
   email     String   @unique
 	nickname  String		@unique
-  avatarURL String
+	avatarFilename	String	@default("default.png")
 
 	requester	Friend[]	@relation("requester")
 	requestee	Friend[]	@relation("requestee")
@@ -23,7 +22,7 @@ model User {
 	blocker		Blocked[]	@relation("blocker")
 	blockee		Blocked[]	@relation("blockee")
 
-	owner		Channel[]
+	chanOwner		Channel[]
 
 	member		ChanMember[]
 
@@ -34,9 +33,9 @@ model User {
 	privSender	PrivMessage[]	@relation("privSender")
 	privReceipt	PrivMessage[]	@relation("privReceipt")
 
-	player1		MatchHistory[]	@relation("player1")
-	player2		MatchHistory[]	@relation("player2")
-	winner		MatchHistory[]	@relation("winner")
+	player1		Game[]	@relation("player1")
+	player2		Game[]	@relation("player2")
+	winner		Game[]	@relation("winner")
 }
 
 model Friend {
@@ -61,8 +60,8 @@ model Blocked {
 model Channel {
 	id			Int			@id @default(autoincrement())
 	name		String  @unique
-	ownerRef	User		@relation(fields: [owner], references: [id])
-	owner		Int
+	chanOwnerRef	User		@relation(fields: [chanOwner], references: [id])
+	chanOwner		Int
 	type		ChanType	@default(PUBLIC)
 	passwd		String?
 
@@ -113,8 +112,8 @@ model PrivMessage {
 	@@id([sender, recipient, timeSent])
 }
 
-model MatchHistory {
-	id			Int			@id
+model Game {
+	id			Int			@id @default(autoincrement())
 	player1Ref	User		@relation("player1", fields: [player1], references: [id])
 	player1		Int
 	player2Ref	User		@relation("player2", fields: [player2], references: [id])

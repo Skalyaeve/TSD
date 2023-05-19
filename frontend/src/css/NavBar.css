@@ -1,23 +1,23 @@
 /* ---------------------------------
-Méthodologie B-E--M (Bloc, Elément, Modifieur)
+Méthodologie B-E--M (Bloc, Élément, Modifieur)
 
-Block: Un composant indépendant
+Bloc: Un composant indépendant
 ex: Un bouton, une barre de navigation, un en-tête...
 ex: ".navBar {}"
 ex: ".button {}"
 
-Element: Une partie d'un Block qui a un sens uniquement dans le contexte de ce Block.
+Élément: Une partie d'un bloc qui a un sens uniquement dans le contexte de ce bloc.
 ex: ".navBar-logo {}"
 ex: ".button-icon {}"
 
-Modifier: Une variation ou un état d'un Block ou d'un élément. 
+Modifieur: Une variation ou un état d'un bloc ou d'un élément. 
 ex: ".button--large {}"
-ex: ".navBar-logo--pressed {}"
+ex: ".navBar-logo--hidden {}"
 --------------------------------- */
 
 /* ---------------------------------
-#1 Elements
-#2 Form
+#1 Éléments
+#2 Forme
 #3 Position
 #4 Margin - Padding
 #5 Animations
@@ -25,7 +25,7 @@ ex: ".navBar-logo--pressed {}"
 
 /* ---NAVBAR--------------------- */
 .navBar {
-	/* #1 Elements */
+	/* #1 Éléments */
 	display: grid;
 	grid-template-rows: minmax(50px, auto);
 	grid-auto-rows: minmax(75px, auto);
@@ -33,37 +33,41 @@ ex: ".navBar-logo--pressed {}"
 	/* #3 Position */
 	grid-row: 1 / 1;
 	z-index: 3;
+
+	/* #4 Margin - Padding */
+	margin: 10px;
+	margin-bottom: 0;
 }
 
 .navBar-link-motion {
-	/* #1 Elements */
+	/* #1 Éléments */
 	border: 1px solid rgb(200, 0, 0);
 }
 
 .navBar-link {
-	/* #1 Elements */
+	/* #1 Éléments */
 	background-color: transparent;
 	display: flex;
 	align-items: center;
 	justify-content: center;
 
-	/* #2 Form */
+	/* #2 Forme */
 	height: 100%;
 }
 
 .navBar-link-motion:first-child {
-	/* #2 Form */
+	/* #2 Forme */
 	border-top-left-radius: 5px;
 	border-top-right-radius: 5px;
 }
 
 .navBar-link-motion:last-child {
-	/* #2 Form */
+	/* #2 Forme */
 	border-bottom-left-radius: 5px;
 	border-bottom-right-radius: 5px;
 }
 
-.navBar-link--pressed {
-	/* #1 Elements */
+.navBar-link:active {
+	/* #1 Éléments */
 	background-color: rgb(200, 0, 0, 0.3);
 }

@@ -347,7 +347,7 @@ function Party() {
 		}
 	}
 
-	/****** PAGE REACT ELEMENTS ******/
+	/****** PAGE REACT Élément ******/
 
 	// Create the game
 	const createGame = () => {

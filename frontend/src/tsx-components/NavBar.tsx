@@ -1,23 +1,28 @@
-import React, { useState, useRef, useEffect } from 'react'
-import { Routes, Route, useLocation } from 'react-router-dom'
+import React, { useRef, useState, useLayoutEffect } from 'react'
+import { Routes, Route, useLocation, NavLink } from 'react-router-dom'
+import Cookies from 'js-cookie';
 import { AnimatePresence, motion } from 'framer-motion'
-
-import { FtMotionLink, FtMotionBtn } from '../tsx-utils/ftSam/ftBox.tsx'
-import { cutThenCompare } from '../tsx-utils/ftSam/ftStrings.tsx'
-import {
-	bouncyHeightChangeByPx, bouncyHeightChangeByPercent, bouncyYMove, mergeMotions
-} from '../tsx-utils/ftSam/ftFramerMotion.tsx'
+import { cutThenCompare } from '../tsx-utils/ftStrings.tsx'
+import { bouncyHeightChangeByPercent, bouncyHeightChangeByPx, bouncyYMove, mergeMotions } from '../tsx-utils/ftMotion.tsx'
 import { GameInfos } from './Matchmaker.tsx'
 
-// --------VALUES---------------------------------------------------------- //
+// --------ANIMATIONS------------------------------------------------------ //
 const BACK_LINK_HEIGHT = 50
 const LINK_HEIGHT = 75
+
+const navBarMotion = (height: number) => bouncyHeightChangeByPx({
+	finalHeight: height,
+	maxHeight: height + height * 0.3
+})
+const navBarLinkMotion = (from: number) => mergeMotions(
+	bouncyHeightChangeByPercent({ finalHeight: 101, maxHeight: 101 }),
+	bouncyYMove({ from: from, extra: 0 })
+)
 
 // --------CLASSNAMES------------------------------------------------------ //
 const NAME = 'navBar'
 const LINK_NAME = `${NAME}-link`
-const LOGOUT_NAME = `${LINK_NAME} ${LINK_NAME}-motion`
-const PRESSED_NAME = `${LINK_NAME}--pressed`
+const MOTION_LINK_NAME = `${LINK_NAME}-motion`
 
 // --------LINK------------------------------------------------------------ //
 interface NavBarLinkProps {
@@ -26,14 +31,23 @@ interface NavBarLinkProps {
 	content: string
 	animating: React.MutableRefObject<boolean>
 }
-const NavBarLink: React.FC<NavBarLinkProps> = ({ index, to, content, animating }) => {
+const NavBarLink: React.FC<NavBarLinkProps> = ({
+	index, to, content, animating
+}) => {
+	// ----HANDLERS--------------------------- //
+	const linkHdl = {
+		onClick: (e: React.MouseEvent) => {
+			if (animating.current || localStorage.getItem('inGame') === '1')
+				e.preventDefault()
+		}
+	}
+
 	// ----ANIMATIONS------------------------- //
-	const comeFrom = (index ? BACK_LINK_HEIGHT + LINK_HEIGHT * (index - 1) : 0)
+	const comeFrom = (index ?
+		BACK_LINK_HEIGHT + LINK_HEIGHT * (index - 1) : 0
+	)
 	const linkMotion = {
-		...mergeMotions(
-			bouncyHeightChangeByPercent({ finalHeight: 101, maxHeight: 101 }),
-			bouncyYMove({ from: -comeFrom, extra: 0 })
-		),
+		...navBarLinkMotion(-comeFrom),
 		whileHover: {
 			scale: 1.025,
 			borderTopLeftRadius: '5px',
@@ -45,33 +59,36 @@ const NavBarLink: React.FC<NavBarLinkProps> = ({ index, to, content, animating }
 	}
 
 	// ----RENDER----------------------------- //
-	return <FtMotionLink className={LINK_NAME}
-		pressedName={PRESSED_NAME}
-		to={to}
-		handler={{
-			onClick: (e: React.MouseEvent) => {
-				if (animating.current || localStorage.getItem('inGame') === '1')
-					e.preventDefault()
-			}
-		}}
-		motionProps={linkMotion}
-		content={content}
-	/>
+	return <motion.div className={MOTION_LINK_NAME} {...linkMotion}>
+		<NavLink className={LINK_NAME} to={to} {...linkHdl}>
+			{content}
+		</NavLink>
+	</motion.div>
 }
 
 // --------RENDER-FROM-HOME------------------------------------------------ //
 interface FromHomeProps {
-	tglLogged: () => void
+	setLogged: React.Dispatch<React.SetStateAction<boolean>>
 	setRender: React.Dispatch<React.SetStateAction<JSX.Element>>
 	animating: React.MutableRefObject<boolean>
 }
-const FromHome: React.FC<FromHomeProps> = ({ tglLogged, setRender, animating }) => {
+const FromHome: React.FC<FromHomeProps> = ({
+	setLogged, setRender, animating
+}) => {
+	// ----HANDLERS--------------------------- //
+	const logoutBtnHdl = {
+		onMouseUp: () => {
+			if (animating.current) return
+			Cookies.remove('access_token', { path: '/', domain: 'localhost' })
+			setLogged(false)
+			setRender(<></>)
+			animating.current = true
+		}
+	}
+
 	// ----ANIMATIONS------------------------- //
 	const logoutBtnMotion = {
-		...mergeMotions(
-			bouncyHeightChangeByPercent({ finalHeight: 101, maxHeight: 101 }),
-			bouncyYMove({ from: 0, extra: 0 })
-		),
+		...navBarLinkMotion(0),
 		whileHover: {
 			scale: 1.025,
 			borderBottomLeftRadius: '5px',
@@ -80,33 +97,32 @@ const FromHome: React.FC<FromHomeProps> = ({ tglLogged, setRender, animating }) 
 		}
 	}
 
+	// ----CLASSNAMES------------------------- //
+	const logoutBtnName = `${LINK_NAME} ${MOTION_LINK_NAME}`
+
 	// ----RENDER----------------------------- //
 	return <motion.nav className={NAME}
-		{...bouncyHeightChangeByPx({ finalHeight: BACK_LINK_HEIGHT + LINK_HEIGHT * 3 })}>
-
-		<FtMotionBtn className={LOGOUT_NAME}
-			handler={{
-				onMouseUp: () => {
-					if (animating.current) return
-					tglLogged()
-					animating.current = true
-					setRender(<></>)
-				}
-			}}
-			motionProps={logoutBtnMotion}
-			content='[LOGOUT]'
-		/>
-		<NavBarLink index={1}
+		{...navBarMotion(BACK_LINK_HEIGHT + LINK_HEIGHT * 3)}>
+		<motion.button
+			className={logoutBtnName}
+			{...logoutBtnHdl}
+			{...logoutBtnMotion}>
+			[LOGOUT]
+		</motion.button>
+		<NavBarLink
+			index={1}
 			to='/profile'
 			content='[PROFILE]'
 			animating={animating}
 		/>
-		<NavBarLink index={2}
+		<NavBarLink
+			index={2}
 			to='/characters'
 			content='[CHARACTERS]'
 			animating={animating}
 		/>
-		<NavBarLink index={3}
+		<NavBarLink
+			index={3}
 			to='/leader'
 			content='[LEADER]'
 			animating={animating}
@@ -118,70 +134,97 @@ const FromHome: React.FC<FromHomeProps> = ({ tglLogged, setRender, animating }) 
 interface FromProfileProps {
 	animating: React.MutableRefObject<boolean>
 }
-const FromProfile: React.FC<FromProfileProps> = ({ animating }) => <motion.nav className={NAME}
-	{...bouncyHeightChangeByPx({ finalHeight: BACK_LINK_HEIGHT + LINK_HEIGHT * 2 })}>
-	<NavBarLink index={0}
-		to='/'
-		content='[BACK]'
-		animating={animating}
-	/>
-	<NavBarLink index={1}
-		to='/profile'
-		content='[INFOS]'
-		animating={animating}
-	/>
-	<NavBarLink index={2}
-		to='/profile/friends'
-		content='[FRIENDS]'
-		animating={animating}
-	/>
-</motion.nav>
+const FromProfile: React.FC<FromProfileProps> = ({ animating }) => (
+	<motion.nav className={NAME}
+		{...navBarMotion(BACK_LINK_HEIGHT + LINK_HEIGHT * 2)}>
+		<NavBarLink
+			index={0}
+			to='/'
+			content='[BACK]'
+			animating={animating}
+		/>
+		<NavBarLink
+			index={1}
+			to='/profile'
+			content='[INFOS]'
+			animating={animating}
+		/>
+		<NavBarLink
+			index={2}
+			to='/profile/friends'
+			content='[FRIENDS]'
+			animating={animating}
+		/>
+	</motion.nav>
+)
 
 // --------RENDER-FROM-CHARACTERS------------------------------------------ //
 interface FromCharactersProps {
 	animating: React.MutableRefObject<boolean>
 }
-const FromCharacters: React.FC<FromCharactersProps> = ({ animating }) => <motion.nav className={NAME}
-	{...bouncyHeightChangeByPx({ finalHeight: BACK_LINK_HEIGHT })}>
-	<NavBarLink index={0}
-		to='/'
-		content='[BACK]'
-		animating={animating}
-	/>
-</motion.nav>
+const FromCharacters: React.FC<FromCharactersProps> = ({ animating }) => (
+	<motion.nav className={NAME}
+		{...navBarMotion(BACK_LINK_HEIGHT)}>
+		<NavBarLink
+			index={0}
+			to='/'
+			content='[BACK]'
+			animating={animating}
+		/>
+	</motion.nav>
+)
 
 // --------RENDER-FROM-LEADER---------------------------------------------- //
 interface FromLeaderProps {
 	animating: React.MutableRefObject<boolean>
 }
-const FromLeader: React.FC<FromLeaderProps> = ({ animating }) => <motion.nav className={NAME}
-	{...bouncyHeightChangeByPx({ finalHeight: BACK_LINK_HEIGHT })}>
-	<NavBarLink index={0}
-		to='/'
-		content='[BACK]'
-		animating={animating}
-	/>
-</motion.nav>
+const FromLeader: React.FC<FromLeaderProps> = ({ animating }) => (
+	<motion.nav className={NAME} {...navBarMotion(BACK_LINK_HEIGHT)}>
+		<NavBarLink
+			index={0}
+			to='/'
+			content='[BACK]'
+			animating={animating}
+		/>
+	</motion.nav>
+)
 
 // --------RENDER-FROM-404------------------------------------------------- //
 interface From404Props {
 	animating: React.MutableRefObject<boolean>
 }
-const From404: React.FC<From404Props> = ({ animating }) => <motion.nav className={NAME}
-	{...bouncyHeightChangeByPx({ finalHeight: BACK_LINK_HEIGHT })}>
-	<NavBarLink index={0}
-		to='/'
-		content='[HOME]'
-		animating={animating}
-	/>
-</motion.nav>
+const From404: React.FC<From404Props> = ({ animating }) => (
+	<motion.nav className={NAME} {...navBarMotion(BACK_LINK_HEIGHT)}>
+		<NavBarLink
+			index={0}
+			to='/'
+			content='[HOME]'
+			animating={animating}
+		/>
+	</motion.nav>
+)
+
+// --------RENDER-FROM-CHAT------------------------------------------------ //
+interface FromChatProps {
+	animating: React.MutableRefObject<boolean>
+}
+const FromChat: React.FC<FromChatProps> = ({ animating }) => (
+	<motion.nav className={NAME} {...navBarMotion(BACK_LINK_HEIGHT)}>
+		<NavBarLink
+			index={0}
+			to='/'
+			content='[HOME]'
+			animating={animating}
+		/>
+	</motion.nav>
+)
 
 // --------NAVBAR---------------------------------------------------------- //
 interface NavBarProps {
-	tglLogged: () => void
+	setLogged: React.Dispatch<React.SetStateAction<boolean>>
 }
-const NavBar: React.FC<NavBarProps> = ({ tglLogged }) => {
-	// ----LOCATION--------------------------- //
+const NavBar: React.FC<NavBarProps> = ({ setLogged }) => {
+	// ----ROUTER----------------------------- //
 	const location = useLocation()
 
 	// ----REFS------------------------------- //
@@ -192,31 +235,34 @@ const NavBar: React.FC<NavBarProps> = ({ tglLogged }) => {
 	const [render, setRender] = useState(<></>)
 
 	// ----EFFECTS---------------------------- //
-	useEffect(() => {
-		if (previousPath.current === null
+	useLayoutEffect(() => {
+		if (previousPath.current !== null
+			&& cutThenCompare(location.pathname, previousPath.current, '/', 1)) {
+			animating.current = true
+			previousPath.current = location.pathname
+			const timer = setTimeout(() => { animating.current = false }, 550)
+			return () => clearTimeout(timer)
+		}
+		else if (previousPath.current === null
 			|| !cutThenCompare(location.pathname, previousPath.current, '/', 1)) {
 			animating.current = true
-			setRender(
-				<Routes location={location} key={location.pathname}>
-					<Route path='/' element={<FromHome
-						tglLogged={tglLogged}
-						setRender={setRender}
-						animating={animating}
-					/>} />
-					<Route path='/profile/*' element={<FromProfile animating={animating} />} />
-					<Route path='/characters' element={<FromCharacters animating={animating} />} />
-					<Route path='/leader' element={<FromLeader animating={animating} />} />
-					<Route path='/game' element={<GameInfos />} />
-					<Route path='*' element={<From404 animating={animating} />} />
-				</Routes>
-			)
+			setRender(<Routes location={location} key={location.pathname}>
+				<Route path='/login' element={<></>} />
+				<Route path='/' element={<FromHome setLogged={setLogged} setRender={setRender} animating={animating} />} />
+				<Route path='/profile/*' element={<FromProfile animating={animating} />} />
+				<Route path='/characters' element={<FromCharacters animating={animating} />} />
+				<Route path='/leader' element={<FromLeader animating={animating} />} />
+				<Route path='/game' element={<GameInfos />} />
+				<Route path='/chat' element={<FromChat animating={animating} />} />
+				<Route path='*' element={<From404 animating={animating} />} />
+			</Routes>)
 		}
 		previousPath.current = location.pathname
 	}, [location.pathname])
 
 	// ----RENDER----------------------------- //
 	return <AnimatePresence mode='wait'
-		onExitComplete={() => { animating.current = false }}>
+		onExitComplete={() => animating.current = false}>
 		{render}
 	</AnimatePresence>
 }

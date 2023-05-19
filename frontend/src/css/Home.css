@@ -1,23 +1,23 @@
 /* ---------------------------------
-Méthodologie B-E--M (Bloc, Elément, Modifieur)
+Méthodologie B-E--M (Bloc, Élément, Modifieur)
 
-Block: Un composant indépendant
+Bloc: Un composant indépendant
 ex: Un bouton, une barre de navigation, un en-tête...
 ex: ".navBar {}"
 ex: ".button {}"
 
-Element: Une partie d'un Block qui a un sens uniquement dans le contexte de ce Block.
+Élément: Une partie d'un bloc qui a un sens uniquement dans le contexte de ce bloc.
 ex: ".navBar-logo {}"
 ex: ".button-icon {}"
 
-Modifier: Une variation ou un état d'un Block ou d'un élément. 
+Modifieur: Une variation ou un état d'un bloc ou d'un élément. 
 ex: ".button--large {}"
-ex: ".navBar-logo--pressed {}"
+ex: ".navBar-logo--hidden {}"
 --------------------------------- */
 
 /* ---------------------------------
-#1 Elements
-#2 Form
+#1 Éléments
+#2 Forme
 #3 Position
 #4 Margin - Padding
 #5 Animations
@@ -25,13 +25,13 @@ ex: ".navBar-logo--pressed {}"
 
 /* ---HOME----------------------- */
 .home {
-	/* #1 Elements */
+	/* #1 Éléments */
 	border: 1px solid rgb(255, 255, 0);
 	display: flex;
 	align-items: center;
 	justify-content: center;
 
-	/* #2 Form */
+	/* #2 Forme */
 	width: calc(100% - 10px);
 	height: calc(100% - 20px);
 

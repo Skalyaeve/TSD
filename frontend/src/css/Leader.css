@@ -1,23 +1,23 @@
 /* ---------------------------------
-Méthodologie B-E--M (Bloc, Elément, Modifieur)
+Méthodologie B-E--M (Bloc, Élément, Modifieur)
 
-Block: Un composant indépendant
+Bloc: Un composant indépendant
 ex: Un bouton, une barre de navigation, un en-tête...
 ex: ".navBar {}"
 ex: ".button {}"
 
-Element: Une partie d'un Block qui a un sens uniquement dans le contexte de ce Block.
+Élément: Une partie d'un bloc qui a un sens uniquement dans le contexte de ce bloc.
 ex: ".navBar-logo {}"
 ex: ".button-icon {}"
 
-Modifier: Une variation ou un état d'un Block ou d'un élément. 
+Modifieur: Une variation ou un état d'un bloc ou d'un élément. 
 ex: ".button--large {}"
-ex: ".navBar-logo--pressed {}"
+ex: ".navBar-logo--hidden {}"
 --------------------------------- */
 
 /* ---------------------------------
-#1 Elements
-#2 Form
+#1 Éléments
+#2 Forme
 #3 Position
 #4 Margin - Padding
 #5 Animations
@@ -25,7 +25,7 @@ ex: ".navBar-logo--pressed {}"
 
 /* ---LEADER--------------------- */
 .leader {
-	/* #1 Elements */
+	/* #1 Éléments */
 	display: flex;
 	flex-direction: column;
 	overflow: hidden;
@@ -35,9 +35,23 @@ ex: ".navBar-logo--pressed {}"
 	padding-left: 0;
 }
 
-/* ---HEAD----------------------- */
+.leader-btn {
+	/* #1 Éléments */
+	border: 1px solid rgb(255, 255, 0);
+
+	/* #2 Forme */
+	width: 55px;
+	height: 35px;
+}
+
+.leader-btn:active {
+	/* #1 Éléments */
+	background-color: rgb(255, 255, 0, 0.3);
+}
+
+/* ---LEADER-HEAD---------------- */
 .leader-head {
-	/* #1 Elements */
+	/* #1 Éléments */
 	border: 1px solid rgb(255, 255, 0);
 	display: flex;
 	flex-direction: row-reverse;
@@ -48,37 +62,37 @@ ex: ".navBar-logo--pressed {}"
 }
 
 .leader-input {
-	/* #1 Elements */
+	/* #1 Éléments */
 	border: 1px solid rgb(255, 255, 0);
 
-	/* #2 Form */
-	width: 325px;
+	/* #2 Forme */
 	height: 35px;
-}
-
-.leader-btn {
-	/* #1 Elements */
-	border: 1px solid rgb(255, 255, 0);
-
-	/* #2 Form */
-	width: 55px;
-	height: 35px;
+	border-top-left-radius: 5px;
+	border-bottom-left-radius: 5px;
 }
 
 .leader-input-btn {
+	/* #2 Forme */
+	border-top-right-radius: 5px;
+	border-bottom-right-radius: 5px;
+
 	/* #4 Margin - Padding */
 	margin-left: 5px;
 	margin-right: 15px;
 }
 
 .leader-findTop-btn {
-	/* #2 Form */
+	/* #2 Forme */
 	width: 110px;
+	border-top-left-radius: 5px;
+	border-bottom-left-radius: 5px;
 }
 
 .leader-findMe-btn {
-	/* #2 Form */
+	/* #2 Forme */
 	width: 110px;
+	border-top-right-radius: 5px;
+	border-bottom-right-radius: 5px;
 
 	/* #4 Margin - Padding */
 	margin-left: 5px;
@@ -86,26 +100,40 @@ ex: ".navBar-logo--pressed {}"
 }
 
 .leader-up-btn {
+	/* #2 Forme */
+	border-top-left-radius: 5px;
+	border-bottom-left-radius: 5px;
+
 	/* #4 Margin - Padding */
 	margin-right: 5px;
 }
 
-/* ---BODY----------------------- */
+.leader-down-btn {
+	/* #2 Forme */
+	border-top-right-radius: 5px;
+	border-bottom-right-radius: 5px;
+
+	/* #4 Margin - Padding */
+	margin-right: 5px;
+}
+
+/* ---LEADER-BODY---------------- */
 .leader-body {
-	/* #1 Elements */
+	/* #1 Éléments */
 	border: 1px solid rgb(255, 255, 0);
+	border-top: none;
 	overflow-y: auto;
 
-	/* #2 Form */
+	/* #2 Forme */
 	height: 100%;
 }
 
 .leader-boardHead {
-	/* #1 Elements */
+	/* #1 Éléments */
 	border-bottom: 1px solid rgb(255, 255, 0);
 	display: flex;
 
-	/* #2 Form */
+	/* #2 Forme */
 	height: 50px;
 
 	/* #3 Position */
@@ -115,7 +143,7 @@ ex: ".navBar-logo--pressed {}"
 }
 
 .leader-col {
-	/* #1 Elements */
+	/* #1 Éléments */
 	border: none;
 	border-right: 1px solid rgb(255, 255, 0);
 	display: flex;
@@ -123,75 +151,70 @@ ex: ".navBar-logo--pressed {}"
 	justify-content: center;
 	overflow: hidden;
 
-	/* #2 Form */
+	/* #2 Forme */
 	width: 14%;
 	height: 100%;
 }
 
 .leader-col:first-child {
-	/* #2 Form */
+	/* #2 Forme */
 	width: 25%;
 	min-width: 250px;
 }
 
 .leader-col:last-child {
-	/* #1 Elements */
+	/* #1 Éléments */
 	border-right: none;
 
-	/* #2 Form */
+	/* #2 Forme */
 	width: 19%;
 }
 
 .leader-col--bigFont {
-	/* #1 Elements */
+	/* #1 Éléments */
 	font-size: 30px;
 }
 
-/* ---USR----------------------- */
+/* ---LEADER-USR----------------- */
 .leader-usr {
-	/* #1 Elements */
+	/* #1 Éléments */
 	border-top: 1px solid rgb(255, 255, 0);
 	border-bottom: 1px solid rgb(255, 255, 0);
 	display: flex;
 
-	/* #2 Form */
-	height: 70px;
+	/* #2 Forme */
+	height: 70.25px;
 }
 
 .leader-usr-rank {
-	/* #1 Elements */
+	/* #1 Éléments */
 	background-color: transparent;
+	text-align: center;
 
-	/* #2 Form */
+	/* #2 Forme */
 	width: 60px;
 }
 
 .leader-usr-pic {
-	/* #1 Elements */
+	/* #1 Éléments */
 	border: 1px solid rgb(255, 255, 0);
 	display: flex;
 	align-items: center;
 	justify-content: center;
 
-	/* #2 Form */
+	/* #2 Forme */
 	width: 50px;
 	height: 50px;
 }
 
 .leader-usr-link {
-	/* #1 Elements */
+	/* #1 Éléments */
 	background-color: transparent;
 	text-align: start;
 
-	/* #2 Form */
+	/* #2 Forme */
 	width: calc(100% - 120px);
 
 	/* #4 Margin - Padding */
 	margin-left: 10px;
-}
-
-/* ---BTN------------------------ */
-.leader-btn--pressed {
-	/* #1 Elements */
-	background-color: rgb(255, 255, 0, 0.3);
 }
