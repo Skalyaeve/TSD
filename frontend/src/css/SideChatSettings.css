@@ -26,7 +26,7 @@ ex: ".navBar-logo--hidden {}"
 /* ---ROOM-SETTINGS-------------- */
 .sideChat-roomSet-btn {
 	/* #1 Éléments */
-	border: 1px solid rgb(0, 128, 0);
+	border: 1px solid rgb(255, 255, 255);
 
 	/* #2 Forme */
 	width: 120px;
@@ -46,7 +46,7 @@ ex: ".navBar-logo--hidden {}"
 
 .sideChat-settings {
 	/* #1 Éléments */
-	border: 1px solid rgb(0, 128, 0);
+	border: 1px solid rgb(255, 255, 255);
 	display: flex;
 	flex-direction: column;
 	align-items: center;
@@ -56,12 +56,12 @@ ex: ".navBar-logo--hidden {}"
 	border-radius: 5px;
 
 	/* #4 Margin - Padding */
-	padding: 5px;
+	padding: 10px;
 }
 
 .sideChat-settings-option {
 	/* #1 Éléments */
-	border: 1px solid rgb(0, 128, 0);
+	border: 1px solid rgb(255, 255, 255);
 
 	/* #2 Forme */
 	width: 200px;
@@ -69,13 +69,16 @@ ex: ".navBar-logo--hidden {}"
 	border-radius: 5px;
 
 	/* #4 Margin - Padding */
-	margin: 5px;
+	margin-top: 5px;
 }
 
 .sideChat-settings-option:first-child {
 	/* #2 Forme */
 	border-bottom-left-radius: 0;
 	border-bottom-right-radius: 0;
+
+	/* #4 Margin - Padding */
+	margin-top: 0;
 }
 
 .sideChat-settings-option:nth-child(2) {
@@ -92,7 +95,7 @@ ex: ".navBar-logo--hidden {}"
 
 .sideChat-settings-join {
 	/* #1 Éléments */
-	border: 1px solid rgb(0, 128, 0);
+	border: 1px solid rgb(255, 255, 255);
 	display: grid;
 	grid-template-columns: 1fr 1fr;
 	grid-template-rows: 75px 45px;
@@ -102,7 +105,7 @@ ex: ".navBar-logo--hidden {}"
 	border-radius: 5px;
 
 	/* #4 Margin - Padding */
-	padding: 5px;
+	padding: 10px 5px;
 }
 
 .sideChat-settings-join-commit {
@@ -114,10 +117,10 @@ ex: ".navBar-logo--hidden {}"
 
 .sideChat-roomSet {
 	/* #1 Éléments */
-	border: 1px solid rgb(0, 128, 0);
+	border: 1px solid rgb(255, 255, 255);
 	display: grid;
 	grid-template-columns: 1fr 1fr;
-	grid-template-rows: 75px 1fr 45px;
+	grid-template-rows: 81.5px 1fr 51.5px;
 
 	/* #2 Forme */
 	width: 400px;
@@ -127,7 +130,7 @@ ex: ".navBar-logo--hidden {}"
 
 .sideChat-roomSet-main-input {
 	/* #1 Éléments */
-	border: 1px solid rgb(0, 128, 0);
+	border: 1px solid rgb(255, 255, 255);
 	text-align: center;
 
 	/* #2 Forme */
@@ -144,8 +147,11 @@ ex: ".navBar-logo--hidden {}"
 	border-top-left-radius: 5px;
 	border-top-right-radius: 5px;
 
+	/* #3 Position */
+	align-self: center;
+
 	/* #4 Margin - Padding */
-	margin-top: 5px;
+	margin-bottom: 35px;
 }
 
 .sideChat-roomSet-psw-input {
@@ -154,25 +160,30 @@ ex: ".navBar-logo--hidden {}"
 	border-bottom-right-radius: 5px;
 
 	/* #3 Position */
-	align-self: flex-end;
+	align-self: center;
 
 	/* #4 Margin - Padding */
-	margin-bottom: 5px;
+	margin-top: 35px;
 }
 
 .sideChat-roomSet-search-input {
 	/* #1 Éléments */
-	border-top: 1px solid rgb(0, 128, 0);
-	border-bottom: 1px solid rgb(0, 128, 0);
+	border-top: 1px solid rgb(255, 255, 255);
+	border-bottom: 1px solid rgb(255, 255, 255);
 	font-size: 18px;
 
 	/* #2 Forme */
 	flex-shrink: 0;
+
+	/* #3 Position */
+	position: sticky;
+	z-index: 1;
+	top: 0;
 }
 
 .sideChat-roomSet-users {
 	/* #1 Éléments */
-	border-bottom: 1px solid rgb(0, 128, 0);
+	border-bottom: 1px solid rgb(255, 255, 255);
 	display: flex;
 	flex-direction: column;
 	overflow-x: hidden;
@@ -181,7 +192,7 @@ ex: ".navBar-logo--hidden {}"
 
 .sideChat-roomSet-users-added {
 	/* #1 Éléments */
-	border-right: 1px solid rgb(0, 128, 0);
+	border-right: 1px solid rgb(255, 255, 255);
 
 	/* #3 Position */
 	grid-column: 1 / 1;
@@ -196,7 +207,7 @@ ex: ".navBar-logo--hidden {}"
 
 .sideChat-roomSet-commit-btn {
 	/* #2 Forme */
-	border-radius: 5px;
+	width: 146px;
 }
 
 .sideChat-roomSet-commit-btn:nth-of-type(1) {
@@ -205,8 +216,12 @@ ex: ".navBar-logo--hidden {}"
 	grid-row: 3 / -1;
 	justify-self: flex-end;
 
+	/* #2 Forme */
+	border-top-left-radius: 5px;
+	border-bottom-left-radius: 5px;
+
 	/* #4 Margin - Padding */
-	margin-right: 20px;
+	margin-right: 2.5px;
 }
 
 .sideChat-roomSet-commit-btn:nth-of-type(2) {
@@ -215,21 +230,25 @@ ex: ".navBar-logo--hidden {}"
 	grid-row: 3 / -1;
 	justify-self: flex-start;
 
+	/* #2 Forme */
+	border-top-right-radius: 5px;
+	border-bottom-right-radius: 5px;
+
 	/* #4 Margin - Padding */
-	margin-left: 20px;
+	margin-left: 2.5px;
 }
 
 /* ---ROOM-USR-SET--------------- */
 .sideChat-roomSet-usr {
 	/* #1 Éléments */
-	border-top: 1px solid rgb(0, 128, 0);
-	border-bottom: 1px solid rgb(0, 128, 0);
+	border-top: 1px solid rgb(255, 255, 255);
+	border-bottom: 1px solid rgb(255, 255, 255);
 	display: flex;
 	position: relative;
 
 	/* #2 Forme */
 	flex-shrink: 0;
-	height: 31px;
+	height: 33px;
 }
 
 .sideChat-roomSet-usr-link {
@@ -264,11 +283,11 @@ ex: ".navBar-logo--hidden {}"
 	font-size: 15px;
 
 	/* #2 Forme */
-	width: 30px;
-	height: 30px;
+	width: 32px;
+	height: 32px;
 }
 
 .sideChat-roomSet-btn:active {
 	/* #1 Éléments */
-	background-color: rgba(0, 122, 6, 0.3);
+	background-color: rgba(255, 255, 255, 0.3);
 }

@@ -38,7 +38,7 @@ ex: ".navBar-logo--hidden {}"
 /* ---FRIENDS-HEAD--------------- */
 .profile-friends-head {
 	/* #1 Éléments */
-	border: 1px solid rgb(255, 255, 0);
+	border: 1px solid rgb(255, 255, 255);
 	display: flex;
 	flex-direction: row-reverse;
 	align-items: flex-end;
@@ -49,7 +49,7 @@ ex: ".navBar-logo--hidden {}"
 
 .profile-friends-add-input {
 	/* #1 Éléments */
-	border: 1px solid rgb(255, 255, 0);
+	border: 1px solid rgb(255, 255, 255);
 
 	/* #2 Forme */
 	height: 35px;
@@ -70,7 +70,7 @@ ex: ".navBar-logo--hidden {}"
 /* ---FRIENDS-LIST--------------- */
 .profile-friends-list {
 	/* #1 Éléments */
-	border: 1px solid rgb(255, 255, 0);
+	border: 1px solid rgb(255, 255, 255);
 	border-top: none;
 
 	/* #2 Forme */
@@ -79,7 +79,7 @@ ex: ".navBar-logo--hidden {}"
 
 .profile-friends-list-head {
 	/* #1 Éléments */
-	border-bottom: 1px solid rgb(255, 255, 0);
+	border-bottom: 1px solid rgb(255, 255, 255);
 	display: flex;
 
 	/* #2 Forme */
@@ -94,7 +94,7 @@ ex: ".navBar-logo--hidden {}"
 .profile-friends-list-col {
 	/* #1 Éléments */
 	border: none;
-	border-right: 1px solid rgb(255, 255, 0);
+	border-right: 1px solid rgb(255, 255, 255);
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -141,7 +141,7 @@ ex: ".navBar-logo--hidden {}"
 
 .profile-friends-search:active {
 	/* #1 Éléments */
-	background-color: rgb(255, 255, 0, 0.3);
+	background-color: rgb(255, 255, 255, 0.3);
 }
 
 .profile-friends-search-btn {
@@ -157,7 +157,7 @@ ex: ".navBar-logo--hidden {}"
 
 .profile-friends-search-input {
 	/* #1 Éléments */
-	border: 1px solid rgb(255, 255, 0);
+	border: 1px solid rgb(255, 255, 255);
 
 	/* #2 Forme */
 	width: calc(100% - 80px);
@@ -176,8 +176,8 @@ ex: ".navBar-logo--hidden {}"
 /* ---FRIEND--------------------- */
 .profile-friend {
 	/* #1 Éléments */
-	border-top: 1px solid rgb(255, 255, 0);
-	border-bottom: 1px solid rgb(255, 255, 0);
+	border-top: 1px solid rgb(255, 255, 255);
+	border-bottom: 1px solid rgb(255, 255, 255);
 	display: flex;
 
 	/* #2 Forme */
@@ -196,12 +196,12 @@ ex: ".navBar-logo--hidden {}"
 
 .profile-friend-name:active {
 	/* #1 Éléments */
-	background-color: rgb(255, 255, 0, 0.3);
+	background-color: rgb(255, 255, 255, 0.3);
 }
 
 .profile-friend-pic {
 	/* #1 Éléments */
-	border: 1px solid rgb(255, 255, 0);
+	border: 1px solid rgb(255, 255, 255);
 	display: flex;
 	align-items: center;
 	justify-content: center;

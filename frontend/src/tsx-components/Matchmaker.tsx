@@ -99,8 +99,8 @@ const Matchmaker: React.FC = () => {
 
 	// ----RENDER----------------------------- //
 	const render = () => {
-		if (!matchmaking) return (inGame ? <>[EXIT]</> : <>[PLAY]</>)
-		else return <> [STOP] < Timer /></>
+		if (!matchmaking) return (inGame ? <>EXIT</> : <>PLAY</>)
+		else return <> STOP < Timer /></>
 	}
 	return <motion.button
 		className={name}

@@ -37,7 +37,7 @@ ex: ".navBar-logo--hidden {}"
 
 .leader-btn {
 	/* #1 Éléments */
-	border: 1px solid rgb(255, 255, 0);
+	border: 1px solid rgb(255, 255, 255);
 
 	/* #2 Forme */
 	width: 55px;
@@ -46,13 +46,13 @@ ex: ".navBar-logo--hidden {}"
 
 .leader-btn:active {
 	/* #1 Éléments */
-	background-color: rgb(255, 255, 0, 0.3);
+	background-color: rgb(255, 255, 255, 0.3);
 }
 
 /* ---LEADER-HEAD---------------- */
 .leader-head {
 	/* #1 Éléments */
-	border: 1px solid rgb(255, 255, 0);
+	border: 1px solid rgb(255, 255, 255);
 	display: flex;
 	flex-direction: row-reverse;
 	align-items: flex-end;
@@ -63,7 +63,7 @@ ex: ".navBar-logo--hidden {}"
 
 .leader-input {
 	/* #1 Éléments */
-	border: 1px solid rgb(255, 255, 0);
+	border: 1px solid rgb(255, 255, 255);
 
 	/* #2 Forme */
 	height: 35px;
@@ -112,15 +112,12 @@ ex: ".navBar-logo--hidden {}"
 	/* #2 Forme */
 	border-top-right-radius: 5px;
 	border-bottom-right-radius: 5px;
-
-	/* #4 Margin - Padding */
-	margin-right: 5px;
 }
 
 /* ---LEADER-BODY---------------- */
 .leader-body {
 	/* #1 Éléments */
-	border: 1px solid rgb(255, 255, 0);
+	border: 1px solid rgb(255, 255, 255);
 	border-top: none;
 	overflow-y: auto;
 
@@ -130,7 +127,7 @@ ex: ".navBar-logo--hidden {}"
 
 .leader-boardHead {
 	/* #1 Éléments */
-	border-bottom: 1px solid rgb(255, 255, 0);
+	border-bottom: 1px solid rgb(255, 255, 255);
 	display: flex;
 
 	/* #2 Forme */
@@ -145,7 +142,7 @@ ex: ".navBar-logo--hidden {}"
 .leader-col {
 	/* #1 Éléments */
 	border: none;
-	border-right: 1px solid rgb(255, 255, 0);
+	border-right: 1px solid rgb(255, 255, 255);
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -178,8 +175,8 @@ ex: ".navBar-logo--hidden {}"
 /* ---LEADER-USR----------------- */
 .leader-usr {
 	/* #1 Éléments */
-	border-top: 1px solid rgb(255, 255, 0);
-	border-bottom: 1px solid rgb(255, 255, 0);
+	border-top: 1px solid rgb(255, 255, 255);
+	border-bottom: 1px solid rgb(255, 255, 255);
 	display: flex;
 
 	/* #2 Forme */
@@ -197,7 +194,7 @@ ex: ".navBar-logo--hidden {}"
 
 .leader-usr-pic {
 	/* #1 Éléments */
-	border: 1px solid rgb(255, 255, 0);
+	border: 1px solid rgb(255, 255, 255);
 	display: flex;
 	align-items: center;
 	justify-content: center;

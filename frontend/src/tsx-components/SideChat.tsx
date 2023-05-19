@@ -222,7 +222,7 @@ const RoomUser: React.FC<RoomUserProps> = ({ id }) => {
 // --------USERS----------------------------------------------------------- //
 const RoomUsers: React.FC = () => {
 	// ----STATES----------------------------- //
-	const [userCount, setUserCount] = useState(11)
+	const [userCount, setUserCount] = useState(12)
 
 	// ----ANIMATIONS------------------------- //
 	const boxMotion = widthChangeByPx({
@@ -400,7 +400,7 @@ const SideChat: React.FC = () => {
 				className={extendBtnName}
 				animate={animeMainBtn ? btnMotion : {}}
 				{...extendBtnHdl}>
-				[CHAT]
+				CHAT
 			</motion.button>
 			<motion.button
 				className={fullPageBtnName}
@@ -408,7 +408,7 @@ const SideChat: React.FC = () => {
 				{...fullPageBtnHdl}
 				{...fullPageBtnMotion as MotionProps}>
 				<Link className={fullPageLinkName} to={'/chat'}>
-					[&gt;&gt;]
+					&gt;&gt;
 				</Link>
 			</motion.button>
 		</motion.div>

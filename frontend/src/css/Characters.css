@@ -38,7 +38,7 @@ ex: ".navBar-logo--hidden {}"
 
 .characters-select {
 	/* #1 Éléments */
-	border: 1px solid rgb(255, 255, 0);
+	border: 1px solid rgb(255, 255, 255);
 	display: flex;
 	flex-wrap: wrap;
 	align-content: flex-start;
@@ -48,7 +48,7 @@ ex: ".navBar-logo--hidden {}"
 
 .character-box {
 	/* #1 Éléments */
-	border: 1px solid rgb(255, 255, 0);
+	border: 1px solid rgb(255, 255, 255);
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -62,13 +62,13 @@ ex: ".navBar-logo--hidden {}"
 }
 
 .character-box:active {
-	background-color: rgb(255, 255, 0, 0.3);
+	background-color: rgb(255, 255, 255, 0.3);
 }
 
 /* ---CHARACTER------------------ */
 .character {
 	/* #1 Éléments */
-	border: 1px solid rgb(255, 255, 0);
+	border: 1px solid rgb(255, 255, 255);
 	display: grid;
 	grid-template-columns: 1fr 1fr;
 	grid-template-rows: 300px 400px auto;
@@ -77,7 +77,7 @@ ex: ".navBar-logo--hidden {}"
 
 .character-skin {
 	/* #1 Éléments */
-	border-bottom: 1px solid rgb(255, 255, 0);
+	border-bottom: 1px solid rgb(255, 255, 255);
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -88,8 +88,8 @@ ex: ".navBar-logo--hidden {}"
 
 .character-stats {
 	/* #1 Éléments */
-	border-bottom: 1px solid rgb(255, 255, 0);
-	border-right: 1px solid rgb(255, 255, 0);
+	border-bottom: 1px solid rgb(255, 255, 255);
+	border-right: 1px solid rgb(255, 255, 255);
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -97,7 +97,7 @@ ex: ".navBar-logo--hidden {}"
 
 .character-story {
 	/* #1 Éléments */
-	border-bottom: 1px solid rgb(255, 255, 0);
+	border-bottom: 1px solid rgb(255, 255, 255);
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -106,7 +106,7 @@ ex: ".navBar-logo--hidden {}"
 /* ---CHARACTER-SPELLS----------- */
 .character-spells {
 	/* #1 Éléments */
-	border-bottom: 1px solid rgb(255, 255, 0);
+	border-bottom: 1px solid rgb(255, 255, 255);
 	display: flex;
 	flex-wrap: wrap;
 	align-content: flex-start;
@@ -118,7 +118,7 @@ ex: ".navBar-logo--hidden {}"
 
 .character-spell {
 	/* #1 Éléments */
-	border: 1px solid rgb(255, 255, 0);
+	border: 1px solid rgb(255, 255, 255);
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -133,7 +133,7 @@ ex: ".navBar-logo--hidden {}"
 
 .character-spell-tooltip {
 	/* #1 Éléments */
-	border: 1px solid rgb(255, 255, 0);
+	border: 1px solid rgb(255, 255, 255);
 	display: flex;
 	align-items: center;
 	justify-content: center;

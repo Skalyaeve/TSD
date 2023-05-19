@@ -26,7 +26,7 @@ ex: ".navBar-logo--hidden {}"
 /* ---MATCHMAKER----------------- */
 .matchmaker {
 	/* #1 Éléments */
-	border: 1px solid rgb(0, 0, 255);
+	border: 1px solid rgb(255, 255, 255);
 
 	/* #2 Forme */
 	border-radius: 5px;
@@ -42,13 +42,13 @@ ex: ".navBar-logo--hidden {}"
 
 .matchmaker:active {
 	/* #1 Éléments */
-	background-color: rgba(0, 0, 255, 0.3);
+	background-color: rgba(255, 255, 255, 0.3);
 }
 
 /* ---GAME-INFOS----------------- */
 .gameInfos {
 	/* #1 Éléments */
-	border: 1px solid rgb(200, 0, 0);
+	border: 1px solid rgb(255, 255, 255);
 	display: grid;
 	grid-template-columns: 1fr 1fr;
 	grid-template-rows: 2fr 1fr 1fr;
@@ -64,7 +64,7 @@ ex: ".navBar-logo--hidden {}"
 
 .gameInfo-player {
 	/* #1 Éléments */
-	border: 1px solid rgb(200, 0, 0);
+	border: 1px solid rgb(255, 255, 255);
 	display: flex;
 	align-items: center;
 	justify-content: center;

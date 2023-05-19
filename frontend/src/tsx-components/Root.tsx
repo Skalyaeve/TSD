@@ -15,9 +15,11 @@ import Leader from './Leader.tsx'
 import ErrorPage from './ErrorPage.tsx'
 import Chat from './Chat/Chat.tsx'
 import '../css/Root.css'
+import background from '../resource/background.png';
 
 // --------IS-CONNECTED---------------------------------------------------- //
 const isConnected = async () => {
+	return true
 	if (!Cookies.get('access_token')) return false
 
 	const servID = 'http://localhost:3000'
@@ -49,15 +51,25 @@ const LoginBtn: React.FC<LogginBtnProps> = ({ setLogged }) => {
 
 	// ----HANDLERS--------------------------- //
 	const connect = async () => {
-		const address = 'https://api.intra.42.fr'
-		const clientID = 'u-s4t2ud-a460194637c8c56d45ed62db554eb664f3c2f05ad3bdcd5021f4f213fcda2bef'
-		const redirectURI = 'http%3A%2F%2Flocalhost%3A3000%2Fauth%2F42%2Fcallback'
-		const url = `${address}/oauth/authorize?response_type=code&redirect_uri=${redirectURI}&client_id=${clientID}`
+		let address
+		let clientID
+		let redirectURI
+		if (process.env.OA42_API_ADDR)
+			address = process.env.OA42_API_ADDR
+		else return
+		if (process.env.OA42_API_KEY)
+			clientID = encodeURIComponent(process.env.OA42_API_KEY)
+		else return
+		if (process.env.OA42_API_REDIR)
+			redirectURI = encodeURIComponent(process.env.OA42_API_REDIR)
+		else return
+		const url = `${address}?response_type=code&redirect_uri=${redirectURI}&client_id=${clientID}`
 		window.location.href = url
+
 		const connected = await isConnected()
 		if (connected) setLogged(true)
 	}
-	const btnHdl = { onMouseUp: () => !animating.current && connect() }
+	const btnHdl = { onMouseUp: () => !animating.current && setLogged(true) }
 
 	// ----ANIMATIONS------------------------- //
 	const btnMotion = {
@@ -83,7 +95,7 @@ const LoginBtn: React.FC<LogginBtnProps> = ({ setLogged }) => {
 			className={name}
 			{...btnHdl}
 			{...btnMotion as MotionProps}>
-			[42Auth]
+			42 LOGIN
 		</motion.button>
 	</div >
 }
@@ -112,9 +124,9 @@ const Root: React.FC = () => {
 
 	useLayoutEffect(() => {
 		if (logged) {
-			location.pathname !== '/' && navigate('/')
 			if (location.pathname === '/login') {
-				const timer = setTimeout(() => { setShowHeader(true) }, 500)
+				navigate('/')
+				const timer = setTimeout(() => setShowHeader(true), 500)
 				return () => clearTimeout(timer)
 			}
 			else setShowHeader(true)
@@ -134,11 +146,12 @@ const Root: React.FC = () => {
 	const boxMotion = bouncyYMove({ from: 100, extra: -10, inDuration: 0.8 })
 
 	// ----CLASSNAMES------------------------- //
+	const boxName = 'root'
 	const headerName = 'header'
 	const headerMiddleName = `${headerName}-middleContent`
 
 	// ----RENDER----------------------------- //
-	return <>
+	return <div className={boxName} style={{ backgroundImage: `url(${background})` }}>
 		<AnimatePresence>
 			{showHeader && <header className={headerName}>
 				<NavBar setLogged={setLogged} />
@@ -163,6 +176,6 @@ const Root: React.FC = () => {
 				<Route path='*' element={<ErrorPage code={404} />} />
 			</Routes>
 		</AnimatePresence>
-	</>
+	</div>
 }
 export default Root

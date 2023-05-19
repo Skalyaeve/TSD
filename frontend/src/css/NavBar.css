@@ -41,7 +41,7 @@ ex: ".navBar-logo--hidden {}"
 
 .navBar-link-motion {
 	/* #1 Éléments */
-	border: 1px solid rgb(200, 0, 0);
+	border: 1px solid rgb(255, 255, 255);
 }
 
 .navBar-link {
@@ -69,5 +69,5 @@ ex: ".navBar-logo--hidden {}"
 
 .navBar-link:active {
 	/* #1 Éléments */
-	background-color: rgb(200, 0, 0, 0.3);
+	background-color: rgb(255, 255, 255, 0.3);
 }

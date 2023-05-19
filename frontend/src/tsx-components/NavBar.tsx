@@ -107,24 +107,24 @@ const FromHome: React.FC<FromHomeProps> = ({
 			className={logoutBtnName}
 			{...logoutBtnHdl}
 			{...logoutBtnMotion}>
-			[LOGOUT]
+			LOGOUT
 		</motion.button>
 		<NavBarLink
 			index={1}
 			to='/profile'
-			content='[PROFILE]'
+			content='PROFILE'
 			animating={animating}
 		/>
 		<NavBarLink
 			index={2}
 			to='/characters'
-			content='[CHARACTERS]'
+			content='CHARACTERS'
 			animating={animating}
 		/>
 		<NavBarLink
 			index={3}
 			to='/leader'
-			content='[LEADER]'
+			content='LEADER'
 			animating={animating}
 		/>
 	</motion.nav >
@@ -140,19 +140,19 @@ const FromProfile: React.FC<FromProfileProps> = ({ animating }) => (
 		<NavBarLink
 			index={0}
 			to='/'
-			content='[BACK]'
+			content='BACK'
 			animating={animating}
 		/>
 		<NavBarLink
 			index={1}
 			to='/profile'
-			content='[INFOS]'
+			content='INFOS'
 			animating={animating}
 		/>
 		<NavBarLink
 			index={2}
 			to='/profile/friends'
-			content='[FRIENDS]'
+			content='FRIENDS'
 			animating={animating}
 		/>
 	</motion.nav>
@@ -168,7 +168,7 @@ const FromCharacters: React.FC<FromCharactersProps> = ({ animating }) => (
 		<NavBarLink
 			index={0}
 			to='/'
-			content='[BACK]'
+			content='BACK'
 			animating={animating}
 		/>
 	</motion.nav>
@@ -183,7 +183,7 @@ const FromLeader: React.FC<FromLeaderProps> = ({ animating }) => (
 		<NavBarLink
 			index={0}
 			to='/'
-			content='[BACK]'
+			content='BACK'
 			animating={animating}
 		/>
 	</motion.nav>
@@ -198,7 +198,7 @@ const From404: React.FC<From404Props> = ({ animating }) => (
 		<NavBarLink
 			index={0}
 			to='/'
-			content='[HOME]'
+			content='HOME'
 			animating={animating}
 		/>
 	</motion.nav>
@@ -213,7 +213,7 @@ const FromChat: React.FC<FromChatProps> = ({ animating }) => (
 		<NavBarLink
 			index={0}
 			to='/'
-			content='[HOME]'
+			content='HOME'
 			animating={animating}
 		/>
 	</motion.nav>
