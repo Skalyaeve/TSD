@@ -1,18 +1,30 @@
-import React from "react";
+import React, { useState } from "react";
 import { BsSearchHeart } from "react-icons/bs";
 
 export default function DmHandler()
 {
+
+    const [contact, setContact] = useState("");
+    const handleSubmit = (e: React.FormEvent) =>
+    {
+        e.preventDefault();
+        //here send the value
+        setContact("");
+    }
     return (
     <div className='direct-messages'>
         <div className="DM-title">
             <h1>
-                Direct Messages
+                [Direct Messages]
             </h1>
         </div>
         <div className="DM-find">
             <div className="DM-find-text">
-                Search/Start Chat
+                <input
+                onChange={(e)=>setContact(e.target.value)}
+                placeholder="Search conversation"
+                value={contact}
+                />
             </div>
             <button className="DM-find-btn">
                 <BsSearchHeart/>

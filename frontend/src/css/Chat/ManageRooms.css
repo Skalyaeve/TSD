@@ -3,33 +3,28 @@
 .chat-main-grid .manage-rooms {
     display: grid;
     grid-template-rows: 1fr 1fr;
-    border: 1px solid green;
+    border: 1px solid rgb(121, 199, 245);
     border-radius: 1px;
     overflow: auto;
     height: 100%;
 }
 
 .chat-main-grid .manage-rooms .channels {
-    border: 1px solid red;
+    border: 1px solid rgb(121, 199, 245);
     overflow: auto;
 }
 
 .chat-main-grid .manage-rooms .direct-messages {
     display: grid;
     grid-template-rows: 0.5fr 1fr 4fr;
-    border: 1px solid white;
+    border: 1px solid rgb(121, 199, 245);
     overflow: auto;
-    /* align-items: center; */
-    /* justify-content: center; */
-
 }
 
 .DM-title {
     display: flex;
     align-items: center;
     justify-content: center;
-
-    /* border: 1px solid rgb(250, 250, 250) */
 }
 
 .DM-title h1 {
@@ -41,8 +36,6 @@
     flex-direction: column;
     align-items: top;
     justify-content: center;
-
-    /* border: 1px solid rgb(255, 255, 255); */
 }
 
 .DM-find-text {
@@ -62,7 +55,7 @@
     grid-template-rows: repeat(auto-fill, minmax(50px, 1fr));
     align-items: center;
     justify-content: center;
-    border: 1px solid rgb(255, 255, 255);
+    border: 1px solid rgb(121, 199, 245);
     overflow: auto;
 
       /* Customize the scrollbar */
