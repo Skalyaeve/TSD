@@ -63,6 +63,12 @@ interface player {
 	sprite?: Phaser.Physics.Arcade.Sprite 		// Player sprite
 }
 
+interface playerConstruct {
+	id: string
+	side: "left" | "right"
+	skin: "player" | "mage" | "blank" | "black"
+}
+
 // Game canvas interface
 interface canvas {								// Scene canvas settings
 	xSize: number								// Canvas heigth
