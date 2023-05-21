@@ -19,8 +19,6 @@ import background from '../resource/background.png';
 
 // --------IS-CONNECTED---------------------------------------------------- //
 const isConnected = async () => {
-	return true
-	if (!Cookies.get('access_token')) return false
 
 	const servID = 'http://localhost:3000'
 	const path = '/users/connected'
@@ -28,7 +26,7 @@ const isConnected = async () => {
 		const response = await fetch(`${servID}${path}`, {
 			method: 'GET',
 			mode: 'cors',
-			credentials: 'include'
+			credentials: 'include',
 		})
 		if (response.ok) {
 			const txt = await response.json()
@@ -51,21 +49,6 @@ const LoginBtn: React.FC<LogginBtnProps> = ({ setLogged }) => {
 
 	// ----HANDLERS--------------------------- //
 	const connect = async () => {
-		let address
-		let clientID
-		let redirectURI
-		if (process.env.OA42_API_ADDR)
-			address = process.env.OA42_API_ADDR
-		else return
-		if (process.env.OA42_API_KEY)
-			clientID = encodeURIComponent(process.env.OA42_API_KEY)
-		else return
-		if (process.env.OA42_API_REDIR)
-			redirectURI = encodeURIComponent(process.env.OA42_API_REDIR)
-		else return
-		const url = `${address}?response_type=code&redirect_uri=${redirectURI}&client_id=${clientID}`
-		window.location.href = url
-
 		const connected = await isConnected()
 		if (connected) setLogged(true)
 	}

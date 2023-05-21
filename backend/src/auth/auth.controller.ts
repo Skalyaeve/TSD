@@ -3,8 +3,8 @@ import { AuthService } from './auth.service';
 import { Request, Response } from 'express';
 import { GoogleAuthGuard } from './guards/GoogleGuard';
 import { FortyTwoAuthGuard } from './guards/FortyTwoGuard';
-import { CreateUserDto } from 'src/user/dto';
 import { UserService } from 'src/user/user.service';
+import { Prisma } from '@prisma/client';
 
 @Controller('auth')
 export class AuthController {
@@ -44,10 +44,10 @@ export class AuthController {
 
     // DEBUGGING
     @Post('new')
-    async createOneUser(@Body() createUserDto: CreateUserDto, @Res({ passthrough: true }) res: Response) {
+    async createOneUser(@Body() userCreateInput: Prisma.UserCreateInput, @Res({ passthrough: true }) res: Response) {
 
-        console.log(createUserDto);
-        const user = await this.userService.findOrCreateOne(createUserDto);
+        console.log(userCreateInput);
+        const user = await this.userService.findOrCreateOne(userCreateInput);
 
         const access_token = await this.authService.login(user);
         res.cookie('access_token', access_token, {

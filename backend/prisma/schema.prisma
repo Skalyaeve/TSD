@@ -119,9 +119,9 @@ model Game {
 	player2Ref	User		@relation("player2", fields: [player2], references: [id])
 	player2		Int
 	timeStart	DateTime	@default(now())	
-	timeEnd		DateTime?
-	winnerRef	User?		@relation("winner", fields: [winner], references: [id])
-	winner		Int?
+	timeEnd		DateTime
+	winnerRef	User		@relation("winner", fields: [winner], references: [id])
+	winner		Int
 }
 
 

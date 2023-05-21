@@ -1,7 +1,7 @@
-import { Controller, Delete, Get, MaxFileSizeValidator, Param, ParseFilePipe, ParseIntPipe, Post, Request, StreamableFile, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
+import { BadRequestException, Controller, Delete, Get, MaxFileSizeValidator, Param, ParseFilePipe, ParseIntPipe, Post, Req, StreamableFile, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
 import { UserService } from "./user.service";
 import { JwtGuard } from "src/auth/guards/JwtGuard";
-import { User } from "@prisma/client";
+import { User, Game } from "@prisma/client";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { Express } from 'express';
 import * as fs from 'fs';
@@ -13,7 +13,7 @@ export class UserController {
 
     @Get('connected')
     @UseGuards(JwtGuard)
-    IsConnected(@Request() req: any) {
+    IsConnected(@Req() req: any) {
         return req.user;
     }
 
@@ -25,7 +25,7 @@ export class UserController {
 
     @Get('avatar/download')
     @UseGuards(JwtGuard)
-    async getAvatar(@Request() req: any): Promise<StreamableFile> {
+    async getAvatar(@Req() req: any): Promise<StreamableFile> {
         const user = await this.userService.findOneByIdOrThrow(req.user.id);
         const path = 'upload/avatars/' + user.avatarFilename;
         const file = fs.createReadStream(join(process.cwd(), path))
@@ -40,7 +40,7 @@ export class UserController {
             validators: [
                 new MaxFileSizeValidator({ maxSize: 2097152 }),
             ]})) file: Express.Multer.File,
-        @Request() req: any): Promise<User> {
+        @Req() req: any): Promise<User> {
         const user = await this.userService.findOneByIdOrThrow(req.user.id);
         if (user.avatarFilename !== 'default.png') {
             const path = 'upload/avatars/' + user.avatarFilename;
@@ -54,7 +54,7 @@ export class UserController {
 
     @Delete()
     @UseGuards(JwtGuard)
-    async deleteOneUser(@Request() req) {
+    async deleteOneUser(@Req() req: any) {
         return this.userService.deleteOneById(req.user.id);
     }
 
@@ -62,12 +62,6 @@ export class UserController {
     @UseGuards(JwtGuard)
     async getOneById(@Param('id', ParseIntPipe) id: number): Promise<User> {
         return this.userService.findOneById(id);
-    }
-
-    @Get(':id/stats')
-    @UseGuards(JwtGuard)
-    async getOneStatsById(@Param('id', ParseIntPipe) id: number) {
-        
     }
 
 }

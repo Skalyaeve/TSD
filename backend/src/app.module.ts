@@ -2,14 +2,11 @@ import { Module } from '@nestjs/common';
 import { PrismaModule } from './prisma/prisma.module';
 import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
-import { ChatGateway } from './chat/chat.gateway';
-import { ChatService } from './chat/chat.service';
 import { GameModule } from './game/game.module';
 import { ChatModule } from './chat/chat.module';
-import { AuthService } from './auth/auth.service';
 import { JwtModule } from '@nestjs/jwt';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { PrismaService } from 'nestjs-prisma';
+import { ConfigModule } from '@nestjs/config';
+import { UserGameModule } from './user_game/user_game.module';
 
 @Module({
   imports: [
@@ -21,14 +18,8 @@ import { PrismaService } from 'nestjs-prisma';
     UserModule,
     ChatModule,
     ConfigModule,
-	GameModule
-  ],
-  providers: [
-    ChatGateway, 
-    ChatService, 
-    AuthService,
-    ConfigService,
-    PrismaService
+	  GameModule,
+    UserGameModule,
   ],
 })
 export class AppModule {}

@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from 'nestjs-prisma';
-import { CreateUserDto } from './dto';
-import { User } from '@prisma/client';
+import { PrismaService } from 'src/prisma/prisma.service';
+import { User, Game, Prisma } from '@prisma/client';
 
 @Injectable()
 export class UserService {
@@ -28,9 +27,9 @@ export class UserService {
     return user;
   }
 
-  async findOrCreateOne(createUserDto: CreateUserDto): Promise<User> {
+  async findOrCreateOne(userCreateInput: Prisma.UserCreateInput): Promise<User> {
 
-    const { email } = createUserDto;
+    const { email } = userCreateInput;
   
     let user = await this.findOneByEmail(email);
     if (user) {
@@ -51,9 +50,9 @@ export class UserService {
     return users;
   }
 
-  async createOne(createUserDto: CreateUserDto): Promise<User> {
+  async createOne(userCreateInput: Prisma.UserCreateInput): Promise<User> {
     const user = await this.prisma.user.create({
-      data: createUserDto,
+      data: userCreateInput,
     });
     return user;
   }
@@ -84,44 +83,4 @@ export class UserService {
     return `${randomAdjective}-${randomNoun}-${randomNum}`;
   }
 
-  // async createUser(data: { email: string; displayName: string }) {
-  //   const user = await this.prisma.user.create({
-  //     data,
-  //   });
-  //   return user;
-  // }
-
-  // async getUsers() {
-  //   const users = await this.prisma.user.findMany();
-  //   return users;
-  // }
-
-  // async getUserById(id: number) {
-  //   const user = await this.prisma.user.findUnique({
-  //     where: { id },
-  //   });
-  //   return user;
-  // }
-
-  // async updateUser(id: number, data: { email?: string; displayName?: string }) {
-  //   const user = await this.prisma.user.update({
-  //     where: { id },
-  //     data,
-  //   });
-  //   return user;
-  // }
-
-  // async deleteUser(id: number) {
-  //   const user = await this.prisma.user.delete({
-  //     where: { id },
-  //   });
-  //   return user;
-  // }
-
-  // async findUserByLogin(login: string) {
-  //   const user = await this.prisma.user.findUnique({
-  //     where: { login },
-  //   });
-  //   return user;
-  // }
 }
