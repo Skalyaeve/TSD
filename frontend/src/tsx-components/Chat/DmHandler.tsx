@@ -21,9 +21,9 @@ export default function DmHandler()
         <div className="DM-find">
             <div className="DM-find-text">
                 <input
-                onChange={(e)=>setContact(e.target.value)}
-                placeholder="Search conversation"
-                value={contact}
+                    onChange={(e)=>setContact(e.target.value)}
+                    placeholder="Search conversation"
+                    value={contact}
                 />
             </div>
             <button className="DM-find-btn">
@@ -31,10 +31,10 @@ export default function DmHandler()
             </button>
         </div>
         <div className="DM-conversations">
-            <div className="conversation">Conversation 1</div>
-            <div className="conversation">Conversation 2</div>
-            <div className="conversation">Conversation 3</div>
-            <div className="conversation">Conversation 4</div>
+            <div className="conversation">Contact 1</div>
+            <div className="conversation">Contact 2</div>
+            <div className="conversation">Contact 3</div>
+            <div className="conversation">Contact 4</div>
         </div>
     </div>
     )

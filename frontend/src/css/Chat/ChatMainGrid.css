@@ -1,6 +1,8 @@
 @import url("ContactInfo.css");
 @import url("ChatBox.css");
 @import url("ManageRooms.css");
+@import url("DirectMessages.css");
+@import url("ManageChannels.css");
 
 .chat-main-grid {
     display: grid;

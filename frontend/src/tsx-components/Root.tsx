@@ -21,7 +21,6 @@ import { io } from 'socket.io-client';
 
 // --------IS-CONNECTED---------------------------------------------------- //
 const isConnected = async () => {
-	return true
 	if (!Cookies.get('access_token')) return false
 
 	const servID = 'http://localhost:3000'
