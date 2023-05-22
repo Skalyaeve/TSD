@@ -3,7 +3,6 @@ import { AuthService } from './auth.service.js';
 import { Request, Response } from 'express';
 import { GoogleAuthGuard } from './guards/GoogleGuard.js';
 import { FortyTwoAuthGuard } from './guards/FortyTwoGuard.js';
-import { CreateUserDto } from '../user/dto/create-user.dto.js';
 import { UserService } from '../user/user.service.js';
 
 @Controller('auth')
@@ -44,10 +43,10 @@ export class AuthController {
 
     // DEBUGGING
     @Post('new')
-    async createOneUser(@Body() createUserDto: CreateUserDto, @Res({ passthrough: true }) res: Response) {
+    async createOneUser(@Body() createUserDto: any, @Res({ passthrough: true }) res: Response) {
 
         console.log(createUserDto);
-        const user = await this.userService.findOrCreateOne(createUserDto);
+        const user = await this.userService.findOrCreateOne(createUserDto.email);
 
         const access_token = await this.authService.login(user);
         res.cookie('access_token', access_token, {

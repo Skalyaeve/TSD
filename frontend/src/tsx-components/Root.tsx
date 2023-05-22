@@ -53,11 +53,11 @@ const LoginBtn: React.FC<LogginBtnProps> = ({ setLogged }) => {
 		const servID = 'http://localhost:3000'
 		const path = '/auth/42/login'
 		try {
-			const response = await fetch(`${servID}${path}`)
-			if (response.ok) setLogged(true)
-			else console.error(`[ERROR] ${response.status}`)
+			window.location.href = `${servID}${path}`
 		}
-		catch { console.error('[ERROR] fetch() failed') }
+		catch {
+			console.error('[ERROR] fetch() failed')
+		}
 	}
 
 	const btnHdl = { onMouseUp: () => !animating.current && connect() }
@@ -104,11 +104,9 @@ const Root: React.FC = () => {
 	// ----EFFECTS---------------------------- //
 	useLayoutEffect(() => {
 		const checkConnection = async () => {
-			if (!logged) {
-				const connected = await isConnected()
-				if (connected) setLogged(true)
-				else navigate('/login')
-			}
+			const connected = await isConnected()
+			if (connected) setLogged(true)
+			else navigate("/login")
 		}
 		checkConnection()
 	}, [])

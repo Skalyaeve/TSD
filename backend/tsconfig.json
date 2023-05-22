@@ -9,9 +9,9 @@
 		// A quoi servent ces trucs? Si on les enlève ca marche plus
 		"skipLibCheck": true,
 		"experimentalDecorators": true,
+		"emitDecoratorMetadata": true,
 		
 		/* A quoi servent ces trucs? Si on les enlève ca marche quand même
-		"emitDecoratorMetadata": true,
 		"incremental": true,
 		"strictBindCallApply": false,
 		"declaration": true,

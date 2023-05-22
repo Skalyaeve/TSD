@@ -28,9 +28,7 @@ export class UserService {
     return user;
   }
 
-  async findOrCreateOne(createUserDto: CreateUserDto): Promise<User> {
-
-    const { email } = createUserDto;
+  async findOrCreateOne(email: string): Promise<User> {
   
     let user = await this.findOneByEmail(email);
     if (user) {
