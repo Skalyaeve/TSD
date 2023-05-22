@@ -1,7 +1,7 @@
-import { BadRequestException, Controller, Delete, Get, MaxFileSizeValidator, Param, ParseFilePipe, ParseIntPipe, Post, Req, StreamableFile, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
-import { UserService } from "./user.service";
-import { JwtGuard } from "src/auth/guards/JwtGuard";
-import { User, Game } from "@prisma/client";
+import { Controller, Delete, Get, MaxFileSizeValidator, Param, ParseFilePipe, ParseIntPipe, Post, Request, StreamableFile, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
+import { UserService } from "./user.service.js";
+import { JwtGuard } from "../auth/guards/JwtGuard.js";
+import { User } from "@prisma/client";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { Express } from 'express';
 import * as fs from 'fs';

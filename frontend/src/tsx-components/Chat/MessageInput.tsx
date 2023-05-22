@@ -3,15 +3,17 @@ import "../../css/Chat/SendMessage.css"
 import "../../css/Chat/InputText.css"
 import {AiOutlineSend} from 'react-icons/ai';
 
+interface Props {
+    send: (val: string, user: string) => void;
+    user: string;
+    setUser: React.Dispatch<React.SetStateAction<string>>;
+}
+
 export default function MessageInput({
     send,
     user,
     setUser,
-} : {
-    send: (val: string, user: string) => void;
-    user: string;
-    setUser: React.Dispatch<React.SetStateAction<string>>;
-}) {
+} : Props ) {
     const [value, setValue] = useState("")
 
     const handleSubmit = (e: React.FormEvent) => {
