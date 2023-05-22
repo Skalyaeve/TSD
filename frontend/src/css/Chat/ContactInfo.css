@@ -3,19 +3,24 @@
 .chat-main-grid .contact-info {
     display: grid;
     grid-template-rows: 2.5fr 6fr;
-    border: 1px solid green;
+    border: 1px solid rgb(121, 199, 245);
     border-radius: 5px;
     height: 100%;
 }
 
+.header-contact, .body-contact {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 .chat-main-grid .contact-info .header-contact
 {
-    border: 1px solid rgb(225, 0, 255);
-    /* overflow: auto; */
+    border: 1px solid rgb(121, 199, 245);
 }
 
 .chat-main-grid .contact-info .body-contact
 {
-    border: 1px solid rgb(225, 0, 255);
+    border: 1px solid rgb(121, 199, 245);
     /* overflow: auto; */
 }

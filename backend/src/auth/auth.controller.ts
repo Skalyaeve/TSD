@@ -1,10 +1,10 @@
 import { Controller, Get, UseGuards, Req, Post, Body, Res } from '@nestjs/common';
-import { AuthService } from './auth.service';
+import { AuthService } from './auth.service.js';
 import { Request, Response } from 'express';
-import { GoogleAuthGuard } from './guards/GoogleGuard';
-import { FortyTwoAuthGuard } from './guards/FortyTwoGuard';
-import { CreateUserDto } from 'src/user/dto';
-import { UserService } from 'src/user/user.service';
+import { GoogleAuthGuard } from './guards/GoogleGuard.js';
+import { FortyTwoAuthGuard } from './guards/FortyTwoGuard.js';
+import { CreateUserDto } from '../user/dto/create-user.dto.js';
+import { UserService } from '../user/user.service.js';
 
 @Controller('auth')
 export class AuthController {

@@ -10,7 +10,7 @@
 }
 
 .input_text {
-    border: 1px solid green;
+    border: 1px solid rgb(121, 199, 245);
     height: 100px;
     width: 100%;
     border-radius: 5px;

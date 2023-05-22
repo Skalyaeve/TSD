@@ -1,14 +1,14 @@
 import { Module } from '@nestjs/common';
-import { PrismaModule } from 'src/prisma/prisma.module';
+import { PrismaModule } from '../prisma/prisma.module.js';
 import { JwtModule } from '@nestjs/jwt';
-import { AuthService } from './auth.service';
-import { AuthController } from './auth.controller';
-import { GoogleStrategy } from './strategies/GoogleStrategy';
-import { FortyTwoStrategy } from './strategies/FortyTwoStrategy';
-import { JwtStrategy } from './strategies/JwtStrategy';
+import { AuthService } from './auth.service.js';
+import { AuthController } from './auth.controller.js';
+import { GoogleStrategy } from './strategies/GoogleStrategy.js';
+import { FortyTwoStrategy } from './strategies/FortyTwoStrategy.js';
+import { JwtStrategy } from './strategies/JwtStrategy.js';
 import { PassportModule } from '@nestjs/passport';
-import { UserModule } from 'src/user/user.module';
-import { UserService } from 'src/user/user.service';
+import { UserModule } from '../user/user.module.js';
+import { UserService } from '../user/user.service.js';
 import { ConfigModule } from '@nestjs/config';
 import { PrismaService } from 'nestjs-prisma';
 

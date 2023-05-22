@@ -21,7 +21,7 @@ balise: key to call an html element (e.g div, input, form, button, etc)
     max-height: 100vh;
 }
 .chat-container .messages {
-    border: 1px solid green;
+    border: 1px solid rgb(121, 199, 245);
     border-radius: 5px;
     overflow: auto;
     padding-left: 10px;
