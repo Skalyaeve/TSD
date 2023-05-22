@@ -1,3 +1,4 @@
+import {useMemo} from 'react';
 import React, { useRef, useState, useLayoutEffect } from 'react'
 import { Routes, Route, useLocation, useNavigate } from 'react-router-dom'
 import Cookies from 'js-cookie';
@@ -16,6 +17,7 @@ import ErrorPage from './ErrorPage.tsx'
 import Chat from './Chat/Chat.tsx'
 import '../css/Root.css'
 import background from '../resource/background.png';
+import { io } from 'socket.io-client';
 
 // --------IS-CONNECTED---------------------------------------------------- //
 const isConnected = async () => {
@@ -106,6 +108,13 @@ const LoginBtn: React.FC<LogginBtnProps> = ({ setLogged }) => {
 	</div >
 }
 
+// ----SOCKET----------------------------- //
+
+export const socket = io("http://localhost:3000/chat", { 
+  transports: ["websocket"], 
+  withCredentials: true
+});
+
 // --------ROOT------------------------------------------------------------ //
 const Root: React.FC = () => {
 	// ----ROUTER----------------------------- //
@@ -155,6 +164,7 @@ const Root: React.FC = () => {
 	const boxName = 'root'
 	const headerName = 'header'
 	const headerMiddleName = `${headerName}-middleContent`
+	
 
 	// ----RENDER----------------------------- //
 	return <div className={boxName} style={{ backgroundImage: `url(${background})` }}>

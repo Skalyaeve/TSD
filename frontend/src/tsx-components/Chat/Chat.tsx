@@ -1,5 +1,6 @@
 import React, { useCallback, useMemo } from 'react'
 import { useEffect, useState } from 'react'
+import { socket } from '../Root.tsx'
 import io, { Socket } from "socket.io-client"
 import MessageInput from './MessageInput.tsx'
 import Messages from './Messages.tsx'
@@ -15,13 +16,13 @@ function Chat({}) {
     const [user, setUser] = useState(() => `User${Math.floor(Math.random() * 10)}`); // this will change 
     const [isOpen, setIsOpen] = useState<boolean>(false);
 
-    const socket = useMemo(()=>{
-        console.log("NEW CONNECTION")
-        return io("http://localhost:3000/chat", { 
-            transports: ["websocket"], 
-            withCredentials: true
-        })
-    }, []);
+    // const socket = useMemo(()=>{
+    //     console.log("NEW CONNECTION")
+    //     return io("http://localhost:3000/chat", { 
+    //         transports: ["websocket"], 
+    //         withCredentials: true
+    //     })
+    // }, []);
 
     const send = useCallback((value: string, user: string) => {
             console.log("value: ", value);
