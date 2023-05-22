@@ -13,8 +13,6 @@
 		"allowImportingTsExtensions": true,
 		// Transformer les importations CommonJS en ECMAScript 
 		"esModuleInterop": true,
-		// Le compilateur vérifiera la cohérence des nom de fichiers
-		"forceConsistentCasingInFileNames": true,
 		// Active un ensemble de vérifications de type strict
 		"strict": true,
 		// Permet de ne pas générer de fichiers de sortie lors de la compilation
