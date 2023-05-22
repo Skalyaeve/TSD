@@ -1,6 +1,6 @@
 /* -------------------------LIBRARIES IMPORTS------------------------- */
 
-import { Socket, Server } from 'socket.io';
+import { Socket } from 'socket.io';
 const io = require('socket.io-client');
 import * as readline from 'readline'
 
@@ -24,29 +24,33 @@ function prompt(socket: Socket) {
 	rl.question('[TSD]>$ ', (answer) => {
 		switch (answer.toLowerCase()) {
 
+			case 'help':
+				console.log("'help': List all commands")
+				console.log("'exit': Exit the controller")
+				console.log("'open': Creates a new party instance")
+				console.log("'close': Close a party instance")
+				console.log("'reset': Close all party instances")
+				console.log("'display': Display a party instance")
+				console.log("'list': List all party instances")
+				break
+
 			case 'exit':
 				socket.disconnect()
 				process.exit()
-				break
 
-			case 'stop':
-				socket.emit('stop')
-				prompt(socket)
-				break
-
-			case 'party':
+			case 'open':
 				socket.emit('newParty')
 				prompt(socket)
 				break
 
-			case 'unparty':
+			case 'close':
 				rl.question('Id?>$ ', (id) => {
 					socket.emit('closeParty', id)
 					prompt(socket)
 				})
 				break
 
-			case 'unparty all':
+			case 'reset':
 				socket.emit('closeAllParties')
 				prompt(socket)
 				break
@@ -57,7 +61,7 @@ function prompt(socket: Socket) {
 				})
 				break
 
-			case 'display all':
+			case 'list':
 				socket.emit('displayAllSockets')
 				break
 
@@ -74,8 +78,10 @@ socket = io('http://localhost:3000/game')
 
 socket.on('ownID', (playerId) => {
 	ownId = playerId
-	console.log("Own id:", ownId)
 	socket.emit('identification', loginID)
+	console.log("/* ----------------------TSD CONTROLLER---------------------- */")
+	console.log("Own id:", ownId)
+	console.log("Type 'help' for a list of commands")
 	prompt(socket)
 })
 
