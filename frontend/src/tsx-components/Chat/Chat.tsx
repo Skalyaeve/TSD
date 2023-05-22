@@ -17,7 +17,7 @@ function Chat({}) {
 
     const socket = useMemo(()=>{
         console.log("NEW CONNECTION")
-        return io("http://localhost:8001", { 
+        return io("http://localhost:3000/chat", { 
             transports: ["websocket"], 
             withCredentials: true
         })

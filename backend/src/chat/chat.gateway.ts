@@ -10,12 +10,17 @@ import {
 } from '@nestjs/websockets';  
 import { Socket, Server } from "socket.io";
 import { User } from '@prisma/client';
-import { UserService } from 'src/user/user.service';
-import { ChatService } from './chat.service';
+import { UserService } from '../user/user.service.js';
+import { ChatService } from './chat.service.js';
 import { Logger } from '@nestjs/common';
 
 
-@WebSocketGateway(8001, {cors: "*"})
+@WebSocketGateway({cors:
+  {
+    origin: '*',
+    methods: ['GET', 'POST']
+  }
+  , namespace: 'chat'})
 
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect
  {
