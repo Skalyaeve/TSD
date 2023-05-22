@@ -45,12 +45,20 @@ interface player {
 	anim: string								// Player current animation
 }
 
+interface playerConstruct {
+	id: string
+	side: "left" | "right"
+	skin: "player" | "mage" | "blank" | "black"
+}
+
 interface party {
 	id: string
 	hostID: string
 	playerOneId: string
 	playerTwoId: string
 }
+
+/* -------------------------WEBSOCKET-HANDLING------------------------- */
 
 @WebSocketGateway({ cors: { origin: '*', methods: ['GET', 'POST'] }, namespace: 'game' })
 export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
@@ -64,10 +72,11 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	readonly headlessType: string = "PHASER-HEADLESS-CLIENT"
 	readonly controllerType: string = "CONTROLLER"
 
+	matchQueue: string[] = []
+
 	sockets: { [id: string]: socketInfo } = {}
 
 	players: { [id: string]: player } = {}
-	matchQueue: string[] = []
 
 	parties: { [partyId: string]: party } = {}
 
@@ -76,30 +85,34 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
 	/* -------------------------FUNCTIONS------------------------- */
 
-	createNewPlayer(): player {
-		let finalSide = (this.nbRight > this.nbLeft ? 'left' : 'right')
-		if (this.nbRight > this.nbLeft)
-			this.nbLeft = this.nbLeft + 1
-		else
-			this.nbRight = this.nbRight + 1
+
+	/*let newPlayer: player = {
+		id: uuidv4(),
+		xPos: (finalSide == 'left' ? 250 : 1670),
+		yPos: 250 + Math.random() * 580,
+		xDir: (finalSide == 'left' ? 'right' : 'left'),
+		keyStates: {
+			up: false,
+			down: false,
+			left: false,
+			right: false,
+		},
+		xVel: 0,
+		yVel: 0,
+		lastMove: 'none',
+		move: 'idle',
+		skin: 'mage',
+		anim: 'IdleAnim'*/
+
+	// Create a new player construct
+	createNewPlayer(): playerConstruct {
+		let finalSide: "left" | "right" = (this.nbRight > this.nbLeft ? 'left' : 'right')
+		this.nbRight > this.nbLeft ? this.nbLeft += 1 : this.nbRight += 1
 		console.log(finalSide + " connected", "r:", this.nbRight, "l:", this.nbLeft)
-		let newPlayer: player = {
+		let newPlayer: playerConstruct = {
 			id: uuidv4(),
-			xPos: (finalSide == 'left' ? 250 : 1670),
-			yPos: 250 + Math.random() * 580,
-			xDir: (finalSide == 'left' ? 'right' : 'left'),
-			keyStates: {
-				up: false,
-				down: false,
-				left: false,
-				right: false,
-			},
-			xVel: 0,
-			yVel: 0,
-			lastMove: 'none',
-			move: 'idle',
+			side: finalSide,
 			skin: 'mage',
-			anim: 'IdleAnim'
 		}
 		return newPlayer
 	}
@@ -118,107 +131,104 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
 	/* -------------------------GLOBAL EVENT LISTENERS------------------------- */
 
-	async handleConnection(client: Socket, ...args: any[]) {
-		client.emit('ownID', `${client.id}`);
-		this.sockets[client.id] = {
-			socket: client,
+	async handleConnection(socket: Socket, ...args: any[]) {
+		this.sockets[socket.id] = {
+			socket: socket,
 			type: 'unknown',
 		};
-		console.log("Connection:", client.id)
+		socket.emit('ownID', `${socket.id}`);
+		console.log("Connection:", socket.id)
 	}
 
-	async handleDisconnect(client: Socket) {
-		let socket = this.sockets[client.id]
-		if (socket.type == this.clientType)
-		delete this.sockets[client.id]
-		console.log("Client", socket.socket.id, "type:", socket.type, "disconnected")
-		
+	async handleDisconnect(socket: Socket) {
+		let client = this.sockets[socket.id]
+		if (client.type == this.clientType)
+			delete this.sockets[socket.id]
+		console.log("Client", client.socket.id, "type:", client.type, "disconnected")
 	}
 
 	@SubscribeMessage('identification')
-	handleIdentification(client: Socket, payload: string) {
+	handleIdentification(socket: Socket, payload: string) {
 		switch (payload) {
 			case this.clientType:
-				this.players[client.id] = this.createNewPlayer()
-				this.matchQueue[this.matchQueue.length] = client.id
-				this.sockets[client.id].type = this.clientType
-				console.log("Player logging in:", client.id)
+				this.sockets[socket.id].type = this.clientType
+				console.log("New player session:", socket.id)
 				break
 			case this.headlessType:
-				this.sockets[client.id].type = this.headlessType
-				console.log("New headless session:", client.id)
+				this.sockets[socket.id].type = this.headlessType
+				console.log("New headless session:", socket.id)
 				break
 			case this.controllerType:
-				this.sockets[client.id].type = this.controllerType
-				console.log("New controller:", client.id)
+				this.sockets[socket.id].type = this.controllerType
+				console.log("New controller:", socket.id)
 				break
 			default:
 				console.log("Wrong client type, disconnecting...")
-				client.disconnect()
+				socket.disconnect()
 		}
 	}
 
 	/* -------------------------WEB EVENT LISTENERS------------------------- */
 
 	@SubscribeMessage('playerKeyUpdate')
-	handlePlayerKeyUpdate(client: Socket, payload: keyStates) {
-		if (this.sockets[client.id].type == this.clientType) {
+	handlePlayerKeyUpdate(socket: Socket, payload: keyStates) {
+		if (this.sockets[socket.id].type == this.clientType) {
 		}
 	}
 
 	@SubscribeMessage('playerStart')
-	handlePlayerStart(client: Socket) {
-		if (this.sockets[client.id].type == this.clientType) {
+	handlePlayerStart(socket: Socket) {
+		if (this.sockets[socket.id].type == this.clientType) {
 		}
 	}
 
 	@SubscribeMessage('playerStop')
-	handlePlayerStop(client: Socket) {
-		if (this.sockets[client.id].type == this.clientType) {
+	handlePlayerStop(socket: Socket) {
+		if (this.sockets[socket.id].type == this.clientType) {
 		}
 	}
 
 	/* -------------------------HEADLESS EVENT LISTENERS------------------------- */
 
 	@SubscribeMessage('playerUpdate')
-	handlePlayerUpdate(client: Socket) {
-		if (this.sockets[client.id].type == this.clientType) {
+	handlePlayerUpdate(socket: Socket) {
+		if (this.sockets[socket.id].type == this.headlessType) {
 		}
 	}
 
 	/* -------------------------CONTROLLER EVENT LISTENERS------------------------- */
 
 	@SubscribeMessage('newParty')
-	handleNewParty(client: Socket) {
-		if (this.sockets[client.id].type == this.controllerType) {
+	handleNewParty(socket: Socket) {
+		if (this.sockets[socket.id].type == this.controllerType) {
 			console.log("New Headless Session")
 			this.parties
 		}
 	}
 
 	@SubscribeMessage('displaySocket')
-	handleDisplaySocket(client: Socket, payload: string) {
-		if (this.sockets[client.id].type == this.controllerType) {
+	handleDisplaySocket(socket: Socket, payload: string) {
+		if (this.sockets[socket.id].type == this.controllerType) {
 			if (this.sockets[payload])
-				client.emit('displayLine', "Socket: " + payload + " type: " + this.sockets[payload].type)
+				socket.emit('displayLine', "Socket: " + payload + " type: " + this.sockets[payload].type)
 			else
-				client.emit('displayLine', "Unknown socket: " + payload)
-			client.emit('endOfDisplay')
+				socket.emit('displayLine', "Unknown socket: " + payload)
+			socket.emit('endOfDisplay')
 		}
 	}
 
 	@SubscribeMessage('displayAllSocket')
-	handleDisplayAllSocket(client: Socket) {
-		if (this.sockets[client.id].type == this.controllerType) {
+	handleDisplayAllSocket(socket: Socket) {
+		if (this.sockets[socket.id].type == this.controllerType) {
 			for (let socketId in this.sockets)
-				client.emit('displayLine', "Socket: " + socketId + " type: " + this.sockets[socketId].type)
-			client.emit('endOfDisplay')
+				socket.emit('displayLine', "Socket: " + socketId + " type: " + this.sockets[socketId].type)
+			socket.emit('endOfDisplay')
 		}
 	}
 
 	@SubscribeMessage('closeParty')
-	handleCloseParty(client: Socket, payload: string) {
-		if (this.sockets[client.id].type == this.controllerType) {
+	handleCloseParty(socket: Socket, payload: string) {
+		if (this.sockets[socket.id].type == this.controllerType) {
 			if (this.sockets[payload] && this.sockets[payload].type == this.headlessType) {
 				this.sockets[payload].socket.disconnect()
 				delete this.sockets[payload]
@@ -230,8 +240,8 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	}
 
 	@SubscribeMessage('closeAllParties')
-	handleCloseAllParties(client: Socket) {
-		if (this.sockets[client.id].type == this.controllerType) {
+	handleCloseAllParties(socket: Socket) {
+		if (this.sockets[socket.id].type == this.controllerType) {
 			for (let socketId in this.sockets) {
 				if (this.sockets[socketId] && this.sockets[socketId].type == this.headlessType) {
 					this.sockets[socketId].socket.disconnect()

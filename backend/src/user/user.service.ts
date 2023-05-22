@@ -28,9 +28,7 @@ export class UserService {
     return user;
   }
 
-  async findOrCreateOne(userCreateInput: Prisma.UserCreateInput): Promise<User> {
-
-    const { email } = userCreateInput;
+  async findOrCreateOne(email: string): Promise<User> {
   
     let user = await this.findOneByEmail(email);
     if (user) {
