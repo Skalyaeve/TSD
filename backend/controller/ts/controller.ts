@@ -1,7 +1,6 @@
 /* -------------------------LIBRARIES IMPORTS------------------------- */
 
-import { Socket } from 'socket.io';
-const io = require('socket.io-client');
+import { io, Socket } from 'socket.io-client'
 import * as readline from 'readline'
 
 /* -------------------------TYPES------------------------- */
@@ -32,6 +31,7 @@ function prompt(socket: Socket) {
 				console.log("'reset': Close all party instances")
 				console.log("'display': Display a party instance")
 				console.log("'list': List all party instances")
+				prompt(socket)
 				break
 
 			case 'exit':
@@ -44,7 +44,7 @@ function prompt(socket: Socket) {
 				break
 
 			case 'close':
-				rl.question('Id?>$ ', (id) => {
+				rl.question('Id?>$ ', (id: string) => {
 					socket.emit('closeParty', id)
 					prompt(socket)
 				})
@@ -56,7 +56,7 @@ function prompt(socket: Socket) {
 				break
 
 			case 'display':
-				rl.question('Id?>$ ', (id) => {
+				rl.question('Id?>$ ', (id: string) => {
 					socket.emit('displaySocket', id)
 				})
 				break

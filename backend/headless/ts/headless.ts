@@ -1,7 +1,8 @@
 /* -------------------------LIBRARIES IMPORTS------------------------- */
 
 import Phaser from 'phaser'
-import { parentPort } from 'worker_threads'
+import { Socket } from 'socket.io-client'
+const io = require('socket.io-client')
 
 /* -------------------------ASSETS IMPORTS------------------------- */
 
@@ -202,10 +203,10 @@ function checkKeyInputs() {
 
 function checkSendUpdate() {
 	// Add check for time
-	if (parentPort) {
+	/*if (parentPort) {
 		parentPort.postMessage({ type: 'playerUpdate', players: players, moved: movingPlayers })
 		movingPlayers = []
-	}
+	}*/
 }
 
 // Create new player upon connection
@@ -275,8 +276,8 @@ function destroyGame() {
 		game.destroy(true, false)
 		game = null
 	}
-	if (parentPort)
-		parentPort.close
+	/*if (parentPort)
+		parentPort.close*/
 }
 
 function addNewPlayer(player: player) {
@@ -300,7 +301,7 @@ function updatePlayerKeys(playerId: string, keyStates: keyStates) {
 
 /* -------------------------MAIN FUNCTIONS------------------------- */
 
-if (parentPort) {
+/*if (parentPort) {
 	parentPort.on('message', (data) => {
 		switch (data.type) {
 			case 'destroy':
@@ -319,6 +320,6 @@ if (parentPort) {
 				console.log("Unknown event type", data.type)
 		}
 	})
-}
+}*/
 
 createGame()

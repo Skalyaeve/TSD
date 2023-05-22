@@ -1,29 +1,27 @@
 {
-  "compilerOptions": {
-    "module": "es2022",
-    "declaration": true, //?
-    "removeComments": true, //?
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "allowSyntheticDefaultImports": true, //?
-    "target": "es2022",
-    "esModuleInterop": true,
-    "outDir": "./dist",
-    "baseUrl": "./", //?
-    "incremental": true, //? c koi sa?
-    "skipLibCheck": true, //?
-    "strictNullChecks": false,  //?
-    "noImplicitAny": false,  //?
-    "strictBindCallApply": false,  //? c koi sa?
-    "noFallthroughCasesInSwitch": false, //?
+	"compilerOptions": {
+		"module": "es2022",
+		"target": "es2022",
+		"outDir": "dist",
 		"moduleResolution": "node16",
-  },
-  "exclude": [
-    "node_modules",
-    "test", 
-    "dist", 
-    "**/*spec.ts",
-    "headless",
-    "controller"
-  ]
+		"esModuleInterop": true,
+
+		// A quoi servent ces trucs? Si on les enlève ca marche plus
+		"skipLibCheck": true,
+		"experimentalDecorators": true,
+		
+		/* A quoi servent ces trucs? Si on les enlève ca marche quand même
+		"emitDecoratorMetadata": true,
+		"incremental": true,
+		"strictBindCallApply": false,
+		"declaration": true,
+		"removeComments": true,
+		"allowSyntheticDefaultImports": true,
+		"strictNullChecks": false,
+		"noImplicitAny": false,
+		"noFallthroughCasesInSwitch": false, */
+	},
+	"include": [
+		"src/**/*"
+	]
 }

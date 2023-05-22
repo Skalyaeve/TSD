@@ -27,13 +27,12 @@ module.exports = [
 			rules: [
 				{
 					test: /\.(js)$/,
-					include: [/server\/authoritative_server/],
-					exclude: [/node_modules/],
+					include: [/headless\/dist/],
 					use: { loader: 'babel-loader' }
 				},
 				{
 					test: /\.(png)$/i,
-					include: [/server\/authoritative_server/],
+					include: [/headless\/resource/],
 					exclude: [/node_modules/],
 					use: { loader: 'file-loader' }
 				}

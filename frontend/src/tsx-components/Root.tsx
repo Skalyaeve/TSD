@@ -50,23 +50,8 @@ const LoginBtn: React.FC<LogginBtnProps> = ({ setLogged }) => {
 
 	// ----HANDLERS--------------------------- //
 	const connect = async () => {
-		let address
-		let clientID
-		let redirectURI
-		if (process.env.OA42_API_ADDR)
-			address = process.env.OA42_API_ADDR
-		else return
-		if (process.env.OA42_API_KEY)
-			clientID = encodeURIComponent(process.env.OA42_API_KEY)
-		else return
-		if (process.env.OA42_API_REDIR)
-			redirectURI = encodeURIComponent(process.env.OA42_API_REDIR)
-		else return
-		const url = `${address}?response_type=code&redirect_uri=${redirectURI}&client_id=${clientID}`
-		window.location.href = url
-
 		const servID = 'http://localhost:3000'
-		const path = '/users/connected'
+		const path = '/auth/42/login'
 		try {
 			const response = await fetch(`${servID}${path}`)
 			if (response.ok) setLogged(true)
@@ -74,7 +59,8 @@ const LoginBtn: React.FC<LogginBtnProps> = ({ setLogged }) => {
 		}
 		catch { console.error('[ERROR] fetch() failed') }
 	}
-	const btnHdl = { onMouseUp: () => !animating.current && setLogged(true) }
+
+	const btnHdl = { onMouseUp: () => !animating.current && connect() }
 
 	// ----ANIMATIONS------------------------- //
 	const btnMotion = {
