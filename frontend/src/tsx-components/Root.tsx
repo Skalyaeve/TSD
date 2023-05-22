@@ -66,8 +66,14 @@ const LoginBtn: React.FC<LogginBtnProps> = ({ setLogged }) => {
 		const url = `${address}?response_type=code&redirect_uri=${redirectURI}&client_id=${clientID}`
 		window.location.href = url
 
-		const connected = await isConnected()
-		if (connected) setLogged(true)
+		const servID = 'http://localhost:3000'
+		const path = '/users/connected'
+		try {
+			const response = await fetch(`${servID}${path}`)
+			if (response.ok) setLogged(true)
+			else console.error(`[ERROR] ${response.status}`)
+		}
+		catch { console.error('[ERROR] fetch() failed') }
 	}
 	const btnHdl = { onMouseUp: () => !animating.current && setLogged(true) }
 

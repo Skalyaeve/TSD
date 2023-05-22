@@ -26,3 +26,10 @@
 // const [firstName, lastName] = myArray
 
 // console.log(firstName, lastName);
+
+
+/*
+uscallback -> create a function for me
+usememo -> create a varible
+
+*/

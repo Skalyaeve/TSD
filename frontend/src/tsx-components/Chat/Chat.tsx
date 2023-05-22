@@ -1,32 +1,35 @@
-import React, { useCallback } from 'react'
+import React, { useCallback, useMemo } from 'react'
 import { useEffect, useState } from 'react'
 import io, { Socket } from "socket.io-client"
 import MessageInput from './MessageInput.tsx'
 import Messages from './Messages.tsx'
 import { Link } from 'react-router-dom'
 import "../../css/Chat/ChatMainGrid.css"
+import ChatHeader from './ChatHeader.tsx'
+import HeaderContactInfo from './HeaderContactInfo.tsx'
+import ChatChannels from './ChatChannels.tsx'
+import DmHandler from './DmHandler.tsx'
 
 function Chat({}) {
-    const [socket, setSocket] = useState<Socket>();
     const [allMessages, setAllMessages] = useState<{user: string; message: string; type: string}[]>([]);
-    const [user, setUser] = useState(() => `User${Math.floor(Math.random() * 10)}`);// this will change 
+    const [user, setUser] = useState(() => `User${Math.floor(Math.random() * 10)}`); // this will change 
+    const [isOpen, setIsOpen] = useState<boolean>(false);
 
-    const send = (value: string, user: string) => {
-        console.log("value: ", value);
-        console.log("user: ", user);
-        const message = {user, message: value, type: "sent"};
-        setAllMessages([...allMessages, message]);
-        socket?.emit('message', message);
-    };
-
-    useEffect(() => {
+    const socket = useMemo(()=>{
         console.log("NEW CONNECTION")
-        const newSocket = io("http://localhost:8001", { 
+        return io("http://localhost:8001", { 
             transports: ["websocket"], 
             withCredentials: true
         })
-        setSocket(newSocket)
-    }, [])
+    }, []);
+
+    const send = useCallback((value: string, user: string) => {
+            console.log("value: ", value);
+            console.log("user: ", user);
+            const message = {user, message: value, type: "sent"};
+            setAllMessages((allMessages)=>[...allMessages, message]);
+            socket.emit('message', message);
+        }, [socket]);
 
     const messageListener = useCallback((message: { user: string; message: string}) => {
         console.log("i received");
@@ -40,10 +43,12 @@ function Chat({}) {
     }
 
     useEffect(() => {
-        console.log('messagelistener');
-        socket?.on("message", messageListener)
-        return () => {
-            socket?.off("message", messageListener)
+        if (socket){
+            console.log('messagelistener');
+            socket.on("message", messageListener)
+            return () => {
+                socket.off("message", messageListener)
+            }
         }
     },[socket])
 
@@ -54,21 +59,16 @@ function Chat({}) {
         }
       }, [allMessages]);
 
+    
 
     return (
-        <div className="chat-main-grid">
+        <div className={`chat-main-grid ${isOpen?"open":"close"}`}>
             <div className="manage-rooms">
-                <div className='channels'>
-                  <p>Channels</p>
-                </div>
-                <div className='direct-messages'>
-                    <p>Direct Messages</p>
-                </div>
+                <DmHandler/>
+                <ChatChannels/>
             </div>
             <div className="chatbox">
-                <div className='chat-header'>
-                    <p>chat header</p>
-                </div>
+                <ChatHeader contactName='Shupo' setIsOpen={setIsOpen}/>
                 <div className='chat-messages' id="chat-messages">
                     {allMessages.map((message, index) => (
                     <Messages key={index} messages={[message]} currentUser={user} />
@@ -78,12 +78,10 @@ function Chat({}) {
                     <MessageInput send={send} user={user} setUser={setUser} />
                 </div>
             </div>
-            <div className="contact-info">
-                <div className='header-contact'>
-                    <p>header of the contact info</p>
-                </div>
+            <div className={`contact-info ${isOpen?"open":"close"}`}>
+                <HeaderContactInfo/>
                 <div className='body-contact'>
-                    <p>body of contact info</p>
+                    body of contact info
                 </div>
             </div>
         </div>

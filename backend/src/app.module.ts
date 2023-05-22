@@ -24,7 +24,6 @@ import { PrismaService } from 'nestjs-prisma';
 	GameModule
   ],
   providers: [
-    ChatGateway, 
     ChatService, 
     AuthService,
     ConfigService,
