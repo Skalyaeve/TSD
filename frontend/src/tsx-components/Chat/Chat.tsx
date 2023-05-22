@@ -60,8 +60,6 @@ function Chat({}) {
         }
       }, [allMessages]);
 
-    
-
     return (
         <div className={`chat-main-grid ${isOpen?"open":"close"}`}>
             <div className="manage-rooms">

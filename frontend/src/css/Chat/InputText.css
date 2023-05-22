@@ -14,6 +14,7 @@
     height: 100px;
     width: 100%;
     border-radius: 5px;
+    background: rgba(76, 175, 80, 0.3);
 }
 
 .input_text input {
@@ -21,6 +22,7 @@
     width: calc(100% - 25px - 1px);
     border-radius: 10px;
     padding-left: 10px;
+    background: rgba(76, 175, 80, 0.3);
 }
 
 .input_text input::placeholder{
