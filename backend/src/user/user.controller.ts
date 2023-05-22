@@ -1,4 +1,4 @@
-import { Controller, Delete, Get, MaxFileSizeValidator, Param, ParseFilePipe, ParseIntPipe, Post, Request, StreamableFile, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
+import { BadRequestException, Controller, Delete, FileTypeValidator, Get, MaxFileSizeValidator, Param, ParseFilePipe, ParseIntPipe, Post, Request, StreamableFile, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
 import { UserService } from "./user.service.js";
 import { JwtGuard } from "../auth/guards/JwtGuard.js";
 import { User } from "@prisma/client";
@@ -6,6 +6,7 @@ import { FileInterceptor } from "@nestjs/platform-express";
 import { Express } from 'express';
 import * as fs from 'fs';
 import { join } from "path";
+import { diskStorage } from "multer";
 
 @Controller('users')
 export class UserController {
@@ -34,13 +35,32 @@ export class UserController {
 
     @Post('avatar/upload')
     @UseGuards(JwtGuard)
-    @UseInterceptors(FileInterceptor('file', { dest: 'upload/avatars' }))
-    async uploadAvatar(
-        @UploadedFile(new ParseFilePipe({
-            validators: [
-                new MaxFileSizeValidator({ maxSize: 2097152 }),
-            ]})) file: Express.Multer.File,
-        @Req() req: any): Promise<User> {
+    @UseInterceptors(FileInterceptor('file', {
+        storage: diskStorage({
+            destination: (req, file, cb) => {
+                cb(null, 'upload/avatars');
+            },
+            filename: (req, file, cb) => {
+                const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9) + '.jpg';
+                cb(null, file.fieldname + '-' + uniqueSuffix);
+            },
+        }),
+        limits: {
+            fieldSize: 2097152,
+        },
+        fileFilter: (req, file, cb) => {
+            if (file.mimetype === 'image/jpeg') {
+                cb(null, true);
+            }
+            else {
+                cb(null, false);
+            }
+        },
+    }))
+    async uploadAvatar(@UploadedFile() file: Express.Multer.File, @Request() req: any): Promise<User> {
+        if (!file) {
+            throw new BadRequestException('can only upload jpeg files');
+        }
         const user = await this.userService.findOneByIdOrThrow(req.user.id);
         if (user.avatarFilename !== 'default.png') {
             const path = 'upload/avatars/' + user.avatarFilename;
