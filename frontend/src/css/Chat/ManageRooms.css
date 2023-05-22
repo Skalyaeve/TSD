@@ -3,7 +3,7 @@
 .chat-main-grid .manage-rooms {
     display: grid;
     grid-template-rows: 1fr 1fr;
-    border: 1px solid rgb(121, 199, 245);
+    border: 1px solid rgb(121, 199, 245, 0.1);
     border-radius: 1px;
     overflow: auto;
     height: 100%;
@@ -12,13 +12,15 @@
 .chat-main-grid .manage-rooms .channels {
     display: grid;
     grid-template-rows: 0.5fr 1fr 4fr;
-    border: 1px solid rgb(121, 199, 245);
+    border: 1px solid rgb(121, 199, 245, 0.1);
+    background: rgba(0, 0, 0, 0.3);
     overflow: auto;
 }
 
 .chat-main-grid .manage-rooms .direct-messages {
     display: grid;
     grid-template-rows: 0.5fr 1fr 4fr;
-    border: 1px solid rgb(121, 199, 245);
+    border: 1px solid rgb(121, 199, 245, 0.1);
+    background: rgba(0, 0, 0, 0.5);
     overflow: auto;
 }
