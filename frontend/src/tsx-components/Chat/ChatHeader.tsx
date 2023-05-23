@@ -11,7 +11,7 @@ export default function ChatHeader({photo = defaultPhoto, contactName, setIsOpen
 
     return (
         <div className='chat-header'>
-            <button className="chat-header-buton" onClick={() => {setIsOpen(current => !current)}}>
+            <button className="chat-header-btn" onClick={() => {setIsOpen(current => !current)}}>
                 <img className="chat-header-photo" src={photo} alt='contactPhoto'/>
             </button>
             <div>

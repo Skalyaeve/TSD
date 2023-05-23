@@ -22,7 +22,7 @@ import { Logger } from '@nestjs/common';
   }
   , namespace: 'chat'})
 
-export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect
+export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit
  {
   constructor(
     private readonly userService: UserService,
@@ -40,16 +40,16 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect
     client.broadcast.emit('message', data); // Use broadcast.emit() to send the message to all clients except the sender
   }
 
-  // afterInit(server: any) {
-  //   this.logger.log('initialized');
-  // }
+  afterInit(server: any) {
+    this.logger.log('initialized');
+  }
 
   async handleConnection(client: Socket, ...args:any[])
   {
     console.log('success');
-    // console.log('handshake: ', client.handshake);
     const userData = await this.chatService.getUserFromSocket(client);
-
+    if (!userData)
+      client.disconnect();
     client.emit('connectionResult', { msg: 'helloworld'})
   }
 

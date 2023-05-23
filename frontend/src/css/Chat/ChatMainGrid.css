@@ -1,6 +1,8 @@
 @import url("ContactInfo.css");
 @import url("ChatBox.css");
 @import url("ManageRooms.css");
+@import url("DirectMessages.css");
+@import url("ManageChannels.css");
 
 .chat-main-grid {
     display: grid;
@@ -8,6 +10,7 @@
     gap: 1px;
     height: 100vh;
     transition: grid-template-columns 0.4s;
+    background-color: rgba(17, 171, 218, 0.3);
 }
 
 .chat-main-grid.close {
