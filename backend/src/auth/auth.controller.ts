@@ -44,10 +44,10 @@ export class AuthController {
 
     // DEBUGGING
     @Post('new')
-    async createOneUser(@Body() createUserDto: any, @Res({ passthrough: true }) res: Response) {
+    async createOneUser(@Body() userInfo: any, @Res({ passthrough: true }) res: Response) {
 
-        console.log(createUserDto);
-        const user = await this.userService.findOrCreateOne(createUserDto.email);
+        console.log(userInfo);
+        const user = await this.userService.findOrCreateOne(userInfo.email);
 
         const access_token = await this.authService.login(user);
         res.cookie('access_token', access_token, {

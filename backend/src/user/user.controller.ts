@@ -5,7 +5,6 @@ import { User } from "@prisma/client";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { Express } from 'express';
 import * as fs from 'fs';
-import { join } from "path";
 import { diskStorage } from "multer";
 
 @Controller('users')
@@ -22,15 +21,6 @@ export class UserController {
     @UseGuards(JwtGuard)
     async getAll(): Promise<User[]> {
         return this.userService.findAll();
-    }
-
-    @Get('avatar/download')
-    @UseGuards(JwtGuard)
-    async getAvatar(@Req() req: any): Promise<StreamableFile> {
-        const user = await this.userService.findOneByIdOrThrow(req.user.id);
-        const path = 'upload/avatars/' + user.avatarFilename;
-        const file = fs.createReadStream(join(process.cwd(), path))
-        return new StreamableFile(file);
     }
 
     @Post('avatar/upload')
