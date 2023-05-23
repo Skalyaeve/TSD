@@ -1,16 +1,8 @@
 /* -------------------------LIBRARIES IMPORTS------------------------- */
 
 import Phaser from 'phaser'
-import { Socket } from 'socket.io-client'
-const io = require('socket.io-client')
-
-/* -------------------------ASSETS IMPORTS------------------------- */
-
-// Images && Spritesheets
-import playerIdle__Sheet from '../resource/assets/black.png'
-import mageIdle__Sheet from '../resource/assets/black.png'
-import blank__Sheet from '../resource/assets/black.png'
-import black__Sheet from '../resource/assets/black.png'
+import { io, Socket } from 'socket.io-client'
+import 'jsdom-worker'
 
 /* -------------------------TYPES------------------------- */
 
@@ -88,13 +80,15 @@ let lastUpdateSent: number
 
 let movingPlayers: string[] = []
 
+let socket: Socket
+
 /* -------------------------SCENE PRELOADING------------------------- */
 
 // Initialise all skins of the scene
 function skinsInitialisation(scene: Phaser.Scene) {
 	skins['player'] = {
 		name: 'player',
-		idleSheet: playerIdle__Sheet,
+		idleSheet: '../resource/assets/black.png',
 		nbFrames: 2,
 		xSize: 100,
 		ySize: 175,
@@ -106,7 +100,7 @@ function skinsInitialisation(scene: Phaser.Scene) {
 	}
 	skins['mage'] = {
 		name: 'mage',
-		idleSheet: mageIdle__Sheet,
+		idleSheet: '../resource/assets/black.png',
 		nbFrames: 8,
 		xSize: 250,
 		ySize: 250,
@@ -118,7 +112,7 @@ function skinsInitialisation(scene: Phaser.Scene) {
 	}
 	skins['black'] = {
 		name: 'black',
-		idleSheet: black__Sheet,
+		idleSheet: '../resource/assets/black.png',
 		nbFrames: 2,
 		xSize: 125,
 		ySize: 250,
@@ -130,7 +124,7 @@ function skinsInitialisation(scene: Phaser.Scene) {
 	}
 	skins['blank'] = {
 		name: 'blank',
-		idleSheet: blank__Sheet,
+		idleSheet: '../resource/assets/black.png',
 		nbFrames: 2,
 		xSize: 125,
 		ySize: 250,
@@ -265,6 +259,7 @@ function createGame() {
 			create: create,
 			update: update,
 		},
+		autoFocus: false
 	}
 	game = new Phaser.Game({ ...config })
 }
@@ -299,27 +294,10 @@ function updatePlayerKeys(playerId: string, keyStates: keyStates) {
 	moveQueue[moveQueue.length] = playerId
 }
 
-/* -------------------------MAIN FUNCTIONS------------------------- */
+function startSocket(){
+	socket = io("http://localhost:3000/game")
+}
 
-/*if (parentPort) {
-	parentPort.on('message', (data) => {
-		switch (data.type) {
-			case 'destroy':
-				destroyGame()
-				break
-			case 'newPlayer':
-				addNewPlayer(data.player)
-				break
-			case 'playerDisconnected':
-				disconnectPlayer(data.playerId)
-				break
-			case 'playerKeyUpdate':
-				updatePlayerKeys(data.playerId, data.keyStates)
-				break
-			default:
-				console.log("Unknown event type", data.type)
-		}
-	})
-}*/
-
+/* -------------------------MAIN CODE------------------------- */
 createGame()
+startSocket()

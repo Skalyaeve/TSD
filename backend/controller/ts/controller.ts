@@ -20,7 +20,7 @@ let rl = readline.createInterface({
 /* -------------------------FUNCTIONS------------------------- */
 
 function prompt(socket: Socket) {
-	rl.question('[TSD]>$ ', (answer) => {
+	rl.question('[TSD]>$ ', (answer: string) => {
 		switch (answer.toLowerCase()) {
 
 			case 'help':
@@ -80,8 +80,8 @@ socket.on('ownID', (playerId) => {
 	ownId = playerId
 	socket.emit('identification', loginID)
 	console.log("/* ----------------------TSD CONTROLLER---------------------- */")
-	console.log("Own id:", ownId)
 	console.log("Type 'help' for a list of commands")
+	console.log("Own id:", ownId)
 	prompt(socket)
 })
 

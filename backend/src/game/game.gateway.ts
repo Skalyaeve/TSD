@@ -5,6 +5,7 @@ import { Server, Socket } from 'socket.io';
 import { v4 as uuidv4 } from 'uuid';
 import { JSDOM } from 'jsdom';
 import * as path from 'path';
+import { fileURLToPath } from 'url';
 
 /* -------------------------TYPES------------------------- */
 
@@ -58,6 +59,11 @@ interface party {
 	playerTwoId: string
 }
 
+/* -------------------------PATH CONSTANTS------------------------- */
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 /* -------------------------WEBSOCKET-HANDLING------------------------- */
 
 @WebSocketGateway({ cors: { origin: '*', methods: ['GET', 'POST'] }, namespace: 'game' })
@@ -82,6 +88,8 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
 	nbRight: number = 0
 	nbLeft: number = 0
+
+	dom: JSDOM
 
 	/* -------------------------FUNCTIONS------------------------- */
 
@@ -118,16 +126,17 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	}
 
 	// Starts a new headless session
-	setupAuthoritativePhaser() {
-		JSDOM.fromFile(path.join(__dirname, '../authoritative_server/dist/index.html'), {
+	async setupAuthoritativePhaser() {
+		this.dom = await JSDOM.fromFile(path.join(__dirname, '../../headless/bundle/index.html'), {
 			// To run the scripts in the html file
 			runScripts: "dangerously",
 			// Also load supported external resources
 			resources: "usable",
 			// So requestAnimatinFrame events fire
 			pretendToBeVisual: true
-		})
+		});
 	}
+
 
 	/* -------------------------GLOBAL EVENT LISTENERS------------------------- */
 
@@ -202,7 +211,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	handleNewParty(socket: Socket) {
 		if (this.sockets[socket.id].type == this.controllerType) {
 			console.log("New Headless Session")
-			this.parties
+			this.setupAuthoritativePhaser()
 		}
 	}
 
