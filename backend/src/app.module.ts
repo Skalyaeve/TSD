@@ -8,7 +8,7 @@ import { ChatModule } from './chat/chat.module.js';
 import { AuthService } from './auth/auth.service.js';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule } from '@nestjs/config';
-import { UserGameModule } from './user_game/user_game.module';
+import { UserGameModule } from './user_game/user_game.module.js';
 
 @Module({
 	imports: [
@@ -21,12 +21,7 @@ import { UserGameModule } from './user_game/user_game.module';
 		ChatModule,
 		ConfigModule,
 		GameModule,
-	],
-	providers: [
-		ChatService,
-		AuthService,
-		ConfigService,
-		PrismaService
+		UserGameModule,
 	],
 })
 export class AppModule { }

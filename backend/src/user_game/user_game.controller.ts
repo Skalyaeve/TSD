@@ -1,8 +1,8 @@
 import { Body, Controller, Get, Param, ParseIntPipe, Post, Req, UseGuards } from "@nestjs/common";
-import { UserGameService } from "./user_game.service";
-import { JwtGuard } from "src/auth/guards/JwtGuard";
+import { UserGameService } from "./user_game.service.js";
+import { JwtGuard } from "../auth/guards/JwtGuard.js"
 import { Game } from "@prisma/client";
-import { CreateGameDto } from "./dto";
+import { CreateGameDto } from "./dto/create-game.dto.js";
 
 @Controller('games')
 export class UserGameController {

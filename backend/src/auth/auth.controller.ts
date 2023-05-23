@@ -1,9 +1,10 @@
-import { Controller, Get, UseGuards, Req, Post, Body, Res } from '@nestjs/common';
+import { Controller, Get, UseGuards, Req, Post, Body, Res, UseFilters } from '@nestjs/common';
 import { AuthService } from './auth.service.js';
 import { Request, Response } from 'express';
 import { GoogleAuthGuard } from './guards/GoogleGuard.js';
 import { FortyTwoAuthGuard } from './guards/FortyTwoGuard.js';
 import { UserService } from '../user/user.service.js';
+import { CallbackExceptionFilter } from './filter/callback-exception.filter.js';
 
 @Controller('auth')
 export class AuthController {
@@ -18,6 +19,7 @@ export class AuthController {
 
     @Get('42/callback')
     @UseGuards(FortyTwoAuthGuard)
+    @UseFilters(CallbackExceptionFilter)
     async handle42Redirect(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
         console.log(req.user);
         const access_token = await this.authService.login(req.user);

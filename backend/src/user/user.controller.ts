@@ -1,4 +1,4 @@
-import { BadRequestException, Controller, Delete, FileTypeValidator, Get, MaxFileSizeValidator, Param, ParseFilePipe, ParseIntPipe, Post, Request, StreamableFile, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
+import { BadRequestException, Controller, Delete, Get, Param, ParseIntPipe, Post, Req, StreamableFile, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
 import { UserService } from "./user.service.js";
 import { JwtGuard } from "../auth/guards/JwtGuard.js";
 import { User } from "@prisma/client";
@@ -57,7 +57,7 @@ export class UserController {
             }
         },
     }))
-    async uploadAvatar(@UploadedFile() file: Express.Multer.File, @Request() req: any): Promise<User> {
+    async uploadAvatar(@UploadedFile() file: Express.Multer.File, @Req() req: any): Promise<User> {
         if (!file) {
             throw new BadRequestException('can only upload jpeg files');
         }
