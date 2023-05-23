@@ -13,6 +13,7 @@ import { User } from '@prisma/client';
 import { UserService } from '../user/user.service.js';
 import { ChatService } from './chat.service.js';
 import { Logger } from '@nestjs/common';
+// import { UserSockets } from './chat.userSockets.js';
 
 
 @WebSocketGateway({cors:
@@ -26,7 +27,8 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
  {
   constructor(
     private readonly userService: UserService,
-    private readonly chatService: ChatService
+    private readonly chatService: ChatService,
+    // private readonly userSocket: UserSockets,
     ){}
 
   private logger: Logger = new Logger('ChatGateway');
@@ -50,6 +52,8 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     const userData = await this.chatService.getUserFromSocket(client);
     if (!userData)
       client.disconnect();
+    // console.log(userData.id);
+    // this.userSocket.setUser(userData.id, client.id);
     client.emit('connectionResult', { msg: 'helloworld'})
   }
 
