@@ -1,7 +1,7 @@
 import { Injectable} from "@nestjs/common";
 
 @Injectable()
-export class SocketState{
+export class UserSockets{
     private userSocketIdMap = new Map<string, string[]>();
 
     public setUser(userID: string, socketID: string): void {
@@ -17,6 +17,6 @@ export class SocketState{
     public deleteUserSocket(userID: string, socketID: string): void {
         const userSockets = this.userSocketIdMap.get(userID) || [];
         const updatedSockets = userSockets.filter((id) => id !== socketID);
-        this.userSocketIdMap.set(userID, updatedSockets);0
+        this.userSocketIdMap.set(userID, updatedSockets);
     }
 }
