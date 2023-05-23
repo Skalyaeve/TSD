@@ -15,6 +15,7 @@ model User {
 	email     String   @unique
 	nickname  String		@unique
 	avatarFilename	String	@default("default.png")
+	twoFactorAuth	Boolean	@default(false)
 
 	requester	Friend[]	@relation("requester")
 	requestee	Friend[]	@relation("requestee")
