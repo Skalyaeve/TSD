@@ -5,6 +5,7 @@ import { GoogleAuthGuard } from './guards/GoogleGuard.js';
 import { FortyTwoAuthGuard } from './guards/FortyTwoGuard.js';
 import { UserService } from '../user/user.service.js';
 import { CallbackExceptionFilter } from './filter/callback-exception.filter.js';
+import { JwtGuard } from './guards/JwtGuard.js';
 
 @Controller('auth')
 export class AuthController {
@@ -39,7 +40,19 @@ export class AuthController {
         res.cookie('access_token', access_token, {
             httpOnly: true,
             maxAge: 60 * 60 * 24 * 7,
+            sameSite: 'lax',
         });
+    }
+
+    @Get('logout')
+    @UseGuards(JwtGuard)
+    logout(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
+        res.clearCookie('access_token', {
+            httpOnly: true,
+            maxAge: 60 * 60 * 24 * 7,
+            sameSite: 'lax',
+        });
+        return (req.user);
     }
 
     // DEBUGGING

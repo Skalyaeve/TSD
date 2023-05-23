@@ -95,10 +95,10 @@ const LoginBtn: React.FC<LogginBtnProps> = ({ setLogged }) => {
 
 // ----SOCKET----------------------------- //
 
-export const socket = io("http://localhost:3000/chat", { 
-  transports: ["websocket"], 
-  withCredentials: true
-});
+// export const socket = io("http://localhost:3000/chat", { 
+//   transports: ["websocket"], 
+//   withCredentials: true
+// });
 
 // --------ROOT------------------------------------------------------------ //
 const Root: React.FC = () => {
