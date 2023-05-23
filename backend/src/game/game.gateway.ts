@@ -6,6 +6,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { JSDOM } from 'jsdom';
 import * as path from 'path';
 import { fileURLToPath } from 'url';
+import fetch, { Headers, Request, Response } from 'node-fetch';
 
 /* -------------------------TYPES------------------------- */
 
@@ -93,7 +94,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
 	/* -------------------------FUNCTIONS------------------------- */
 
-
 	/*let newPlayer: player = {
 		id: uuidv4(),
 		xPos: (finalSide == 'left' ? 250 : 1670),
@@ -133,7 +133,15 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			// Also load supported external resources
 			resources: "usable",
 			// So requestAnimatinFrame events fire
-			pretendToBeVisual: true
+			pretendToBeVisual: true,
+
+			beforeParse(window: any) {
+				// Polyfill the fetch API
+				window.fetch = fetch;
+				window.Headers = Headers;
+				window.Request = Request;
+				window.Response = Response;
+			}
 		});
 	}
 
