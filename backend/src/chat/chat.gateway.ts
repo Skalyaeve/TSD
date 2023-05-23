@@ -6,14 +6,15 @@ import {
   ConnectedSocket,
   OnGatewayConnection,
   OnGatewayDisconnect,
-  OnGatewayInit
+  OnGatewayInit,
+  WsException
 } from '@nestjs/websockets';  
 import { Socket, Server } from "socket.io";
 import { User } from '@prisma/client';
 import { UserService } from '../user/user.service.js';
 import { ChatService } from './chat.service.js';
 import { Logger } from '@nestjs/common';
-// import { UserSockets } from './chat.userSockets.js';
+import { UserSocketsService } from './chat.userSocketsService.js';
 
 
 @WebSocketGateway({cors:
@@ -28,7 +29,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
   constructor(
     private readonly userService: UserService,
     private readonly chatService: ChatService,
-    // private readonly userSocket: UserSockets,
+    private readonly userSocketsService: UserSocketsService,
     ){}
 
   private logger: Logger = new Logger('ChatGateway');
@@ -42,23 +43,79 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     client.broadcast.emit('message', data); // Use broadcast.emit() to send the message to all clients except the sender
   }
 
+  @SubscribeMessage('getUserInfo')
+  async handleUserInfo(@ConnectedSocket() client: Socket): Promise<void> {
+    const userData = await this.chatService.getUserFromSocket(client);
+    if (!userData) return;
+    const { id, email, nickname, avatarFilename } = userData;
+
+    client.emit('userInfo', {
+      id,
+      email,
+      nickname,
+      avatarFilename,
+    });
+  }
+
   afterInit(server: any) {
     this.logger.log('initialized');
   }
 
   async handleConnection(client: Socket, ...args:any[])
   {
-    console.log('success');
+    console.log('success connected with client id', client.id);
     const userData = await this.chatService.getUserFromSocket(client);
     if (!userData)
+    {
       client.disconnect();
-    // console.log(userData.id);
-    // this.userSocket.setUser(userData.id, client.id);
-    client.emit('connectionResult', { msg: 'helloworld'})
+     
+      // throw new WsException('Invalid token.')
+    }
+    else{
+      const { id, email, nickname, avatarFilename } = userData;
+
+      client.emit('userInfo', {
+        id,
+        email,
+        nickname,
+        avatarFilename,
+      });
+
+      console.log('userData: ', userData);
+      const userID = userData.id;
+      console.log('userID: ', userID);
+      this.userSocketsService.setUser(userID, client.id);
+      const userWithSocket = this.userSocketsService.getUserSocketIds(userID);
+      console.log('userWithSocket: ',userWithSocket);
+
+
+      // const userChannels = 
+      // Function that retrieve channels where in member;
+      // const userDM = 
+      // Function that retrieve private discussions;
+
+
+      client.emit('connectionResult', { msg: 'connected successfully'});
+
+
+      // client.emit('connectionResult', { msg: 'helloworld', userChannels: userChannels, userDM: userDM});
+
+     //  userDM.senderRef.nickname == userData.nickname ? userDM.receiptRef.nickname :  userDM.senderRef.nickname
+
+    }
   }
 
   async handleDisconnect(client: Socket)
   {
     console.log('client disconnected: ', client.id);
+    const userData = await this.chatService.getUserFromSocket(client);
+    if (userData)
+    {
+      const userID = userData.id;
+      this.userSocketsService.deleteUserSocket(userID, client.id);
+      const userWithSocket = this.userSocketsService.getUserSocketIds(userID);
+      console.log('userWithSocket: ',userWithSocket);
+      client.join(userID.toString());
+    }
   }
 }

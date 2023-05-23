@@ -11,20 +11,23 @@ import HeaderContactInfo from './HeaderContactInfo.tsx'
 import ChatChannels from './ChatChannels.tsx'
 import DmHandler from './DmHandler.tsx'
 
+// const socket = useMemo(()=>{
+//     console.log("NEW CONNECTION")
+//     return io("http://localhost:3000/chat", { 
+//         transports: ["websocket"], 
+//         withCredentials: true
+//     })
+// }, []);
+
 function Chat({}) {
     const [allMessages, setAllMessages] = useState<{user: string; message: string; type: string}[]>([]);
     const [user, setUser] = useState(() => `User${Math.floor(Math.random() * 10)}`); // this will change 
     const [isOpen, setIsOpen] = useState<boolean>(false);
+    const [userInfo, setUserInfo] = useState(null);
 
-    // const socket = useMemo(()=>{
-    //     console.log("NEW CONNECTION")
-    //     return io("http://localhost:3000/chat", { 
-    //         transports: ["websocket"], 
-    //         withCredentials: true
-    //     })
-    // }, []);
 
     const send = useCallback((value: string, user: string) => {
+            // socket.connect();
             console.log("value: ", value);
             console.log("user: ", user);
             const message = {user, message: value, type: "sent"};
@@ -42,6 +45,23 @@ function Chat({}) {
         const newMessage = {...message};
         console.log(newMessage);
     }
+
+
+    useEffect(() => {
+        // Listen for the 'userInfo' event from the backend
+        socket.on('userInfo', (userData) => {
+          setUserInfo(userData);
+          const { nickname } = userData;
+          console.log(' nickname ', nickname);
+        });
+
+        socket.emit('getUserInfo', () => {});
+    
+        // Clean up the event listener when the component unmounts
+        return () => {
+          socket.off('userInfo');
+        };
+    }, []);
 
     useEffect(() => {
         if (socket){

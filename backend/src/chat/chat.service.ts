@@ -3,6 +3,7 @@ import { AuthService } from '../auth/auth.service.js';
 import { Socket } from 'socket.io';
 import { parse } from 'cookie';
 import { WsException } from '@nestjs/websockets';
+import { UserSocketsService } from './chat.userSocketsService.js';
 
 @Injectable()
 export class ChatService {

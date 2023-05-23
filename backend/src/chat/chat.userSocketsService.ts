@@ -1,20 +1,20 @@
 import { Injectable} from "@nestjs/common";
 
 @Injectable()
-export class UserSockets{
-    private userSocketIdMap = new Map<string, string[]>();
+export class UserSocketsService{
+    private userSocketIdMap = new Map<number, string[]>();
 
-    public setUser(userID: string, socketID: string): void {
+    public setUser(userID: number, socketID: string): void {
         const userSockets = this.userSocketIdMap.get(userID) || [];
         userSockets.push(socketID);
         this.userSocketIdMap.set(userID, userSockets);
     }
 
-    public getUserSocketIds(userID: string) : string[] {
+    public getUserSocketIds(userID: number) : string[] {
         return this.userSocketIdMap.get(userID) || [];
     }
 
-    public deleteUserSocket(userID: string, socketID: string): void {
+    public deleteUserSocket(userID: number, socketID: string): void {
         const userSockets = this.userSocketIdMap.get(userID) || [];
         const updatedSockets = userSockets.filter((id) => id !== socketID);
         this.userSocketIdMap.set(userID, updatedSockets);

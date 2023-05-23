@@ -97,7 +97,8 @@ const LoginBtn: React.FC<LogginBtnProps> = ({ setLogged }) => {
 
 export const socket = io("http://localhost:3000/chat", { 
   transports: ["websocket"], 
-  withCredentials: true
+  withCredentials: true,
+//   autoConnect: false,
 });
 
 // --------ROOT------------------------------------------------------------ //
