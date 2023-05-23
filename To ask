@@ -1,0 +1,11 @@
+// why there are to input-text
+
+
+    // @Get('all')
+    // @UseGuards(JwtGuard)
+    // async getAll(@Req() req, @Res() res): Promise<User[]> {
+
+    //     console.log(req.user);
+    //     res.cookies('key', 'value', {httpOnly: true, maxAge})
+    //     return this.userService.findAll();
+    // }
