@@ -72,14 +72,14 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       // throw new WsException('Invalid token.')
     }
     else{
-      const { id, email, nickname, avatarFilename } = userData;
+      // const { id, email, nickname, avatarFilename } = userData;
 
-      client.emit('userInfo', {
-        id,
-        email,
-        nickname,
-        avatarFilename,
-      });
+      // client.emit('userInfo', {
+      //   id,
+      //   email,
+      //   nickname,
+      //   avatarFilename,
+      // });
 
       console.log('userData: ', userData);
       const userID = userData.id;
@@ -87,7 +87,8 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       this.userSocketsService.setUser(userID, client.id);
       const userWithSocket = this.userSocketsService.getUserSocketIds(userID);
       console.log('userWithSocket: ',userWithSocket);
-
+      const userRoomId = 'userID_' + userID.toString() + '_room';
+      client.join(userRoomId);
 
       // const userChannels = 
       // Function that retrieve channels where in member;
@@ -115,7 +116,6 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       this.userSocketsService.deleteUserSocket(userID, client.id);
       const userWithSocket = this.userSocketsService.getUserSocketIds(userID);
       console.log('userWithSocket: ',userWithSocket);
-      client.join(userID.toString());
     }
   }
 }

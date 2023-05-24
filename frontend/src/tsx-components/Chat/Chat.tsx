@@ -10,7 +10,7 @@ import ChatHeader from './ChatHeader.tsx'
 import HeaderContactInfo from './HeaderContactInfo.tsx'
 import ChatChannels from './ChatChannels.tsx'
 import DmHandler from './DmHandler.tsx'
-
+import axios from 'axios'
 // const socket = useMemo(()=>{
 //     console.log("NEW CONNECTION")
 //     return io("http://localhost:3000/chat", { 
@@ -20,20 +20,24 @@ import DmHandler from './DmHandler.tsx'
 // }, []);
 
 function Chat({}) {
+
     const [allMessages, setAllMessages] = useState<{user: string; message: string; type: string}[]>([]);
     const [user, setUser] = useState(() => `User${Math.floor(Math.random() * 10)}`); // this will change 
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const [userInfo, setUserInfo] = useState(null);
-
-
+    const [allUsers, setAllUsers] = useState<{id: number; email: string; nickname: string; avatarFilename: string}[]>([]);
+    const [error, setError] = useState<any>(null);
+    // const [selectedChannel, setSelectedChannel] = useState<any>(null);
+    // const [selectedContact, setSelectedContact] = useState<{id: number; email: string; nickname: string; avatarFilename: string} | null>(null);
+    
+    
     const send = useCallback((value: string, user: string) => {
-            // socket.connect();
             console.log("value: ", value);
             console.log("user: ", user);
             const message = {user, message: value, type: "sent"};
             setAllMessages((allMessages)=>[...allMessages, message]);
             socket.emit('message', message);
-        }, [socket]);
+    }, [socket]);
 
     const messageListener = useCallback((message: { user: string; message: string}) => {
         console.log("i received");
@@ -46,9 +50,17 @@ function Chat({}) {
         console.log(newMessage);
     }
 
+    // const handleContactSelect = (contact: {id: number; email: string; nickname: string; avatarFilename: string}) => {
+    //     setSelectedContact(contact);
+    //     setSelectedChannel(null);
+    // }
+
+    // const handleChannelSelect = (channel: any) => {
+    //     setSelectedChannel(channel);
+    //     setSelectedContact(null);
+    // }
 
     useEffect(() => {
-        // Listen for the 'userInfo' event from the backend
         socket.on('userInfo', (userData) => {
           setUserInfo(userData);
           const { nickname } = userData;
@@ -57,12 +69,29 @@ function Chat({}) {
 
         socket.emit('getUserInfo', () => {});
     
-        // Clean up the event listener when the component unmounts
         return () => {
           socket.off('userInfo');
         };
     }, []);
 
+    const axiosInstance = axios.create({
+        withCredentials: true,
+      });
+
+    useEffect(() => {
+        const fetchAllUsers =async () => {
+            try {
+                const response = await axiosInstance.get('http://localhost:3000/users/all');
+                const users = response.data;
+                setAllUsers(users);
+                console.log(users);
+            }
+            catch (error) {
+                setError(error)
+            }
+        };
+        fetchAllUsers();
+    }, []);
     useEffect(() => {
         if (socket){
             console.log('messagelistener');
@@ -83,7 +112,8 @@ function Chat({}) {
     return (
         <div className={`chat-main-grid ${isOpen?"open":"close"}`}>
             <div className="manage-rooms">
-                <DmHandler/>
+                {/* <DmHandler allUsers={allUsers} onContactSelect={}/> */}
+                <DmHandler allUsers={allUsers}/>
                 <ChatChannels/>
             </div>
             <div className="chatbox">

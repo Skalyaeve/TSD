@@ -1,7 +1,11 @@
 import React, { useState } from "react";
 import { BsSearchHeart } from "react-icons/bs";
 
-export default function DmHandler()
+interface DmHandlerProps {
+    allUsers: {id: number; email: string; nickname: string; avatarFilename: string}[];
+}
+
+export default function DmHandler({ allUsers }: DmHandlerProps)
 {
 
     const [contact, setContact] = useState("");
@@ -31,10 +35,11 @@ export default function DmHandler()
             </button>
         </div>
         <div className="DM-conversations">
-            <div className="conversation">Contact 1</div>
-            <div className="conversation">Contact 2</div>
-            <div className="conversation">Contact 3</div>
-            <div className="conversation">Contact 4</div>
+            {allUsers.map((user) => (
+                <button className="conversation-btn" key={user.id}>
+                    {user.nickname}
+                </button>
+            ))}
         </div>
     </div>
     )
