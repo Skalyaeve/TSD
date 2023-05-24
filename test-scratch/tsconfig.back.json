@@ -1,0 +1,30 @@
+{
+	// Spécifie les options de compilation TypeScript
+	"compilerOptions": {
+		// Le code sera compilé en utilisant la syntaxe ECMAScript 2022
+		"module": "es2022",
+		// Définit la version d'ECMAScript que le compilateur TypeScript doit générer en JavaScript
+		"target": "es2022",
+		// La syntaxe JSX est utilisée via React
+		"jsx": "react-jsx",
+		// Les modules sont résolus en utilisant la convention de résolution de modules Node.js
+		"moduleResolution": "node16",
+		// Transformer les importations CommonJS en ECMAScript 
+		"esModuleInterop": true,
+		// Le compilateur vérifiera la cohérence des nom de fichiers
+		"forceConsistentCasingInFileNames": true,
+		// Active un ensemble de vérifications de type strict
+		"strict": true,
+		// Permet de ne pas générer de fichiers de sortie lors de la compilation
+		"noEmit": false,
+		// Dossier de sortie de transcompilation
+		"outDir": "server/dist",
+
+		"noImplicitAny": false
+	},
+	// Spécifie les fichiers à inclure dans la compilation
+	"include": [
+		"server/index.ts",
+		"server/controler.ts"
+	],
+}
