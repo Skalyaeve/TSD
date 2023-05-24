@@ -1,4 +1,4 @@
-import { BadRequestException, Controller, Delete, Get, Param, ParseIntPipe, Post, Req, StreamableFile, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
+import { BadRequestException, Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Req, StreamableFile, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
 import { UserService } from "./user.service.js";
 import { JwtGuard } from "../auth/guards/JwtGuard.js";
 import { FriendRequest, User } from "@prisma/client";
@@ -96,16 +96,16 @@ export class UserController {
         return this.friendRequestService.findAllRequestsReceived(req.user.id);
     }
 
-    @Post('me/friends')
+    @Post('me/friends/:id')
     @UseGuards(JwtGuard)
-    async addFriend(@Req() req: any, friend: number): Promise<FriendRequest> {
-        return this.friendRequestService.createOne(req.user.id, friend);
+    async addFriend(@Req() req: any, @Param('id', ParseIntPipe) friendID: number): Promise<FriendRequest> {
+        return this.friendRequestService.createOne(req.user.id, friendID);
     }
 
-    @Delete('me/friends')
+    @Delete('me/friends/:id')
     @UseGuards(JwtGuard)
-    async deleteFriend(@Req() req: any, friend: number): Promise<FriendRequest> {
-        return this.friendRequestService.deleteOne(req.user.id, friend);
+    async deleteFriend(@Req() req: any, @Param('id', ParseIntPipe) friendID: number): Promise<FriendRequest> {
+        return this.friendRequestService.deleteOne(req.user.id, friendID);
     }
 
 }
