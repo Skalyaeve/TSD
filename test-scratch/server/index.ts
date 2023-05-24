@@ -120,14 +120,7 @@ function createNewPlayer(): player {
 
 // Starts a new headless session
 function setupAuthoritativePhaser() {
-	JSDOM.fromFile(path.join(__dirname, '../authoritative_server/dist/index.html'), {
-		// To run the scripts in the html file
-		runScripts: "dangerously",
-		// Also load supported external resources
-		resources: "usable",
-		// So requestAnimatinFrame events fire
-		pretendToBeVisual: true
-	})
+	
 }
 
 // Setup for client socket listeners
