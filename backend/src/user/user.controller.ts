@@ -1,15 +1,19 @@
 import { BadRequestException, Controller, Delete, Get, Param, ParseIntPipe, Post, Req, StreamableFile, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
 import { UserService } from "./user.service.js";
 import { JwtGuard } from "../auth/guards/JwtGuard.js";
-import { User } from "@prisma/client";
+import { FriendRequest, User } from "@prisma/client";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { Express } from 'express';
 import * as fs from 'fs';
 import { diskStorage } from "multer";
+import { FriendRequestService } from "../friend/friend.service.js";
 
 @Controller('users')
 export class UserController {
-    constructor(private userService: UserService) {}
+    constructor(
+        private userService: UserService,
+        private friendRequestService: FriendRequestService,
+    ) {}
 
     @Get('connected')
     @UseGuards(JwtGuard)
@@ -23,7 +27,7 @@ export class UserController {
         return this.userService.findAll();
     }
 
-    @Post('avatar/upload')
+    @Post('me/avatar/upload')
     @UseGuards(JwtGuard)
     @UseInterceptors(FileInterceptor('file', {
         storage: diskStorage({
@@ -62,7 +66,7 @@ export class UserController {
         return this.userService.updateAvatar(req.user.id, file.filename);
     }
 
-    @Delete()
+    @Delete('me')
     @UseGuards(JwtGuard)
     async deleteOneUser(@Req() req: any) {
         return this.userService.deleteOneById(req.user.id);
@@ -72,6 +76,36 @@ export class UserController {
     @UseGuards(JwtGuard)
     async getOneById(@Param('id', ParseIntPipe) id: number): Promise<User> {
         return this.userService.findOneById(id);
+    }
+
+    @Get('me/friends')
+    @UseGuards(JwtGuard)
+    async getOwnFriendsIDs(@Req() req: any): Promise<number[]> {
+        return this.friendRequestService.findAllFriends(req.user.id);
+    }
+
+    @Get('me/friends/requests/sent')
+    @UseGuards(JwtGuard)
+    async getFriendsRequestsSent(@Req() req: any): Promise<FriendRequest[]> {
+        return this.friendRequestService.findAllRequestsSent(req.user.id);
+    }
+
+    @Get('me/friends/requests/received')
+    @UseGuards(JwtGuard)
+    async getFriendsRequestsReceived(@Req() req: any): Promise<FriendRequest[]> {
+        return this.friendRequestService.findAllRequestsReceived(req.user.id);
+    }
+
+    @Post('me/friends')
+    @UseGuards(JwtGuard)
+    async addFriend(@Req() req: any, friend: number): Promise<FriendRequest> {
+        return this.friendRequestService.createOne(req.user.id, friend);
+    }
+
+    @Delete('me/friends')
+    @UseGuards(JwtGuard)
+    async deleteFriend(@Req() req: any, friend: number): Promise<FriendRequest> {
+        return this.friendRequestService.deleteOne(req.user.id, friend);
     }
 
 }

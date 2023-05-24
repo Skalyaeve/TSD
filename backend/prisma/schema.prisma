@@ -17,8 +17,8 @@ model User {
 	avatarFilename	String	@default("default.png")
 	twoFactorAuth	Boolean	@default(false)
 
-	requester	Friend[]	@relation("requester")
-	requestee	Friend[]	@relation("requestee")
+	requester	FriendRequest[]	@relation("requester")
+	requestee	FriendRequest[]	@relation("requestee")
 
 	blocker		Blocked[]	@relation("blocker")
 	blockee		Blocked[]	@relation("blockee")
@@ -39,12 +39,11 @@ model User {
 	winner		Game[]	@relation("winner")
 }
 
-model Friend {
+model FriendRequest {
 	requesterRef	User	@relation("requester", fields: [requester], references: [id])
 	requester		Int
 	requesteeRef	User	@relation("requestee", fields: [requestee], references: [id])
 	requestee		Int
-	status			Boolean	@default(false)
 
 	@@id([requester, requestee])
 }
@@ -119,7 +118,7 @@ model Game {
 	player1		Int
 	player2Ref	User		@relation("player2", fields: [player2], references: [id])
 	player2		Int
-	timeStart	DateTime	@default(now())	
+	timeStart	DateTime
 	timeEnd		DateTime
 	winnerRef	User		@relation("winner", fields: [winner], references: [id])
 	winner		Int

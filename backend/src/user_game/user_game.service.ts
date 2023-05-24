@@ -74,6 +74,10 @@ export class UserGameService {
         return games;
     }
 
+    async findAllFriends(id: number) {
+        
+    }
+
     async createOne(createGameDto: CreateGameDto): Promise<Game> {
         const { player1, player2, timeStart, timeEnd, winner } = createGameDto;
         const game = await this.prisma.game.create({
