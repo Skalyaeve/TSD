@@ -78,6 +78,18 @@ export class UserController {
         return this.userService.findOneById(id);
     }
 
+    @Get('rank/top/:count')
+    @UseGuards(JwtGuard)
+    async getTopPlayers(@Param('count', ParseIntPipe) count: number): Promise<User[]> {
+        return this.userService.findManyByRankDec(count);
+    }
+
+    @Post('me/rank/:pts')
+    @UseGuards(JwtGuard)
+    async modifyRank(@Req() req: any, @Param('pts', ParseIntPipe) pts: number): Promise<User> {
+        return this.userService.updateRank(req.user.id, pts);
+    }
+
     @Get('me/friends')
     @UseGuards(JwtGuard)
     async getOwnFriendsIDs(@Req() req: any): Promise<number[]> {

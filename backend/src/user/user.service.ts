@@ -7,21 +7,21 @@ export class UserService {
   constructor(private prisma: PrismaService) {}
 
   async findOneById(id: number): Promise<User|null> {
-    const user = await this.prisma.user.findUnique({
+    const user: User|null = await this.prisma.user.findUnique({
       where: { id },
     });
     return user;
   }
 
   async findOneByIdOrThrow(id: number): Promise<User|null> {
-    const user = await this.prisma.user.findUniqueOrThrow({
+    const user: User = await this.prisma.user.findUniqueOrThrow({
       where: { id },
     });
     return user;
   }
 
   async findOneByEmail(email: string): Promise<User|null> {
-    const user = await this.prisma.user.findUnique({
+    const user: User|null = await this.prisma.user.findUnique({
       where: { email },
     });
     return user;
@@ -29,7 +29,7 @@ export class UserService {
 
   async findOrCreateOne(email: string): Promise<User> {
   
-    let user = await this.findOneByEmail(email);
+    let user: User = await this.findOneByEmail(email);
     if (user) {
       return user;
     }
@@ -44,30 +44,52 @@ export class UserService {
   }
 
   async findAll(): Promise<User[]|null> {
-    const users = await this.prisma.user.findMany({});
+    const users: User[] = await this.prisma.user.findMany({});
+    return users;
+  }
+
+  async findManyByRankDec(count: number): Promise<User[]> {
+    const users: User[] = await this.prisma.user.findMany({
+      orderBy: {
+        rankPoints: "desc",
+      },
+      take: count,
+    });
     return users;
   }
 
   async createOne(userCreateInput: Prisma.UserCreateInput): Promise<User> {
-    const user = await this.prisma.user.create({
+    const user: User = await this.prisma.user.create({
       data: userCreateInput,
     });
     return user;
   }
 
   async deleteOneById(id: number): Promise<User> {
-    const user = await this.prisma.user.delete({
+    const user: User = await this.prisma.user.delete({
       where: { id },
     });
     return user;
   }
 
   async updateAvatar(id: number, filename: string): Promise<User> {
-    const user = await this.prisma.user.update({
+    const user: User = await this.prisma.user.update({
       where: { id },
       data: {
         avatarFilename: filename,
       }
+    });
+    return user;
+  }
+
+  async updateRank(id: number, pts: number): Promise<User> {
+    const user: User = await this.prisma.user.update({
+      where: {
+        id,
+      },
+      data: {
+        rankPoints: pts,
+      },
     });
     return user;
   }
