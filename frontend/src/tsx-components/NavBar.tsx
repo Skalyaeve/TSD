@@ -79,7 +79,7 @@ const FromHome: React.FC<FromHomeProps> = ({
 	const logoutBtnHdl = {
 		onMouseUp: () => {
 			if (animating.current) return
-			Cookies.remove('access_token', { path: '/', domain: 'localhost' })
+			const response = fetch('http://localhost:8080/auth/logout');
 			setLogged(false)
 			setRender(<></>)
 			animating.current = true

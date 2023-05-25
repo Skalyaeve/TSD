@@ -3,6 +3,7 @@ import { UserService } from './user.service.js';
 import { UserController } from './user.controller.js';
 import { PrismaModule } from 'nestjs-prisma';
 import { MulterModule } from '@nestjs/platform-express';
+import { FriendModule } from '../friend/friend.module.js';
 
 @Module({
   providers: [UserService],
@@ -10,6 +11,7 @@ import { MulterModule } from '@nestjs/platform-express';
   imports: [
     PrismaModule,
     MulterModule,
+    FriendModule,
   ],
   exports: [UserService],
 })
