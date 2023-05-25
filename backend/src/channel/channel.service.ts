@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service.js";
-import { ChanMember, Channel } from "@prisma/client";
+import { ChanMember, ChanMessage, Channel } from "@prisma/client";
 
 @Injectable()
 export class ChannelService {
@@ -43,4 +43,88 @@ export class ChannelService {
         });
         return channels;
     }
+
+    async createOneChanMessage(senderId: number, chanId: number, content: string): Promise<ChanMessage> {
+        const message: ChanMessage = await this.prisma.chanMessage.create({
+            data: {
+                senderRef: {
+                    connect: {
+                        id: senderId,
+                    },
+                },
+                chanRef: {
+                    connect: {
+                        id: chanId,
+                    },
+                },
+                content,
+            },
+        });
+        return message;
+    }
+
+    async findManyChanMessages(chanId: number, count: number): Promise<ChanMessage[]> {
+        const messages: ChanMessage[] = await this.prisma.chanMessage.findMany({
+            where: {
+                chanId,
+            },
+            orderBy: {
+                timeSent: "asc",
+            },
+            take: count,
+        });
+        return messages;
+    }
+
+    async findAllChanMessages(chanId: number): Promise<ChanMessage[]> {
+        const messages: ChanMessage[] = await this.prisma.chanMessage.findMany({
+            where: {
+                chanId,
+            },
+            orderBy: {
+                timeSent: "asc",
+            },
+        });
+        return messages;
+    }
+
+    async isMember(chanId: number, memberId: number): Promise<boolean> {
+        const member: ChanMember = await this.prisma.chanMember.findUnique({
+            where: {
+                chanId_member: {
+                    chanId,
+                    member: memberId,
+                },
+            },
+        });
+        if (member) {
+            return true;
+        }
+        return false;
+    }
+
+    async isAdmin(chanId: number, memberId: number): Promise<boolean> {
+        const member: ChanMember = await this.prisma.chanMember.findUnique({
+            where: {
+                chanId_member: {
+                    chanId,
+                    member: memberId,
+                },
+            },
+        });
+        if (member?.isAdmin) {
+            return true;
+        }
+        return false;
+    }
+
+    async isOwner(chanId: number, memberId: number): Promise<boolean> {
+        const channel: Channel = await this.prisma.channel.findUnique({
+            where: {
+                id: chanId,
+            },
+        });
+        return channel.chanOwner === memberId;
+    }
+
 }
