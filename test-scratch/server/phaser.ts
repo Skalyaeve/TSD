@@ -1,9 +1,9 @@
 /* -------------------------LIBRARIES IMPORTS------------------------- */
 
 import Phaser from 'phaser'
-import { Socket, io } from 'socket.io-client'
+import { parentPort } from 'worker_threads'
 import { ArcadePhysics } from 'arcade-physics'
-import { ArcadeWorldConfig } from 'arcade-physics/lib/physics/arcade/ArcadePhysics'
+//import { Body } from 'arcade-physics/lib/physics/arcade/Body'
 
 /* -------------------------TYPES------------------------- */
 
@@ -15,142 +15,162 @@ interface keyStates {
 	right: boolean								// Player RIGHT key state
 }
 
-// Players interface
-interface player {
+// Players construction interface (sent by the main process)
+interface playerConstruct {
+	type: string								// Event type
 	id: string									// Player ID
 	xPos: number								// Player initial X position
 	yPos: number								// Player initial Y position
-	xDir: string								// Player X direction (left/right)
+	width: number								// Player width
+	height: number								// Player height
+}
+
+// Player update event interface (sent by the main process)
+interface playerUpdate {
+	type: string								// Event type
+	id: string									// Player ID
 	keyStates: keyStates						// Player key states
-	xVel: number								// Player X velocity
-	yVel: number								// Player Y velocity
-	lastMove: string							// Player last movement state (none/idle/run)
-	move: string								// Player actual movement state (idle/run)
-	skin: string								// Player skin name
-	anim: string								// Player current animation
+}
+
+// Properties of a game object (sent to the main process)
+interface objectProperties {
+	target: string
+	xPos: number
+	yPos: number
+	xVel: number
+	yVel: number
+}
+
+// Player interface
+interface player {
+	id: string
+	body: any
+}
+
+// Ball interface
+interface ball {
+	body: any
 }
 
 /* -------------------------VARIABLES------------------------- */
 
-// Configuration
-const config: ArcadeWorldConfig = {
-	width: 800,
-	height: 450,
+// Game constants
+const screenWidth: number = 1920
+const screenHeight: number = 1080
+const targetFPS: number = 60
+const playerSpeed: number = 150
+
+// Physics initialisation
+const config = {
+	width: screenWidth,
+	height: screenHeight,
 	gravity: {
 		x: 0,
-		y: 300
+		y: 0
 	}
 }
+const physics: ArcadePhysics = new ArcadePhysics(config)
 
-// Physic object
-let physics: ArcadePhysics
-
-// Websocket
-let socket: Socket
-
-// Client type
-const ClientType: string = "PHASER-HEADLESS-CLIENT"
-
-// Session Id
-let selfId: string
-
-// Game ticks
+// Game variables
 let tick: number = 0
-
-// Game objects
-let box: any
-let ball: any
-let platform: any
+let players: player[] = []
+let ball: ball
 
 /* -------------------------CREATION FUNCTIONS------------------------- */
 
-function startPhysics(){
-	physics = new ArcadePhysics(config)
+// Create the ball
+function createBall() {
+	ball = {
+		body: physics.add.body(screenHeight / 2, screenWidth / 2)
+	}
+	ball.body.setCircle(25)
+	ball.body.setCollideWorldBounds(true, undefined, undefined, undefined)
+	console.log("Added ball")
 }
 
-function createGameObjects(){
-	// box
-	box = physics.add.body(20, 20, 64, 64)
-	box.setVelocityX(20)
-	box.setBounce(0.6, 0.6)
-	box.setCollideWorldBounds(true, undefined, undefined, undefined)
-
-	// ball
-	ball = physics.add.body(206, 20)
-	ball.setCircle(32)
-	ball.setBounce(0.8, 0.8)
-	ball.setCollideWorldBounds(true, undefined, undefined, undefined)
-
-	// platform
-	platform = physics.add.staticBody(60, 350, 160, 32)
+// Create a new player
+function createPlayer(construct: playerConstruct) {
+	let newPlayer: player = {
+		id: construct.id,
+		body: physics.add.body(construct.xPos, construct.yPos, construct.width, construct.height)
+	}
+	newPlayer.body.setBounce(1, 1)
+	newPlayer.body.setCollideWorldBounds(true, undefined, undefined, undefined)
+	physics.add.collider(ball.body, newPlayer.body)
+	players[players.length] = newPlayer
+	console.log("Added player")
 }
 
 /* -------------------------UPDATE FUNCTIONS------------------------- */
 
-
-function createColliders(){
-	// colliders
-	physics.add.collider(box, ball)
-	physics.add.collider(box, platform)
-	physics.add.collider(ball, platform)
+// Update players local speed usinf keyStates recieved from main process
+function updatePlayer(update: playerUpdate) {
+	let xVel: number = 0
+	let yVel: number = 0
+	if (update.keyStates.up)
+		yVel = yVel - playerSpeed
+	if (update.keyStates.down)
+		yVel = yVel + playerSpeed
+	if (update.keyStates.left)
+		xVel = xVel - playerSpeed
+	if (update.keyStates.right)
+		xVel = xVel + playerSpeed
+	players[update.id].body.setVelocity(xVel, yVel)
 }
 
-function preUpdateDebug(){
-	console.log("box x:", box.x, "y:", box.y, "time:", tick)
-	console.log("ball x:", ball.x, "y:", ball.y, "time:", tick)
-}
+/* -------------------------PORT EVENTS------------------------- */
 
-function updatePhysics(){
-	physics.world.update(tick * 1000, 1000 / 60)
-	physics.world.postUpdate()
-	tick++
-}
-
-function postUpdateDebug(){
-
-}
-
-/* -------------------------SOCKET EVENTS------------------------- */
-
-function startSockets(){
-	socket = io('http://localhost:3000')
-
-	socket.on('ownID', (playerId) => {
-		selfId = playerId
-		console.log("Own id:", selfId)
-		socket.emit('identification', selfId)
+function portListener() {
+	parentPort?.on("message", (incomingData: playerConstruct | playerUpdate) => {
+		switch (incomingData.type) {
+			case 'construct':
+				createPlayer((incomingData as playerConstruct))
+				break
+			case 'update':
+				updatePlayer((incomingData as playerUpdate))
+				break
+			default:
+		}
 	})
 }
 
 /* -------------------------MAIN FUNCTIONS------------------------- */
 
-function create() {
-	startPhysics()
-	createGameObjects()
-	createColliders()
-}
-
 function update() {
-	preUpdateDebug()
-	updatePhysics()
-	postUpdateDebug()
-}
-
-function loop(){
-	setInterval(() => {
-		update()
-	}, 1000 / 60);
+	let properties: objectProperties[] = []
+	physics.world.update(tick * 1000, 1000 / targetFPS)
+	physics.world.postUpdate()
+	tick++
+	if (tick % 2){
+		for (let player of players){
+			properties[properties.length] = {
+				target: player.id,
+				xPos: player.body.x,
+				yPos: player.body.x,
+				xVel: player.body.velocity.x,
+				yVel: player.body.velocity.y
+			}
+		}
+		properties[properties.length] = {
+			target: "ball",
+			xPos: ball.body.x,
+			yPos: ball.body.x,
+			xVel: ball.body.velocity.x,
+			yVel: ball.body.velocity.y
+		}
+		parentPort?.postMessage(properties)
+	}
 }
 
 /* -------------------------MAIN CODE------------------------- */
 
 function main() {
-	create()
+	portListener()
 	setTimeout(() => {
-		startSockets()
-	}, 100)
-	setTimeout(() => {
-		loop()
+		createBall()
+		setInterval(() => {
+			update()
+		}, 1000 / targetFPS)
 	}, 100)
 }
 

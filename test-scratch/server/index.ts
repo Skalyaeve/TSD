@@ -1,10 +1,7 @@
 /* -------------------------LIBRARIES IMPORTS------------------------- */
 
-import * as path from 'path';
-import { dirname } from 'path';
-import { fileURLToPath } from 'url';
+import { Worker } from 'worker_threads'
 import { Socket, Server } from 'socket.io';
-import { JSDOM } from 'jsdom';
 import { v4 as uuidv4 } from 'uuid';
 
 /* -------------------------TYPES------------------------- */
@@ -68,20 +65,23 @@ interface party {
 	hostID: string
 }
 
+interface simulation {
+	hostId: string
+	playerId1: string
+	playerId2: string
+}
+
 /* -------------------------VARIABLES------------------------- */
 
-const __filename: string = fileURLToPath(import.meta.url)
-const __dirname: string = dirname(__filename)
 const port: number = 3001
 const clientIDLogin: string = "PHASER-WEB-CLIENT"
-const headlessIDLogin: string = "PHASER-HEADLESS-CLIENT"
 const controlerIDLogin: string = "CONTROLER"
 
 let io: Server
 let sockets: { [id: string]: socketInfo } = {}
 
 let players: { [id: string]: player } = {}
-let headless: string[] = []
+let workers: Worker[] = []
 let matchQueue: string[] = []
 
 let nbRight: number = 0
@@ -119,7 +119,8 @@ function createNewPlayer(): player {
 }
 
 // Starts a new headless session
-function setupAuthoritativePhaser() {
+function newSimulation() {
+	let newWorker = new Worker('./dist/phaser.js')
 	
 }
 
@@ -128,19 +129,11 @@ function setupClientListeners(socket: Socket) {
 	socket.on('', () => { })
 }
 
-// Setup for headless client socket listeners\
-function setupHeadlessListeners(socket: Socket) {
-	socket.on('', () => { })
-}
-
 // Setup for controler socket listeners
 function setupControlerListeners(socket: Socket) {
-	socket.on('stop', () => {
-
-	})
 	socket.on('newHeadless', () => {
 		console.log("New headless")
-		setupAuthoritativePhaser();
+		newSimulation();
 	})
 	socket.on('displaySocket', (socketId: string) => {
 		if (sockets[socketId])
@@ -173,33 +166,12 @@ function setupControlerListeners(socket: Socket) {
 			}
 		}
 	})
-	socket.on('kickPlayer', (socketId: string) => {
-		if (sockets[socketId]) {
-			sockets[socketId].socket.disconnect()
-			delete sockets[socketId]
-			console.log("Socket destroyed by server:", socketId)
-		}
-		else
-			console.log("Can't destroy unknown socket:", socketId)
-	})
-	socket.on('kickAllPlayers', () => {
-		for (let socketId in sockets) {
-			if (sockets[socketId].type != 'controler'){
-				sockets[socketId].socket.disconnect()
-				delete sockets[socketId]
-				console.log("Socket destroyed by server:", socketId)
-			}
-		}
-	})
 }
 
 /* -------------------------MAIN CODE------------------------- */
 
 // Setting up socket.IO server
-io = new Server<ClientToServerEvents,
-	ServerToClientEvents,
-	InterServerEvents,
-	SocketData>(port, {
+io = new Server<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>(port, {
 		cors: {
 			origin: '*', // Allow any origin, you can change this to specific domains
 			methods: ['GET', 'POST'],
@@ -209,7 +181,6 @@ console.log("listening on port:", port)
 
 // Connection handler
 io.on('connection', (socket) => {
-	socket.emit('ownID', `${socket.id}`)
 	sockets[socket.id] = {
 		socket: socket,
 		type: 'unknown'
@@ -224,12 +195,6 @@ io.on('connection', (socket) => {
 				setupClientListeners(socket)
 				console.log("Player logging in:", socket.id)
 				break
-			case headlessIDLogin:
-				headless[headless.length] = socket.id
-				sockets[socket.id].type = 'headless'
-				setupHeadlessListeners(socket)
-				console.log("New headless session:", socket.id)
-				break
 			case controlerIDLogin:
 				sockets[socket.id].type = 'controler'
 				setupControlerListeners(socket)
@@ -238,6 +203,5 @@ io.on('connection', (socket) => {
 			default:
 				socket.disconnect()
 		}
-
 	})
 })
