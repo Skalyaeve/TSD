@@ -14,12 +14,12 @@
 		// Permet de ne pas générer de fichiers de sortie lors de la compilation
 		"noEmit": false,
 		// Dossier de sortie de transcompilation
-		"outDir": "controller/dist",
+		"outDir": "dist",
 		// Removes 'any' type error due to packages
 		"noImplicitAny": false,
 	},
 	// Spécifie les fichiers à inclure dans la compilation
 	"include": [
-		"controller/ts/controller.ts"
+		"gameTools/**/*"
 	],
 }

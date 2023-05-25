@@ -17,7 +17,6 @@
 		"outDir": "headless/dist",
 		// Removes 'any' type error due to packages
 		"noImplicitAny": false,
-		"skipLibCheck": true,
 	},
 	// Spécifie les fichiers à inclure dans la compilation
 	"include": [

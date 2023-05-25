@@ -16,7 +16,7 @@ import black__Sheet from '../resource/assets/black.png'
 
 /* -------------------------TYPES------------------------- */
 
-// Keys interface
+// Keys
 interface keys {								// Keyboard keys
 	up: Phaser.Input.Keyboard.Key				// UP key
 	down: Phaser.Input.Keyboard.Key				// DOWN key
@@ -24,15 +24,7 @@ interface keys {								// Keyboard keys
 	right: Phaser.Input.Keyboard.Key			// RIGHT key
 }
 
-// Player key states interface
-interface keyStates {
-	up: boolean									// Player UP key state
-	down: boolean								// Player DOWN key state
-	left: boolean								// Player LEFT key state
-	right: boolean								// Player RIGHT key state
-}
-
-// Skins interface
+// Skins
 interface skin {
 	name: string								// Skin name
 	idleSheet: string							// Skin idle spritesheet
@@ -47,15 +39,9 @@ interface skin {
 	scaleFactor: number							// Skin sprite scale factor
 }
 
-// Players interface
+// Players
 interface player {
-	id: string									// Player ID
-	xPos: number								// Player initial X position
-	yPos: number								// Player initial Y position
 	xDir: string								// Player X direction (left/right)
-	keyStates: keyStates						// Player key states
-	xVel: number								// Player X velocity
-	yVel: number								// Player Y velocity
 	lastMove: string							// Player last movement state (none/idle/run)
 	move: string								// Player actual movement state (idle/run)
 	skin: string								// Player skin name
@@ -63,17 +49,44 @@ interface player {
 	sprite?: Phaser.Physics.Arcade.Sprite 		// Player sprite
 }
 
+// Player constructor
 interface playerConstruct {
-	id: string
-	side: "left" | "right"
-	skin: "player" | "mage" | "blank" | "black"
+	id: string									// Player ID
+	side: "left" | "right"						// Player side
+	skin: "player" | "mage" | "blank" | "black"	// Skin name
 }
 
-// Game canvas interface
-interface canvas {								// Scene canvas settings
-	xSize: number								// Canvas heigth
-	ySize: number								// Canvas width
-	gameSpeed: number							// Game global speed
+// Ball
+interface ball {
+	sprite?: Phaser.Physics.Arcade.Sprite		// Ball sprite
+}
+
+// Player key states
+interface keyStates {
+	up: boolean									// Player UP key state
+	down: boolean								// Player DOWN key state
+	left: boolean								// Player LEFT key state
+	right: boolean								// Player RIGHT key state
+}
+
+// New properties (sent by the back to the client)
+interface newPropsToClient {
+	leftProps: objectProps						// Left player properties
+	rightProps: objectProps						// Right player properties
+	ballProps: objectProps						// Ball properties
+}
+
+// Player update (sent by the client to the back)
+interface playerUpdateFromClient {
+	keyStates: keyStates						// Player key states
+}
+
+// Properties of a game object (sent to the client)
+interface objectProps {
+	xPos: number
+	yPos: number
+	xVel: number
+	yVel: number
 }
 
 /* -------------------------GAME INITIALISATION------------------------- */
@@ -88,28 +101,25 @@ function Party() {
 
 	// Client type
 	const loginID: string = "PHASER-WEB-CLIENT"
+	const mySkin: string = "mage"
 
 	// Canvas constants
-	let canvas: canvas = {
-		xSize: 1920,
-		ySize: 1080,
-		gameSpeed: 1000
-	}
+	const screenWidth: number = 1920
+	const screenHeight: number = 1080
+	const gameSpeed: number = 1000
 
 	// Player socket
-	let comSocket: Socket
+	let socket: Socket
 
 	// Keyboard keys
 	let keys: keys
 
-	// Players list
-	let players: { [key: string]: player } = {}
+	// Players
+	let leftPlayer: player
+	let rightPlayer: player
 
 	// Skins list
 	let skins: { [key: string]: skin } = {}
-
-	// Player self id
-	let myId: string
 
 	// Player event queues
 	let creationQueue: string[] = []
@@ -193,11 +203,11 @@ function Party() {
 
 	/****** SCENE CREATION ******/
 
-	//WORK IN PROGRESS HERE
-
 	// Create players for this scene
-	function createPlayer(playerId: string, scene: Phaser.Scene) {
-		let player: player = players[playerId]
+	function createPlayer(construct: playerConstruct, scene: Phaser.Scene) {
+		let newPlayer: player = {
+
+		}
 		let skin = skins[player.skin]
 		player.sprite = scene.physics.add.sprite(player.xPos, player.yPos, player.skin + 'Idle')
 		if (player.sprite.body) {
@@ -213,8 +223,6 @@ function Party() {
 		else if (player.xDir == 'right')
 			player.sprite.setFlipX(false)
 	}
-
-	//WORK IN PROGRESS HERE
 
 	// Create animation for this scene
 	function createAnims(scene: Phaser.Scene) {
@@ -246,21 +254,21 @@ function Party() {
 	// Send player movements to the server
 	// WORKER <= BACK <= CLIENT
 	const sendPlayerMovement = () => {
-		comSocket.emit('playerKeyUpdate', { keyStates: players[myId].keyStates })
+		socket.emit('playerKeyUpdate', { keyStates: players[myId].keyStates })
 	}
 
 	// Send player start to the server
 	// WORKER x BACK <= CLIENT
 	const sendPlayerStart = () => {
 		players[myId].sprite?.play(players[myId].skin + 'RunAnim')
-		comSocket.emit('playerStart')
+		socket.emit('playerStart')
 	}
 
 	// Send player stop to the server
 	// WORKER x BACK <= CLIENT
 	const sendPlayerStop = () => {
 		players[myId].sprite?.play(players[myId].skin + 'IdleAnim')
-		comSocket.emit('playerStop')
+		socket.emit('playerStop')
 	}
 
 	/****** SCENE UPDATE ******/
@@ -391,7 +399,7 @@ function Party() {
 		const socket = io('http://localhost:3000/game')
 
 		// ********** BACK TO CLIENT SPECIFIC EVENTS ********** //
-		// WORKER x BACK => CLIENT
+		// WORKER <x= BACK ==> CLIENT
 
 		// Update the players list with the received data (when connecting for the first time)
 		socket.on('currentPlayers', (playersList: player[]) => {
@@ -404,11 +412,14 @@ function Party() {
 		});
 
 		// Get the player's own ID
-		socket.on('ownID', (playerId) => {
-			myId = playerId
-			console.log("My id:", myId)
+		socket.on('Welcome', () => {
 			socket.emit('identification', loginID)
 		})
+
+		socket.on('Construct', () => {
+			
+		})
+
 
 		// Changes the player's animation on movement chance
 		socket.on('playerStarted', (playerId: string) => {
@@ -425,7 +436,7 @@ function Party() {
 		})
 
 		// ********** BACK TO ALL EVENTS ********** //
-		// WORKER <= BACK => CLIENT
+		// WORKER <== BACK ==> CLIENT
 
 		// Add a new player to the players list
 		socket.on('newPlayer', (player: player) => {
@@ -442,10 +453,10 @@ function Party() {
 		});
 
 		// ********** WORKER TO CLIENT EVENTS ********** //
-		// WORKER => BACK => CLIENT
+		// WORKER ==> BACK ==> CLIENT
 
 		// Update the moved player's velocity in the players list
-		socket.on('playerMoved', (playerList: { [key: string]: player }, playerIds: string[]) => {
+		socket.on('newProperties', () => {
 			for (let playerId of playerIds) {
 				players[playerId].xPos = playerList[playerId].xPos
 				players[playerId].yPos = playerList[playerId].yPos
@@ -461,18 +472,18 @@ function Party() {
 	// Construction of the whole page
 	useEffect(() => {
 		createGame()
-		comSocket = startSocket()
+		socket = startSocket()
 		return () => {
 			if (game) {
 				keys.up.destroy()
 				keys.down.destroy()
 				keys.left.destroy()
 				keys.down.destroy()
-				for (let playerId in players)
-					players[playerId].sprite?.destroy()
+				leftPlayer.sprite?.destroy()
+				rightPlayer.sprite?.destroy()
 				game.destroy(true, false)
 			}
-			comSocket.disconnect()
+			socket.disconnect()
 		}
 	}, [])
 

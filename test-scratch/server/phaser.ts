@@ -3,7 +3,8 @@
 import Phaser from 'phaser'
 import { parentPort } from 'worker_threads'
 import { ArcadePhysics } from 'arcade-physics'
-//import { Body } from 'arcade-physics/lib/physics/arcade/Body'
+import { Body } from 'arcade-physics/lib/physics/arcade/Body.js'
+import { ArcadeWorldConfig } from 'arcade-physics/lib/physics/arcade/ArcadePhysics.js'
 
 /* -------------------------TYPES------------------------- */
 
@@ -44,12 +45,12 @@ interface objectProperties {
 // Player interface
 interface player {
 	id: string
-	body: any
+	body: Body
 }
 
 // Ball interface
 interface ball {
-	body: any
+	body: Body
 }
 
 /* -------------------------VARIABLES------------------------- */
@@ -61,7 +62,7 @@ const targetFPS: number = 60
 const playerSpeed: number = 150
 
 // Physics initialisation
-const config = {
+const config: ArcadeWorldConfig = {
 	width: screenWidth,
 	height: screenHeight,
 	gravity: {
