@@ -5,7 +5,8 @@ import { UserModule } from './user/user.module.js';
 import { GameModule } from './game/game.module.js';
 import { ChatModule } from './chat/chat.module.js';
 import { JwtModule } from '@nestjs/jwt';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConfigModule } from '@nestjs/config';
+import { ChannelModule } from './channel/channel.module.js';
 
 @Module({
   imports: [
@@ -17,7 +18,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
     UserModule,
     ChatModule,
     ConfigModule,
-	GameModule
+    GameModule,
+    ChannelModule,
   ]
 })
 export class AppModule { }
