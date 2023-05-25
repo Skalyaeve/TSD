@@ -10,7 +10,7 @@ import {
   WsException
 } from '@nestjs/websockets';  
 import { Socket, Server } from "socket.io";
-import { User } from '@prisma/client';
+import { ChanType, User } from '@prisma/client';
 import { UserService } from '../user/user.service.js';
 import { ChatService } from './chat.service.js';
 import { Logger } from '@nestjs/common';
@@ -43,6 +43,33 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     client.broadcast.emit('message', data); // Use broadcast.emit() to send the message to all clients except the sender
   }
 
+  async onCreateChannel(
+    @ConnectedSocket() client: Socket, 
+    @MessageBody() data: {name: string; type: string; password?: string}) 
+  {
+    const user = await this.chatService.getUserFromSocket(client);
+    const { name, type, password } = data;
+
+    if (!user){
+      throw new WsException('Invalid credentials');
+    }
+
+    if (!Object.values(ChanType).includes(type as ChanType)){
+      throw new WsException('Invalid channel type');
+    }
+
+    const channelType: ChanType = type as ChanType;
+    
+    const channel = await this.chatService.createChannel({
+      name, 
+      type: channelType, 
+      passwd: password,
+      chanOwnerRef: {connect: {id: user.id}}
+    });
+
+    return { event: 'channelCreatead', data: channel};
+  }
+
   @SubscribeMessage('getUserInfo')
   async handleUserInfo(@ConnectedSocket() client: Socket): Promise<void> {
     const userData = await this.chatService.getUserFromSocket(client);
@@ -72,14 +99,6 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       // throw new WsException('Invalid token.')
     }
     else{
-      // const { id, email, nickname, avatarFilename } = userData;
-
-      // client.emit('userInfo', {
-      //   id,
-      //   email,
-      //   nickname,
-      //   avatarFilename,
-      // });
 
       console.log('userData: ', userData);
       const userID = userData.id;

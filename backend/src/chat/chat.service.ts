@@ -4,12 +4,15 @@ import { Socket } from 'socket.io';
 import { parse } from 'cookie';
 import { WsException } from '@nestjs/websockets';
 import { UserSocketsService } from './chat.userSocketsService.js';
+import { PrismaService } from 'nestjs-prisma';
+import { ChanType } from '@prisma/client';
 
 @Injectable()
 export class ChatService {
 
     constructor(
         private readonly authservice: AuthService,
+        private prismaService: PrismaService
     )
     {}
 
@@ -28,4 +31,23 @@ export class ChatService {
         console.log('there is no cookie :(')
     }
 
+    async createChannel(channelData: { name: string, type: ChanType, passwd?: string, chanOwnerRef: { connect: { id: number } } }){
+        const channel = await this.prismaService.channel.create({
+          data: channelData,
+        });
+        return channel;
+      }
+    // async createChannel(channelData: { name: string, type: string, passwd?: string, chanOwner: number}){
+    //     const channel = await this.prismaService.channel.create({
+    //         data: {
+    //             ...channelData,
+    //             chanOwnerRef: {
+    //                 connect: {
+    //                     id: channelData.chanOwner,
+    //                 }
+    //             },
+    //         },
+    //     });
+    //     return channel;
+    // }
 }
