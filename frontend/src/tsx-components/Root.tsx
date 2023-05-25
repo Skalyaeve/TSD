@@ -18,6 +18,8 @@ import Chat from './Chat/Chat.tsx'
 import '../css/Root.css'
 import background from '../resource/background.png';
 import { io } from 'socket.io-client';
+import Modal from 'react-modal';
+
 
 // --------IS-CONNECTED---------------------------------------------------- //
 const isConnected = async () => {

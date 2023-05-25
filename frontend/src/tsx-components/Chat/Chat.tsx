@@ -27,9 +27,7 @@ function Chat({}) {
     const [userInfo, setUserInfo] = useState(null);
     const [allUsers, setAllUsers] = useState<{id: number; email: string; nickname: string; avatarFilename: string}[]>([]);
     const [error, setError] = useState<any>(null);
-    // const [selectedChannel, setSelectedChannel] = useState<any>(null);
-    // const [selectedContact, setSelectedContact] = useState<{id: number; email: string; nickname: string; avatarFilename: string} | null>(null);
-    
+    const [selectedContact, setSelectedContact] = useState<{id: number; email: string; nickname: string; avatarFilename: string} | null>(null);
     
     const send = useCallback((value: string, user: string) => {
             console.log("value: ", value);
@@ -49,16 +47,6 @@ function Chat({}) {
         const newMessage = {...message};
         console.log(newMessage);
     }
-
-    // const handleContactSelect = (contact: {id: number; email: string; nickname: string; avatarFilename: string}) => {
-    //     setSelectedContact(contact);
-    //     setSelectedChannel(null);
-    // }
-
-    // const handleChannelSelect = (channel: any) => {
-    //     setSelectedChannel(channel);
-    //     setSelectedContact(null);
-    // }
 
     useEffect(() => {
         socket.on('userInfo', (userData) => {
@@ -112,12 +100,11 @@ function Chat({}) {
     return (
         <div className={`chat-main-grid ${isOpen?"open":"close"}`}>
             <div className="manage-rooms">
-                {/* <DmHandler allUsers={allUsers} onContactSelect={}/> */}
-                <DmHandler allUsers={allUsers}/>
+                <DmHandler allUsers={allUsers} setSelectedContact={setSelectedContact}/>
                 <ChatChannels/>
             </div>
             <div className="chatbox">
-                <ChatHeader contactName='Shupo' setIsOpen={setIsOpen}/>
+                <ChatHeader contactName={selectedContact?.nickname || 'No conversation selected'} setIsOpen={setIsOpen}/>
                 <div className='chat-messages' id="chat-messages">
                     {allMessages.map((message, index) => (
                     <Messages key={index} messages={[message]} currentUser={user} />

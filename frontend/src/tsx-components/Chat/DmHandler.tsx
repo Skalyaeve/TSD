@@ -3,9 +3,10 @@ import { BsSearchHeart } from "react-icons/bs";
 
 interface DmHandlerProps {
     allUsers: {id: number; email: string; nickname: string; avatarFilename: string}[];
+    setSelectedContact: React.Dispatch<React.SetStateAction<{id: number; email: string; nickname: string; avatarFilename: string} | null>>
 }
 
-export default function DmHandler({ allUsers }: DmHandlerProps)
+export default function DmHandler({ allUsers, setSelectedContact }: DmHandlerProps)
 {
 
     const [contact, setContact] = useState("");
@@ -36,7 +37,7 @@ export default function DmHandler({ allUsers }: DmHandlerProps)
         </div>
         <div className="DM-conversations">
             {allUsers.map((user) => (
-                <button className="conversation-btn" key={user.id}>
+                <button className="conversation-btn" key={user.id} onClick={() => setSelectedContact(user)}>
                     {user.nickname}
                 </button>
             ))}

@@ -21,6 +21,7 @@
 		"react-dnd-html5-backend": "^16.0.1",
 		"react-dom": "^18.2.0",
 		"react-icons": "^4.8.0",
+		"react-modal": "^3.16.1",
 		"react-router-dom": "^6.10.0",
 		"socket.io-client": "^4.6.1"
 	},
@@ -33,6 +34,7 @@
 		"@types/js-cookie": "^3.0.3",
 		"@types/react": "^18.0.34",
 		"@types/react-dom": "^18.0.11",
+		"@types/react-modal": "^3.16.0",
 		"babel-loader": "^9.1.2",
 		"css-loader": "^6.7.3",
 		"file-loader": "^6.2.0",
