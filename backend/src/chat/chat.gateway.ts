@@ -17,6 +17,8 @@ import { UserSocketsService } from './chat.userSocketsService.js';
 import { cli } from 'webpack';
 import { promises } from 'dns';
 import { channel } from 'diagnostics_channel';
+import { type } from 'os';
+import * as bcrypt from 'bcrypt';
 
 
 @WebSocketGateway({cors:
@@ -74,7 +76,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     await this.chatService.createOneChanMember(chanID, userId);
     await this.chatService.makeOwnerAdmin(userId, chanID);
 
-    this.server.emit('created channel');
+    this.server.emit('created channel', channel);
     // client.emit('channelCreated', channel);
   }
 
@@ -156,7 +158,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
   @SubscribeMessage('sendChanMessage')
   async handleSendChanMessage(
     @ConnectedSocket() client: Socket,
-    @MessageBody() data: {senderId: number; chanId: number; content: string})
+    @MessageBody() data: {senderId: number; chanId: number; content: string}) : Promise<void>
   {
     try {
       const {senderId, chanId, content} = data;
@@ -206,7 +208,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
   @SubscribeMessage('joinChannel')
   async handleJoinChannel(
       @ConnectedSocket() client: Socket,
-      @MessageBody() data: {chanID: number, userID: number})
+      @MessageBody() data: {chanID: number, userID: number}) : Promise<void>
   {
     try {
       const {chanID, userID} = data;
@@ -244,7 +246,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
   @SubscribeMessage('makeMemberAdmin')
   async handleMakeMemberAdmin(
       @ConnectedSocket() client: Socket,
-      @MessageBody() data: {chanOwnerId:number, chanId: number, memberId: number})
+      @MessageBody() data: {chanOwnerId:number, chanId: number, memberId: number}) : Promise<void>
   {
     try {
     const {chanId, memberId, chanOwnerId} = data;
@@ -268,7 +270,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
   @SubscribeMessage('muteMember')
   async handleMuteMember(
     @ConnectedSocket() client: Socket,
-    @MessageBody() data: {chanId: number, memberToMuteId: number, adminId: number, muteDuration: number})
+    @MessageBody() data: {chanId: number, memberToMuteId: number, adminId: number, muteDuration: number}) : Promise<void>
   {
     try {
       const {chanId, memberToMuteId, adminId, muteDuration} = data;
@@ -290,7 +292,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
   @SubscribeMessage('banMember')
   async handleBanMember(
     @ConnectedSocket() client: Socket,
-    @MessageBody() data: {chanId: number, memberToBanId: number, adminId: number})
+    @MessageBody() data: {chanId: number, memberToBanId: number, adminId: number}) : Promise<void>
   {
     try {
       const {chanId, memberToBanId, adminId} = data;
@@ -313,7 +315,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
   @SubscribeMessage('kickMember')
   async handleKickMember(
     @ConnectedSocket() client: Socket,
-    @MessageBody() data: {chanId: number, memberToKickId: number, adminId: number})
+    @MessageBody() data: {chanId: number, memberToKickId: number, adminId: number}) : Promise<void>
   {
     try {
       const {chanId, memberToKickId, adminId} = data;
@@ -346,7 +348,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
   @SubscribeMessage('setChannelName')
   async handleSetChannelName(
     @ConnectedSocket() client: Socket,
-    @MessageBody() data: {chanMember:number, chanId:number, newChanName:string})
+    @MessageBody() data: {chanMember:number, chanId:number, newChanName:string}) : Promise<void>
   {
     try {
       const {chanMember, chanId, newChanName} = data;
@@ -373,11 +375,13 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
   @SubscribeMessage('setNewPasswd')
   async handleSetNewUserPassword(
       @ConnectedSocket() client: Socket,
-      @MessageBody() data: {chanId: number; userId: number; newPasswd: string})
+      @MessageBody() data: {chanId: number; userId: number; newPasswd: string}): Promise<void>
   {
     try {
       const {chanId, userId, newPasswd} = data;
-      const updatedChannel = await this.chatService.setChanPassword(data);
+      const saltRounds = 10;
+      const hashedPassword = await bcrypt.hash(newPasswd, saltRounds);
+      const updatedChannel = await this.chatService.setChanPassword(chanId, userId, hashedPassword);
 
       if (!updatedChannel)
       {
@@ -387,6 +391,31 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     }
     catch (error)
     {
+      console.log(error);
+    }
+  }
+
+  @SubscribeMessage('setChannelType')
+  async handleSetChannelType(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() data: {userId:number, chanId:number, newChanType:string})
+  {
+    try {
+      const {userId, chanId, newChanType} = data;
+      if (!Object.values(ChanType).includes(newChanType as ChanType)){
+        
+      }
+      const updatedChannel = await this.chatService.setChannelType(userId, chanId, ChanType[newChanType as keyof typeof ChanType]);
+      if (!updatedChannel) {
+        throw new WsException('could not change Type of channel');
+      }
+      const ChanRoomId = 'chan_'+ chanId + '_room';
+      const chanType = updatedChannel.type;
+      this.server.to(ChanRoomId).emit('chanTypeChanged');
+      this.server.to(ChanRoomId).emit('chanTypeChanged', chanType);
+      // client.emit('channelNameChanged', updatedChannel);
+    }
+    catch (error) {
       console.log(error);
     }
   }

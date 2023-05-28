@@ -82,9 +82,9 @@ export class ChatService {
 
     //setters that don't create but change values
 
-    async setChanPassword(data: {chanId: number, userId: number, newPasswd: string }): Promise<Channel|null> {
+    async setChanPassword(chanId: number, userId: number, newPasswd: string ): Promise<Channel|null> {
         try {
-            const {chanId, userId, newPasswd} = data;
+            // const {chanId, userId, newPasswd} = data;
 
             if (this.isAdmin(chanId, userId))
             {
@@ -131,6 +131,26 @@ export class ChatService {
         catch (error) {
             console.log(error);
             throw error;
+        }
+    }
+
+    async setChannelType(userId: number, chanID: number, type: ChanType): Promise<Channel> {
+        try {
+            const isOwner = await this.isOwner(chanID, userId);
+            if (!isOwner) {
+                throw new Error('not an owner, cannot set type')
+            }
+            const channel = await this.prisma.channel.update({
+                where: {id: chanID},
+                data: {type}
+            });
+            if (!channel) {
+                throw new Error('could not change channel type')
+            }
+            return channel;
+        }
+        catch (error){
+            console.log(error);
         }
     }
 
