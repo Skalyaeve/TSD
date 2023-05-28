@@ -16,6 +16,7 @@ import { Logger } from '@nestjs/common';
 import { UserSocketsService } from './chat.userSocketsService.js';
 import { cli } from 'webpack';
 import { promises } from 'dns';
+import { channel } from 'diagnostics_channel';
 
 
 @WebSocketGateway({cors:
@@ -104,6 +105,42 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       console.log(error);
     }
   }
+  
+
+  @SubscribeMessage('GetChannelsByUser')
+  async handleGetChannelbyUser(
+      @ConnectedSocket() client: Socket,
+      @MessageBody() userId: number) : Promise<void>
+  {
+    try{
+      const channels = await this.chatService.findAllChannelsByMember(userId);
+      if (!channels){
+        throw new WsException('Channels not found');
+      }
+      client.emit('channelsByUserFound', channels);
+    }
+    catch (error){
+      console.log(error);
+    }
+  }
+
+  @SubscribeMessage('GetChannelMembers')
+  async handleChannelMembers(
+      @ConnectedSocket() client: Socket,
+      @MessageBody() chanId: number) : Promise<void>
+  {
+    try{
+      const members = await this.chatService.findAllMembersByChanID(chanId);
+      if (!members){
+        throw new WsException('Members not found');
+      }
+      client.emit('MembersofChannelFound', members);
+    }
+    catch (error){
+      console.log(error);
+    }
+  }
+
 
   //--------------------------------------------------------------------------//
   //                           CHANNEL MESSAGE EVENTS                         //
@@ -128,14 +165,30 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
         throw new WsException('Channel message was not sent');
       }
       const ChanRoomId = 'chan_'+ chanId + '_room';
-      client.to(ChanRoomId).emit('SentChanMessage', chanMessage);
-      // client.emit('SentChanMessage', chanMessage);
+      // client.to(ChanRoomId).emit('SentChanMessage', chanMessage);
 
-      // this.server.in(ChanRoomId).emit('SentChanMessage', chanMessage);
+      this.server.in(ChanRoomId).emit('SentChanMessage', chanMessage);
       // Remember that client.to(room) targets all sockets in a room, but not the sender. If you also want to include the sender, you could use:
     }
     catch (error)
     {
+      console.log(error);
+    }
+  }
+
+  @SubscribeMessage('GetChannelMessages')
+  async handleGetChannelMessages(
+      @ConnectedSocket() client: Socket,
+      @MessageBody() chanId: number) : Promise<void>
+  {
+    try{
+      const messages = await this.chatService.findAllChanMessages(chanId);
+      if (!messages){
+        throw new WsException('Channel messages were not found');
+      }
+      client.emit('channelMessagesFound', channel);
+    }
+    catch (error){
       console.log(error);
     }
   }
@@ -400,10 +453,10 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       const userID = userData.id;
       console.log('userID: ', userID);
       this.userSocketsService.setUser(userID, client.id);
-      const userWithSocket = this.userSocketsService.getUserSocketIds(userID);
-      console.log('userWithSocket: ',userWithSocket);
+      // const userWithSocket = this.userSocketsService.getUserSocketIds(userID);
+      // console.log('userWithSocket: ',userWithSocket);
       const userRoomId = 'userID_' + userID.toString() + '_room';
-      const userRooms = this.chatService.findAllChannelsByMember(userID);
+      const userChannels = await this.chatService.findAllChannelsByMember(userID);
 
       
       client.join(userRoomId);
@@ -413,7 +466,10 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       // const userDM = 
       // Function that retrieve private discussions;
 
-
+      userChannels.forEach(channel =>{
+        const chanRoomId = 'chan_'+ channel.chanId + '_room';
+        client.join(chanRoomId);
+      })
       client.emit('connectionResult', { msg: 'connected successfully'});
 
 

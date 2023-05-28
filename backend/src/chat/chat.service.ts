@@ -82,7 +82,7 @@ export class ChatService {
 
     //setters that don't create but change values
 
-    async setChanPassword(data: {chanId: number, userId: number, newPasswd: string }) {
+    async setChanPassword(data: {chanId: number, userId: number, newPasswd: string }): Promise<Channel|null> {
         try {
             const {chanId, userId, newPasswd} = data;
 
@@ -108,7 +108,7 @@ export class ChatService {
         }
     }
 
-    async setChanName(data: {chanMember:number; chanId: number, newChanName: string}){
+    async setChanName(data: {chanMember:number; chanId: number, newChanName: string}): Promise<Channel|null>{
         try {
             const {chanMember, chanId, newChanName} = data;
             const isAdmin = await this.isAdmin(chanId, chanMember);
@@ -134,7 +134,7 @@ export class ChatService {
         }
     }
 
-    async makeOwnerAdmin( userId: number, chanId: number)
+    async makeOwnerAdmin( userId: number, chanId: number) : Promise<ChanMember|null>
     {
         try {
             const updatedMember: ChanMember|null = await this.prisma.chanMember.update({
@@ -159,7 +159,7 @@ export class ChatService {
         }
     }
 
-    async makeChanAdmin(data: {chanOwnerId:number, chanId: number, memberId: number}) {
+    async makeChanAdmin(data: {chanOwnerId:number, chanId: number, memberId: number}):  Promise<ChanMember|null> {
         try {
             const {chanOwnerId, chanId, memberId} = data;
 
@@ -192,7 +192,7 @@ export class ChatService {
         }
     }
 
-    async muteMember(data: {chanId: number, memberToMuteId: number, adminId: number, muteDuration: number}) {
+    async muteMember(data: {chanId: number, memberToMuteId: number, adminId: number, muteDuration: number}) :Promise<ChanMember|null> {
 
         try {
             const {chanId, memberToMuteId, adminId, muteDuration} = data;
@@ -228,7 +228,7 @@ export class ChatService {
         }
     }
 
-    async kickMember(data: {chanId: number, memberToKickId: number, adminId: number}) {
+    async kickMember(data: {chanId: number, memberToKickId: number, adminId: number}) : Promise<ChanMember|null>{
 
         try {
             const {chanId, memberToKickId, adminId} = data;
@@ -259,7 +259,7 @@ export class ChatService {
         }
     }
 
-    async banMember(data: {chanId: number, memberToBanId: number, adminId: number}) {
+    async banMember(data: {chanId: number, memberToBanId: number, adminId: number}) : Promise<ChanMember|null> {
 
         try {
             const {chanId, memberToBanId, adminId} = data;
