@@ -8,7 +8,7 @@
   "license": "UNLICENSED",
   "scripts": {
     "clean": "(yes | rm -rf dist/*)",
-	"cleanGameTools": "rm -f dist/controller.js; rm -f dist/session.js",
+	"cleanGameTools": "rm -f toolDist/controller.js; rm -f toolDist/session.js",
 	"buildGameTools": "npm run cleanGameTools; npx tsc -p tsconfig.gameTools.json",
     "controller": "npm run buildGameTools && npm run run:ctrl",
     "run:ctrl": "node dist/controller.js",

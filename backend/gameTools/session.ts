@@ -4,7 +4,6 @@ import Phaser from 'phaser'
 import { parentPort } from 'worker_threads'
 import { ArcadePhysics } from 'arcade-physics'
 import { Body } from 'arcade-physics/lib/physics/arcade/Body.js'
-import { ArcadeWorldConfig } from 'arcade-physics/lib/physics/arcade/ArcadePhysics.js'
 
 /* -------------------------TYPES------------------------- */
 
@@ -71,11 +70,12 @@ const targetFPS: number = 60
 const playerSpeed: number = 150
 
 // Game variables
-let sessionId: string
+let sessionId: string | undefined = undefined
 let leftPlayer: player | undefined = undefined
 let rightPlayer: player | undefined = undefined
 let ball: ball | undefined = undefined
 let tick: number = 0
+let gameState: "on" | "off" = "off"
 
 // Physics initialisation
 const physics: ArcadePhysics = new ArcadePhysics({
@@ -95,7 +95,7 @@ function createBall() {
 	ball.body.setCircle(25)
 	ball.body.setBounce(1, 1)
 	ball.body.setCollideWorldBounds(true, undefined, undefined, undefined)
-	console.log("Added ball")
+	console.log("[", sessionId,"] Added ball")
 }
 
 // Create a new player
@@ -108,12 +108,16 @@ function createPlayer(construct: playerConstruct) {
 	if (ball) physics.add.collider(ball.body, newPlayer.body)
 	if (leftPlayer) {
 		rightPlayer = newPlayer
-		console.log("Added right player:", rightPlayer)
+		console.log("[", sessionId,"] Added right player:", rightPlayer)
 	}
 	else {
 		leftPlayer = newPlayer
-		console.log("Added left player:", leftPlayer)
+		console.log("[", sessionId,"] Added left player:", leftPlayer)
 	}
+	if (leftPlayer && rightPlayer && ball)
+		gameState = "on"
+	else
+		gameState = "off"
 }
 
 /* -------------------------UPDATE FUNCTIONS------------------------- */
@@ -163,7 +167,7 @@ function getProperties(body: Body): objectProps {
 
 // Send objects properties to
 function sendProperties() {
-	if (leftPlayer && ball && rightPlayer && parentPort) {
+	if (sessionId && leftPlayer && ball && rightPlayer && parentPort) {
 		let properties: newProps = {
 			sessionId: sessionId,
 			leftProps: getProperties(leftPlayer.body),
@@ -171,7 +175,7 @@ function sendProperties() {
 			ballProps: getProperties(ball.body)
 		}
 		parentPort.postMessage(properties)
-		console.log("Object properties sent at time:", tick)
+		console.log("[", sessionId,"] Object properties sent at time:", tick)
 	}
 }
 
@@ -192,7 +196,8 @@ function main() {
 	setTimeout(() => {
 		createBall()
 		setInterval(() => {
-			update()
+			if (gameState == "on")
+				update()
 		}, 1000 / targetFPS)
 	}, 100)
 }
