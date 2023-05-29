@@ -43,6 +43,11 @@ interface party {
 	rightPlayerId: string							// Party right player ID
 }
 
+// Party login data
+interface loginData {
+	sessionId: string
+}
+
 // Player construction interface (sent to the client)
 interface clientPlayerConstruct {
 	side: 'left' | 'right'							// Player side
@@ -156,33 +161,39 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			leftPlayerId: leftPlayerId,
 			rightPlayerId: rightPlayerId
 		}
-
+		// Store the new party in the parties object
+		this.parties[newParty.id] = newParty
+		console.log("New party: ", newParty.id)
 		// Wait for party to be created and sens constructs to clients and session
 		setTimeout(() => {
+			// Set session id in player object
 			this.players[leftPlayerId].sessionId = newParty.id
 			this.players[rightPlayerId].sessionId = newParty.id
-
-			let leftSkin = this.skins[this.players[leftPlayerId].skin]
-			let rightSkin = this.skins[this.players[rightPlayerId].skin]
-
-			let leftClientConstruct: clientPlayerConstruct = this.newClientConstruct('left')
-			let rightClientConstruct: clientPlayerConstruct = this.newClientConstruct('right')
-
+			// Emit to each client it's side
 			this.sockets[leftPlayerId].socket.emit('clientSide', 'left')
 			this.sockets[rightPlayerId].socket.emit('clientSide', 'right')
-
+			// Create the loginData object to store the session id
+			let sessionLoginData: loginData = { sessionId: newParty.id }
+			// Send the loginData object to the session
+			newParty.worker.postMessage(sessionLoginData)
+			// Create the player construct objects for clients
+			let leftClientConstruct: clientPlayerConstruct = this.newClientConstruct('left')
+			let rightClientConstruct: clientPlayerConstruct = this.newClientConstruct('right')
+			// Emit to each client the player construct objects
 			this.sockets[leftPlayerId].socket.emit('playerConstruct', leftClientConstruct)
 			this.sockets[rightPlayerId].socket.emit('playerConstruct', leftClientConstruct)
 			this.sockets[leftPlayerId].socket.emit('playerConstruct', rightClientConstruct)
 			this.sockets[rightPlayerId].socket.emit('playerConstruct', rightClientConstruct)
-
+			// Get skins for left and right side
+			let leftSkin = this.skins[this.players[leftPlayerId].skin]
+			let rightSkin = this.skins[this.players[rightPlayerId].skin]
+			// Create the player construct objects for session
 			let leftSessionConstruct: sessionPlayerConstruct = this.newSessionConstruct('left', leftSkin.width, leftSkin.height)
 			let rightSessionConstruct: sessionPlayerConstruct = this.newSessionConstruct('right', rightSkin.width, rightSkin.height)
-
+			// Emit to session the player construct objects
 			newParty.worker.postMessage(leftSessionConstruct)
 			newParty.worker.postMessage(rightSessionConstruct)
 		}, 100)
-
 		// Session message listener
 		newParty.worker.on('message', (incomingProps: newPropsFromSession) => {
 			let outgoingProps: newPropsToClient = {
@@ -198,6 +209,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	// Creates a new party if 
 	checkMatchQueue() {
 		if (this.matchQueue.length >= 2) {
+			console.log("More than 2 players in matchmaking queue starting a new session")
 			this.createParty(this.matchQueue.pop(), this.matchQueue.pop())
 		}
 	}
@@ -210,7 +222,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			type: undefined,
 		};
 		socket.emit('Welcome');
-		console.log("Connection:", socket.id)
 	}
 
 	async handleDisconnect(socket: Socket) {

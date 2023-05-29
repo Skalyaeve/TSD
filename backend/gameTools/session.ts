@@ -76,6 +76,8 @@ let rightPlayer: player | undefined = undefined
 let ball: ball | undefined = undefined
 let tick: number = 0
 let gameState: "on" | "off" = "off"
+let oldProps: newProps | undefined = undefined
+let newProps: newProps | undefined = undefined
 
 // Physics initialisation
 const physics: ArcadePhysics = new ArcadePhysics({
@@ -95,7 +97,7 @@ function createBall() {
 	ball.body.setCircle(25)
 	ball.body.setBounce(1, 1)
 	ball.body.setCollideWorldBounds(true, undefined, undefined, undefined)
-	console.log("[", sessionId,"] Added ball")
+	console.log("[", sessionId?.slice(0,4),"] Added ball")
 }
 
 // Create a new player
@@ -108,11 +110,11 @@ function createPlayer(construct: playerConstruct) {
 	if (ball) physics.add.collider(ball.body, newPlayer.body)
 	if (leftPlayer) {
 		rightPlayer = newPlayer
-		console.log("[", sessionId,"] Added right player:", rightPlayer)
+		console.log("[", sessionId?.slice(0,4),"] Added right player")
 	}
 	else {
 		leftPlayer = newPlayer
-		console.log("[", sessionId,"] Added left player:", leftPlayer)
+		console.log("[", sessionId?.slice(0,4),"] Added left player")
 	}
 	if (leftPlayer && rightPlayer && ball)
 		gameState = "on"
@@ -131,6 +133,7 @@ function updatePlayer(updatedPlayer: playerUpdate) {
 	if (updatedPlayer.keyStates.left) xVel = xVel - playerSpeed
 	if (updatedPlayer.keyStates.right) xVel = xVel + playerSpeed
 	if (leftPlayer && rightPlayer) {
+		console.log("[", sessionId?.slice(0,4),"] Updating player vel")
 		if (updatedPlayer.side == leftPlayer.side) leftPlayer.body.setVelocity(xVel, yVel)
 		else rightPlayer.body.setVelocity(xVel, yVel)
 	}
@@ -168,14 +171,17 @@ function getProperties(body: Body): objectProps {
 // Send objects properties to
 function sendProperties() {
 	if (sessionId && leftPlayer && ball && rightPlayer && parentPort) {
-		let properties: newProps = {
+		if (newProps)
+			oldProps = Object.assign({}, newProps)
+		newProps = {
 			sessionId: sessionId,
 			leftProps: getProperties(leftPlayer.body),
 			rightProps: getProperties(rightPlayer.body),
 			ballProps: getProperties(ball.body)
 		}
-		parentPort.postMessage(properties)
-		console.log("[", sessionId,"] Object properties sent at time:", tick)
+		if (oldProps){
+			parentPort.postMessage(newProps)
+		}
 	}
 }
 
@@ -192,9 +198,9 @@ function update() {
 /* -------------------------MAIN CODE------------------------- */
 
 function main() {
-	portListener()
+	createBall()
 	setTimeout(() => {
-		createBall()
+		portListener()
 		setInterval(() => {
 			if (gameState == "on")
 				update()

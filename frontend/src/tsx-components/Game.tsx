@@ -136,6 +136,9 @@ function Party() {
 	let leftPlayer: player | undefined = undefined
 	let rightPlayer: player | undefined = undefined
 
+	//ball
+	let ball: ball | undefined = undefined
+
 	// Skins list
 	let skins: { [key: string]: skin } = {}
 
@@ -155,9 +158,9 @@ function Party() {
 	function keysInitialisation(scene: Phaser.Scene) {
 		if (scene.input.keyboard) {
 			keys = {
-				up: scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.W),
+				up: scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.Z),
 				down: scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.S),
-				left: scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.A),
+				left: scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.Q),
 				right: scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.D)
 			}
 		}
@@ -308,13 +311,14 @@ function Party() {
 	// Adapts player moveState and devolity following the pressed keys
 	function checkKeyInputs() {
 		let player: player
-		oldKeyStates = actualKeyStates
+		
 		if (leftPlayer && rightPlayer) {
 			if (mySide && mySide == 'left')
 				player = leftPlayer
 			else
 				player = rightPlayer
 
+			oldKeyStates = Object.assign({}, actualKeyStates)
 			actualKeyStates.up = (keys.up.isDown ? true : false)
 			actualKeyStates.down = (keys.down.isDown ? true : false)
 			actualKeyStates.left = (keys.left.isDown ? true : false)
@@ -323,8 +327,9 @@ function Party() {
 			if (actualKeyStates.up != oldKeyStates.up ||
 				actualKeyStates.down != oldKeyStates.down ||
 				actualKeyStates.left != oldKeyStates.left ||
-				actualKeyStates.right != oldKeyStates.right)
-				sendPlayerMovement()
+				actualKeyStates.right != oldKeyStates.right){
+					sendPlayerMovement()
+				}
 
 			if (allKeysUp()) {
 				if (player.move == 'run') {
@@ -372,16 +377,17 @@ function Party() {
 
 	// Set player position following xPos and yPos
 	function checkMove() {
-		if (moveQueue) {
+		if (moveQueue && leftPlayer && rightPlayer /*&& ball*/) {
+			console.log('players to move')
 			leftPlayer.sprite?.setPosition(moveQueue.leftProps.xPos, moveQueue.leftProps.yPos)
-			leftPlayer.sprite?.setPosition(moveQueue.rightProps.xPos, moveQueue.rightProps.yPos)
-			leftPlayer.sprite?.setPosition(moveQueue.ballProps.xPos, moveQueue.ballProps.yPos)
+			rightPlayer.sprite?.setPosition(moveQueue.rightProps.xPos, moveQueue.rightProps.yPos)
+			//ball.sprite?.setPosition(moveQueue.ballProps.xPos, moveQueue.ballProps.yPos)
 
 			leftPlayer.sprite?.setVelocity(moveQueue.leftProps.xVel, moveQueue.leftProps.yVel)
-			leftPlayer.sprite?.setVelocity(moveQueue.rightProps.xVel, moveQueue.rightProps.yVel)
-			leftPlayer.sprite?.setVelocity(moveQueue.ballProps.xVel, moveQueue.ballProps.yVel)
+			rightPlayer.sprite?.setVelocity(moveQueue.rightProps.xVel, moveQueue.rightProps.yVel)
+			//ball.sprite?.setVelocity(moveQueue.ballProps.xVel, moveQueue.ballProps.yVel)
+			moveQueue = undefined
 		}
-		moveQueue = undefined
 	}
 
 	/****** OVERLOADED PHASER FUNCTIONS ******/
@@ -426,6 +432,9 @@ function Party() {
 				create: create,
 				update: update,
 			},
+			audio: {
+				noAudio: true
+			}
 		}
 		if (gameRef.current) {
 			game = new Phaser.Game({ ...config, parent: gameRef.current, })
