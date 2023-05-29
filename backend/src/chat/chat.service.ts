@@ -1,11 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { AuthService } from '../auth/auth.service.js';
+import { UserService } from '../user/user.service.js';
 import { Socket } from 'socket.io';
 import { parse } from 'cookie';
 import { WsException } from '@nestjs/websockets';
 import { UserSocketsService } from './chat.userSocketsService.js';
 import { PrismaService } from 'nestjs-prisma';
-import { ChanType } from '@prisma/client';
+import { Blocked, ChanType, User } from '@prisma/client';
 import { ChanMember, ChanMessage, Channel, PrivMessage } from "@prisma/client";
 import * as bcrypt from 'bcrypt';
 
@@ -14,7 +15,8 @@ export class ChatService {
 
     constructor(
         private readonly authservice: AuthService,
-        private prisma: PrismaService
+        private prisma: PrismaService,
+        private userService: UserService
     )
     {}
 
@@ -465,6 +467,32 @@ export class ChatService {
                 throw new Error('conversation was not found');
             }
             return conversation;
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }
+
+    async blockUser(blockerID: number, blockeeID: number) : Promise<Blocked|null>
+    {
+        try {
+            if (blockerID == blockeeID) {
+                throw new Error ('cannot block itself');
+            }
+            const blockee = await this.userService.findOneById(blockeeID);
+            if (!blockee) {
+                throw new Error ('blockee user does not exist');
+            }
+            const blockEntity: Blocked = await this.prisma.blocked.create({
+                data: {
+                    blocker: blockerID,
+                    blockee: blockeeID
+                }
+            });
+            if (!blockEntity) {
+                throw new Error('could not block');
+            }
+            return blockEntity;
         }
         catch (error) {
             console.log(error);

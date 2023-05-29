@@ -5,9 +5,9 @@ import Modal from 'react-modal';
 
 export default function ChatChannels()
 {
-    useEffect(() => {
-        setIsModalOpen(true);
-      }, []);
+    // useEffect(() => {
+    //     setIsModalOpen(true);
+    //   }, []);
     
     const [channel, setChannel] = useState("");
     const [newChannel, setNewChannel] = useState("");
