@@ -50,12 +50,13 @@ model FriendRequest {
 }
 
 model Blocked {
+	id        Int   @id @default(autoincrement())
 	blockerRef	User	@relation("blocker", fields: [blocker], references: [id])
 	blocker		Int
 	blockeeRef	User	@relation("blockee", fields: [blockee], references: [id])
 	blockee		Int
 
-	@@id([blocker, blockee])
+	@@unique([blocker, blockee])
 }
 
 model Channel {

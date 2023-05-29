@@ -483,6 +483,19 @@ export class ChatService {
             if (!blockee) {
                 throw new Error ('blockee user does not exist');
             }
+            const existingBlock = await this.prisma.blocked.findFirst({
+                where: {
+                    AND: [
+                        {
+                            blocker: blockerID,
+                            blockee: blockeeID,
+                        }
+                    ]
+                }
+            })
+            if (existingBlock) {
+                throw new Error('user already blocked');
+            }
             const blockEntity: Blocked = await this.prisma.blocked.create({
                 data: {
                     blocker: blockerID,
@@ -496,7 +509,47 @@ export class ChatService {
         }
         catch (error) {
             console.log(error);
+            return null;
         }
     }
+
+
+    // async unblockUser(blockerID: number, blockeeID: number)
+    // {
+    //     try {
+    //         if (blockerID == blockeeID) {
+    //             throw new Error ('cannot unblock itself');
+    //         }
+    //         const blockee = await this.userService.findOneById(blockeeID);
+    //         if (!blockee) {
+    //             throw new Error ('blockee user does not exist');
+    //         }
+    //         const existingBlock = await this.prisma.blocked.findFirst({
+    //             where: {
+    //                 AND: [
+    //                     {
+    //                         blocker: blockerID,
+    //                         blockee: blockeeID,
+    //                     }
+    //                 ]
+    //             }
+    //         })
+    //         if (!existingBlock) {
+    //             throw new Error('user is not blocked');
+    //         }
+    //         //here remove the block 
+
+    //         await this.prisma.blocked.delete({
+    //             where: {
+    //                 blocker: blockerID,
+    //                 blockee: blockeeID
+    //             }
+    //         });
+    //     }
+    //     catch (error) {
+    //         console.log(error);
+    //         return null;
+    //     }
+    // }
     
 }

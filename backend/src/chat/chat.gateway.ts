@@ -11,7 +11,7 @@ import {
 } from '@nestjs/websockets';  
 import { Socket, Server } from "socket.io";
 import { ChanType, User } from '@prisma/client';
-import { ChatService } from './chat.service.js';
+import { ChatService } from './service/index.js';
 import { Logger } from '@nestjs/common';
 import { UserSocketsService } from './chat.userSocketsService.js';
 import { cli } from 'webpack';
@@ -55,7 +55,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
   //GET ALL MESSAGES OF A CONVERSATION
 
   @SubscribeMessage('getPrivateConversation')
-  async onGetPrivateConversation(
+  async handleGetPrivateConversation(
     @ConnectedSocket() client: Socket, 
     @MessageBody() data: {firstUser: number; secondUser: number}) : Promise<void>
   {
@@ -77,19 +77,28 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
   //SEND A MESSAGE
 
   @SubscribeMessage('sendPrivateMessage')
-  async onSendPrivateMessage(
+  async handleSendPrivateMessage(
     @ConnectedSocket() client: Socket, 
     @MessageBody() data: {senderID: number; recipientID: number; content: string}) : Promise<void>
   {
     try {
       const { senderID, recipientID, content} = data;
-      const privateMessage = await this.chatService.createOnePrivMessage(senderID, recipientID, content);
-      if (!privateMessage) {
-        throw new WsException('could not find privateMessage');
+      const isBlocked = await this.chatService.isBlocked(senderID, recipientID);
+      if (!isBlocked)
+      {
+        const senderUserChatRoom = 'userID_' + senderID.toString() + '_room';
+        const privateMessage = await this.chatService.createOnePrivMessage(senderID, recipientID, content);
+        this.server.to(senderUserChatRoom).emit('foundPrivateMessage', privateMessage);
       }
-      const senderUserChatRoom = 'userID_' + senderID.toString() + '_room';
-      const recipientUserChatRoom = 'userID_' + recipientID.toString() + '_room';
-      this.server.to(senderUserChatRoom).to(recipientUserChatRoom).emit('foundPrivateMessage', privateMessage);
+      else {
+        const privateMessage = await this.chatService.createOnePrivMessage(senderID, recipientID, content);
+        if (!privateMessage) {
+          throw new WsException('could not find privateMessage');
+        }
+        const senderUserChatRoom = 'userID_' + senderID.toString() + '_room';
+        const recipientUserChatRoom = 'userID_' + recipientID.toString() + '_room';
+        this.server.to(senderUserChatRoom).to(recipientUserChatRoom).emit('foundPrivateMessage', privateMessage);
+      }
     }
     catch (error) {
       console.log(error);
@@ -97,7 +106,42 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
   }
 
 
-  //BLOCK 
+  //BLOCK
+
+  @SubscribeMessage('blockUser')
+  async handleBlockUser(
+    @ConnectedSocket() client: Socket, 
+    @MessageBody() data: {blockerID: number; blockeeID: number}) : Promise<void>
+  {
+    try {
+      const { blockerID, blockeeID} = data;
+      const blockeEntity = await this.chatService.blockUser(blockerID, blockeeID);
+      if (!blockeEntity) {
+        throw new WsException('could not find privateMessage');
+      }
+      client.emit('userBlocked');
+    }
+    catch (error) {
+      console.log(error);
+    }
+  }
+
+  //UNBLOCK
+
+  @SubscribeMessage('unblockUser')
+  async handleUnblockUser(
+    @ConnectedSocket() client: Socket, 
+    @MessageBody() data: {blockerID: number; blockeeID: number}) : Promise<void>
+  {
+    try {
+      const { blockerID, blockeeID} = data;
+      await this.chatService.unblockUser(blockerID, blockeeID);
+      client.emit('userUnblocked');
+    }
+    catch (error) {
+      console.log(error);
+    }
+  }
 
 
   //*****************************************************************************************************************************************//

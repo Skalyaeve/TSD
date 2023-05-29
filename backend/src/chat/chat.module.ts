@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { ChatService } from './chat.service.js';
+import { ChatService } from './service/index.js';
 import { UserModule } from '../user/user.module.js';
 import { ChatGateway } from './chat.gateway.js';
 import { AuthService } from '../auth/auth.service.js';
