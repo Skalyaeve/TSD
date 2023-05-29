@@ -6,7 +6,8 @@ import { WsException } from '@nestjs/websockets';
 import { UserSocketsService } from './chat.userSocketsService.js';
 import { PrismaService } from 'nestjs-prisma';
 import { ChanType } from '@prisma/client';
-import { ChanMember, ChanMessage, Channel } from "@prisma/client";
+import { ChanMember, ChanMessage, Channel, PrivMessage } from "@prisma/client";
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class ChatService {
@@ -104,7 +105,7 @@ export class ChatService {
         }
         catch (error) {
             console.log(error);
-            throw error;
+            // throw error;
         }
     }
 
@@ -130,7 +131,7 @@ export class ChatService {
         }
         catch (error) {
             console.log(error);
-            throw error;
+            // throw error;
         }
     }
 
@@ -175,7 +176,7 @@ export class ChatService {
         }
         catch (error) {
             console.log(error);
-            throw error;
+            // throw error;
         }
     }
 
@@ -208,7 +209,7 @@ export class ChatService {
         }
         catch (error) {
             console.log(error);
-            throw error;
+            // throw error;
         }
     }
 
@@ -244,7 +245,7 @@ export class ChatService {
         catch (error)
         {
             console.log(error);
-            throw error;
+            // throw error;
         }
     }
 
@@ -275,7 +276,7 @@ export class ChatService {
         catch (error)
         {
             console.log(error);
-            throw error;
+            // throw error;
         }
     }
 
@@ -311,7 +312,7 @@ export class ChatService {
         catch (error)
         {
             console.log(error);
-            throw error;
+            // throw error;
         }
 
     }
@@ -409,5 +410,65 @@ export class ChatService {
         return channel.chanOwner === memberId;
     }
 
+    async psswdMatch(chanId: number, password: string): Promise<boolean> {
+        const channel: Channel = await this.prisma.channel.findUnique({
+            where: {
+                id: chanId,
+            },
+        });
+        const hashedPassword = channel.passwd;
+        const isMatch = await bcrypt.compare(password, hashedPassword);
+        return isMatch;
+    }
 
+
+  //--------------------------------------------------------------------------//
+  //                              PRIVATE MESSAGE                             //
+  //--------------------------------------------------------------------------//
+
+    async createOnePrivMessage(
+        senderId: number, 
+        receiptId: number, 
+        content: string): Promise<PrivMessage>
+    {
+        const privMessage: PrivMessage = await this.prisma.privMessage.create({
+            data: {
+                sender: senderId,
+                recipient: receiptId,
+                content: content
+            },
+        });
+        return privMessage;
+    }
+
+    async getPrivateConversation(firstUser: number, secondUser: number) : Promise<PrivMessage[]>
+    {
+        try {
+            const conversation: PrivMessage[] = await this.prisma.privMessage.findMany({
+                where: {
+                    OR: [
+                        {
+                            sender: firstUser,
+                            recipient: secondUser,
+                        },
+                        {
+                            sender: secondUser,
+                            recipient: firstUser,
+                        }
+                    ],
+                },
+                orderBy: {
+                    timeSent: 'asc',
+                }
+            });
+            if (!conversation) {
+                throw new Error('conversation was not found');
+            }
+            return conversation;
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }
+    
 }

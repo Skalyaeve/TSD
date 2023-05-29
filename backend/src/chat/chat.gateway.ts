@@ -48,6 +48,60 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 
   //*****************************************************************************************************************************************//
   //*****************************************************************************************************************************************//
+  //                                                        PRIV MESSAGE EVENTS                                                              //
+  //*****************************************************************************************************************************************//
+  //*****************************************************************************************************************************************//
+
+  //GET ALL MESSAGES OF A CONVERSATION
+
+  @SubscribeMessage('getPrivateConversation')
+  async onGetPrivateConversation(
+    @ConnectedSocket() client: Socket, 
+    @MessageBody() data: {firstUser: number; secondUser: number}) : Promise<void>
+  {
+    try {
+      const { firstUser, secondUser} = data;
+      const conversation = await this.chatService.getPrivateConversation(firstUser, secondUser);
+      if (!conversation) {
+        throw new WsException('could not find conversation');
+      }
+      const firstUserChatRoom = 'userID_' + firstUser.toString() + '_room';
+      const secondUserChatRoom = 'userID_' + secondUser.toString() + '_room';
+      this.server.to(firstUserChatRoom).to(secondUserChatRoom).emit('foundPrivateConversation', conversation);
+    }
+    catch (error) {
+      console.log(error);
+    }
+  }
+
+  //SEND A MESSAGE
+
+  @SubscribeMessage('sendPrivateMessage')
+  async onSendPrivateMessage(
+    @ConnectedSocket() client: Socket, 
+    @MessageBody() data: {senderID: number; recipientID: number; content: string}) : Promise<void>
+  {
+    try {
+      const { senderID, recipientID, content} = data;
+      const privateMessage = await this.chatService.createOnePrivMessage(senderID, recipientID, content);
+      if (!privateMessage) {
+        throw new WsException('could not find privateMessage');
+      }
+      const senderUserChatRoom = 'userID_' + senderID.toString() + '_room';
+      const recipientUserChatRoom = 'userID_' + recipientID.toString() + '_room';
+      this.server.to(senderUserChatRoom).to(recipientUserChatRoom).emit('foundPrivateMessage', privateMessage);
+    }
+    catch (error) {
+      console.log(error);
+    }
+  }
+
+
+  //BLOCK 
+
+
+  //*****************************************************************************************************************************************//
+  //*****************************************************************************************************************************************//
   //                                                          CHANNEL EVENTS                                                                 //
   //*****************************************************************************************************************************************//
   //*****************************************************************************************************************************************//
@@ -67,16 +121,23 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
   @SubscribeMessage('createChannel')
   async onCreateChannel(
     @ConnectedSocket() client: Socket, 
-    @MessageBody() data: {name: string; userId: number}) : Promise<void>
+    @MessageBody() data: {name: string; userId: number, type: string, psswd?: string}) : Promise<void>
   {
-    const { name, userId } = data;
+    const { name, userId, type, psswd } = data;
 
     const channel = await this.chatService.createOneChannel(name, userId);
     const chanID = channel.id;
     await this.chatService.createOneChanMember(chanID, userId);
     await this.chatService.makeOwnerAdmin(userId, chanID);
-
+    if (!Object.values(ChanType).includes(type as ChanType)){
+      throw new WsException('Invalid channel type');
+    }
+    await this.chatService.setChannelType(userId, chanID, ChanType[type as keyof typeof ChanType]);
+    if (type == 'PROTECTED') {
+      await this.chatService.setChanPassword(chanID, userId, psswd);
+    }
     this.server.emit('created channel', channel);
+    // this.server.emit('created channel');
     // client.emit('channelCreated', channel);
   }
 
@@ -212,6 +273,41 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
   {
     try {
       const {chanID, userID} = data;
+      const chanMember = await this.chatService.createOneChanMember(chanID, userID);
+      if (!chanMember) {
+        throw new WsException('Chan member did not joined');
+      }
+      else {
+        const userSockets = this.userSocketsService.getUserSocketIds(userID);
+        userSockets.forEach(SocketID =>{
+          const socket = this.server.sockets.sockets.get(SocketID);
+          if (socket) {
+            const ChanRoomId = 'chan_'+ chanID + '_room';
+            socket.join(ChanRoomId);
+          }
+        })
+        const userRoomId = 'userID_' + userID.toString() + '_room';
+        this.server.to(userRoomId).emit('joinRoom', String(chanID));
+        // client.emit('userJoinedChannel', chanMember);
+        // In the above code, this.server.to(userRoomId).emit('joinRoom', String(chanID)); will emit a 'joinRoom' event to all sockets in the user-specific room. You will then need to handle this 'joinRoom' event on the client-side, where each socket will join the channel room upon receiving the 'joinRoom' event.
+      }
+    }
+    catch (error){
+      console.log(error);
+    }
+  }
+
+  @SubscribeMessage('joinProtectedChannel')
+  async handleJoinProtectedChannel(
+      @ConnectedSocket() client: Socket,
+      @MessageBody() data: {chanID: number, userID: number, password: string}) : Promise<void>
+  {
+    try {
+      const {chanID, userID, password} = data;
+      const passwordMatches = this.chatService.psswdMatch(chanID, password);
+      if (!passwordMatches) {
+        throw new WsException('password does not match');
+      }
       const chanMember = await this.chatService.createOneChanMember(chanID, userID);
       if (!chanMember) {
         throw new WsException('Chan member did not joined');
@@ -398,12 +494,19 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
   @SubscribeMessage('setChannelType')
   async handleSetChannelType(
     @ConnectedSocket() client: Socket,
-    @MessageBody() data: {userId:number, chanId:number, newChanType:string})
+    @MessageBody() data: {userId:number, chanId:number, newChanType:string, password?: string})
   {
     try {
-      const {userId, chanId, newChanType} = data;
+      const {userId, chanId, newChanType, password} = data;
       if (!Object.values(ChanType).includes(newChanType as ChanType)){
-        
+        throw new WsException('Invalid channel type');
+      }
+
+      if (newChanType == 'PROTECTED' && password) {
+        if (password == '') {
+          throw new WsException('Password cannot be empty');
+        }
+        await this.chatService.setChanPassword(chanId, userId, password);
       }
       const updatedChannel = await this.chatService.setChannelType(userId, chanId, ChanType[newChanType as keyof typeof ChanType]);
       if (!updatedChannel) {
