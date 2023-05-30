@@ -701,6 +701,11 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       console.log('userWithSocket: ',userWithSocket);
       const userRoomId = 'userID_' + userID.toString() + '_room';
       client.leave(userRoomId);
+      const userChannels = await this.chatService.findAllChannelsByMember(userID);
+      userChannels.forEach(chanMember => {
+        const chanRoomId = 'chan_' + chanMember.chanId + '_room';
+        client.leave(chanRoomId);
+      });
     }
   }
 }
