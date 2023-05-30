@@ -7,6 +7,8 @@ import { UserService } from '../user/user.service.js';
 import { CallbackExceptionFilter } from './filter/callback-exception.filter.js';
 import { JwtGuard } from './guards/JwtGuard.js';
 import { User } from '@prisma/client';
+import { authenticator } from 'otplib';
+import { toFileStream } from 'qrcode';
 
 @Controller('auth')
 export class AuthController {
@@ -55,6 +57,40 @@ export class AuthController {
         });
         res.redirect('http://localhost:8080');
         return (req.user);
+    }
+
+    @Post('2FA/on')
+    @UseGuards(JwtGuard)
+    async activate2FA(@Req() req: any): Promise<User> {
+        const secret: string = authenticator.generateSecret();
+        const user: User = await this.userService.update2FAStatus(req.user.id, true, secret);
+        return user;
+    }
+
+    @Post('2FA/off')
+    @UseGuards(JwtGuard)
+    async deactivate2FA(@Req() req: any): Promise<User> {
+        const user: User = await this.userService.update2FAStatus(req.user.id, false, null);
+        return user;
+    }
+
+    @Get('2FA/qrcode')
+    @UseGuards(JwtGuard)
+    async generateQRCode(@Req() req: any, @Res() res: any): Promise<any> {
+        const user: User = await this.userService.findOneByIdOrThrow(req.user.id);
+        const otpauthURL: string = authenticator.keyuri(user.email, 'transcendance', user.twoFactorAuthSecret);
+        return toFileStream(res, otpauthURL);
+    }
+
+    @Get('2FA/verify')
+    @UseGuards(JwtGuard)
+    async verify2FACode(@Req() req: any, @Body('code') code: string): Promise<any> {
+        const user: User = await this.userService.findOneByIdOrThrow(req.user.id);
+        const isValid: boolean = authenticator.verify({
+            token: code,
+            secret: user.twoFactorAuthSecret,
+        });
+        return isValid;
     }
 
     // DEBUGGING
