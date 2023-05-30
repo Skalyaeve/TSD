@@ -158,9 +158,9 @@ function Party() {
 	function keysInitialisation(scene: Phaser.Scene) {
 		if (scene.input.keyboard) {
 			keys = {
-				up: scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.Z),
+				up: scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.W),
 				down: scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.S),
-				left: scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.Q),
+				left: scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.A),
 				right: scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.D)
 			}
 		}
@@ -350,9 +350,11 @@ function Party() {
 	function checkNewPlayer(scene: Phaser.Scene) {
 		if (creationQueue.left) {
 			createPlayer(creationQueue.left, scene)
+			creationQueue.left = undefined
 		}
 		if (creationQueue.right) {
 			createPlayer(creationQueue.right, scene)
+			creationQueue.right = undefined
 		}
 	}
 

@@ -61,13 +61,17 @@ interface newProps {
 	ballProps: objectProps
 }
 
+interface sharedPlayer {
+
+}
+
 /* -------------------------VARIABLES------------------------- */
 
 // Game constants
 const screenWidth: number = 1920
 const screenHeight: number = 1080
 const targetFPS: number = 60
-const playerSpeed: number = 150
+const playerSpeed: number = 1000
 
 // Game variables
 let sessionId: string | undefined = undefined
@@ -192,7 +196,7 @@ function update() {
 	physics.world.update(tick * 1000, 1000 / targetFPS)
 	physics.world.postUpdate()
 	tick++
-	if (tick % 2) sendProperties()
+	sendProperties()
 }
 
 /* -------------------------MAIN CODE------------------------- */
