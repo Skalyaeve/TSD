@@ -11,6 +11,7 @@ import { UserModule } from '../user/user.module.js';
 import { UserService } from '../user/user.service.js';
 import { ConfigModule } from '@nestjs/config';
 import { PrismaService } from 'nestjs-prisma';
+import { JwtTwoFactorStrategy } from './strategies/JwtTwoFactorStrategy.js';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { PrismaService } from 'nestjs-prisma';
     FortyTwoStrategy,
     GoogleStrategy,
     JwtStrategy,
+    JwtTwoFactorStrategy,
     AuthService,
     UserService,
     PrismaService

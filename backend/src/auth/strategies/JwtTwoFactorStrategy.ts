@@ -5,11 +5,11 @@ import { ExtractJwt, Strategy } from "passport-jwt";
 import { PayloadDto } from "../dto/payload.dto.js";
 
 @Injectable()
-export class JwtStrategy extends PassportStrategy(Strategy) {
+export class JwtTwoFactorStrategy extends PassportStrategy(Strategy, 'jwt-2fa') {
     constructor() {
         super({
             jwtFromRequest: ExtractJwt.fromExtractors([
-                JwtStrategy.extractJWTFromCookie,
+                JwtTwoFactorStrategy.extractJWTFromCookie,
             ]),
             ignoreExpiration: false,
             secretOrKey: process.env.jwtSecret,
@@ -24,12 +24,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     }
 
     async validate(payload: PayloadDto): Promise<any> {
-        if (payload.is2FAEnabled && !payload.is2FAAuthenticated) {
-            throw new UnauthorizedException('require second authentication step');
-        }
-        return {
-            id: payload.id,
-        }
+        return payload;
     }
 
 }
