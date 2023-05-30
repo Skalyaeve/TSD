@@ -22,8 +22,8 @@ export async function setChanPassword(chanId: number, userId: number, newPasswd:
     }
   }
   catch (error) {
-    console.log(error);
-    // throw error;
+    console.error(error);
+    throw error;
   }
 }
 
@@ -48,8 +48,8 @@ export async function setChanName(data: { chanMember: number; chanId: number, ne
     }
   }
   catch (error) {
-    console.log(error);
-    // throw error;
+    console.error(error);
+    throw error;
   }
 }
 
@@ -69,7 +69,8 @@ export async function setChannelType(userId: number, chanID: number, type: ChanT
     return channel;
   }
   catch (error) {
-    console.log(error);
+    console.error(error);
+    throw error;
   }
 }
 
@@ -93,8 +94,8 @@ export async function makeOwnerAdmin(userId: number, chanId: number): Promise<Ch
     return updatedMember;
   }
   catch (error) {
-    console.log(error);
-    // throw error;
+    console.error(error);
+    throw error;
   }
 }
 
@@ -127,7 +128,7 @@ export async function makeChanAdmin(data: { chanOwnerId: number, chanId: number,
     }
   }
   catch (error) {
-    console.log(error);
-    // throw error;
+    console.error(error);
+    throw error;
   }
 }

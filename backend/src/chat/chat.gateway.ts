@@ -62,15 +62,13 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     try {
       const { firstUser, secondUser} = data;
       const conversation = await this.chatService.getPrivateConversation(firstUser, secondUser);
-      if (!conversation) {
-        throw new WsException('could not find conversation');
-      }
       const firstUserChatRoom = 'userID_' + firstUser.toString() + '_room';
       const secondUserChatRoom = 'userID_' + secondUser.toString() + '_room';
       this.server.to(firstUserChatRoom).to(secondUserChatRoom).emit('foundPrivateConversation', conversation);
     }
     catch (error) {
       console.log(error);
+      throw new WsException(error.message || 'Could not get private conversation');
     }
   }
 
@@ -92,9 +90,6 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       }
       else {
         const privateMessage = await this.chatService.createOnePrivMessage(senderID, recipientID, content);
-        if (!privateMessage) {
-          throw new WsException('could not find privateMessage');
-        }
         const senderUserChatRoom = 'userID_' + senderID.toString() + '_room';
         const recipientUserChatRoom = 'userID_' + recipientID.toString() + '_room';
         this.server.to(senderUserChatRoom).to(recipientUserChatRoom).emit('foundPrivateMessage', privateMessage);
@@ -102,6 +97,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     }
     catch (error) {
       console.log(error);
+      throw new WsException(error.message || 'Could not send private message');
     }
   }
 
@@ -116,13 +112,11 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     try {
       const { blockerID, blockeeID} = data;
       const blockeEntity = await this.chatService.blockUser(blockerID, blockeeID);
-      if (!blockeEntity) {
-        throw new WsException('could not find privateMessage');
-      }
       client.emit('userBlocked');
     }
     catch (error) {
       console.log(error);
+      throw new WsException(error.message || 'Could not block user');
     }
   }
 
@@ -140,6 +134,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     }
     catch (error) {
       console.log(error);
+      throw new WsException(error.message || 'Could not unblock user');
     }
   }
 
@@ -167,20 +162,27 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     @ConnectedSocket() client: Socket, 
     @MessageBody() data: {name: string; userId: number, type: string, psswd?: string}) : Promise<void>
   {
-    const { name, userId, type, psswd } = data;
-
-    const channel = await this.chatService.createOneChannel(name, userId);
-    const chanID = channel.id;
-    await this.chatService.createOneChanMember(chanID, userId);
-    await this.chatService.makeOwnerAdmin(userId, chanID);
-    if (!Object.values(ChanType).includes(type as ChanType)){
-      throw new WsException('Invalid channel type');
+    try {
+      const { name, userId, type, psswd } = data;
+  
+      const channel = await this.chatService.createOneChannel(name, userId);
+      const chanID = channel.id;
+      await this.chatService.createOneChanMember(chanID, userId);
+      await this.chatService.makeOwnerAdmin(userId, chanID);
+      if (!Object.values(ChanType).includes(type as ChanType)){
+        throw new WsException('Invalid channel type');
+      }
+      await this.chatService.setChannelType(userId, chanID, ChanType[type as keyof typeof ChanType]);
+      if (type == 'PROTECTED') {
+        await this.chatService.setChanPassword(chanID, userId, psswd);
+      }
+      this.server.emit('created channel', channel);
     }
-    await this.chatService.setChannelType(userId, chanID, ChanType[type as keyof typeof ChanType]);
-    if (type == 'PROTECTED') {
-      await this.chatService.setChanPassword(chanID, userId, psswd);
+    catch (error)
+    {
+      console.log(error);
+      throw new WsException(error.message || 'Could not create channel');
     }
-    this.server.emit('created channel', channel);
     // this.server.emit('created channel');
     // client.emit('channelCreated', channel);
   }
@@ -203,13 +205,12 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
   {
     try{
       const channel = await this.chatService.findChannelbyId(data.chanId);
-      if (!channel){
-        throw new WsException('Channel not found');
-      }
       client.emit('channelFound', channel);
     }
     catch (error){
       console.log(error);
+      throw new WsException(error.message || 'Could find channel');
+
     }
   }
   
@@ -221,13 +222,11 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
   {
     try{
       const channels = await this.chatService.findAllChannelsByMember(userId);
-      if (!channels){
-        throw new WsException('Channels not found');
-      }
       client.emit('channelsByUserFound', channels);
     }
     catch (error){
       console.log(error);
+      throw new WsException(error.message || 'Could not get user`s channels');
     }
   }
 
@@ -238,13 +237,11 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
   {
     try{
       const members = await this.chatService.findAllMembersByChanID(chanId);
-      if (!members){
-        throw new WsException('Members not found');
-      }
       client.emit('MembersofChannelFound', members);
     }
     catch (error){
       console.log(error);
+      throw new WsException(error.message || 'Could not get channel members');
     }
   }
 
@@ -267,10 +264,21 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
   {
     try {
       const {senderId, chanId, content} = data;
-      const chanMessage = await this.chatService.createOneChanMessage(senderId, chanId, content);
-      if (!chanMessage) {
-        throw new WsException('Channel message was not sent');
+      //check if i am in the channel
+      const isMember = await this.chatService.isMember(chanId, senderId);
+      if (!isMember) {
+        const userRoomId = 'userID_' + senderId.toString() + '_room';
+        this.server.to(userRoomId).emit('userIsNotMember');
+        throw new WsException('user not in channel');
       }
+      //check if i am not muted
+      const isMuted = await this.chatService.isMuted(chanId, senderId);
+      if (isMuted){
+        const userRoomId = 'userID_' + senderId.toString() + '_room';
+        this.server.to(userRoomId).emit('userIsMuted');
+        throw new WsException('user is muted');
+      }
+      const chanMessage = await this.chatService.createOneChanMessage(senderId, chanId, content);
       const ChanRoomId = 'chan_'+ chanId + '_room';
       // client.to(ChanRoomId).emit('SentChanMessage', chanMessage);
 
@@ -280,6 +288,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     catch (error)
     {
       console.log(error);
+      throw new WsException(error.message || 'Could not send message to channel');
     }
   }
 
@@ -290,13 +299,11 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
   {
     try{
       const messages = await this.chatService.findAllChanMessages(chanId);
-      if (!messages){
-        throw new WsException('Channel messages were not found');
-      }
       client.emit('channelMessagesFound', channel);
     }
     catch (error){
       console.log(error);
+      throw new WsException(error.message || 'Could not channel messages');
     }
   }
 
@@ -310,6 +317,8 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
    * @param client 
    * @param data 
    */
+
+  //check user has not been banned
   @SubscribeMessage('joinChannel')
   async handleJoinChannel(
       @ConnectedSocket() client: Socket,
@@ -317,27 +326,29 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
   {
     try {
       const {chanID, userID} = data;
-      const chanMember = await this.chatService.createOneChanMember(chanID, userID);
-      if (!chanMember) {
-        throw new WsException('Chan member did not joined');
-      }
-      else {
-        const userSockets = this.userSocketsService.getUserSocketIds(userID);
-        userSockets.forEach(SocketID =>{
-          const socket = this.server.sockets.sockets.get(SocketID);
-          if (socket) {
-            const ChanRoomId = 'chan_'+ chanID + '_room';
-            socket.join(ChanRoomId);
-          }
-        })
+      const isBanned = await this.chatService.isBanned(chanID, userID);
+      if (isBanned) {
         const userRoomId = 'userID_' + userID.toString() + '_room';
-        this.server.to(userRoomId).emit('joinRoom', String(chanID));
-        // client.emit('userJoinedChannel', chanMember);
-        // In the above code, this.server.to(userRoomId).emit('joinRoom', String(chanID)); will emit a 'joinRoom' event to all sockets in the user-specific room. You will then need to handle this 'joinRoom' event on the client-side, where each socket will join the channel room upon receiving the 'joinRoom' event.
+        this.server.to(userRoomId).emit('userIsBanned');
+        throw new WsException('Chan member is banned');
       }
+      const chanMember = await this.chatService.createOneChanMember(chanID, userID);
+      const userSockets = this.userSocketsService.getUserSocketIds(userID);
+      userSockets.forEach(SocketID =>{
+        const socket = this.server.sockets.sockets.get(SocketID);
+        if (socket) {
+          const ChanRoomId = 'chan_'+ chanID + '_room';
+          socket.join(ChanRoomId);
+        }
+      })
+      const userRoomId = 'userID_' + userID.toString() + '_room';
+      this.server.to(userRoomId).emit('joinRoom', String(chanID));
+      // client.emit('userJoinedChannel', chanMember);
+      // In the above code, this.server.to(userRoomId).emit('joinRoom', String(chanID)); will emit a 'joinRoom' event to all sockets in the user-specific room. You will then need to handle this 'joinRoom' event on the client-side, where each socket will join the channel room upon receiving the 'joinRoom' event.
     }
     catch (error){
       console.log(error);
+      throw new WsException(error.message || 'Could not public or private channel');
     }
   }
 
@@ -348,31 +359,33 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
   {
     try {
       const {chanID, userID, password} = data;
+      const isBanned = await this.chatService.isBanned(chanID, userID);
+      if (isBanned) {
+        const userRoomId = 'userID_' + userID.toString() + '_room';
+        this.server.to(userRoomId).emit('userIsBanned');
+        return;
+      }
       const passwordMatches = this.chatService.psswdMatch(chanID, password);
       if (!passwordMatches) {
         throw new WsException('password does not match');
       }
       const chanMember = await this.chatService.createOneChanMember(chanID, userID);
-      if (!chanMember) {
-        throw new WsException('Chan member did not joined');
-      }
-      else {
-        const userSockets = this.userSocketsService.getUserSocketIds(userID);
-        userSockets.forEach(SocketID =>{
-          const socket = this.server.sockets.sockets.get(SocketID);
-          if (socket) {
-            const ChanRoomId = 'chan_'+ chanID + '_room';
-            socket.join(ChanRoomId);
-          }
-        })
-        const userRoomId = 'userID_' + userID.toString() + '_room';
-        this.server.to(userRoomId).emit('joinRoom', String(chanID));
-        // client.emit('userJoinedChannel', chanMember);
-        // In the above code, this.server.to(userRoomId).emit('joinRoom', String(chanID)); will emit a 'joinRoom' event to all sockets in the user-specific room. You will then need to handle this 'joinRoom' event on the client-side, where each socket will join the channel room upon receiving the 'joinRoom' event.
-      }
+      const userSockets = this.userSocketsService.getUserSocketIds(userID);
+      userSockets.forEach(SocketID =>{
+        const socket = this.server.sockets.sockets.get(SocketID);
+        if (socket) {
+          const ChanRoomId = 'chan_'+ chanID + '_room';
+          socket.join(ChanRoomId);
+        }
+      })
+      const userRoomId = 'userID_' + userID.toString() + '_room';
+      this.server.to(userRoomId).emit('joinRoom', String(chanID));
+      // client.emit('userJoinedChannel', chanMember);
+      // In the above code, this.server.to(userRoomId).emit('joinRoom', String(chanID)); will emit a 'joinRoom' event to all sockets in the user-specific room. You will then need to handle this 'joinRoom' event on the client-side, where each socket will join the channel room upon receiving the 'joinRoom' event.
     }
     catch (error){
       console.log(error);
+      throw new WsException(error.message || 'Could not join protected channel');
     }
   }
 
@@ -391,15 +404,13 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     try {
     const {chanId, memberId, chanOwnerId} = data;
       const updatedChanMember = await this.chatService.makeChanAdmin(data);
-      if (!updatedChanMember) {
-        throw new WsException('could not make member admin');
-      }
       const ChanRoomId = 'chan_'+ chanId + '_room';
       this.server.to(ChanRoomId).emit('newAdminInRoom');
       // client.emit('MemberisAdmin', updatedChanMember);
     }
     catch (error) {
       console.log(error);
+      throw new WsException(error.message || 'Could not make member admin');
     }
   }
   /**
@@ -415,17 +426,13 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     try {
       const {chanId, memberToMuteId, adminId, muteDuration} = data;
       const mutedMember = await this.chatService.muteMember(data);
-      if (!mutedMember) {
-        throw new WsException('could not mute member');
-      }
-      else {
-        const ChanRoomId = 'chan_'+ chanId + '_room';
-        this.server.to(ChanRoomId).emit('memberMuted');
-        // client.emit('memberIsMuted', mutedMember);
-      }
+      const ChanRoomId = 'chan_'+ chanId + '_room';
+      this.server.to(ChanRoomId).emit('memberMuted');
+      // client.emit('memberIsMuted', mutedMember);
     }
     catch (error) {
       console.log(error);
+      throw new WsException(error.message || 'Could not mute member');
     }
   }
 
@@ -437,18 +444,21 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     try {
       const {chanId, memberToBanId, adminId} = data;
       const bannedMember = await this.chatService.banMember(data);
-      if (!bannedMember)  {
-        throw new WsException('could not ban member')
-      }
-      else {
-        
-        const ChanRoomId = 'chan_'+ chanId + '_room';   
+        const ChanRoomId = 'chan_'+ chanId + '_room';
+        //leave room 
+        const userSockets = this.userSocketsService.getUserSocketIds(memberToBanId);
+        userSockets.forEach(SocketID =>{
+          const socket = this.server.sockets.sockets.get(SocketID);
+          if (socket) {
+            socket.leave(ChanRoomId);
+          }
+        })
         this.server.to(ChanRoomId).emit('memberBanned');
         // client.emit('memberIsBanned', bannedMember);
-      }
     } 
     catch (error) {
       console.log(error);
+      throw new WsException(error.message || 'Could not ban Member');
     }
   }
 
@@ -459,18 +469,44 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
   {
     try {
       const {chanId, memberToKickId, adminId} = data;
-      const kickedMember = await this.chatService.kickMember(data);
-      if (!kickedMember)  {
-        throw new WsException('could not ban member')
-      }
-      else {
-        const ChanRoomId = 'chan_'+ chanId + '_room';   
-        this.server.to(ChanRoomId).emit('memberKicked');
-        // client.emit('memberIsBanned', kickedMember);
-      }
+      await this.chatService.kickMember(data);
+      const ChanRoomId = 'chan_'+ chanId + '_room';
+      const userSockets = this.userSocketsService.getUserSocketIds(memberToKickId);
+      userSockets.forEach(SocketID =>{
+        const socket = this.server.sockets.sockets.get(SocketID);
+        if (socket) {
+          socket.leave(ChanRoomId);
+        }
+      })
+      this.server.to(ChanRoomId).emit('memberKicked');
     } 
     catch (error) {
       console.log(error);
+      throw new WsException(error.message || 'Could not kick member');
+    }
+  }
+
+  @SubscribeMessage('leaveChannel')
+  async handleLeaveChannel(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() data: {chanId: number, userId: number}) : Promise<void>
+  {
+    try {
+      const {chanId, userId} = data;
+      await this.chatService.leaveChannel(chanId, userId);
+      const ChanRoomId = 'chan_'+ chanId + '_room';
+      const userSockets = this.userSocketsService.getUserSocketIds(userId);
+      userSockets.forEach(SocketID =>{
+        const socket = this.server.sockets.sockets.get(SocketID);
+        if (socket) {
+          socket.leave(ChanRoomId);
+        }
+      })
+      this.server.to(ChanRoomId).emit('user left channel');
+    }
+    catch (error) {
+      console.log(error);
+      throw new WsException(error.message || 'user could not leave channel');
     }
   }
 
@@ -493,9 +529,6 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     try {
       const {chanMember, chanId, newChanName} = data;
       const updatedChannel = await this.chatService.setChanName(data);
-      if (!updatedChannel) {
-        throw new WsException('could not change name of channel');
-      }
       const ChanRoomId = 'chan_'+ chanId + '_room';
       const chanName = updatedChannel.name;
       this.server.to(ChanRoomId).emit('chanNameChanged', chanName);
@@ -503,6 +536,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     }
     catch (error) {
       console.log(error);
+      throw new WsException(error.message || 'Could not set channel name');
     }
   }
 
@@ -522,16 +556,12 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       const saltRounds = 10;
       const hashedPassword = await bcrypt.hash(newPasswd, saltRounds);
       const updatedChannel = await this.chatService.setChanPassword(chanId, userId, hashedPassword);
-
-      if (!updatedChannel)
-      {
-        throw new WsException('Password could not be set');
-      }
       client.emit('chanPasswdChanged', updatedChannel);
     }
     catch (error)
     {
       console.log(error);
+      throw new WsException(error.message || 'Could not set new password');
     }
   }
 
@@ -553,17 +583,15 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
         await this.chatService.setChanPassword(chanId, userId, password);
       }
       const updatedChannel = await this.chatService.setChannelType(userId, chanId, ChanType[newChanType as keyof typeof ChanType]);
-      if (!updatedChannel) {
-        throw new WsException('could not change Type of channel');
-      }
       const ChanRoomId = 'chan_'+ chanId + '_room';
       const chanType = updatedChannel.type;
       this.server.to(ChanRoomId).emit('chanTypeChanged');
-      this.server.to(ChanRoomId).emit('chanTypeChanged', chanType);
+      // this.server.to(ChanRoomId).emit('chanTypeChanged', chanType);
       // client.emit('channelNameChanged', updatedChannel);
     }
     catch (error) {
       console.log(error);
+      throw new WsException(error.message || 'Could not set channel type');
     }
   }
 
@@ -597,6 +625,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     }
     catch (error) {
       console.log(error);
+      throw new WsException(error.message || 'Could get user info');
     }
   }
   

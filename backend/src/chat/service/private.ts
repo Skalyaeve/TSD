@@ -5,14 +5,21 @@ export async function createOnePrivMessage(
   senderId: number,
   receiptId: number,
   content: string): Promise<PrivMessage> {
-  const privMessage: PrivMessage = await this.prisma.privMessage.create({
-    data: {
-      sender: senderId,
-      recipient: receiptId,
-      content: content
-    },
-  });
-  return privMessage;
+
+  try {
+    const privMessage: PrivMessage = await this.prisma.privMessage.create({
+      data: {
+        sender: senderId,
+        recipient: receiptId,
+        content: content
+      },
+    });
+    return privMessage;
+  }
+  catch (error) {
+    console.error(error);
+    throw error;
+  }
 }
 
 export async function getPrivateConversation(firstUser: number, secondUser: number): Promise<PrivMessage[]> {
@@ -40,7 +47,8 @@ export async function getPrivateConversation(firstUser: number, secondUser: numb
     return conversation;
   }
   catch (error) {
-    console.log(error);
+    console.error(error);
+    throw error;
   }
 }
 
@@ -78,8 +86,8 @@ export async function blockUser(blockerID: number, blockeeID: number): Promise<B
     return blockEntity;
   }
   catch (error) {
-    console.log(error);
-    return null;
+    console.error(error);
+    throw error;
   }
 }
 
@@ -114,8 +122,8 @@ export async function unblockUser(blockerID: number, blockeeID: number) {
     });
   }
   catch (error) {
-    console.log(error);
-    return null;
+    console.error(error);
+    throw error;
   }
 }
 
@@ -145,7 +153,7 @@ export async function isBlocked(senderId: number, recipientID: number) : Promise
     return false
   }
   catch (error) {
-    console.log(error);
-    return null;
+    console.error(error);
+    throw error;
   }
 }

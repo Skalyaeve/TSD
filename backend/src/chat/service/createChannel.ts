@@ -5,47 +5,84 @@ import { ChanMember, ChanMessage, Channel } from "@prisma/client";
 // Creation methods, equivalent of setters
 
 export async function createChannel(channelData: { name: string, type: ChanType, passwd?: string, chanOwnerRef: { connect: { id: number } } }): Promise<Channel> {
-  const channel: Channel = await this.prisma.channel.create({
-    data: channelData,
-  });
-  return channel;
+  try {
+    const channel: Channel = await this.prisma.channel.create({
+      data: channelData,
+    });
+    if (!channel) {
+      throw new Error('could not create channel');
+    }
+    return channel;
+  }
+  catch (error) {
+    console.error(error);
+    throw error;
+  }
 }
 
 export async function createOneChannel(name: string, chanOwner: number): Promise<Channel> {
-  const channel = this.prisma.channel.create({
-    data: {
-      name,
-      chanOwner,
-    },
-  });
-  return channel;
+  try {
+    const channel = this.prisma.channel.create({
+      data: {
+        name,
+        chanOwner,
+      },
+    });
+    if (!channel) {
+      throw new Error('could not create channel');
+    }
+    return channel;
+  }
+  catch (error) {
+    console.error(error);
+    throw error;
+  }
 }
 
 export async function createOneChanMember(chanId: number, memberId: number): Promise<ChanMember> {
-  const chanMember: ChanMember = await this.prisma.chanMember.create({
-    data: {
-      chanId,
-      member: memberId,
-    },
-  });
-  return chanMember;
+  try {
+    const chanMember: ChanMember = await this.prisma.chanMember.create({
+      data: {
+        chanId,
+        member: memberId,
+      },
+    });
+    if (!chanMember) {
+      throw new Error('channel member could not be created');
+    }
+    return chanMember;
+  }
+  catch (error) {
+    console.error(error);
+    throw error;
+  }
 }
 
 export async function createOneChanMessage(senderId: number, chanId: number, content: string): Promise<ChanMessage> {
-  const message: ChanMessage = await this.prisma.chanMessage.create({
-    data: {
-      senderRef: {
-        connect: {
-          id: senderId,
+
+  try {
+    const message: ChanMessage = await this.prisma.chanMessage.create({
+      data: {
+        senderRef: {
+          connect: {
+            id: senderId,
+          },
         },
-      },
-      chanRef: {
-        connect: {
-          id: chanId,
+        chanRef: {
+          connect: {
+            id: chanId,
+          },
         },
+        content,
       },
-      content,
-    },
-  });
-  return message;
+    });
+    if (!message) {
+      throw new Error('could not create chan message');
+    }
+    return message;
+  }
+  catch (error) {
+    console.error(error);
+    throw error;
+  }
 }
