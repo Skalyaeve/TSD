@@ -14,13 +14,12 @@
 		// Permet de ne pas générer de fichiers de sortie lors de la compilation
 		"noEmit": false,
 		// Dossier de sortie de transcompilation
-		"outDir": "headless/dist",
+		"outDir": "toolDist",
 		// Removes 'any' type error due to packages
 		"noImplicitAny": false,
 	},
 	// Spécifie les fichiers à inclure dans la compilation
 	"include": [
-		"headless/ts/headless.ts",
-		"headless/types/image.d.ts"
+		"gameTools/**/*"
 	],
 }

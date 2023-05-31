@@ -9,18 +9,17 @@
 		"moduleResolution": "node16",
 		// Transformer les importations CommonJS en ECMAScript 
 		"esModuleInterop": true,
-		// Active un ensemble de vérifications de type strict
-		"strict": true,
+		// Le compilateur vérifiera la cohérence des nom de fichiers
+		"forceConsistentCasingInFileNames": true,
 		// Permet de ne pas générer de fichiers de sortie lors de la compilation
 		"noEmit": false,
 		// Dossier de sortie de transcompilation
-		"outDir": "headless/dist",
-		// Removes 'any' type error due to packages
-		"noImplicitAny": false,
+		"outDir": "server/dist",
 	},
 	// Spécifie les fichiers à inclure dans la compilation
 	"include": [
-		"headless/ts/headless.ts",
-		"headless/types/image.d.ts"
+		"server/index.ts",
+		"server/controler.ts",
+		"server/phaser.ts"
 	],
 }

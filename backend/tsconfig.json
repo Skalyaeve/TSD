@@ -5,21 +5,17 @@
 		"outDir": "dist",
 		"moduleResolution": "node16",
 		"esModuleInterop": true,
-
-		// A quoi servent ces trucs? Si on les enlève ca marche plus
 		"skipLibCheck": true,
 		"experimentalDecorators": true,
 		"emitDecoratorMetadata": true,
-		
-		/* A quoi servent ces trucs? Si on les enlève ca marche quand même
 		"incremental": true,
 		"strictBindCallApply": false,
 		"declaration": true,
-		"removeComments": true,
 		"allowSyntheticDefaultImports": true,
 		"strictNullChecks": false,
 		"noImplicitAny": false,
-		"noFallthroughCasesInSwitch": false, */
+		"noFallthroughCasesInSwitch": false,
+		"removeComments": true,
 	},
 	"include": [
 		"src/**/*"

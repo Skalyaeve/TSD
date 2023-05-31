@@ -1,64 +1,103 @@
 /* -------------------------LIBRARIES IMPORTS------------------------- */
 
-import { SubscribeMessage, WebSocketGateway, WebSocketServer, OnGatewayConnection, OnGatewayDisconnect } from '@nestjs/websockets';
-import { Server, Socket } from 'socket.io';
 import { v4 as uuidv4 } from 'uuid';
-import { JSDOM } from 'jsdom';
-import * as path from 'path';
+import { Worker } from 'worker_threads'
+import { Server, Socket } from 'socket.io';
+import { SubscribeMessage, WebSocketGateway, WebSocketServer, OnGatewayConnection, OnGatewayDisconnect } from '@nestjs/websockets';
 
 /* -------------------------TYPES------------------------- */
 
-// Socket and socket type for server
+// Socket and socket type
 interface socketInfo {
-	socket: Socket								// Socket
-	type: string								// Socket type
+	socket: Socket									// Socket
+	type: string | undefined						// Socket type
 }
 
-// Player key states interface
+// Player key states
 interface keyStates {
-	up: boolean									// Player UP key state
-	down: boolean								// Player DOWN key state
-	left: boolean								// Player LEFT key state
-	right: boolean								// Player RIGHT key state
+	up: boolean										// Player UP key state
+	down: boolean									// Player DOWN key state
+	left: boolean									// Player LEFT key state
+	right: boolean									// Player RIGHT key state
 }
 
-// Player update content
-interface playerUpdate {
-	xPos: number
-	yPos: number
-	xVel: number
-	yVel: number
+// Skins
+interface skin {
+	name: string									// Skin name
+	width: number									// Skin width
+	height: number									// Skin height
 }
 
-// Players interface
+// Players
 interface player {
-	id: string									// Player ID
-	xPos: number								// Player initial X position
-	yPos: number								// Player initial Y position
-	xDir: string								// Player X direction (left/right)
-	keyStates: keyStates						// Player key states
-	xVel: number								// Player X velocity
-	yVel: number								// Player Y velocity
-	lastMove: string							// Player last movement state (none/idle/run)
-	move: string								// Player actual movement state (idle/run)
-	skin: string								// Player skin name
-	anim: string								// Player current animation
+	id: string										// Player ID
+	sessionId: string | undefined					// Player session ID
+	skin: string									// Player skin name
 }
 
-interface playerConstruct {
-	id: string
-	side: "left" | "right"
-	skin: "player" | "mage" | "blank" | "black"
-}
-
+// Party session
 interface party {
-	id: string
-	hostID: string
-	playerOneId: string
-	playerTwoId: string
+	id: string										// Party id
+	worker: Worker									// Party worker	
+	leftPlayerId: string							// Party left player ID
+	rightPlayerId: string							// Party right player ID
 }
 
-/* -------------------------WEBSOCKET-HANDLING------------------------- */
+// Party login data
+interface loginData {
+	sessionId: string
+}
+
+// Player construction interface (sent to the client)
+interface clientPlayerConstruct {
+	side: 'left' | 'right'							// Player side
+	skin: "player" | "mage" | "blank" | "black"		// Player skin
+}
+
+// Players construction interface (sent to the session)
+interface sessionPlayerConstruct {
+	side: 'left' | 'right'							// Player side
+	xPos: number									// Player initial X position
+	yPos: number									// Player initial Y position
+	width: number									// Player width
+	height: number									// Player height
+}
+
+// Player update (sent by the client to the back)
+interface playerUpdateFromClient {
+	keyStates: keyStates							// Player key states
+}
+
+// Player update (sent by the back to the session)
+interface playerUpdateToSession {
+	side: 'left' | 'right'							// Player side
+	keyStates: keyStates							// Player key states
+}
+
+// New properties (sent by the session to the back)
+interface newPropsFromSession {
+	sessionId: string								// Session ID
+	leftProps: objectProps							// Left player properties
+	rightProps: objectProps							// Right player properties
+	ballProps: objectProps							// Ball properties
+}
+
+// New properties (sent by the back to the client)
+interface newPropsToClient {
+	leftProps: objectProps							// Left player properties
+	rightProps: objectProps							// Right player properties
+	ballProps: objectProps							// Ball properties
+}
+
+// Properties of a game object (sent to the client)
+interface objectProps {
+	xPos: number									// X coordinate of object
+	yPos: number									// Y coordinate of object
+	xVel: number									// X velocity of object
+	yVel: number									// Y velocity of object
+}
+
+/* -------------------------WEBSOCKET-CLASS------------------------- */
 
 @WebSocketGateway({ cors: { origin: '*', methods: ['GET', 'POST'] }, namespace: 'game' })
 export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
@@ -66,10 +105,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	@WebSocketServer()
 	server: Server;
 
-	/* -------------------------VARIABLES------------------------- */
-
 	readonly clientType: string = "PHASER-WEB-CLIENT"
-	readonly headlessType: string = "PHASER-HEADLESS-CLIENT"
 	readonly controllerType: string = "CONTROLLER"
 
 	matchQueue: string[] = []
@@ -80,53 +116,102 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
 	parties: { [partyId: string]: party } = {}
 
-	nbRight: number = 0
-	nbLeft: number = 0
+	skins: { [key: string]: skin } = {
+		['player']: {
+			name: 'player',
+			width: 100,
+			height: 175
+		},
+		['mage']: {
+			name: 'mage',
+			width: 250,
+			height: 250
+		}
+	}
 
 	/* -------------------------FUNCTIONS------------------------- */
 
-
-	/*let newPlayer: player = {
-		id: uuidv4(),
-		xPos: (finalSide == 'left' ? 250 : 1670),
-		yPos: 250 + Math.random() * 580,
-		xDir: (finalSide == 'left' ? 'right' : 'left'),
-		keyStates: {
-			up: false,
-			down: false,
-			left: false,
-			right: false,
-		},
-		xVel: 0,
-		yVel: 0,
-		lastMove: 'none',
-		move: 'idle',
-		skin: 'mage',
-		anim: 'IdleAnim'*/
-
-	// Create a new player construct
-	createNewPlayer(): playerConstruct {
-		let finalSide: "left" | "right" = (this.nbRight > this.nbLeft ? 'left' : 'right')
-		this.nbRight > this.nbLeft ? this.nbLeft += 1 : this.nbRight += 1
-		console.log(finalSide + " connected", "r:", this.nbRight, "l:", this.nbLeft)
-		let newPlayer: playerConstruct = {
-			id: uuidv4(),
-			side: finalSide,
+	// Create a new client player construct
+	newClientConstruct(side: "left" | "right"): clientPlayerConstruct {
+		let newPlayer: clientPlayerConstruct = {
+			side: side,
 			skin: 'mage',
 		}
 		return newPlayer
 	}
 
-	// Starts a new headless session
-	setupAuthoritativePhaser() {
-		JSDOM.fromFile(path.join(__dirname, '../authoritative_server/dist/index.html'), {
-			// To run the scripts in the html file
-			runScripts: "dangerously",
-			// Also load supported external resources
-			resources: "usable",
-			// So requestAnimatinFrame events fire
-			pretendToBeVisual: true
+	// Create a new sesion player construct
+	newSessionConstruct(side: "left" | "right", width: number, height: number): sessionPlayerConstruct {
+		let newPlayer: sessionPlayerConstruct = {
+			side: side,
+			xPos: (side == 'left' ? 250 : 1670),
+			yPos: 540,
+			width: width,
+			height: height,
+		}
+		return newPlayer
+	}
+
+	// Starts a new party
+	async createParty(leftPlayerId: string, rightPlayerId: string) {
+		// Create new session
+		let newParty: party = {
+			id: uuidv4(),
+			worker: new Worker('./toolDist/session.js'),
+			leftPlayerId: leftPlayerId,
+			rightPlayerId: rightPlayerId
+		}
+		// Store the new party in the parties object
+		this.parties[newParty.id] = newParty
+		console.log("New party: ", newParty.id)
+		// Wait for party to be created and sens constructs to clients and session
+		setTimeout(() => {
+			// Set session id in player object
+			this.players[leftPlayerId].sessionId = newParty.id
+			this.players[rightPlayerId].sessionId = newParty.id
+			// Emit to each client it's side
+			this.sockets[leftPlayerId].socket.emit('clientSide', 'left')
+			this.sockets[rightPlayerId].socket.emit('clientSide', 'right')
+			// Create the loginData object to store the session id
+			let sessionLoginData: loginData = { sessionId: newParty.id }
+			// Send the loginData object to the session
+			newParty.worker.postMessage(sessionLoginData)
+			// Create the player construct objects for clients
+			let leftClientConstruct: clientPlayerConstruct = this.newClientConstruct('left')
+			let rightClientConstruct: clientPlayerConstruct = this.newClientConstruct('right')
+			// Emit to each client the player construct objects
+			this.sockets[leftPlayerId].socket.emit('playerConstruct', leftClientConstruct)
+			this.sockets[rightPlayerId].socket.emit('playerConstruct', leftClientConstruct)
+			this.sockets[leftPlayerId].socket.emit('playerConstruct', rightClientConstruct)
+			this.sockets[rightPlayerId].socket.emit('playerConstruct', rightClientConstruct)
+			// Get skins for left and right side
+			let leftSkin = this.skins[this.players[leftPlayerId].skin]
+			let rightSkin = this.skins[this.players[rightPlayerId].skin]
+			// Create the player construct objects for session
+			let leftSessionConstruct: sessionPlayerConstruct = this.newSessionConstruct('left', leftSkin.width, leftSkin.height)
+			let rightSessionConstruct: sessionPlayerConstruct = this.newSessionConstruct('right', rightSkin.width, rightSkin.height)
+			// Emit to session the player construct objects
+			newParty.worker.postMessage(leftSessionConstruct)
+			newParty.worker.postMessage(rightSessionConstruct)
+		}, 100)
+		// Session message listener
+		newParty.worker.on('message', (incomingProps: newPropsFromSession) => {
+			let outgoingProps: newPropsToClient = {
+				leftProps: incomingProps.leftProps,
+				rightProps: incomingProps.rightProps,
+				ballProps: incomingProps.ballProps
+			}
+			this.sockets[newParty.leftPlayerId].socket.emit('newProps', outgoingProps)
+			this.sockets[newParty.rightPlayerId].socket.emit('newProps', outgoingProps)
 		})
+	}
+
+	// Creates a new party if 
+	checkMatchQueue() {
+		if (this.matchQueue.length >= 2) {
+			console.log("More than 2 players in matchmaking queue starting a new session")
+			this.createParty(this.matchQueue.pop(), this.matchQueue.pop())
+		}
 	}
 
 	/* -------------------------GLOBAL EVENT LISTENERS------------------------- */
@@ -134,10 +219,9 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	async handleConnection(socket: Socket, ...args: any[]) {
 		this.sockets[socket.id] = {
 			socket: socket,
-			type: 'unknown',
+			type: undefined,
 		};
-		socket.emit('ownID', `${socket.id}`);
-		console.log("Connection:", socket.id)
+		socket.emit('Welcome');
 	}
 
 	async handleDisconnect(socket: Socket) {
@@ -151,16 +235,19 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	handleIdentification(socket: Socket, payload: string) {
 		switch (payload) {
 			case this.clientType:
-				this.sockets[socket.id].type = this.clientType
 				console.log("New player session:", socket.id)
-				break
-			case this.headlessType:
-				this.sockets[socket.id].type = this.headlessType
-				console.log("New headless session:", socket.id)
+				this.sockets[socket.id].type = this.clientType
+				this.players[socket.id] = {
+					id: socket.id,
+					sessionId: undefined,
+					skin: "mage"
+				}
+				this.matchQueue[this.matchQueue.length] = socket.id
+				this.checkMatchQueue()
 				break
 			case this.controllerType:
-				this.sockets[socket.id].type = this.controllerType
 				console.log("New controller:", socket.id)
+				this.sockets[socket.id].type = this.controllerType
 				break
 			default:
 				console.log("Wrong client type, disconnecting...")
@@ -172,8 +259,14 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
 	@SubscribeMessage('playerKeyUpdate')
 	handlePlayerKeyUpdate(socket: Socket, payload: keyStates) {
-		if (this.sockets[socket.id].type == this.clientType) {
-		}
+		if (this.sockets[socket.id].type == this.clientType && this.players[socket.id].sessionId) {
+			let sessionId: string = this.players[socket.id].sessionId
+			let update: playerUpdateToSession = {
+				side: (this.parties[sessionId].leftPlayerId == socket.id ? 'left' : 'right'),
+				keyStates: payload
+			}
+			this.parties[sessionId].worker.postMessage(update)
+		}	
 	}
 
 	@SubscribeMessage('playerStart')
@@ -188,24 +281,9 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		}
 	}
 
-	/* -------------------------HEADLESS EVENT LISTENERS------------------------- */
-
-	@SubscribeMessage('playerUpdate')
-	handlePlayerUpdate(socket: Socket) {
-		if (this.sockets[socket.id].type == this.headlessType) {
-		}
-	}
-
 	/* -------------------------CONTROLLER EVENT LISTENERS------------------------- */
 
-	@SubscribeMessage('newParty')
-	handleNewParty(socket: Socket) {
-		if (this.sockets[socket.id].type == this.controllerType) {
-			console.log("New Headless Session")
-			this.parties
-		}
-	}
-
+	// Display a connected socket to the controller
 	@SubscribeMessage('displaySocket')
 	handleDisplaySocket(socket: Socket, payload: string) {
 		if (this.sockets[socket.id].type == this.controllerType) {
@@ -217,40 +295,13 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		}
 	}
 
+	// Display all the connected sockets to the controller
 	@SubscribeMessage('displayAllSocket')
 	handleDisplayAllSocket(socket: Socket) {
 		if (this.sockets[socket.id].type == this.controllerType) {
 			for (let socketId in this.sockets)
 				socket.emit('displayLine', "Socket: " + socketId + " type: " + this.sockets[socketId].type)
 			socket.emit('endOfDisplay')
-		}
-	}
-
-	@SubscribeMessage('closeParty')
-	handleCloseParty(socket: Socket, payload: string) {
-		if (this.sockets[socket.id].type == this.controllerType) {
-			if (this.sockets[payload] && this.sockets[payload].type == this.headlessType) {
-				this.sockets[payload].socket.disconnect()
-				delete this.sockets[payload]
-				console.log("Socket destroyed by server:", payload)
-			}
-			else
-				console.log("Can't destroy unknown socket:", payload)
-		}
-	}
-
-	@SubscribeMessage('closeAllParties')
-	handleCloseAllParties(socket: Socket) {
-		if (this.sockets[socket.id].type == this.controllerType) {
-			for (let socketId in this.sockets) {
-				if (this.sockets[socketId] && this.sockets[socketId].type == this.headlessType) {
-					this.sockets[socketId].socket.disconnect()
-					delete this.sockets[socketId]
-					console.log("Socket destroyed by server:", socketId)
-				}
-				else
-					console.log("Can't destroy unknown socket:", socketId)
-			}
 		}
 	}
 }
