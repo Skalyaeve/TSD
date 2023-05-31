@@ -8,14 +8,13 @@
   "license": "UNLICENSED",
   "scripts": {
     "clean": "(yes | rm -rf dist/*)",
-	"cleanGameTools": "rm -f toolDist/controller.js; rm -f toolDist/session.js",
-	"buildGameTools": "npm run cleanGameTools; npx tsc -p tsconfig.gameTools.json",
+    "cleanGameTools": "rm -f toolDist/controller.js; rm -f toolDist/session.js",
+    "buildGameTools": "npm run cleanGameTools; npx tsc -p tsconfig.gameTools.json",
     "controller": "npm run buildGameTools && npm run run:ctrl",
     "run:ctrl": "node dist/controller.js",
     "backend": "npm run buildGameTools && npm run run:back",
-	"run:back": "nest start --watch --debug",
-	"init": "npx prisma migrate dev",
-
+    "run:back": "nest start --watch --debug",
+    "init": "npx prisma migrate dev",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
