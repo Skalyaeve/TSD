@@ -64,18 +64,33 @@ export class UserGameService {
         return games;
     }
 
-    async findManyOrderedByDate(count: number): Promise<Game[]> {
-        const games = await this.prisma.game.findMany({
+    async findManyOrderedByDate(first: number, last: number): Promise<Game[]> {
+        const skip: number = first - 1;
+        const take: number = last - first + 1;
+        const games: Game[] = await this.prisma.game.findMany({
             orderBy: {
                 timeStart: "desc",
             },
-            take: count,
+            skip,
+            take,
         });
         return games;
     }
 
-    async findAllFriends(id: number) {
-        
+    async findManyByUserOrderedByDate(id: number, first: number, last: number): Promise<Game[]> {
+        const skip: number = first - 1;
+        const take: number = last - first + 1;
+        const games: Game[] = await this.prisma.game.findMany({
+            where: {
+                id,
+            },
+            orderBy: {
+                timeStart: "desc",
+            },
+            skip,
+            take,
+        });
+        return games;
     }
 
     async createOne(createGameDto: CreateGameDto): Promise<Game> {

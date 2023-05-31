@@ -20,10 +20,10 @@ export class UserGameController {
         return this.userGameService.countAll();
     }
 
-    @Get('latest/:count')
+    @Get('all/latest/:first/:last')
     @UseGuards(JwtGuard)
-    async getAllLatestGames(@Param('count', ParseIntPipe) count: number): Promise<Game[]> {
-        return this.userGameService.findManyOrderedByDate(count);
+    async getAllLatestGames(@Param('first', ParseIntPipe) first: number, @Param('last', ParseIntPipe) last: number): Promise<Game[]> {
+        return this.userGameService.findManyOrderedByDate(first, last);
     }
 
     @Get('own')
@@ -38,22 +38,64 @@ export class UserGameController {
         return this.userGameService.countByPlayer(req.user.id);
     }
 
-    @Get('vs/:id')
+    @Get('own/latest/:first/:last')
+    @UseGuards(JwtGuard)
+    async getOwnLatestGames(@Req() req: any, @Param('first') first: number, @Param('last') last: number): Promise<Game[]> {
+        return this.userGameService.findManyByUserOrderedByDate(req.user.id, first, last);
+    }
+
+    @Get('own/vs/:id')
     @UseGuards(JwtGuard)
     async getOwnGamesVS(@Param('id', ParseIntPipe) id: number, @Req() req: any): Promise<Game[]> {
         return this.userGameService.findAllByTwoPlayers(req.user.id, id);
     }
 
-    @Get('victories')
+    @Get('own/victories')
     @UseGuards(JwtGuard)
     async getVictories(@Req() req: any): Promise<Game[]> {
         return this.userGameService.findAllByWinner(req.user.id);
     }
 
-    @Get('victories/count')
+    @Get('own/victories/count')
     @UseGuards(JwtGuard)
     async getVictoriesCount(@Req() req: any): Promise<number> {
         return this.userGameService.countByWinner(req.user.id);
+    }
+
+    @Get(':id')
+    @UseGuards(JwtGuard)
+    async getGamesByID(@Param('id') id: number): Promise<Game[]> {
+        return this.userGameService.findAllByOnePlayer(id);
+    }
+
+    @Get(':id/count')
+    @UseGuards(JwtGuard)
+    async getGamesCountByID(@Param('id') id: number): Promise<number> {
+        return this.userGameService.countByPlayer(id);
+    }
+
+    @Get(':id/latest/:first/:last')
+    @UseGuards(JwtGuard)
+    async getLatestGamesByID(@Param('id') id: number, @Param('first') first: number, @Param('last') last: number): Promise<Game[]> {
+        return this.userGameService.findManyByUserOrderedByDate(id, first, last);
+    }
+
+    @Get(':id1/vs/:id2')
+    @UseGuards(JwtGuard)
+    async getVSGamesByID(@Param('id1', ParseIntPipe) id1: number, @Param('id2') id2: number): Promise<Game[]> {
+        return this.userGameService.findAllByTwoPlayers(id1, id2);
+    }
+
+    @Get(':id/victories')
+    @UseGuards(JwtGuard)
+    async getVictoriesByID(@Param('id') id: number): Promise<Game[]> {
+        return this.userGameService.findAllByWinner(id);
+    }
+
+    @Get(':id/victories/count')
+    @UseGuards(JwtGuard)
+    async getVictoriesCountByID(@Param('id') id: number): Promise<number> {
+        return this.userGameService.countByWinner(id);
     }
 
     @Post('new')
