@@ -14,6 +14,7 @@
     "run:ctrl": "node dist/controller.js",
     "backend": "npm run buildGameTools && npm run run:back",
     "run:back": "nest start --watch --debug",
+	
     "init": "npx prisma migrate dev",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",

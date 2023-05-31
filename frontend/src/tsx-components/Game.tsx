@@ -512,8 +512,8 @@ function Party() {
 				keys.down.destroy()
 				keys.left.destroy()
 				keys.down.destroy()
-				leftPlayer.sprite?.destroy()
-				rightPlayer.sprite?.destroy()
+				leftPlayer?.sprite?.destroy()
+				rightPlayer?.sprite?.destroy()
 				game.destroy(true, false)
 			}
 			socket.disconnect()
