@@ -1,11 +1,11 @@
-import {useMemo} from 'react';
+import { useMemo } from 'react';
 import React, { useRef, useState, useLayoutEffect } from 'react'
 import { Routes, Route, useLocation, useNavigate } from 'react-router-dom'
 import Cookies from 'js-cookie';
-import { AnimatePresence, MotionProps, motion } from 'framer-motion'
-import { bouncyPopUpByPx, bouncyYMove } from '../tsx-utils/ftMotion.tsx'
+import { AnimatePresence, motion } from 'framer-motion'
+import { bouncyPopUp, bouncyYMove } from '../tsx-utils/ftMotion.tsx'
 import NavBar from './NavBar.tsx'
-import SideChat from './SideChat.tsx'
+import Chat from './Chat.tsx'
 import Matchmaker from './Matchmaker.tsx'
 import Home from './Home.tsx'
 import AccountInfos from './AccountInfos.tsx'
@@ -14,10 +14,11 @@ import Characters from './Characters.tsx'
 import Party from './Game.tsx'
 import Leader from './Leader.tsx'
 import ErrorPage from './ErrorPage.tsx'
-import Chat from './Chat/Chat.tsx'
 import '../css/Root.css'
 import background from '../resource/background.png';
 import { io } from 'socket.io-client';
+import Modal from 'react-modal';
+
 
 // --------IS-CONNECTED---------------------------------------------------- //
 const isConnected = async () => {
@@ -33,12 +34,14 @@ const isConnected = async () => {
 		})
 		if (response.ok) {
 			const txt = await response.json()
-			console.log(`[SUCCESS] isConnected(): fetch() -> ${txt}`)
+			console.log(`[SUCCESS] isConnected() -> fetch(): ${txt}`)
 			return true
 		}
-		else console.error(`[ERROR] isConnected(): fetch() -> ${response.status}`)
+		else console.error(
+			`[ERROR] isConnected() -> fetch(): ${response.status}`
+		)
 	}
-	catch { console.error('[ERROR] isConnected(): fetch() -> failed') }
+	catch { console.error('[ERROR] isConnected() -> fetch(): failed') }
 	return false
 }
 
@@ -52,6 +55,24 @@ const LoginBtn: React.FC<LogginBtnProps> = ({ setLogged }) => {
 
 	// ----HANDLERS--------------------------- //
 	const connect = async () => {
+		let address
+		let clientID
+		let redirectURI
+		if (process.env.OA42_API_ADDR)
+			address = process.env.OA42_API_ADDR
+		else return
+		if (process.env.OA42_API_KEY)
+			clientID = encodeURIComponent(process.env.OA42_API_KEY)
+		else return
+		if (process.env.OA42_API_REDIR)
+			redirectURI = encodeURIComponent(process.env.OA42_API_REDIR)
+		else return
+
+		const urlBase = `${address}?response_type=code`
+		const urlArg1 = `&redirect_uri=${redirectURI}`
+		const urlArg2 = `&client_id=${clientID}`
+		window.location.href = urlBase + urlArg1 + urlArg2
+
 		const servID = 'http://localhost:3000'
 		const path = '/auth/42/login'
 		try {
@@ -65,40 +86,25 @@ const LoginBtn: React.FC<LogginBtnProps> = ({ setLogged }) => {
 	const btnHdl = { onMouseUp: () => !animating.current && connect() }
 
 	// ----ANIMATIONS------------------------- //
-	const btnMotion = {
-		...bouncyPopUpByPx({ finalWidth: 325, finalHeight: 125 }),
-		whileHover: {
-			scale: 1.05,
-			transition: {
-				duration: 1.5,
-				repeat: Infinity,
-				repeatType: 'reverse',
-				ease: 'linear'
-			}
-		}
-	}
+	const btnMotion = bouncyPopUp({})
 
 	// ----CLASSNAMES------------------------- //
-	const name = 'login-btn'
-	const boxName = `${name}-box`
+	const boxName = `login-btn`
+	const txtName = `${boxName}-txt custom-txt`
 
 	// ----RENDER----------------------------- //
-	return <div className={boxName}>
-		<motion.button
-			className={name}
-			{...btnHdl}
-			{...btnMotion as MotionProps}>
-			42 LOGIN
-		</motion.button>
-	</div >
+	return <motion.button className={boxName} {...btnHdl} {...btnMotion}>
+		<div className={txtName} />
+	</motion.button>
 }
 
 // ----SOCKET----------------------------- //
 
-// export const socket = io("http://localhost:3000/chat", { 
-//   transports: ["websocket"], 
-//   withCredentials: true
-// });
+export const socket = io("http://localhost:3000/chat", {
+	transports: ["websocket"],
+	withCredentials: true,
+	//   autoConnect: false,
+});
 
 // --------ROOT------------------------------------------------------------ //
 const Root: React.FC = () => {
@@ -140,25 +146,15 @@ const Root: React.FC = () => {
 			navigate('/game')
 	}, [location.pathname])
 
-	// ----ANIMATIONS------------------------- //
-	const boxMotion = bouncyYMove({ from: 100, extra: -10, inDuration: 0.8 })
-
 	// ----CLASSNAMES------------------------- //
-	const boxName = 'root'
 	const headerName = 'header'
-	const headerMiddleName = `${headerName}-middleContent`
-	
 
 	// ----RENDER----------------------------- //
-	return <div className={boxName} style={{ backgroundImage: `url(${background})` }}>
+	return <>
 		<AnimatePresence>
 			{showHeader && <header className={headerName}>
 				<NavBar setLogged={setLogged} />
-				<motion.div className={headerMiddleName} {...boxMotion}>
-					<AnimatePresence>
-						{location.pathname !== '/chat' && <SideChat />}
-					</AnimatePresence>
-				</motion.div>
+				<Chat />
 				<Matchmaker />
 			</header>}
 		</AnimatePresence>
@@ -171,10 +167,9 @@ const Root: React.FC = () => {
 				<Route path='/characters' element={<Characters />} />
 				<Route path='/leader' element={<Leader />} />
 				<Route path='/game' element={<Party />} />
-				<Route path='/chat' element={<Chat />} />
 				<Route path='*' element={<ErrorPage code={404} />} />
 			</Routes>
 		</AnimatePresence>
-	</div>
+	</>
 }
 export default Root

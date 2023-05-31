@@ -2,16 +2,16 @@ import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { Timer } from '../tsx-utils/ftNumbers.tsx'
-import { fade, bouncyHeightChangeByPx, bouncyYMove } from '../tsx-utils/ftMotion.tsx'
+import { fade, heightChangeByPx, bouncyYMove } from '../tsx-utils/ftMotion.tsx'
 
 // --------GAME-INFOS------------------------------------------------------ //
 export const GameInfos: React.FC = () => {
 	// ----ANIMATIONS------------------------- //
-	const boxMotion = bouncyHeightChangeByPx({
+	const boxMotion = heightChangeByPx({
 		finalHeight: 275,
 		inDuration: 0.7
 	})
-	const childMotion = fade({ inDelay: 0.2 })
+	const childMotion = fade({ inDelay: 0.3 })
 
 	// ----CLASSNAMES------------------------- //
 	const name = 'gameInfo'
@@ -22,12 +22,8 @@ export const GameInfos: React.FC = () => {
 
 	// ----RENDER----------------------------- //
 	return <motion.div className={boxName} {...boxMotion}>
-		<motion.div className={playerPPName} {...childMotion}>
-			Player 1
-		</motion.div>
-		<motion.div className={playerPPName} {...childMotion}>
-			Player 2
-		</motion.div>
+		<motion.div className={playerPPName} {...childMotion} />
+		<motion.div className={playerPPName} {...childMotion} />
 		<motion.div className={scoreName} {...childMotion}>
 			0
 		</motion.div>
@@ -55,6 +51,7 @@ const Matchmaker: React.FC = () => {
 	// ----EFFECTS---------------------------- //
 	useEffect(() => {
 		if (!matchmaking) return
+
 		const timer = setTimeout(() => {
 			setMatchmaking(false)
 			setInGame(true)
@@ -83,30 +80,19 @@ const Matchmaker: React.FC = () => {
 			extra: -10,
 			inDuration: 0.7,
 			outDuration: 0.4,
-		}),
-		whileHover: {
-			rotate: [0, -5, 5, 0],
-			transition: { ease: 'easeIn' }
-		},
-		whileTap: {
-			rotate: [0, 5, -5, 5, -5, 0],
-			transition: { ease: 'easeInOut' }
-		}
+		})
 	}
 
 	// ----CLASSNAMES------------------------- //
-	const name = 'matchmaker'
+	const boxName = 'matchmaker'
+	const txtName = `${boxName}-txt custom-txt`
 
 	// ----RENDER----------------------------- //
-	const render = () => {
-		if (!matchmaking) return (inGame ? <>EXIT</> : <>PLAY</>)
-		else return <> STOP < Timer /></>
-	}
 	return <motion.button
-		className={name}
+		className={boxName}
 		{...matchmakerBtnHdl}
 		{...boxMotion}>
-		{render()}
+		<div className={txtName}>{matchmaking && <Timer />}</div>
 	</motion.button>
 }
 export default Matchmaker

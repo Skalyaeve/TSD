@@ -1,47 +1,40 @@
-/* ---------------------------------
-Méthodologie B-E--M (Bloc, Élément, Modifieur)
+/* ------------------------------ */
+/* #1 Éléments */
+/* #2 Forme */
+/* #3 Position */
+/* #4 Margin - Padding */
+/* #5 Animations */
+/* ------------------------------ */
 
-Bloc: Un composant indépendant
-ex: Un bouton, une barre de navigation, un en-tête...
-ex: ".navBar {}"
-ex: ".button {}"
+@import url('NavBar.css');
+@import url('Chat.css');
+@import url('ChatSettings.css');
+@import url('Matchmaker.css');
+@import url('Home.css');
+@import url('AccountInfos.css');
+@import url('Friends.css');
+@import url('Characters.css');
+@import url('Leader.css');
+@import url('Errors.css');
+@import url('Game.css');
 
-Élément: Une partie d'un bloc qui a un sens uniquement dans le contexte de ce bloc.
-ex: ".navBar-logo {}"
-ex: ".button-icon {}"
-
-Modifieur: Une variation ou un état d'un bloc ou d'un élément. 
-ex: ".button--large {}"
-ex: ".navBar-logo--hidden {}"
---------------------------------- */
-
-/* ---------------------------------
-#1 Éléments
-#2 Forme
-#3 Position
-#4 Margin - Padding
-#5 Animations
---------------------------------- */
-
-@import url("NavBar.css");
-@import url("SideChat.css");
-@import url("SideChatSettings.css");
-@import url("Matchmaker.css");
-@import url("Home.css");
-@import url("AccountInfos.css");
-@import url("Friends.css");
-@import url("Characters.css");
-@import url("Leader.css");
-@import url("Errors.css");
-@import url("Game.css");
+/* ---FONTS---------------------- */
+@font-face {
+	font-family: Main;
+	src: url('../resource/font.ttf');
+	font-weight: normal;
+	font-style: normal;
+}
 
 /* ---TAGS----------------------- */
 * {
 	/* #1 Éléments */
 	box-sizing: border-box;
-	font-family: Bungee, sans-serif;
-	font-size: 25px;
-	color: rgb(255, 255, 255);
+	background-position: center;
+	background-size: cover;
+	font-family: Main, serif;
+	font-size: 20px;
+	color: rgb(0, 0, 0);
 
 	/* #4 Margin - Padding */
 	margin: 0;
@@ -56,14 +49,15 @@ a {
 button {
 	/* #1 Éléments */
 	border: none;
+	cursor: pointer;
 }
 
 input {
 	/* #1 Éléments */
 	border: none;
 
-	/* #2 Forme */
-	height: 30px;
+	/* #4 Margin - Padding */
+	padding: 0 10px
 }
 
 input:focus {
@@ -74,8 +68,7 @@ input:focus {
 /* ---ROOT----------------------- */
 .root {
 	/* #1 Éléments */
-	background-position: center;
-	background-size: cover;
+	background-image: url('../resource/background.png');
 	display: grid;
 	grid-template-columns: 265px 1fr;
 	overflow: hidden;
@@ -87,47 +80,62 @@ input:focus {
 	min-height: 768px;
 }
 
-/* ---LOGIN---------------------- */
-.login-btn-box {
+/* ---LOGIN-BTN------------------ */
+.login-btn {
+	/* #1 Éléments */
+	background-image: url('../resource/assets-ui/background-1.png');
+	border: solid 9px;
+	border-image-source: url('../resource/assets-ui/black-border.png');
+	border-image-slice: 15;
+	border-image-width: 12px;
+
+	/* #2 Forme */
+	width: 330px;
+	height: 120px;
+
 	/* #3 Position */
 	position: fixed;
 	top: 50%;
 	left: 50%;
-	transform: translate(-50%, -50%);
+	translate: -50% -50%;
 }
 
-.login-btn {
+.login-btn-txt {
 	/* #1 Éléments */
-	background-color: rgba(30, 30, 30, 0.8);
-	border: 3px solid rgb(255, 255, 255);
-	font-size: 30px;
-
-	/* #2 Forme */
-	border-radius: 5px;
-}
-
-.login-btn:active {
-	/* #1 Éléments */
-	background-color: rgb(255, 255, 255, 0.3);
+	background-image: url('../resource/assets-ui/42AUTH.png');
 }
 
 /* ---HEADER--------------------- */
 .header {
 	/* #1 Éléments */
 	display: grid;
-	grid-template-columns: 1fr;
-	grid-template-rows: auto 1fr 106px;
-}
+	grid-template-rows: auto 1fr 110px;
+	grid-gap: 5px;
 
-.header-middleContent {
 	/* #3 Position */
-	grid-row: 2 / 2;
-	z-index: 2;
-	position: relative;
+	grid-column: 1 / 1;
+
+	/* #4 Margin - Padding */
+	padding: 10px;
 }
 
 /* ---MAIN----------------------- */
 .main {
 	/* #3 Position */
-	grid-column: 2 / -1;
+	grid-column: 2 / 2;
+
+	/* #4 Margin - Padding */
+	padding: 10px;
+	padding-left: 0;
+}
+
+/* ---CUSTOM-TXT----------------- */
+.custom-txt {
+	/* #1 Éléments */
+	background-size: unset;
+	background-repeat: no-repeat;
+
+	/* #2 Forme */
+	width: 100%;
+	height: 100%;
 }

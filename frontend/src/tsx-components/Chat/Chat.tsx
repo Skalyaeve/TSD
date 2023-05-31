@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo } from 'react'
 import { useEffect, useState } from 'react'
-// import { socket } from '../Root.tsx'
+import { socket } from '../Root.tsx'
 import io, { Socket } from "socket.io-client"
 import MessageInput from './MessageInput.tsx'
 import Messages from './Messages.tsx'
@@ -10,27 +10,32 @@ import ChatHeader from './ChatHeader.tsx'
 import HeaderContactInfo from './HeaderContactInfo.tsx'
 import ChatChannels from './ChatChannels.tsx'
 import DmHandler from './DmHandler.tsx'
+import axios from 'axios'
+// const socket = useMemo(()=>{
+//     console.log("NEW CONNECTION")
+//     return io("http://localhost:3000/chat", { 
+//         transports: ["websocket"], 
+//         withCredentials: true
+//     })
+// }, []);
 
 function Chat({}) {
+
     const [allMessages, setAllMessages] = useState<{user: string; message: string; type: string}[]>([]);
     const [user, setUser] = useState(() => `User${Math.floor(Math.random() * 10)}`); // this will change 
     const [isOpen, setIsOpen] = useState<boolean>(false);
-
-    const socket = useMemo(()=>{
-        console.log("NEW CONNECTION")
-        return io("http://localhost:3000/chat", { 
-            transports: ["websocket"], 
-            withCredentials: true
-        })
-    }, []);
-
+    const [userInfo, setUserInfo] = useState(null);
+    const [allUsers, setAllUsers] = useState<{id: number; email: string; nickname: string; avatarFilename: string}[]>([]);
+    const [error, setError] = useState<any>(null);
+    const [selectedContact, setSelectedContact] = useState<{id: number; email: string; nickname: string; avatarFilename: string} | null>(null);
+    
     const send = useCallback((value: string, user: string) => {
             console.log("value: ", value);
             console.log("user: ", user);
             const message = {user, message: value, type: "sent"};
             setAllMessages((allMessages)=>[...allMessages, message]);
             socket.emit('message', message);
-        }, [socket]);
+    }, [socket]);
 
     const messageListener = useCallback((message: { user: string; message: string}) => {
         console.log("i received");
@@ -43,6 +48,38 @@ function Chat({}) {
         console.log(newMessage);
     }
 
+    useEffect(() => {
+        socket.on('userInfo', (userData) => {
+          setUserInfo(userData);
+          const { nickname } = userData;
+          console.log(' nickname ', nickname);
+        });
+
+        socket.emit('getUserInfo', () => {});
+    
+        return () => {
+          socket.off('userInfo');
+        };
+    }, []);
+
+    const axiosInstance = axios.create({
+        withCredentials: true,
+      });
+
+    useEffect(() => {
+        const fetchAllUsers =async () => {
+            try {
+                const response = await axiosInstance.get('http://localhost:3000/users/all');
+                const users = response.data;
+                setAllUsers(users);
+                console.log(users);
+            }
+            catch (error) {
+                setError(error)
+            }
+        };
+        fetchAllUsers();
+    }, []);
     useEffect(() => {
         if (socket){
             console.log('messagelistener');
@@ -63,11 +100,11 @@ function Chat({}) {
     return (
         <div className={`chat-main-grid ${isOpen?"open":"close"}`}>
             <div className="manage-rooms">
-                <DmHandler/>
+                <DmHandler allUsers={allUsers} setSelectedContact={setSelectedContact}/>
                 <ChatChannels/>
             </div>
             <div className="chatbox">
-                <ChatHeader contactName='Shupo' setIsOpen={setIsOpen}/>
+                <ChatHeader contactName={selectedContact?.nickname || 'No conversation selected'} setIsOpen={setIsOpen}/>
                 <div className='chat-messages' id="chat-messages">
                     {allMessages.map((message, index) => (
                     <Messages key={index} messages={[message]} currentUser={user} />

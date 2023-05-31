@@ -6,20 +6,20 @@ import { GameModule } from './game/game.module.js';
 import { ChatModule } from './chat/chat.module.js';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule } from '@nestjs/config';
-import { UserGameModule } from './user_game/user_game.module.js';
+import { ChannelModule } from './channel/channel.module.js';
 
 @Module({
-	imports: [
-		JwtModule.register({
-			secret: process.env.jwtSecret,
-		}),
-		AuthModule,
-		PrismaModule,
-		UserModule,
-		ChatModule,
-		ConfigModule,
-		GameModule,
-		UserGameModule,
-	],
+  imports: [
+    JwtModule.register({
+      secret: process.env.jwtSecret,
+    }),
+    AuthModule,
+    PrismaModule,
+    UserModule,
+    ChatModule,
+    ConfigModule,
+    GameModule,
+    ChannelModule,
+  ]
 })
 export class AppModule { }

@@ -23,15 +23,9 @@ module.exports = {
 				use: ['style-loader', 'css-loader']
 			},
 			{
-				test: /\.(png)$/i,
-				use: [{
-					loader: 'file-loader',
-					options: {
-						name: '[name].[ext]',
-						outputPath: 'dist/img'
-					}
-				}]
-			}
+				test: /\.(jpg|png|svg|gif)$/,
+				type: 'asset/resource',
+			},
 		]
 	},
 	plugins: [
@@ -49,7 +43,7 @@ module.exports = {
 	},
 	devtool: 'source-map',
 	devServer: {
-		static: { directory: path.join(__dirname, './src/resources/') },
+		static: { directory: path.join(__dirname, './src/resource/') },
 		hot: true,
 		historyApiFallback: true
 	}

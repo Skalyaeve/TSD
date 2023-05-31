@@ -1,78 +1,59 @@
-/* ---------------------------------
-Méthodologie B-E--M (Bloc, Élément, Modifieur)
-
-Bloc: Un composant indépendant
-ex: Un bouton, une barre de navigation, un en-tête...
-ex: ".navBar {}"
-ex: ".button {}"
-
-Élément: Une partie d'un bloc qui a un sens uniquement dans le contexte de ce bloc.
-ex: ".navBar-logo {}"
-ex: ".button-icon {}"
-
-Modifieur: Une variation ou un état d'un bloc ou d'un élément. 
-ex: ".button--large {}"
-ex: ".navBar-logo--hidden {}"
---------------------------------- */
-
-/* ---------------------------------
-#1 Éléments
-#2 Forme
-#3 Position
-#4 Margin - Padding
-#5 Animations
---------------------------------- */
+/* ------------------------------ */
+/* #1 Éléments */
+/* #2 Forme */
+/* #3 Position */
+/* #4 Margin - Padding */
+/* #5 Animations */
+/* ------------------------------ */
 
 /* ---MATCHMAKER----------------- */
 .matchmaker {
 	/* #1 Éléments */
-	border: 1px solid rgb(255, 255, 255);
-
-	/* #2 Forme */
-	border-radius: 5px;
+	background-image: url('../resource/assets-ui/background-1.png');
+	border: solid 9px;
+	border-image-source: url('../resource/assets-ui/blue-border.png');
+	border-image-slice: 15;
+	border-image-width: 12px;
 
 	/* #3 Position */
 	grid-row: 3 / 3;
-	z-index: 3;
-
-	/* #4 Margin - Padding */
-	margin: 10px;
-	margin-top: 0;
+	z-index: 4;
 }
 
-.matchmaker:active {
+.matchmaker-txt {
 	/* #1 Éléments */
-	background-color: rgba(255, 255, 255, 0.3);
+	background-image: url('../resource/assets-ui/PLAY.png');
 }
 
 /* ---GAME-INFOS----------------- */
 .gameInfos {
 	/* #1 Éléments */
-	border: 1px solid rgb(255, 255, 255);
+	background-image: url('../resource/assets-ui/background-1.png');
+	border: solid 9px;
+	border-image-source: url('../resource/assets-ui/red-border.png');
+	border-image-slice: 15;
+	border-image-width: 12px;
 	display: grid;
 	grid-template-columns: 1fr 1fr;
 	grid-template-rows: 2fr 1fr 1fr;
 	grid-column-gap: 15px;
 	align-items: center;
 
-	/* #2 Forme */
-	border-radius: 5px;
-
 	/* #3 Position */
-	z-index: 3;
+	z-index: 4;
 }
 
 .gameInfo-player {
 	/* #1 Éléments */
-	border: 1px solid rgb(255, 255, 255);
-	display: flex;
-	align-items: center;
-	justify-content: center;
+	background-image: url('../resource/assets-ui/background-1.png');
+	border: solid 5px;
+	border-image-source: url('../resource/assets-ui/red-border.png');
+	border-image-slice: 15;
+	border-image-width: 8px;
 
 	/* #2 Forme */
 	width: 100px;
 	height: 100px;
-	border-radius: 5px;
 }
 
 .gameInfo-player:nth-of-type(1) {
@@ -87,25 +68,28 @@ ex: ".navBar-logo--hidden {}"
 
 .gameInfo-score {
 	/* #1 Éléments */
-	font-size: 51px;
+	font-size: 50px;
 	justify-self: center;
 }
 
 .gameInfo-score:nth-of-type(3) {
 	/* #4 Margin - Padding */
-	margin-left: 23%;
+	margin-left: 25px;
 }
 
 .gameInfo-score:nth-of-type(4) {
 	/* #4 Margin - Padding */
-	margin-right: 23%;
+	margin-right: 25px;
 }
 
 .gameInfo-timer {
 	/* #1 Éléments */
-	font-size: 36px;
+	font-size: 40px;
 
 	/* #3 Position */
 	grid-column: 1 / -1;
 	justify-self: center;
+
+	/* #4 Margin - Padding */
+	margin-bottom: 10px;
 }

@@ -85,3 +85,12 @@
     text-overflow: ellipsis;
     padding: 10px;
 }
+
+.conversation-btn {
+  display: block;
+  background: rgba(255, 255, 255, 0.0);
+  border: 1px solid #fffcfc;
+  padding: 8px 12px; /* Adjust the padding as needed */
+  margin-bottom: 10px;
+  font-size: 15px;
+}

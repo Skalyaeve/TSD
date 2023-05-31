@@ -30,8 +30,8 @@ const UserStats: React.FC<UserStatsProps> = ({ rank }) => {
 	// ----RENDER----------------------------- //
 	const nameBtnContent = <>
 		<div className={rankName}>#{rank}</div>
-		<div className={ppName}>PP</div>
-		<div className={linkName}>[NAME]</div>
+		<div className={ppName}></div>
+		<div className={linkName}>NAME</div>
 	</>
 	const usrBox = (content: string) => <div className={colName}>
 		{content}
@@ -52,6 +52,7 @@ const Board: React.FC = () => {
 	const count = 20
 
 	// ----CLASSNAMES------------------------- //
+	const boxName = `${NAME}-body`
 	const headName = `${NAME}-boardHead`
 
 	// ----RENDER----------------------------- //
@@ -61,17 +62,17 @@ const Board: React.FC = () => {
 	const headCol = (content: string) => <div className={COL_BTN_NAME}>
 		{content}
 	</div>
-	return <>
+	return <div className={boxName}>
 		<div className={headName}>
 			<div className={COL_NAME}>NAME</div>
-			{headCol('[MATCHES]')}
-			{headCol('[WINS]')}
-			{headCol('[LOSES]')}
-			{headCol('[RATIO]')}
-			{headCol('[SCORED]')}
+			{headCol('MATCHES')}
+			{headCol('WINS')}
+			{headCol('LOSES')}
+			{headCol('RATIO')}
+			{headCol('RANKING')}
 		</div>
 		{renderUsers}
-	</>
+	</div>
 }
 
 // --------LEADER---------------------------------------------------------- //
@@ -97,7 +98,6 @@ const Leader: React.FC = () => {
 	const headBtnName = (nameExt: string) => (
 		`${NAME}-${nameExt}-btn ${BTN_NAME}`
 	)
-	const bodyName = `${NAME}-body`
 
 	// ----RENDER----------------------------- //
 	const headBtn = (index: number, nameExt: string, content: string) => (
@@ -107,18 +107,18 @@ const Leader: React.FC = () => {
 	)
 	return <motion.main className={boxName} {...boxMotion}>
 		<motion.div className={headName} {...headMotion}>
-			{headBtn(1, 'down', '[>>]')}
-			{headBtn(2, 'up', '[<<]')}
-			{headBtn(3, 'findMe', '[FIND ME]')}
-			{headBtn(4, 'findTop', '[TOP]')}
-			{headBtn(5, 'input', '[OK]')}
+			{headBtn(1, 'down', '>>')}
+			{headBtn(2, 'up', '<<')}
+			{headBtn(3, 'findMe', 'FIND ME')}
+			{headBtn(4, 'findTop', 'TOP')}
+			{headBtn(5, 'input', 'OK')}
 			<motion.input
 				className={inputName}
-				placeholder=' ...'
+				placeholder='...'
 				{...headInputMotion}
 			/>
 		</motion.div>
-		<div className={bodyName}><Board /></div>
+		<Board />
 	</motion.main >
 }
 export default Leader

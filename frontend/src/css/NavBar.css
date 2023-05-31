@@ -1,73 +1,74 @@
-/* ---------------------------------
-Méthodologie B-E--M (Bloc, Élément, Modifieur)
-
-Bloc: Un composant indépendant
-ex: Un bouton, une barre de navigation, un en-tête...
-ex: ".navBar {}"
-ex: ".button {}"
-
-Élément: Une partie d'un bloc qui a un sens uniquement dans le contexte de ce bloc.
-ex: ".navBar-logo {}"
-ex: ".button-icon {}"
-
-Modifieur: Une variation ou un état d'un bloc ou d'un élément. 
-ex: ".button--large {}"
-ex: ".navBar-logo--hidden {}"
---------------------------------- */
-
-/* ---------------------------------
-#1 Éléments
-#2 Forme
-#3 Position
-#4 Margin - Padding
-#5 Animations
---------------------------------- */
+/* ------------------------------ */
+/* #1 Éléments */
+/* #2 Forme */
+/* #3 Position */
+/* #4 Margin - Padding */
+/* #5 Animations */
+/* ------------------------------ */
 
 /* ---NAVBAR--------------------- */
 .navBar {
 	/* #1 Éléments */
 	display: grid;
-	grid-template-rows: minmax(50px, auto);
-	grid-auto-rows: minmax(75px, auto);
+	grid-template-rows: 55px;
+	grid-auto-rows: 75px;
+	grid-gap: 5px;
 
 	/* #3 Position */
 	grid-row: 1 / 1;
-	z-index: 3;
-
-	/* #4 Margin - Padding */
-	margin: 10px;
-	margin-bottom: 0;
+	z-index: 4;
 }
 
 .navBar-link-motion {
 	/* #1 Éléments */
-	border: 1px solid rgb(255, 255, 255);
+	background-image: url('../resource/assets-ui/background-1.png');
+	border: solid 7px;
+	border-image-source: url('../resource/assets-ui/red-border.png');
+	border-image-slice: 15;
+	border-image-width: 10px;
 }
 
 .navBar-link {
 	/* #1 Éléments */
-	background-color: transparent;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-
-	/* #2 Forme */
-	height: 100%;
+	display: block;
 }
 
-.navBar-link-motion:first-child {
-	/* #2 Forme */
-	border-top-left-radius: 5px;
-	border-top-right-radius: 5px;
-}
-
-.navBar-link-motion:last-child {
-	/* #2 Forme */
-	border-bottom-left-radius: 5px;
-	border-bottom-right-radius: 5px;
-}
-
-.navBar-link:active {
+.navBar-link-logout {
 	/* #1 Éléments */
-	background-color: rgb(255, 255, 255, 0.3);
+	background-image: url('../resource/assets-ui/navbar/LOGOUT.png');
+}
+
+.navBar-link-back {
+	/* #1 Éléments */
+	background-image: url('../resource/assets-ui/navbar/BACK.png');
+}
+
+.navBar-link-home {
+	/* #1 Éléments */
+	background-image: url('../resource/assets-ui/navbar/HOME.png');
+}
+
+.navBar-link-profile {
+	/* #1 Éléments */
+	background-image: url('../resource/assets-ui/navbar/PROFILE.png');
+}
+
+.navBar-link-characters {
+	/* #1 Éléments */
+	background-image: url('../resource/assets-ui/navbar/CHARACTERS.png');
+}
+
+.navBar-link-leader {
+	/* #1 Éléments */
+	background-image: url('../resource/assets-ui/navbar/LEADER.png');
+}
+
+.navBar-link-infos {
+	/* #1 Éléments */
+	background-image: url('../resource/assets-ui/navbar/INFOS.png');
+}
+
+.navBar-link-friends {
+	/* #1 Éléments */
+	background-image: url('../resource/assets-ui/navbar/FRIENDS.png');
 }
