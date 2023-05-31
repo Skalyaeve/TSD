@@ -6,9 +6,10 @@
 	"type": "module",
 	"main": "./src/index.jsx",
 	"scripts": {
-		"start": "npm run dev",
+		"start": "npm run getIp && npm run dev",
 		"dev": "webpack serve --mode=development",
-		"prod": "webpack --mode=production"
+		"prod": "webpack --mode=production",
+		"getIp": "echo \"\\nHOST_IP=\"$(ip addr | grep \"inet 10.\" | cut -d\" \" -f6 | cut -d\"/\" -f1) >> .env"
 	},
 	"dependencies": {
 		"dotenv": "^16.0.3",
