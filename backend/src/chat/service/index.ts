@@ -7,7 +7,14 @@ import {getUserFromSocket} from './getUserFromSocket.js';
 import { createChannel, createOneChanMember, createOneChanMessage, createOneChannel } from './createChannel.js';
 import { setChanName, setChanPassword, setChannelType, makeChanAdmin, makeOwnerAdmin } from './updateChannel.js';
 import { muteMember, banMember, kickMember, leaveChannel } from './members.js';
-import { findAllChanMessages,findAllChannelsByMember,findAllMembersByChanID, findChannelbyId, findManyChanMessages } from './finders.js';
+import { 
+  findAllChanMessages,
+  findAllChannelsByMember,
+  findAllMembersByChanID, 
+  findChannelbyId, 
+  findManyChanMessages, 
+  findAllProtectedChannels, 
+  findAllPublicChannels } from './finders.js';
 import { isAdmin, isMember, isOwner, psswdMatch, isBanned, isMuted } from './verifications.js'
 import { getPrivateConversation, createOnePrivMessage, blockUser, unblockUser, isBlocked} from './private.js'
 
@@ -47,6 +54,9 @@ export class ChatService {
   findAllMembersByChanID = findAllMembersByChanID
   findChannelbyId = findChannelbyId
   findManyChanMessages = findManyChanMessages
+  findAllPublicChannels = findAllPublicChannels
+  findAllProtectedChannels = findAllProtectedChannels
+
 
   //Verification methods
   isAdmin = isAdmin

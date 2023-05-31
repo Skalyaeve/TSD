@@ -52,6 +52,64 @@ export async function findAllChannelsByMember(member: number): Promise<ChanMembe
   }
 }
 
+export async function findChannelsthatStartby(startBy:string): Promise<Channel[]> {
+  try {
+    const channels: Channel[] = await this.prisma.channel.findMany({
+      where: {
+        startsWith: startBy,
+      }
+    });
+    if (!channels) {
+      throw new Error('channels by member not found');
+    }
+    return channels;
+  }
+  catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
+export async function findAllPublicChannels(): Promise<Channel[]>{
+  try {
+    const channels: Channel[] = await this.prisma.channel.findMany(
+      {
+        where: {
+          type: 'PUBLIC'
+        }
+      }
+    );
+    if (!channels) {
+      throw new Error('no public channels');
+    }
+    return channels;
+  }
+  catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
+export async function findAllProtectedChannels(): Promise<Channel[]>{
+  try {
+    const channels: Channel[] = await this.prisma.channel.findMany(
+      {
+        where: {
+          type: 'PROTECTED'
+        }
+      }
+    );
+    if (!channels) {
+      throw new Error('no protected channels');
+    }
+    return channels;
+  }
+  catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
 export async function findManyChanMessages(chanId: number, count: number): Promise<ChanMessage[]> {
   try {
     const messages: ChanMessage[] = await this.prisma.chanMessage.findMany({
@@ -94,3 +152,4 @@ export async function findAllChanMessages(chanId: number): Promise<ChanMessage[]
     throw error;
   }
 }
+

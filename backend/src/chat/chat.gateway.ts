@@ -210,10 +210,8 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     catch (error){
       console.log(error);
       throw new WsException(error.message || 'Could find channel');
-
     }
   }
-  
 
   @SubscribeMessage('GetChannelsByUser')
   async handleGetChannelbyUser(
@@ -245,6 +243,31 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     }
   }
 
+  @SubscribeMessage('GetPublicChannels')
+  async handleGetPublicChannels(
+    @ConnectedSocket() client: Socket) : Promise<void> {
+      try {
+        const channels = await this.chatService.findAllPublicChannels();
+        this.server.emit('publicChannelsfound', channels);
+      }
+      catch (error) {
+        console.log(error);
+        throw new WsException(error.message || 'Could not get public channels');
+      }
+  }
+
+  @SubscribeMessage('GetProtectedChannels')
+  async handleGetProtectedChannels(
+    @ConnectedSocket() client: Socket) : Promise<void> {
+      try {
+        const channels = await this.chatService.findAllProtectedChannels();
+        this.server.emit('protectedChannelsfound', channels);
+      }
+      catch (error) {
+        console.log(error);
+        throw new WsException(error.message || 'Could not get protected channels');
+      }
+    }
 
   //--------------------------------------------------------------------------//
   //                           CHANNEL MESSAGE EVENTS                         //
