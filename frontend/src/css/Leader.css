@@ -1,27 +1,10 @@
-/* ---------------------------------
-Méthodologie B-E--M (Bloc, Élément, Modifieur)
-
-Bloc: Un composant indépendant
-ex: Un bouton, une barre de navigation, un en-tête...
-ex: ".navBar {}"
-ex: ".button {}"
-
-Élément: Une partie d'un bloc qui a un sens uniquement dans le contexte de ce bloc.
-ex: ".navBar-logo {}"
-ex: ".button-icon {}"
-
-Modifieur: Une variation ou un état d'un bloc ou d'un élément. 
-ex: ".button--large {}"
-ex: ".navBar-logo--hidden {}"
---------------------------------- */
-
-/* ---------------------------------
-#1 Éléments
-#2 Forme
-#3 Position
-#4 Margin - Padding
-#5 Animations
---------------------------------- */
+/* ------------------------------ */
+/* #1 Éléments */
+/* #2 Forme */
+/* #3 Position */
+/* #4 Margin - Padding */
+/* #5 Animations */
+/* ------------------------------ */
 
 /* ---LEADER--------------------- */
 .leader {
@@ -29,53 +12,51 @@ ex: ".navBar-logo--hidden {}"
 	display: flex;
 	flex-direction: column;
 	overflow: hidden;
-
-	/* #4 Margin - Padding */
-	padding: 10px;
-	padding-left: 0;
 }
 
 .leader-btn {
 	/* #1 Éléments */
-	border: 1px solid rgb(255, 255, 255);
+	background-image: url('../resource/assets-ui/background-1.png');
+	border: 5px solid;
+	border-image-source: url('../resource/assets-ui/black-border.png');
+	border-image-slice: 15;
+	border-image-width: 8px;
 
 	/* #2 Forme */
-	width: 55px;
-	height: 35px;
-}
-
-.leader-btn:active {
-	/* #1 Éléments */
-	background-color: rgb(255, 255, 255, 0.3);
+	width: 60px;
+	height: 45px;
 }
 
 /* ---LEADER-HEAD---------------- */
 .leader-head {
 	/* #1 Éléments */
-	border: 1px solid rgb(255, 255, 255);
+	background-image: url('../resource/assets-ui/background-2.png');
+	border: 9px solid;
+	border-image-source: url('../resource/assets-ui/black-border.png');
+	border-image-slice: 15;
+	border-image-width: 12px;
 	display: flex;
 	flex-direction: row-reverse;
 	align-items: flex-end;
 
 	/* #4 Margin - Padding */
-	padding: 10px;
+	margin-bottom: 5px;
+	padding: 7px 10px;
 }
 
 .leader-input {
 	/* #1 Éléments */
-	border: 1px solid rgb(255, 255, 255);
+	background-image: url('../resource/assets-ui/background-1.png');
+	border: 5px solid;
+	border-image-source: url('../resource/assets-ui/black-border.png');
+	border-image-slice: 15;
+	border-image-width: 8px;
 
 	/* #2 Forme */
-	height: 35px;
-	border-top-left-radius: 5px;
-	border-bottom-left-radius: 5px;
+	height: 45px;
 }
 
 .leader-input-btn {
-	/* #2 Forme */
-	border-top-right-radius: 5px;
-	border-bottom-right-radius: 5px;
-
 	/* #4 Margin - Padding */
 	margin-left: 5px;
 	margin-right: 15px;
@@ -83,16 +64,12 @@ ex: ".navBar-logo--hidden {}"
 
 .leader-findTop-btn {
 	/* #2 Forme */
-	width: 110px;
-	border-top-left-radius: 5px;
-	border-bottom-left-radius: 5px;
+	width: 120px;
 }
 
 .leader-findMe-btn {
 	/* #2 Forme */
-	width: 110px;
-	border-top-right-radius: 5px;
-	border-bottom-right-radius: 5px;
+	width: 120px;
 
 	/* #4 Margin - Padding */
 	margin-left: 5px;
@@ -100,25 +77,18 @@ ex: ".navBar-logo--hidden {}"
 }
 
 .leader-up-btn {
-	/* #2 Forme */
-	border-top-left-radius: 5px;
-	border-bottom-left-radius: 5px;
-
 	/* #4 Margin - Padding */
 	margin-right: 5px;
-}
-
-.leader-down-btn {
-	/* #2 Forme */
-	border-top-right-radius: 5px;
-	border-bottom-right-radius: 5px;
 }
 
 /* ---LEADER-BODY---------------- */
 .leader-body {
 	/* #1 Éléments */
-	border: 1px solid rgb(255, 255, 255);
-	border-top: none;
+	background-image: url('../resource/assets-ui/background-2.png');
+	border: solid 9px;
+	border-image-source: url('../resource/assets-ui/black-border.png');
+	border-image-slice: 15;
+	border-image-width: 12px;
 	overflow-y: auto;
 
 	/* #2 Forme */
@@ -127,22 +97,27 @@ ex: ".navBar-logo--hidden {}"
 
 .leader-boardHead {
 	/* #1 Éléments */
-	border-bottom: 1px solid rgb(255, 255, 255);
+	background-image: url('../resource/assets-ui/background-1.png');
+	border-bottom: 7px solid;
+	border-image-source: url('../resource/assets-ui/black-border.png');
+	border-image-slice: 15;
+	border-image-width: 0 0 10px 0;
 	display: flex;
 
 	/* #2 Forme */
-	height: 50px;
+	height: 65px;
 
 	/* #3 Position */
 	position: sticky;
+	z-index: 2;
 	top: 0;
-	z-index: 1;
 }
 
 .leader-col {
 	/* #1 Éléments */
+	background-image: url('../resource/assets-ui/background-1.png');
 	border: none;
-	border-right: 1px solid rgb(255, 255, 255);
+	font-size: 24px;
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -156,62 +131,80 @@ ex: ".navBar-logo--hidden {}"
 .leader-col:first-child {
 	/* #2 Forme */
 	width: 25%;
-	min-width: 250px;
+	min-width: 200px;
+}
+
+.leader-col:nth-child(2) {
+	/* #2 Forme */
+	min-width: 120px;
 }
 
 .leader-col:last-child {
-	/* #1 Éléments */
-	border-right: none;
-
 	/* #2 Forme */
 	width: 19%;
 }
 
 .leader-col--bigFont {
 	/* #1 Éléments */
-	font-size: 30px;
+	font-size: 34px;
 }
 
 /* ---LEADER-USR----------------- */
 .leader-usr {
 	/* #1 Éléments */
-	border-top: 1px solid rgb(255, 255, 255);
-	border-bottom: 1px solid rgb(255, 255, 255);
+	border-bottom: solid 5px;
+	border-image-source: url('../resource/assets-ui/black-border.png');
+	border-image-slice: 15;
+	border-image-width: 0 0 8px 0;
 	display: flex;
 
 	/* #2 Forme */
-	height: 70.25px;
+	height: 80px;
 }
 
 .leader-usr-rank {
 	/* #1 Éléments */
-	background-color: transparent;
+	font-size: 22px;
 	text-align: center;
+	text-overflow: ellipsis;
+	overflow: hidden;
 
 	/* #2 Forme */
-	width: 60px;
+	width: 65px;
+
+	/* #3 Position */
+	z-index: 1;
+
+	/* #4 Margin - Padding */
+	padding-left: 5px;
+}
+
+.leader-usr-rank:hover {
+	/* #1 Éléments */
+	overflow: visible;
 }
 
 .leader-usr-pic {
 	/* #1 Éléments */
-	border: 1px solid rgb(255, 255, 255);
-	display: flex;
-	align-items: center;
-	justify-content: center;
+	border: solid 5px;
+	border-image-source: url('../resource/assets-ui/black-border.png');
+	border-image-slice: 15;
+	border-image-width: 8px;
 
 	/* #2 Forme */
-	width: 50px;
-	height: 50px;
+	width: 65px;
+	height: 65px;
 }
 
 .leader-usr-link {
 	/* #1 Éléments */
-	background-color: transparent;
-	text-align: start;
+	font-size: 22px;
+	text-overflow: ellipsis;
+	overflow: hidden;
 
 	/* #2 Forme */
-	width: calc(100% - 120px);
+	width: calc(100% - 130px);
 
 	/* #4 Margin - Padding */
-	margin-left: 10px;
+	padding-left: 5px;
 }

@@ -1,86 +1,68 @@
-/* ---------------------------------
-Méthodologie B-E--M (Bloc, Élément, Modifieur)
-
-Bloc: Un composant indépendant
-ex: Un bouton, une barre de navigation, un en-tête...
-ex: ".navBar {}"
-ex: ".button {}"
-
-Élément: Une partie d'un bloc qui a un sens uniquement dans le contexte de ce bloc.
-ex: ".navBar-logo {}"
-ex: ".button-icon {}"
-
-Modifieur: Une variation ou un état d'un bloc ou d'un élément. 
-ex: ".button--large {}"
-ex: ".navBar-logo--hidden {}"
---------------------------------- */
-
-/* ---------------------------------
-#1 Éléments
-#2 Forme
-#3 Position
-#4 Margin - Padding
-#5 Animations
---------------------------------- */
+/* ------------------------------ */
+/* #1 Éléments */
+/* #2 Forme */
+/* #3 Position */
+/* #4 Margin - Padding */
+/* #5 Animations */
+/* ------------------------------ */
 
 /* ---CHARACTERS----------------- */
 .characters {
 	/* #1 Éléments */
 	display: grid;
 	grid-template-columns: 1fr 500px;
-	grid-gap: 10px;
+	grid-gap: 5px;
 	overflow: hidden;
-
-	/* #4 Margin - Padding */
-	padding: 10px;
-	padding-left: 0;
 }
 
 .characters-select {
 	/* #1 Éléments */
-	border: 1px solid rgb(255, 255, 255);
-	display: flex;
-	flex-wrap: wrap;
-	align-content: flex-start;
+	background-image: url('../resource/assets-ui/background-2.png');
+	border: 10px solid;
+	border-image-source: url('../resource/assets-ui/black-border.png');
+	border-image-slice: 15;
+	border-image-width: 15px;
+	display: grid;
+	grid-template-columns: repeat(auto-fill, 200px);
+	grid-auto-rows: 200px;
+	grid-gap: 30px;
 	justify-content: center;
 	overflow-x: hidden;
+
+	/* #4 Margin - Padding */
+	padding: 50px;
 }
 
 .character-box {
 	/* #1 Éléments */
-	border: 1px solid rgb(255, 255, 255);
-	display: flex;
-	align-items: center;
-	justify-content: center;
+	background-image: url('../resource/assets-ui/background-1.png');
+	border: 10px solid;
+	border-image-source: url('../resource/assets-ui/black-border.png');
+	border-image-slice: 15;
+	border-image-width: 15px;
+	cursor: pointer;
 
 	/* #2 Forme */
 	min-width: 200px;
 	min-height: 200px;
-
-	/* #4 Margin - Padding */
-	margin: 53px;
-}
-
-.character-box:active {
-	background-color: rgb(255, 255, 255, 0.3);
 }
 
 /* ---CHARACTER------------------ */
 .character {
 	/* #1 Éléments */
-	border: 1px solid rgb(255, 255, 255);
 	display: grid;
 	grid-template-columns: 1fr 1fr;
-	grid-template-rows: 300px 400px auto;
-	overflow-y: auto;
+	grid-template-rows: 300px auto 200px;
+	grid-gap: 5px;
 }
 
 .character-skin {
 	/* #1 Éléments */
-	border-bottom: 1px solid rgb(255, 255, 255);
-	display: flex;
-	align-items: center;
-	justify-content: center;
+	background-image: url('../resource/assets-ui/background-1.png');
+	border: 10px solid;
+	border-image-source: url('../resource/assets-ui/black-border.png');
+	border-image-slice: 15;
+	border-image-width: 15px;
 
 	/* #3 Position */
 	grid-column: 1 / -1;
@@ -88,52 +70,76 @@ ex: ".navBar-logo--hidden {}"
 
 .character-stats {
 	/* #1 Éléments */
-	border-bottom: 1px solid rgb(255, 255, 255);
-	border-right: 1px solid rgb(255, 255, 255);
+	background-image: url('../resource/assets-ui/background-1.png');
+	border: 10px solid;
+	border-image-source: url('../resource/assets-ui/black-border.png');
+	border-image-slice: 15;
+	border-image-width: 15px;
 	display: flex;
 	align-items: center;
 	justify-content: center;
+
+	/* #4 Margin - Padding */
+	padding: 5px;
 }
 
 .character-story {
 	/* #1 Éléments */
-	border-bottom: 1px solid rgb(255, 255, 255);
+	background-image: url('../resource/assets-ui/background-1.png');
+	border: 10px solid;
+	border-image-source: url('../resource/assets-ui/black-border.png');
+	border-image-slice: 15;
+	border-image-width: 15px;
 	display: flex;
 	align-items: center;
 	justify-content: center;
+
+	/* #4 Margin - Padding */
+	padding: 5px;
 }
 
 /* ---CHARACTER-SPELLS----------- */
 .character-spells {
 	/* #1 Éléments */
-	border-bottom: 1px solid rgb(255, 255, 255);
-	display: flex;
-	flex-wrap: wrap;
-	align-content: flex-start;
-	justify-content: center;
+	background-image: url('../resource/assets-ui/background-2.png');
+	border: 10px solid;
+	border-image-source: url('../resource/assets-ui/black-border.png');
+	border-image-slice: 15;
+	border-image-width: 15px;
+	display: grid;
+	grid-template-columns: 1fr 1fr;
 
 	/* #3 Position */
 	grid-column: 1 / -1;
+
+	/* #4 Margin - Padding */
+	padding: 0 40px;
 }
 
 .character-spell {
 	/* #1 Éléments */
-	border: 1px solid rgb(255, 255, 255);
-	display: flex;
-	align-items: center;
-	justify-content: center;
+	background-image: url('../resource/assets-ui/background-1.png');
+	border: 10px solid;
+	border-image-source: url('../resource/assets-ui/black-border.png');
+	border-image-slice: 15;
+	border-image-width: 15px;
 
 	/* #2 Forme */
-	height: 150px;
-	width: 150px;
+	height: 140px;
+	width: 140px;
 
-	/* #4 Margin - Padding */
-	margin: 33px;
+	/* #3 Position */
+	align-self: center;
+	justify-self: center;
 }
 
 .character-spell-tooltip {
 	/* #1 Éléments */
-	border: 1px solid rgb(255, 255, 255);
+	background-image: url('../resource/assets-ui/background-1.png');
+	border: 10px solid;
+	border-image-source: url('../resource/assets-ui/black-border.png');
+	border-image-slice: 15;
+	border-image-width: 15px;
 	display: flex;
 	align-items: center;
 	justify-content: center;

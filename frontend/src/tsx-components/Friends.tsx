@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react'
+import React, { useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { fade, bouncyWidthChangeByPx, heightChangeByPx, xMove, bouncyXMove, yMove, mergeMotions, widthChange } from '../tsx-utils/ftMotion.tsx'
 
@@ -8,7 +8,7 @@ const FRIEND_NAME = `${NAME}-friend`
 const FRIENDS_NAME = `${FRIEND_NAME}s`
 const LIST_NAME = `${FRIENDS_NAME}-list`
 const COL_NAME = `${LIST_NAME}-col`
-const BTN_NAME = `${NAME}-btn`
+const BTN_NAME = `${FRIENDS_NAME}-btn`
 
 // --------FRIEND-NAME----------------------------------------------------- //
 interface FriendNameProps {
@@ -28,27 +28,37 @@ const FriendName: React.FC<FriendNameProps> = ({ id }) => {
 	const delbtnMotion = xMove({ from: 30, inDuration: 0.3, outDuration: 0.3 })
 
 	// ----CLASSNAMES------------------------- //
+	const boxName = `${COL_NAME} ${BTN_NAME}`
 	const mainBtnName = `${FRIEND_NAME}-name`
 	const ppName = `${FRIEND_NAME}-pic`
 	const linkName = `${FRIEND_NAME}-link`
-	const delBtnName = `${FRIEND_NAME}-del-btn ${BTN_NAME}`
+	const linkFirstLineName = `${linkName}-firstLine`
+	const linkSecondLineName = `${linkName}-secondLine`
+	const delBtnName = `${FRIEND_NAME}-del-btn`
 
 	// ----RENDER----------------------------- //
-	const btnContent = useMemo(() => <>
-		<div className={ppName}>PP</div>
-		<div className={linkName}>[FRIEND #{id}]<br />online</div>
-	</>, [])
+	const btnContent = <>
+		<div className={ppName}></div>
+		<div className={linkName}>
+			<div className={linkFirstLineName}>
+				NAME
+			</div>
+			<div className={linkSecondLineName}>
+				online
+			</div>
+		</div>
+	</>
 	const boxContent = <>
 		<div className={mainBtnName}>{btnContent}</div>
 		<AnimatePresence>
 			{delBtn && <motion.button
 				className={delBtnName}
 				{...delbtnMotion}>
-				[X]
+				X
 			</motion.button>}
 		</AnimatePresence>
 	</>
-	return <div className={COL_NAME} {...boxHdl}>{boxContent}</div>
+	return <div className={boxName} {...boxHdl}>{boxContent}</div>
 }
 
 // --------FRIEND---------------------------------------------------------- //
@@ -107,12 +117,12 @@ const FriendSearch: React.FC = () => {
 
 	// ----CLASSNAMES------------------------- //
 	const searchName = `${FRIENDS_NAME}-search`
-	const searchBtnName = `${searchName}-btn ${BTN_NAME}`
+	const searchBtnName = `${searchName}-btn`
 	const inputName = `${searchName}-input`
 
 	// ----RENDER----------------------------- //
 	const childBtnContent = (!searchin ?
-		<div className={searchName}>[NAME]</div>
+		<div className={searchName}>NAME</div>
 		:
 		<motion.input
 			className={inputName}
@@ -127,7 +137,7 @@ const FriendSearch: React.FC = () => {
 				className={searchBtnName}
 				{...searchBtnHdl}
 				{...btnMotion}>
-				{searchin ? '[X]' : '[S]'}
+				{searchin ? 'X' : 'S'}
 			</motion.button>}
 		</AnimatePresence>
 	</>
@@ -138,41 +148,29 @@ const FriendSearch: React.FC = () => {
 const FriendsList: React.FC = () => {
 	// ----STATES----------------------------- //
 	const [count, setCount] = useState(20)
-	const [animating, setAnimating] = useState(true)
-
-	// ----EFFECTS---------------------------- //
-	useEffect(() => {
-		const timer = setTimeout(() => setAnimating(false), 1000)
-		return () => clearTimeout(timer)
-	}, [])
 
 	// ----CLASSNAMES------------------------- //
 	const listHeadName = `${LIST_NAME}-head`
 	const headColName = `${COL_NAME} ${BTN_NAME}`
 
 	// ----RENDER----------------------------- //
-	const renderFriends = useMemo(() => (
-		Array.from({ length: count }, (_, index) =>
-			<Friend key={index + 1} id={index + 1} />
-		)
-	), [])
+	const renderFriends = Array.from({ length: count }, (_, index) =>
+		<Friend key={index + 1} id={index + 1} />
+	)
 	const listHeadCol = (content: string) => <div className={headColName}>
 		{content}
 	</div>
-	return <motion.div
-		className={LIST_NAME}
-		exit={{ overflowY: 'hidden' }}
-		style={{ overflowY: (animating ? 'hidden' : 'auto') }}>
+	return <div className={LIST_NAME}>
 		<div className={listHeadName}>
 			<FriendSearch />
-			{listHeadCol('[MATCHES]')}
-			{listHeadCol('[WINS]')}
-			{listHeadCol('[LOSES]')}
-			{listHeadCol('[RATIO]')}
-			{listHeadCol('[SCORED]')}
+			{listHeadCol('MATCHES')}
+			{listHeadCol('WINS')}
+			{listHeadCol('LOSES')}
+			{listHeadCol('RATIO')}
+			{listHeadCol('RANKING')}
 		</div>
 		{renderFriends}
-	</motion.div>
+	</div>
 }
 
 // --------FRIENDS--------------------------------------------------------- //
@@ -195,13 +193,13 @@ const Friends: React.FC = () => {
 	const boxName = `${FRIENDS_NAME} main`
 	const headName = `${FRIENDS_NAME}-head`
 	const inputName = `${FRIENDS_NAME}-add-input`
-	const inputBtnName = `${inputName}-btn ${BTN_NAME}`
+	const inputBtnName = `${inputName}-btn`
 
 	// ----RENDER----------------------------- //
 	return <motion.main className={boxName} {...boxMotion}>
 		<motion.div className={headName} {...headMotion}>
 			<motion.button className={inputBtnName} {...boxMove(1)}>
-				[ADD]
+				ADD
 			</motion.button>
 			<motion.input className={inputName} {...headInputMotion} />
 		</motion.div>

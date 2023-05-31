@@ -1,14 +1,11 @@
 import React, { useRef, useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
-import { AnimatePresence, MotionProps, motion } from 'framer-motion'
+import { AnimatePresence, motion } from 'framer-motion'
 import { DragDrop } from '../tsx-utils/ftDragDrop.tsx'
-import { widthChangeByPx, bouncyHeightChangeByPercent, xMove, bouncyYMove } from '../tsx-utils/ftMotion.tsx'
-import ChatSettings from './SideChatSettings.tsx'
+import { popUp, widthChangeByPercent, bouncyHeightChangeByPercent, xMove, bouncyYMove } from '../tsx-utils/ftMotion.tsx'
+import ChatSettings from './ChatSettings.tsx'
 
 // --------CLASSNAMES------------------------------------------------------ //
-const NAME = 'sideChat'
-const MAIN_NAME = `${NAME}-main`
-const BTN_NAME = `${NAME}-btn`
+const NAME = 'chat'
 
 // --------ROOM-BOX-------------------------------------------------------- //
 interface RoomBoxProps {
@@ -52,28 +49,27 @@ const RoomBox: React.FC<RoomBoxProps> = ({
 	}
 
 	// ----ANIMATIONS------------------------- //
-	const setBtnMotion = xMove({
-		from: 20,
+	const setBtnMotion = popUp({
 		inDuration: 0.3,
 		outDuration: 0.3
 	})
 
 	// ----CLASSNAMES------------------------- //
 	const boxName = `${NAME}-room`
-	const linkName = `${boxName}-link ${BTN_NAME}`
-	const setBtnName = `${NAME}-setRoom-btn ${BTN_NAME}`
+	const linkName = `${boxName}-link`
+	const setBtnName = `${NAME}-setRoom-btn`
 
 	// ----RENDER----------------------------- //
 	const boxContent = <>
 		<div className={linkName} {...linkHdl}>
-			[#{id}]
+			#{id}
 		</div>
 		<AnimatePresence>
 			{showRoomSet && <motion.button
 				className={setBtnName}
 				{...setBtnHdl}
 				{...setBtnMotion}>
-				[*]
+				*
 			</motion.button>}
 		</AnimatePresence>
 	</>
@@ -110,7 +106,6 @@ const RoomBoxes: React.FC<RoomBoxesProps> = ({ setChatArea, chatRef }) => {
 	useEffect(() => {
 		updateRoomBoxes(0, 1, { id: 1 })
 		updateRoomBoxes(1, 1, { id: 2 })
-		updateRoomBoxes(2, 1, { id: 3 })
 	}, [])
 
 	// ----HANDLERS--------------------------- //
@@ -140,7 +135,7 @@ const RoomBoxes: React.FC<RoomBoxesProps> = ({ setChatArea, chatRef }) => {
 
 	// ----CLASSNAMES------------------------- //
 	const boxName = `${NAME}-rooms`
-	const btnName = `${NAME}-newRoom-btn ${BTN_NAME}`
+	const btnName = `${NAME}-newRoom-btn`
 
 	// ----RENDER----------------------------- //
 	const newRoomBox = (box: RoomBoxType) => <RoomBox
@@ -154,10 +149,12 @@ const RoomBoxes: React.FC<RoomBoxesProps> = ({ setChatArea, chatRef }) => {
 		setIsDragging={setIsDragging}
 	/>
 	return <>
-		<div className={boxName}>{roomz.map(box => newRoomBox(box))}</div>
-		<button className={btnName} {...btnHdl}>
-			{settingsOpen !== 1 ? '[+]' : '[-]'}
-		</button>
+		<div className={boxName}>
+			{roomz.map(box => newRoomBox(box))}
+			<button className={btnName} {...btnHdl}>
+				{settingsOpen !== 1 ? '+' : '-'}
+			</button>
+		</div>
 		<AnimatePresence>
 			{settingsOpen && <ChatSettings
 				key={`${NAME}-roomSet-${settingsOpen}`}
@@ -183,11 +180,6 @@ const RoomUser: React.FC<RoomUserProps> = ({ id }) => {
 	}
 
 	// ----ANIMATIONS------------------------- //
-	const boxMotion = xMove({
-		from: 100 + 100 * id,
-		inDuration: 0.5 + 0.01 * id,
-		outDuration: 0.5 - 0.01 * id
-	})
 	const btnMotion = (nbr: number) => xMove({
 		from: 10 * nbr,
 		inDuration: 0.3 + 0.01 * nbr,
@@ -196,39 +188,36 @@ const RoomUser: React.FC<RoomUserProps> = ({ id }) => {
 
 	// ----CLASSNAMES------------------------- //
 	const boxName = `${NAME}-roomUsr`
-	const linkName = `${boxName}-link ${BTN_NAME}`
-	const btnName = `${boxName}-btn ${BTN_NAME}`
+	const linkName = `${boxName}-link`
+	const btnName = `${boxName}-btn`
 	const btnsName = `${boxName}-btns`
 
 	// ----RENDER----------------------------- //
-	return <motion.div className={boxName} {...boxHdl} {...boxMotion}>
-		<div className={linkName}>[#{id}]</div>
+	return <div className={boxName} {...boxHdl}>
+		<div className={linkName}>#{id}</div>
 		<AnimatePresence>
 			{showButtons && <div className={btnsName}>
 				<motion.button className={btnName} {...btnMotion(3)}>
-					[vs]
+					vs
 				</motion.button>
 				<motion.button className={btnName} {...btnMotion(2)}>
-					[/w]
+					/w
 				</motion.button>
 				<motion.button className={btnName} {...btnMotion(1)}>
-					[/x]
+					/x
 				</motion.button>
 			</div>}
 		</AnimatePresence>
-	</motion.div>
+	</div>
 }
 
 // --------USERS----------------------------------------------------------- //
 const RoomUsers: React.FC = () => {
 	// ----STATES----------------------------- //
-	const [userCount, setUserCount] = useState(12)
+	const [userCount, setUserCount] = useState(15)
 
 	// ----ANIMATIONS------------------------- //
-	const boxMotion = widthChangeByPx({
-		finalWidth: 200,
-		initialOpacity: 1,
-	})
+	const boxMotion = widthChangeByPercent({ finalWidth: 75, initialOpacity: 1 })
 
 	// ----CLASSNAMES------------------------- //
 	const boxName = `${NAME}-roomUsers`
@@ -239,10 +228,7 @@ const RoomUsers: React.FC = () => {
 		<RoomUser key={index + 1} id={index + 1} />
 	)
 	return <motion.div className={boxName} {...boxMotion}>
-		<motion.input
-			className={inputName}
-			placeholder={` ${userCount} online`}
-		/>
+		<input className={inputName} placeholder={`${userCount} online`} />
 		{renderBoxes}
 	</motion.div>
 }
@@ -250,16 +236,15 @@ const RoomUsers: React.FC = () => {
 // --------TEXT-AREA------------------------------------------------------- //
 interface TextAreaProps {
 	chatArea: number
-	showUsers: boolean
 }
-const TextArea: React.FC<TextAreaProps> = ({ chatArea, showUsers }) => {
+const TextArea: React.FC<TextAreaProps> = ({ chatArea }) => {
 	// ----CLASSNAMES------------------------- //
-	const boxName = `${NAME}-txtArea ${(
-		showUsers ? `${NAME}-txtArea--shorten` : ''
-	)}`
+	const boxName = `${NAME}-txtArea`
 
 	// ----RENDER----------------------------- //
-	return <div className={boxName}>Content of chat #{chatArea}</div>
+	return <div className={boxName}>
+		Content of chat #{chatArea}
+	</div>
 }
 
 // --------MAIN-CONTENT---------------------------------------------------- //
@@ -287,13 +272,13 @@ const MainContent: React.FC<MainContentProps> = ({ chatRef }) => {
 	const resize = () => {
 		if (!chatRef.current) return
 		const chatRefBCR = chatRef.current.getBoundingClientRect()
-		if (chatRefBCR.width >= 450) {
+		if (chatRefBCR.width >= 500) {
 			if (!showUsersRef.current) {
 				setShowUsers(true)
 				showUsersRef.current = true
 			}
 		}
-		else if (chatRefBCR.width < 450 && showUsersRef.current) {
+		else if (chatRefBCR.width < 500 && showUsersRef.current) {
 			setShowUsers(false)
 			showUsersRef.current = false
 		}
@@ -306,33 +291,35 @@ const MainContent: React.FC<MainContentProps> = ({ chatRef }) => {
 	})
 
 	// ----CLASSNAMES------------------------- //
-	const inputName = `${MAIN_NAME}-input`
-	const btnName = `${inputName}-btn ${BTN_NAME}`
+	const boxName = `${NAME}-main`
+	const inputName = `${boxName}-input`
+	const btnName = `${inputName}-btn`
 	const inputBoxName = `${inputName}-box`
+	const middleContentName = `${boxName}-middleContent`
 
 	// ----RENDER----------------------------- //
-	return <motion.div className={MAIN_NAME} {...boxMotion}>
+	return <motion.div className={boxName} {...boxMotion}>
 		<RoomBoxes setChatArea={setChatArea} chatRef={chatRef} />
-		<AnimatePresence>
-			{showUsers && <RoomUsers />}
-		</AnimatePresence>
-		<TextArea chatArea={chatArea} showUsers={showUsers} />
+		<div className={middleContentName}>
+			<TextArea chatArea={chatArea} />
+			<AnimatePresence>
+				{showUsers && <RoomUsers />}
+			</AnimatePresence>
+		</div>
 		<div className={inputBoxName}>
-			<input className={inputName} placeholder=' ...' />
-			<button className={btnName}>[OK]</button>
+			<input className={inputName} placeholder='...' />
+			<button className={btnName}>OK</button>
 		</div>
 	</motion.div>
 }
 
 // --------SIDE-CHAT------------------------------------------------------- //
-const SideChat: React.FC = () => {
+const Chat: React.FC = () => {
 	// ----REFS------------------------------- //
 	const chatRef = useRef<HTMLDivElement | null>(null)
 
 	// ----STATES----------------------------- //
 	const [chatOpen, setChatOpen] = useState(false)
-	const [animeMainBtn, setAnimeMainBtn] = useState(false)
-	const [animeFullPageBtn, setAnimeFullPageBtn] = useState(false)
 
 	// ----HANDLERS--------------------------- //
 	const toggleChatContent = () => {
@@ -340,78 +327,33 @@ const SideChat: React.FC = () => {
 		if (chatRef.current)
 			chatRef.current.setAttribute('style', 'width: 100%')
 	}
-	const extendBtnHdl = {
-		onMouseEnter: () => setAnimeMainBtn(true),
-		onMouseLeave: () => setAnimeMainBtn(false),
-		onMouseUp: toggleChatContent
-	}
-	const fullPageBtnHdl = {
-		onMouseEnter: () => setAnimeFullPageBtn(true),
-		onMouseLeave: () => setAnimeFullPageBtn(false),
-	}
+	const extendBtnHdl = { onMouseUp: toggleChatContent }
 
 	// ----ANIMATIONS------------------------- //
-	const boxMotion = bouncyYMove({ from: 100, extra: -10, inDuration: 0.8 })
-	const btnMotion = {
-		y: [0, -5, 0],
-		transition: {
-			times: [0, 0.75, 1],
-			repeat: Infinity,
-			ease: 'easeOut'
-		}
-	}
-	const fullPageBtnMotion = {
-		whileHover: {
-			scale: [1, 1.1, 1],
-			borderTopLeftRadius: [0, 5, 0],
-			borderBottomLeftRadius: [0, 5, 0],
-			borderBottomRightRadius: [chatOpen ? 0 : 5, 5, chatOpen ? 0 : 5],
-			transition: {
-				duration: 1,
-				repeat: Infinity,
-				repeatType: 'reverse',
-				ease: 'linear'
-			}
-		}
-	}
+	const chatMotion = bouncyYMove({ from: 100, extra: -10, inDuration: 0.8 })
 
 	// ----CLASSNAMES------------------------- //
-	const boxName = `${NAME}${!chatOpen ? ` ${NAME}--noResize` : ''}`
-	const btnName = ` ${MAIN_NAME}-btn`
-	const extendBtnName = `${BTN_NAME}  ${MAIN_NAME}-extend-btn${(
-		chatOpen ? ` ${MAIN_NAME}-extend-btn--extend` : ''
-	)}`
-	const fullPageBtnName = `${BTN_NAME}  ${MAIN_NAME}-fullPage-btn${(
-		chatOpen ?
-			(!animeFullPageBtn ? ` ${MAIN_NAME}-fullPage-btn--extend` : '')
-			:
-			` ${MAIN_NAME}-fullPage-btn--noextend`
-	)}`
-	const fullPageLinkName = `${MAIN_NAME}-fullPage-link`
+	const boxName = `${NAME}-box`
+	const btnName = `${NAME}-btn`
+	const btnTxtName = `${btnName}-txt custom-txt`
 
 	// ----RENDER----------------------------- //
-	return <motion.div className={boxName} ref={chatRef} {...boxMotion}>
-		<AnimatePresence>
-			{chatOpen && <MainContent chatRef={chatRef} />}
-		</AnimatePresence>
+	return <div className={boxName}>
 		<motion.div
-			className={btnName}>
-			<motion.button
-				className={extendBtnName}
-				animate={animeMainBtn ? btnMotion : {}}
+			ref={chatRef}
+			className={NAME}
+			style={{ resize: chatOpen ? 'horizontal' : 'none' }}
+			{...chatMotion}>
+			<AnimatePresence>
+				{chatOpen && <MainContent chatRef={chatRef} />}
+			</AnimatePresence>
+			<button
+				className={btnName}
+				style={{ height: (chatOpen ? '68.9px' : '60px') }}
 				{...extendBtnHdl}>
-				CHAT
-			</motion.button>
-			<motion.button
-				className={fullPageBtnName}
-				animate={animeMainBtn ? btnMotion : {}}
-				{...fullPageBtnHdl}
-				{...fullPageBtnMotion as MotionProps}>
-				<Link className={fullPageLinkName} to={'/chat'}>
-					&gt;&gt;
-				</Link>
-			</motion.button>
+				<div className={btnTxtName} />
+			</button>
 		</motion.div>
-	</motion.div>
+	</div>
 }
-export default SideChat
+export default Chat

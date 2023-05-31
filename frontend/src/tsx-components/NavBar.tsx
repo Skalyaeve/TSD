@@ -1,220 +1,168 @@
-import React, { useRef, useState, useLayoutEffect } from 'react'
+import React from 'react'
 import { Routes, Route, useLocation, NavLink } from 'react-router-dom'
 import Cookies from 'js-cookie';
 import { AnimatePresence, motion } from 'framer-motion'
-import { cutThenCompare } from '../tsx-utils/ftStrings.tsx'
-import { bouncyHeightChangeByPercent, bouncyHeightChangeByPx, bouncyYMove, mergeMotions } from '../tsx-utils/ftMotion.tsx'
+import { heightChangeByPx, yMove } from '../tsx-utils/ftMotion.tsx'
 import { GameInfos } from './Matchmaker.tsx'
 
 // --------ANIMATIONS------------------------------------------------------ //
-const BACK_LINK_HEIGHT = 50
+const BACK_LINK_HEIGHT = 55
 const LINK_HEIGHT = 75
+const GRID_GAP = 5
 
-const navBarMotion = (height: number) => bouncyHeightChangeByPx({
-	finalHeight: height,
-	maxHeight: height + height * 0.3
-})
-const navBarLinkMotion = (from: number) => mergeMotions(
-	bouncyHeightChangeByPercent({ finalHeight: 101, maxHeight: 101 }),
-	bouncyYMove({ from: from, extra: 0 })
-)
+const navBarMotion = (height: number) => heightChangeByPx({ finalHeight: height })
+const navBarLinkMotion = (from: number) => yMove({ from: from })
 
 // --------CLASSNAMES------------------------------------------------------ //
 const NAME = 'navBar'
 const LINK_NAME = `${NAME}-link`
-const MOTION_LINK_NAME = `${LINK_NAME}-motion`
 
 // --------LINK------------------------------------------------------------ //
 interface NavBarLinkProps {
 	index: number
 	to: string
-	content: string
-	animating: React.MutableRefObject<boolean>
+	ext: string
 }
-const NavBarLink: React.FC<NavBarLinkProps> = ({
-	index, to, content, animating
-}) => {
+const NavBarLink: React.FC<NavBarLinkProps> = ({ index, to, ext }) => {
 	// ----HANDLERS--------------------------- //
 	const linkHdl = {
-		onClick: (e: React.MouseEvent) => {
-			if (animating.current || localStorage.getItem('inGame') === '1')
+		onMouseUp: (e: React.MouseEvent) => {
+			if (localStorage.getItem('inGame') === '1')
 				e.preventDefault()
 		}
 	}
 
 	// ----ANIMATIONS------------------------- //
-	const comeFrom = (index ?
-		BACK_LINK_HEIGHT + LINK_HEIGHT * (index - 1) : 0
-	)
-	const linkMotion = {
-		...navBarLinkMotion(-comeFrom),
-		whileHover: {
-			scale: 1.025,
-			borderTopLeftRadius: '5px',
-			borderTopRightRadius: '5px',
-			borderBottomLeftRadius: '5px',
-			borderBottomRightRadius: '5px',
-			transition: { ease: 'easeInOut' }
-		}
-	}
+	const comeFrom = (index ? BACK_LINK_HEIGHT + LINK_HEIGHT * (index - 1) + 75 : 0)
+	const linkMotion = navBarLinkMotion(-comeFrom)
+
+	// ----CLASSNAMES------------------------- //
+	const boxName = `${LINK_NAME}-motion`
+	const linkTxtName = `${LINK_NAME} ${LINK_NAME}-${ext} custom-txt`
 
 	// ----RENDER----------------------------- //
-	return <motion.div className={MOTION_LINK_NAME} {...linkMotion}>
-		<NavLink className={LINK_NAME} to={to} {...linkHdl}>
-			{content}
-		</NavLink>
+	return <motion.div className={boxName} {...linkMotion}>
+		<NavLink to={to} {...linkHdl} className={linkTxtName} />
 	</motion.div>
 }
 
 // --------RENDER-FROM-HOME------------------------------------------------ //
 interface FromHomeProps {
 	setLogged: React.Dispatch<React.SetStateAction<boolean>>
-	setRender: React.Dispatch<React.SetStateAction<JSX.Element>>
-	animating: React.MutableRefObject<boolean>
 }
-const FromHome: React.FC<FromHomeProps> = ({
-	setLogged, setRender, animating
-}) => {
+const FromHome: React.FC<FromHomeProps> = ({ setLogged }) => {
 	// ----HANDLERS--------------------------- //
 	const logoutBtnHdl = {
 		onMouseUp: () => {
-			if (animating.current) return
 			Cookies.remove('access_token', { path: '/', domain: 'localhost' })
 			setLogged(false)
-			setRender(<></>)
-			animating.current = true
 		}
 	}
 
 	// ----ANIMATIONS------------------------- //
-	const logoutBtnMotion = {
-		...navBarLinkMotion(0),
-		whileHover: {
-			scale: 1.025,
-			borderBottomLeftRadius: '5px',
-			borderBottomRightRadius: '5px',
-			transition: { ease: 'easeInOut' }
-		}
-	}
+	const logoutBtnMotion = navBarLinkMotion(0)
 
 	// ----CLASSNAMES------------------------- //
-	const logoutBtnName = `${LINK_NAME} ${MOTION_LINK_NAME}`
+	const logoutBtnName = `${LINK_NAME}-motion`
+	const logoutBtnTxTName = `${LINK_NAME} ${LINK_NAME}-logout custom-txt`
 
 	// ----RENDER----------------------------- //
-	return <motion.nav className={NAME}
-		{...navBarMotion(BACK_LINK_HEIGHT + LINK_HEIGHT * 3)}>
+	return <motion.nav
+		className={NAME}
+		{...navBarMotion(BACK_LINK_HEIGHT + LINK_HEIGHT * 3 + GRID_GAP * 3)}>
 		<motion.button
 			className={logoutBtnName}
 			{...logoutBtnHdl}
 			{...logoutBtnMotion}>
-			LOGOUT
+			<div className={logoutBtnTxTName} />
 		</motion.button>
 		<NavBarLink
 			index={1}
 			to='/profile'
-			content='PROFILE'
-			animating={animating}
+			ext='profile'
 		/>
 		<NavBarLink
 			index={2}
 			to='/characters'
-			content='CHARACTERS'
-			animating={animating}
+			ext='characters'
 		/>
 		<NavBarLink
 			index={3}
 			to='/leader'
-			content='LEADER'
-			animating={animating}
+			ext='leader'
 		/>
 	</motion.nav >
 }
 
-// --------RENDER-FROM-PROFILE--------------------------------------------- //
-interface FromProfileProps {
-	animating: React.MutableRefObject<boolean>
-}
-const FromProfile: React.FC<FromProfileProps> = ({ animating }) => (
-	<motion.nav className={NAME}
-		{...navBarMotion(BACK_LINK_HEIGHT + LINK_HEIGHT * 2)}>
+// --------RENDER-FROM-INFOS----------------------------------------------- //
+const FromInfos: React.FC = () => (
+	<motion.nav
+		className={NAME}
+		{...navBarMotion(BACK_LINK_HEIGHT + LINK_HEIGHT + GRID_GAP)}>
 		<NavBarLink
 			index={0}
 			to='/'
-			content='BACK'
-			animating={animating}
-		/>
-		<NavBarLink
-			index={1}
-			to='/profile'
-			content='INFOS'
-			animating={animating}
+			ext='back'
 		/>
 		<NavBarLink
 			index={2}
 			to='/profile/friends'
-			content='FRIENDS'
-			animating={animating}
+			ext='friends'
+		/>
+	</motion.nav>
+)
+
+// --------RENDER-FROM-FRIENDS--------------------------------------------- //
+const FromFriends: React.FC = () => (
+	<motion.nav className={NAME} {...navBarMotion(BACK_LINK_HEIGHT)}>
+		<NavBarLink
+			index={0}
+			to='/profile'
+			ext='back'
 		/>
 	</motion.nav>
 )
 
 // --------RENDER-FROM-CHARACTERS------------------------------------------ //
-interface FromCharactersProps {
-	animating: React.MutableRefObject<boolean>
-}
-const FromCharacters: React.FC<FromCharactersProps> = ({ animating }) => (
-	<motion.nav className={NAME}
-		{...navBarMotion(BACK_LINK_HEIGHT)}>
+const FromCharacters: React.FC = () => (
+	<motion.nav className={NAME} {...navBarMotion(BACK_LINK_HEIGHT)}>
 		<NavBarLink
 			index={0}
 			to='/'
-			content='BACK'
-			animating={animating}
+			ext='back'
 		/>
 	</motion.nav>
 )
 
 // --------RENDER-FROM-LEADER---------------------------------------------- //
-interface FromLeaderProps {
-	animating: React.MutableRefObject<boolean>
-}
-const FromLeader: React.FC<FromLeaderProps> = ({ animating }) => (
+const FromLeader: React.FC = () => (
 	<motion.nav className={NAME} {...navBarMotion(BACK_LINK_HEIGHT)}>
 		<NavBarLink
 			index={0}
 			to='/'
-			content='BACK'
-			animating={animating}
+			ext='back'
 		/>
 	</motion.nav>
 )
 
 // --------RENDER-FROM-404------------------------------------------------- //
-interface From404Props {
-	animating: React.MutableRefObject<boolean>
-}
-const From404: React.FC<From404Props> = ({ animating }) => (
+const From404: React.FC = () => (
 	<motion.nav className={NAME} {...navBarMotion(BACK_LINK_HEIGHT)}>
 		<NavBarLink
 			index={0}
 			to='/'
-			content='HOME'
-			animating={animating}
+			ext='home'
 		/>
 	</motion.nav>
 )
 
 // --------RENDER-FROM-CHAT------------------------------------------------ //
-interface FromChatProps {
-	animating: React.MutableRefObject<boolean>
-}
-const FromChat: React.FC<FromChatProps> = ({ animating }) => (
+const FromChat: React.FC = () => (
 	<motion.nav className={NAME} {...navBarMotion(BACK_LINK_HEIGHT)}>
 		<NavBarLink
 			index={0}
 			to='/'
-			content='HOME'
-			animating={animating}
+			ext='home'
 		/>
 	</motion.nav>
 )
@@ -227,43 +175,19 @@ const NavBar: React.FC<NavBarProps> = ({ setLogged }) => {
 	// ----ROUTER----------------------------- //
 	const location = useLocation()
 
-	// ----REFS------------------------------- //
-	const previousPath = useRef<string | null>(null)
-	const animating = useRef(false)
-
-	// ----STATES----------------------------- //
-	const [render, setRender] = useState(<></>)
-
-	// ----EFFECTS---------------------------- //
-	useLayoutEffect(() => {
-		if (previousPath.current !== null
-			&& cutThenCompare(location.pathname, previousPath.current, '/', 1)) {
-			animating.current = true
-			previousPath.current = location.pathname
-			const timer = setTimeout(() => { animating.current = false }, 550)
-			return () => clearTimeout(timer)
-		}
-		else if (previousPath.current === null
-			|| !cutThenCompare(location.pathname, previousPath.current, '/', 1)) {
-			animating.current = true
-			setRender(<Routes location={location} key={location.pathname}>
-				<Route path='/login' element={<></>} />
-				<Route path='/' element={<FromHome setLogged={setLogged} setRender={setRender} animating={animating} />} />
-				<Route path='/profile/*' element={<FromProfile animating={animating} />} />
-				<Route path='/characters' element={<FromCharacters animating={animating} />} />
-				<Route path='/leader' element={<FromLeader animating={animating} />} />
-				<Route path='/game' element={<GameInfos />} />
-				<Route path='/chat' element={<FromChat animating={animating} />} />
-				<Route path='*' element={<From404 animating={animating} />} />
-			</Routes>)
-		}
-		previousPath.current = location.pathname
-	}, [location.pathname])
-
 	// ----RENDER----------------------------- //
-	return <AnimatePresence mode='wait'
-		onExitComplete={() => animating.current = false}>
-		{render}
+	return <AnimatePresence mode='wait'>
+		<Routes location={location} key={location.pathname}>
+			<Route path='/login' element={<></>} />
+			<Route path='/' element={<FromHome setLogged={setLogged} />} />
+			<Route path='/profile' element={<FromInfos />} />
+			<Route path='/profile/friends' element={<FromFriends />} />
+			<Route path='/characters' element={<FromCharacters />} />
+			<Route path='/leader' element={<FromLeader />} />
+			<Route path='/game' element={<GameInfos />} />
+			<Route path='/chat' element={<FromChat />} />
+			<Route path='*' element={<From404 />} />
+		</Routes>
 	</AnimatePresence>
 }
 export default NavBar

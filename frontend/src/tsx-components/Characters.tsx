@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect, useMemo, memo } from 'react'
+import React, { useRef, useState, useEffect, memo } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { fade, xMove, yMove } from '../tsx-utils/ftMotion.tsx'
 
@@ -35,9 +35,7 @@ const CharBox: React.FC<CharBoxProps> = ({ id, swapping, setSelected }) => {
 	const boxName = `${NAME}-box`
 
 	// ----RENDER----------------------------- //
-	return <motion.div className={boxName} {...boxHdl} {...boxMotion}>
-		[Character #{id}]
-	</motion.div>
+	return <motion.div className={boxName} {...boxHdl} {...boxMotion} />
 }
 
 // --------CHARACTER-BOXES------------------------------------------------- //
@@ -45,41 +43,23 @@ interface CharBoxesProps {
 	swapping: React.MutableRefObject<boolean>
 	setSelected: React.Dispatch<React.SetStateAction<number>>
 }
-const CharBoxes: React.FC<CharBoxesProps> = memo(({
-	swapping, setSelected
-}) => {
+const CharBoxes: React.FC<CharBoxesProps> = memo(({ swapping, setSelected }) => {
 	// ----VALUES----------------------------- //
 	const count = 9
-
-	// ----STATES----------------------------- //
-	const [animating, setAnimating] = useState(true)
-
-	// ----EFFECTS---------------------------- //
-	useEffect(() => {
-		const timer = setTimeout(() => setAnimating(false), 1250)
-		return () => clearTimeout(timer)
-	}, [])
 
 	// ----CLASSNAMES------------------------- //
 	const boxName = `${NAME}s-select`
 
 	// ----RENDER----------------------------- //
-	const render = useMemo(() => (
-		Array.from({ length: count }, (_, index) =>
-			<CharBox
-				key={index + 1}
-				id={index + 1}
-				swapping={swapping}
-				setSelected={setSelected}
-			/>
-		)
-	), [])
-	return <motion.div
-		className={boxName}
-		exit={{ overflowY: 'hidden' }}
-		style={{ overflowY: (animating ? 'hidden' : 'auto') }}>
-		{render}
-	</motion.div>
+	const render = Array.from({ length: count }, (_, index) =>
+		<CharBox
+			key={index + 1}
+			id={index + 1}
+			swapping={swapping}
+			setSelected={setSelected}
+		/>
+	)
+	return <div className={boxName}>{render}</div>
 })
 
 // --------SPELL----------------------------------------------------------- //
@@ -93,17 +73,28 @@ const Spell: React.FC<SpellProps> = ({ spellName, content }) => {
 
 	// ----STATES----------------------------- //
 	const [tooltip, setToolTip] = useState(false)
-	const [position, setPosition] = useState({ x: 0, y: 0 })
+	const [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0 })
 
 	// ----EFFECTS----------------------------//
 	useEffect(() => {
-		if (spellNameRef.current) {
-			const rect = spellNameRef.current.getBoundingClientRect()
-			setPosition({ x: rect.left, y: rect.top })
+		const chatSizeObserver = new ResizeObserver(updateTooltipPos)
+		spellNameRef.current && chatSizeObserver.observe(spellNameRef.current)
+		window.addEventListener('scroll', updateTooltipPos)
+		window.addEventListener('resize', updateTooltipPos)
+		return () => {
+			spellNameRef.current && (
+				chatSizeObserver.unobserve(spellNameRef.current)
+			)
 		}
 	}, [])
 
 	// ----HANDLERS--------------------------- //
+	const updateTooltipPos = () => {
+		if (spellNameRef.current) {
+			const rect = spellNameRef.current.getBoundingClientRect()
+			setTooltipPos({ x: rect.left, y: rect.top })
+		}
+	}
 	const boxHdl = {
 		onMouseEnter: () => setToolTip(true),
 		onMouseLeave: () => setToolTip(false)
@@ -123,8 +114,8 @@ const Spell: React.FC<SpellProps> = ({ spellName, content }) => {
 	// ----RENDER----------------------------- //
 	return <>
 		<motion.div
-			className={spellName}
 			ref={spellNameRef}
+			className={spellName}
 			{...boxHdl}
 			{...boxMotion}>
 			{content}
@@ -134,8 +125,8 @@ const Spell: React.FC<SpellProps> = ({ spellName, content }) => {
 				className={tooltipName}
 				{...tooltipMotion}
 				style={{
-					top: `${position.y - 305}px`,
-					left: `${position.x - 250}px`
+					top: `${tooltipPos.y - 305}px`,
+					left: `${tooltipPos.x - 260}px`
 				}}>
 				TOOLTIP
 			</motion.div>}
@@ -157,41 +148,33 @@ const Character: React.FC<CharacterProps> = ({ selected }) => {
 	const storyName = `${NAME}-story`
 	const spellName = `${NAME}-spell`
 	const spellzName = `${spellName}s`
-	const contentName = (preffix: string) => `${preffix}-content`
+	const contentName = (preffix: string) => `${preffix}-content ${NAME}-content`
 
 	// ----RENDER----------------------------- //
 	return <motion.div className={NAME}>
 		<AnimatePresence mode='wait'>
 			<div className={skinName} key={`${skinName}-${selected}`}>
-				<motion.div
-					className={contentName(skinName)}
-					{...boxMotion}>
-					CHARACTER #{selected}
-				</motion.div>
+				<motion.div className={contentName(skinName)} {...boxMotion} />
 			</div>
 		</AnimatePresence>
 		<AnimatePresence mode='wait'>
 			<div className={statsName} key={`${statsName}-${selected}`}>
-				<motion.div
-					className={contentName(statsName)}
-					{...boxMotion}>
+				<motion.div className={contentName(statsName)} {...boxMotion}>
 					STATS
 				</motion.div>
 			</div>
 		</AnimatePresence>
 		<AnimatePresence mode='wait'>
 			<div className={storyName} key={`${storyName}-${selected}`}>
-				<motion.div
-					className={contentName(storyName)}
-					{...boxMotion}>
+				<motion.div className={contentName(storyName)} {...boxMotion}>
 					STORY
 				</motion.div>
 			</div>
 		</AnimatePresence>
 		<AnimatePresence mode='wait'>
 			<div className={spellzName} key={`${spellzName}-${selected}`}>
-				<Spell spellName={spellName} content='ACTIVE' />
-				<Spell spellName={spellName} content='PASSIVE' />
+				<Spell spellName={spellName} content='' />
+				<Spell spellName={spellName} content='' />
 			</div>
 		</AnimatePresence>
 	</motion.div>

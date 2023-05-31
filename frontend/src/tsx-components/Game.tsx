@@ -7,12 +7,12 @@ import { Socket, io } from 'socket.io-client'
 /* -------------------------ASSETS IMPORTS------------------------- */
 
 // Images && Spritesheets
-import playerIdle__Sheet from '../resource/assets/playerSheet.png'
-import playerRun__Sheet from '../resource/assets/playerSheet.png'
-import mageIdle__Sheet from '../resource/assets/Mage/Idle.png'
-import mageRun__Sheet from '../resource/assets/Mage/Run.png'
-import blank__Sheet from '../resource/assets/blank.png'
-import black__Sheet from '../resource/assets/black.png'
+import playerIdle__Sheet from '../resource/assets-game/playerSheet.png'
+import playerRun__Sheet from '../resource/assets-game/playerSheet.png'
+import mageIdle__Sheet from '../resource/assets-game/Mage/Idle.png'
+import mageRun__Sheet from '../resource/assets-game/Mage/Run.png'
+import blank__Sheet from '../resource/assets-game/blank.png'
+import black__Sheet from '../resource/assets-game/black.png'
 
 /* -------------------------TYPES------------------------- */
 

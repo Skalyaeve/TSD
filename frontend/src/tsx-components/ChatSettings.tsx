@@ -10,14 +10,12 @@ const mainBoxMotion = xMove({
 })
 
 // --------CLASSNAMES------------------------------------------------------ //
-const NAME = 'sideChat'
+const NAME = 'chat'
 const SETTINGS_NAME = `${NAME}-settings`
-const ROOMSET_NAME = `${NAME}-roomSet`
-const BTN_NAME = `${ROOMSET_NAME}-btn`
-const OPTIONS_NAME = `${SETTINGS_NAME}-option ${BTN_NAME}`
-const NAME_INPUT_NAME = `${ROOMSET_NAME}-name-input ${ROOMSET_NAME}-main-input`
-const PSW_INPUT_NAME = `${ROOMSET_NAME}-psw-input ${ROOMSET_NAME}-main-input`
-const COMMIT_BTN = `${ROOMSET_NAME}-commit-btn ${BTN_NAME}`
+const ROOMSET_NAME = `${NAME}-roomSettings`
+const BTN_NAME = `${SETTINGS_NAME}-btn`
+const COMMIT_BTN = `${SETTINGS_NAME}-commit-btn ${BTN_NAME}`
+const INPUT_NAME = `${SETTINGS_NAME}-input`
 
 // --------ROOM-MEMBER----------------------------------------------------- //
 interface RoomMemberProps {
@@ -48,7 +46,7 @@ const RoomMember: React.FC<RoomMemberProps> = ({ id, addedUsers }) => {
 
 	// ----CLASSNAMES------------------------- //
 	const boxName = `${ROOMSET_NAME}-usr`
-	const linkName = `${boxName}-link  ${BTN_NAME}`
+	const linkName = `${boxName}-link`
 	const btnName = `${boxName}-btn  ${BTN_NAME}`
 	const btnsName = `${boxName}-btns `
 
@@ -56,22 +54,22 @@ const RoomMember: React.FC<RoomMemberProps> = ({ id, addedUsers }) => {
 	const btnToAdd = () => {
 		if (!addedUsers)
 			return <motion.button className={btnName} {...btnMotion(1)}>
-				[/x]
+				/x
 			</motion.button>
 		else return <>
 			<motion.button className={btnName} {...btnMotion(3)}>
-				[up]
+				up
 			</motion.button>
 			<motion.button className={btnName} {...btnMotion(2)}>
-				[/m]
+				/m
 			</motion.button>
 			<motion.button className={btnName} {...btnMotion(1)}>
-				[/x]
+				/x
 			</motion.button>
 		</>
 	}
 	return <motion.div className={boxName} {...boxHdl} {...boxMotion}>
-		<div className={linkName}>[#{id}]</div>
+		<div className={linkName}>#{id}</div>
 		<AnimatePresence>
 			{showButtons && <div className={btnsName}>{btnToAdd()}</div>}
 		</AnimatePresence>
@@ -84,27 +82,22 @@ interface RoomMembersSetProps {
 }
 const RoomMembersSet: React.FC<RoomMembersSetProps> = ({ addedUsers }) => {
 	// ----STATES----------------------------- //
-	const [count, setAddedCount] = useState(addedUsers ? 10 : 7)
+	const [count, setAddedCount] = useState(addedUsers ? 10 : 4)
 
 	// ----CLASSNAMES------------------------- //
-	const boxName = `${ROOMSET_NAME}-users${(addedUsers ?
-		` ${ROOMSET_NAME}-users-added` : ` ${ROOMSET_NAME}-users-toAdd`
-	)}`
+	const boxName = `${ROOMSET_NAME}-users`
 	const inputName = `${ROOMSET_NAME}-search-input`
 
 	// ----RENDER----------------------------- //
 	const renderUserList = (count: number, addedUsers: boolean) => (
 		Array.from({ length: count }, (_, index) =>
-			<RoomMember
-				key={index + 1}
-				id={index + 1}
-				addedUsers={addedUsers}
-			/>
+			<RoomMember key={index + 1} id={index + 1} addedUsers={addedUsers} />
 		)
 	)
 	return <div className={boxName}>
-		<input className={inputName}
-			placeholder={` ${count}${(addedUsers ? ' members' : ' friends')}`}
+		<input
+			className={inputName}
+			placeholder={`${count}${(addedUsers ? ' members' : ' friends')}`}
 		/>
 		{renderUserList(count, addedUsers)}
 	</div>
@@ -113,42 +106,29 @@ const RoomMembersSet: React.FC<RoomMembersSetProps> = ({ addedUsers }) => {
 // --------ROOM-SETTINGS--------------------------------------------------- //
 interface RoomSettingsProps {
 	settingsOpen: number
-	settingsPos: {}
 	setCreating: React.Dispatch<React.SetStateAction<number>>
 	isPublic?: boolean
 }
 const RoomSettings: React.FC<RoomSettingsProps> = ({
-	settingsOpen, settingsPos, setCreating, isPublic
+	settingsOpen, setCreating, isPublic
 }) => {
 	// ----HANDLERS--------------------------- //
 	const backBtnHdl = { onMouseUp: () => setCreating(1) }
 
 	// ----RENDER----------------------------- //
 	const commitArea = () => {
-		if (settingsOpen === 1)
-			return <>
-				<button className={COMMIT_BTN}>
-					[CREATE]
-				</button>
-				<button className={COMMIT_BTN} {...backBtnHdl}>
-					[BACK]
-				</button>
-			</>
-		else return <>
-			<button className={COMMIT_BTN}>
-				[SAVE]
-			</button>
-			<button className={COMMIT_BTN}>
-				[DELETE]
-			</button>
+		if (settingsOpen === 1) return <>
+			<button className={COMMIT_BTN}>CREATE</button>
+			<button className={COMMIT_BTN} {...backBtnHdl}>BACK</button>
+		</>
+		return <>
+			<button className={COMMIT_BTN}>SAVE</button>
+			<button className={COMMIT_BTN}>DELETE</button>
 		</>
 	}
-	return <motion.div
-		className={ROOMSET_NAME}
-		style={settingsPos}
-		{...mainBoxMotion}>
-		<input className={NAME_INPUT_NAME} placeholder='Name' />
-		<input className={PSW_INPUT_NAME} placeholder='Password' />
+	return <motion.div className={ROOMSET_NAME} {...mainBoxMotion}>
+		<input className={INPUT_NAME} placeholder='Name' />
+		<input className={INPUT_NAME} placeholder='Password' />
 		<RoomMembersSet addedUsers={true} />
 		<RoomMembersSet addedUsers={false} />
 		{commitArea()}
@@ -157,70 +137,48 @@ const RoomSettings: React.FC<RoomSettingsProps> = ({
 
 // --------JOIN-ROOM------------------------------------------------------- //
 interface JoinRoomProps {
-	settingsPos: {}
 	setJoining: React.Dispatch<React.SetStateAction<boolean>>
 }
-const JoinRoom: React.FC<JoinRoomProps> = ({ settingsPos, setJoining }) => {
+const JoinRoom: React.FC<JoinRoomProps> = ({ setJoining }) => {
 	// ----HANDLERS--------------------------- //
 	const backBtnHdl = { onMouseUp: () => setJoining(false) }
 
 	// ----CLASSNAMES------------------------- //
-	const boxName = `${SETTINGS_NAME}-join`
-	const commitAreaName = `${boxName}-commit`
-	const commitBtnName = `${COMMIT_BTN}`
+	const boxName = `${SETTINGS_NAME} ${SETTINGS_NAME}-join`
 
 	// ----RENDER----------------------------- //
-	return <motion.div className={boxName}
-		style={settingsPos}
-		{...mainBoxMotion}>
-		<input className={NAME_INPUT_NAME} placeholder='Name' />
-		<input className={PSW_INPUT_NAME} placeholder='Password' />
-		<div className={commitAreaName}>
-			<button className={commitBtnName}>
-				[ENTER]
-			</button>
-			<button className={commitBtnName} {...backBtnHdl}>
-				[BACK]
-			</button>
-		</div>
+	return <motion.div className={boxName} {...mainBoxMotion}>
+		<input className={INPUT_NAME} placeholder='Name' />
+		<input className={INPUT_NAME} placeholder='Password' />
+		<button className={COMMIT_BTN}>ENTER</button>
+		<button className={COMMIT_BTN} {...backBtnHdl}>BACK</button>
 	</motion.div>
 }
 
 // --------CREATE-ROOM----------------------------------------------------- //
 interface CreateRoomProps {
-	settingsPos: {}
 	setCreating: React.Dispatch<React.SetStateAction<number>>
 }
-const CreateRoom: React.FC<CreateRoomProps> = ({
-	settingsPos, setCreating
-}) => {
+const CreateRoom: React.FC<CreateRoomProps> = ({ setCreating }) => {
 	// ----HANDLERS--------------------------- //
 	const backBtnHdl = { onMouseUp: () => setCreating(0) }
 	const publicBtnHdl = { onMouseUp: () => setCreating(2) }
 	const privateBtnHdl = { onMouseUp: () => setCreating(3) }
 
 	// ----RENDER----------------------------- //
-	return <motion.div className={SETTINGS_NAME}
-		style={settingsPos}
-		{...mainBoxMotion}>
-		<button className={OPTIONS_NAME} {...backBtnHdl}>
-			[BACK]
-		</button>
-		<button className={OPTIONS_NAME} {...publicBtnHdl}>
-			[PUBLIC]
-		</button>
-		<button className={OPTIONS_NAME} {...privateBtnHdl}>
-			[PRIVATE]
-		</button>
+	return <motion.div className={SETTINGS_NAME} {...mainBoxMotion}>
+		<button className={BTN_NAME} {...backBtnHdl}>BACK</button>
+		<button className={BTN_NAME} {...publicBtnHdl}>PUBLIC</button>
+		<button className={BTN_NAME} {...privateBtnHdl}>PRIVATE</button>
 	</motion.div>
 }
 
 // --------SIDE-CHAT-SETTINGS---------------------------------------------- //
-interface SideChatSettingsProps {
+interface ChatSettingsProps {
 	settingsOpen: number
 	chatRef: React.MutableRefObject<HTMLDivElement | null>
 }
-const SideChatSettings: React.FC<SideChatSettingsProps> = ({
+const ChatSettings: React.FC<ChatSettingsProps> = ({
 	settingsOpen, chatRef
 }) => {
 	// ----STATES----------------------------- //
@@ -243,10 +201,11 @@ const SideChatSettings: React.FC<SideChatSettingsProps> = ({
 	// ----HANDLERS--------------------------- //
 	const moveSettings = () => {
 		if (!chatRef.current) return
+
 		const chatForm = chatRef.current.getBoundingClientRect()
 		setSettingsPos({
-			top: `${chatForm.top + 10}px`,
-			left: `${chatForm.right}px`
+			top: `${chatForm.top}px`,
+			left: `${chatForm.right + 10}px`
 		})
 	}
 	const createBtnHdl = { onMouseUp: () => setCreating(1) }
@@ -258,32 +217,28 @@ const SideChatSettings: React.FC<SideChatSettingsProps> = ({
 	// ----RENDER----------------------------- //
 	const render = () => {
 		if (creating === 1) return <CreateRoom
-			key={`${SETTINGS_NAME}-CreateRoom`}
-			settingsPos={settingsPos}
+			key={`${SETTINGS_NAME}-createRoom`}
 			setCreating={setCreating}
 		/>
 		if (creating) return <RoomSettings
-			key={`${SETTINGS_NAME}-RoomSettings`}
+			key={`${SETTINGS_NAME}-roomSettings`}
 			settingsOpen={settingsOpen}
-			settingsPos={settingsPos}
 			setCreating={setCreating}
 			isPublic={creating === 2 ? true : false}
 		/>
 		if (joining) return <JoinRoom
-			key={`${SETTINGS_NAME}-JoinRoom`}
-			settingsPos={settingsPos}
+			key={`${SETTINGS_NAME}-joinRoom`}
 			setJoining={setJoining}
 		/>
 		return <motion.div
 			className={SETTINGS_NAME}
-			key={`${SETTINGS_NAME}-Main`}
-			style={settingsPos}
+			key={`${SETTINGS_NAME}-main`}
 			{...mainBoxMotion}>
-			<button className={OPTIONS_NAME} {...createBtnHdl}>
-				[CREATE]
+			<button className={BTN_NAME} {...createBtnHdl}>
+				CREATE
 			</button>
-			<button className={OPTIONS_NAME} {...joinBtnHdl}>
-				[JOIN]
+			<button className={BTN_NAME} {...joinBtnHdl}>
+				JOIN
 			</button>
 		</motion.div>
 	}
@@ -296,9 +251,8 @@ const SideChatSettings: React.FC<SideChatSettingsProps> = ({
 		</AnimatePresence>}
 		{settingsOpen !== 1 && <RoomSettings
 			settingsOpen={settingsOpen}
-			settingsPos={settingsPos}
 			setCreating={setCreating}
 		/>}
 	</motion.div>
 }
-export default SideChatSettings
+export default ChatSettings

@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { motion } from 'framer-motion'
-import { fade, widthChangeByPercent, heightChangeByPercent, xMove, yMove } from '../tsx-utils/ftMotion.tsx'
+import { fade, widthChangeByPercent, heightChangeByPercent, yMove } from '../tsx-utils/ftMotion.tsx'
 
 // --------CLASSNAMES------------------------------------------------------ //
 const NAME = 'profile'
@@ -13,21 +13,13 @@ const HISTORY_NAME = `${NAME}-history`
 // --------MATCH----------------------------------------------------------- //
 interface MatchProps {
 	id: number
-	count: number
 }
-const Match: React.FC<MatchProps> = ({ id, count }) => {
-	// ----ANIMATIONS------------------------- //
-	const boxMotion = xMove({
-		from: -200 * (count - id),
-		inDuration: 0.5 + 0.04 * (count - id),
-		outDuration: 0.5 - 0.01 * (count - id)
-	})
-
+const Match: React.FC<MatchProps> = ({ id }) => {
 	// ----CLASSNAMES------------------------- //
 	const boxName = `${HISTORY_NAME}-match`
 
 	// ----RENDER----------------------------- //
-	return <motion.div className={boxName} {...boxMotion}>
+	return <motion.div className={boxName}>
 		MATCH #{id}
 	</motion.div>
 }
@@ -39,7 +31,7 @@ const History: React.FC = () => {
 
 	// ----RENDER----------------------------- //
 	const render = Array.from({ length: count }, (_, index) =>
-		<Match key={index + 1} id={index + 1} count={count} />
+		<Match key={index + 1} id={index + 1} />
 	)
 	return <>{render}</>
 }
@@ -79,7 +71,6 @@ const Achievements: React.FC = () => {
 const ProfilePicture: React.FC = () => {
 	// ----STATES----------------------------- //
 	const [profilePicture, setProfilePicture] = useState('')
-	const [loading, setLoading] = useState(true)
 
 	// ----EFFECTS---------------------------- //
 	/*
@@ -113,7 +104,7 @@ const ProfilePicture: React.FC = () => {
 	*/
 
 	// ----RENDER----------------------------- //
-	return <>{loading ? <>Loading...</> : <>{profilePicture}</>}</>
+	return <>{profilePicture}</>
 }
 
 // --------INFOS----------------------------------------------------------- //
@@ -131,10 +122,13 @@ const AccountInfos: React.FC = () => {
 	const boxMotion = fade({ inDuration: 1 })
 	const achievementsMotion = heightChangeByPercent({ inDuration: 0.8 })
 	const historyMotion = widthChangeByPercent({ inDuration: 0.8 })
+	const txtMotion = fade({ inDuration: 0.2, outDuration: 0.2, inDelay: 0.5 })
 
 	// ----CLASSNAMES------------------------- //
 	const boxName = `${NAME}-infos main`
 	const historyBoxName = `${HISTORY_NAME}-box`
+	const statsFirstLineName = `${STATS_NAME}-firstLine`
+	const statsSecondLineName = `${STATS_NAME}-secondLine`
 
 	// ----RENDER----------------------------- //
 	return <motion.div className={boxName} {...boxMotion}>
@@ -146,10 +140,15 @@ const AccountInfos: React.FC = () => {
 		</motion.div>
 		<motion.div className={historyBoxName} {...historyMotion}>
 			<div className={STATS_NAME}>
-				0 MATCHES - 0 WINS - 0 LOSES<br />RATIO: 0% - SCORED: 0
+				<motion.div className={statsFirstLineName} {...txtMotion}>
+					0 MATCHES - 0 WINS - 0 LOSES
+				</motion.div>
+				<motion.div className={statsSecondLineName} {...txtMotion}>
+					RATIO: 0% - RANKING: 0
+				</motion.div>
 			</div>
 			<div className={HISTORY_NAME}><History /></div>
 		</motion.div>
-	</motion.div>
+	</motion.div >
 }
 export default AccountInfos

@@ -1,82 +1,57 @@
-/* ---------------------------------
-Méthodologie B-E--M (Bloc, Élément, Modifieur)
-
-Bloc: Un composant indépendant
-ex: Un bouton, une barre de navigation, un en-tête...
-ex: ".navBar {}"
-ex: ".button {}"
-
-Élément: Une partie d'un bloc qui a un sens uniquement dans le contexte de ce bloc.
-ex: ".navBar-logo {}"
-ex: ".button-icon {}"
-
-Modifieur: Une variation ou un état d'un bloc ou d'un élément. 
-ex: ".button--large {}"
-ex: ".navBar-logo--hidden {}"
---------------------------------- */
-
-/* ---------------------------------
-#1 Éléments
-#2 Forme
-#3 Position
-#4 Margin - Padding
-#5 Animations
---------------------------------- */
-
-/* ---PROFILE-------------------- */
-.profile-btn {
-	/* #1 Éléments */
-	border: 1px solid rgb(255, 255, 255);
-
-	/* #2 Forme */
-	width: 55px;
-	height: 35px;
-}
-
-.profile-btn:active {
-	/* #1 Éléments */
-	background-color: rgb(255, 255, 255, 0.3);
-}
+/* ------------------------------ */
+/* #1 Éléments */
+/* #2 Forme */
+/* #3 Position */
+/* #4 Margin - Padding */
+/* #5 Animations */
+/* ------------------------------ */
 
 /* ---PROFILE-INFOS-------------- */
 .profile-infos {
 	/* #1 Éléments */
 	display: grid;
 	grid-template-columns: 1fr 1.25fr;
-	grid-template-rows: 250px 1fr;
-	grid-gap: 10px;
+	grid-template-rows: 275px 1fr;
+	grid-gap: 5px;
 	overflow-y: hidden;
-
-	/* #4 Margin - Padding */
-	padding: 10px;
-	padding-left: 0;
 }
 
 .profile-accountInfos {
 	/* #1 Éléments */
-	border: 1px solid rgb(255, 255, 255);
+	background-image: url('../resource/assets-ui/background-1.png');
+	border: solid 10px;
+	border-image-source: url('../resource/assets-ui/black-border.png');
+	border-image-slice: 15;
+	border-image-width: 15px;
 	display: grid;
 	grid-template-columns: 175px auto;
 	grid-template-rows: 175px auto;
+
+	/* #4 Margin - Padding */
+	padding: 5px;
 }
 
 .profile-picture {
 	/* #1 Éléments */
-	border: 1px solid rgb(255, 255, 255);
-	display: flex;
-	align-items: center;
-	justify-content: center;
+	background-image: url('../resource/assets-ui/background-1.png');
+	border: solid 10px;
+	border-image-source: url('../resource/assets-ui/black-border.png');
+	border-image-slice: 15;
+	border-image-width: 15px;
 
 	/* #4 Margin - Padding */
-	margin: 10px;
+	margin: 5px;
 }
 
 /* ---PROFILE-ACHIEVEMENTS------- */
 .profile-achievements {
 	/* #1 Éléments */
+	border: solid 10px;
+	border-image-source: url('../resource/assets-ui/black-border.png');
+	border-image-slice: 15;
+	border-image-width: 15px;
 	display: grid;
 	grid-template-rows: 75px 1fr;
-	border: 1px solid rgb(255, 255, 255);
 	overflow-y: hidden;
 
 	/* #3 Position */
@@ -86,7 +61,12 @@ ex: ".navBar-logo--hidden {}"
 
 .profile-achievements-count {
 	/* #1 Éléments */
-	border-bottom: 1px solid rgb(255, 255, 255);
+	background-image: url('../resource/assets-ui/background-1.png');
+	border-bottom: solid 10px;
+	border-image-source: url('../resource/assets-ui/black-border.png');
+	border-image-slice: 15;
+	border-image-width: 0 0 15px 0;
+	font-size: 20px;
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -94,6 +74,7 @@ ex: ".navBar-logo--hidden {}"
 
 .profile-achievements-list {
 	/* #1 Éléments */
+	background-image: url('../resource/assets-ui/background-2.png');
 	display: flex;
 	flex-wrap: wrap;
 	align-content: flex-start;
@@ -103,7 +84,11 @@ ex: ".navBar-logo--hidden {}"
 
 .profile-achievement {
 	/* #1 Éléments */
-	border: 1px solid rgb(255, 255, 255);
+	background-image: url('../resource/assets-ui/background-1.png');
+	border: solid 10px;
+	border-image-source: url('../resource/assets-ui/black-border.png');
+	border-image-slice: 15;
+	border-image-width: 15px;
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -119,6 +104,11 @@ ex: ".navBar-logo--hidden {}"
 /* ---PROFILE-HISTORY------------ */
 .profile-history-box {
 	/* #1 Éléments */
+	border: solid 10px;
+	border-bottom-width: 8px;
+	border-image-source: url('../resource/assets-ui/black-border.png');
+	border-image-slice: 15;
+	border-image-width: 15px;
 	display: grid;
 	grid-template-rows: 200px 1fr;
 
@@ -129,24 +119,47 @@ ex: ".navBar-logo--hidden {}"
 
 .profile-stats {
 	/* #1 Éléments */
-	border: 1px solid rgb(255, 255, 255);
-	border-bottom: none;
-	font-size: 27px;
+	background-image: url('../resource/assets-ui/background-1.png');
+	border-bottom: solid 10px;
+	border-image-source: url('../resource/assets-ui/black-border.png');
+	border-image-slice: 15;
+	border-image-width: 0 0 15px 0;
+	display: grid;
+	grid-gap: 5px;
+}
+
+.profile-stats-firstLine {
+	/* #1 Éléments */
+	font-size: 30px;
 	text-align: center;
-	display: flex;
-	align-items: center;
-	justify-content: center;
+
+	/* #3 Position */
+	align-self: flex-end;
+	justify-self: center;
+}
+
+.profile-stats-secondLine {
+	/* #1 Éléments */
+	font-size: 25px;
+	text-align: center;
+
+	/* #3 Position */
+	align-self: flex-start;
+	justify-self: center;
 }
 
 .profile-history {
 	/* #1 Éléments */
-	border: 1px solid rgb(255, 255, 255);
 	overflow-y: auto;
 }
 
 .profile-history-match {
 	/* #1 Éléments */
-	border: 1px solid rgb(255, 255, 255);
+	background-image: url('../resource/assets-ui/background-1.png');
+	border-bottom: solid 7px;
+	border-image-source: url('../resource/assets-ui/black-border.png');
+	border-image-slice: 15;
+	border-image-width: 0 0 10px 0;
 	display: flex;
 	align-items: center;
 	justify-content: center;
