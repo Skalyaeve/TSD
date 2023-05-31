@@ -1,3 +1,6 @@
-dist/
+# compiled output
 node_modules/
+dist/
+
+# env
 .env

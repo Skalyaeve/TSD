@@ -8,7 +8,6 @@ import { ConfigService } from '@nestjs/config';
 export class AuthService {
   constructor(
     private jwtService: JwtService,
-    private readonly configService: ConfigService,
     private readonly userService: UserService
   ) {}
 

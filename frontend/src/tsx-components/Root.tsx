@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import React, { useRef, useState, useLayoutEffect } from 'react'
 import { Routes, Route, useLocation, useNavigate } from 'react-router-dom'
 import Cookies from 'js-cookie';
@@ -14,10 +15,13 @@ import Party from './Game.tsx'
 import Leader from './Leader.tsx'
 import ErrorPage from './ErrorPage.tsx'
 import '../css/Root.css'
+import background from '../resource/background.png';
+import { io } from 'socket.io-client';
+import Modal from 'react-modal';
+
 
 // --------IS-CONNECTED---------------------------------------------------- //
 const isConnected = async () => {
-	return true
 	if (!Cookies.get('access_token')) return false
 
 	const servID = 'http://localhost:3000'
@@ -26,7 +30,7 @@ const isConnected = async () => {
 		const response = await fetch(`${servID}${path}`, {
 			method: 'GET',
 			mode: 'cors',
-			credentials: 'include'
+			credentials: 'include',
 		})
 		if (response.ok) {
 			const txt = await response.json()
@@ -70,15 +74,16 @@ const LoginBtn: React.FC<LogginBtnProps> = ({ setLogged }) => {
 		window.location.href = urlBase + urlArg1 + urlArg2
 
 		const servID = 'http://localhost:3000'
-		const path = '/users/connected'
+		const path = '/auth/42/login'
 		try {
-			const response = await fetch(`${servID}${path}`)
-			if (response.ok) setLogged(true)
-			else console.error(`[ERROR] ${response.status}`)
+			window.location.href = `${servID}${path}`
 		}
-		catch { console.error('[ERROR] fetch() failed') }
+		catch {
+			console.error('[ERROR] fetch() failed')
+		}
 	}
-	const btnHdl = { onMouseUp: () => !animating.current && setLogged(true) }
+
+	const btnHdl = { onMouseUp: () => !animating.current && connect() }
 
 	// ----ANIMATIONS------------------------- //
 	const btnMotion = bouncyPopUp({})
@@ -93,6 +98,14 @@ const LoginBtn: React.FC<LogginBtnProps> = ({ setLogged }) => {
 	</motion.button>
 }
 
+// ----SOCKET----------------------------- //
+
+export const socket = io("http://localhost:3000/chat", {
+	transports: ["websocket"],
+	withCredentials: true,
+	//   autoConnect: false,
+});
+
 // --------ROOT------------------------------------------------------------ //
 const Root: React.FC = () => {
 	// ----ROUTER----------------------------- //
@@ -106,11 +119,9 @@ const Root: React.FC = () => {
 	// ----EFFECTS---------------------------- //
 	useLayoutEffect(() => {
 		const checkConnection = async () => {
-			if (!logged) {
-				const connected = await isConnected()
-				if (connected) setLogged(true)
-				else navigate('/login')
-			}
+			const connected = await isConnected()
+			if (connected) setLogged(true)
+			else navigate("/login")
 		}
 		checkConnection()
 	}, [])

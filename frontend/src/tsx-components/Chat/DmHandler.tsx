@@ -1,7 +1,12 @@
 import React, { useState } from "react";
 import { BsSearchHeart } from "react-icons/bs";
 
-export default function DmHandler()
+interface DmHandlerProps {
+    allUsers: {id: number; email: string; nickname: string; avatarFilename: string}[];
+    setSelectedContact: React.Dispatch<React.SetStateAction<{id: number; email: string; nickname: string; avatarFilename: string} | null>>
+}
+
+export default function DmHandler({ allUsers, setSelectedContact }: DmHandlerProps)
 {
 
     const [contact, setContact] = useState("");
@@ -21,9 +26,9 @@ export default function DmHandler()
         <div className="DM-find">
             <div className="DM-find-text">
                 <input
-                onChange={(e)=>setContact(e.target.value)}
-                placeholder="Search conversation"
-                value={contact}
+                    onChange={(e)=>setContact(e.target.value)}
+                    placeholder="Search conversation"
+                    value={contact}
                 />
             </div>
             <button className="DM-find-btn">
@@ -31,10 +36,11 @@ export default function DmHandler()
             </button>
         </div>
         <div className="DM-conversations">
-            <div className="conversation">Conversation 1</div>
-            <div className="conversation">Conversation 2</div>
-            <div className="conversation">Conversation 3</div>
-            <div className="conversation">Conversation 4</div>
+            {allUsers.map((user) => (
+                <button className="conversation-btn" key={user.id} onClick={() => setSelectedContact(user)}>
+                    {user.nickname}
+                </button>
+            ))}
         </div>
     </div>
     )
