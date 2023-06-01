@@ -3,6 +3,7 @@
 import React, { useEffect, useRef } from 'react'
 import Phaser from 'phaser'
 import { Socket, io } from 'socket.io-client'
+import { gameSocket } from './Matchmaker.tsx'
 
 /* -------------------------ASSETS IMPORTS------------------------- */
 
@@ -105,7 +106,6 @@ function Party() {
 	let game: Phaser.Game
 
 	// Client type
-	const loginID: string = "PHASER-WEB-CLIENT"
 	const mySkin: string = "mage"
 	let mySide: "left" | "right" | undefined = undefined
 
@@ -289,21 +289,21 @@ function Party() {
 	// Send player movements to the server
 	// WORKER <= BACK <= CLIENT
 	const sendPlayerMovement = () => {
-		socket.emit('playerKeyUpdate', actualKeyStates)
+		gameSocket.emit('playerKeyUpdate', actualKeyStates)
 	}
 
 	// Send player start to the server
 	// WORKER x BACK <= CLIENT
 	/*const sendPlayerStart = () => {
 		players[myId].sprite?.play(players[myId].skin + 'RunAnim')
-		socket.emit('playerStart')
+		gameSocket.emit('playerStart')
 	}player.move
 
 	// Send player stop to the server
 	// WORKER x BACK <= CLIENT
 	const sendPlayerStop = () => {
 		players[myId].sprite?.play(players[myId].skin + 'IdleAnim')
-		socket.emit('playerStop')
+		gameSocket.emit('playerStop')
 	}*/
 
 	/****** SCENE UPDATE ******/
@@ -444,17 +444,9 @@ function Party() {
 	}
 
 	// Start socket comunication with game server
-	const startSocket = () => {
-		// Connect to the backend server
-		const socket = io('http://localhost:3000/game')
-
+	const socketListeners = () => {
 		// ********** BACK TO CLIENT SPECIFIC EVENTS ********** //
 		// WORKER <x= BACK ==> CLIENT
-
-		// Get the player's own ID
-		socket.on('Welcome', () => {
-			socket.emit('identification', loginID)
-		})
 
 		// Changes the player's animation on movement chance
 		/*socket.on('playerStarted', (playerId: string) => {
@@ -504,8 +496,8 @@ function Party() {
 
 	// Construction of the whole page
 	useEffect(() => {
+		socketListeners()
 		createGame()
-		socket = startSocket()
 		return () => {
 			if (game) {
 				keys.up.destroy()
@@ -516,7 +508,6 @@ function Party() {
 				rightPlayer?.sprite?.destroy()
 				game.destroy(true, false)
 			}
-			socket.disconnect()
 		}
 	}, [])
 

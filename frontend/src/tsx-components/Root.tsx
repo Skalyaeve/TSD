@@ -57,12 +57,7 @@ const LoginBtn: React.FC<LogginBtnProps> = ({ setLogged }) => {
 	const connect = () => {
 		const servID = 'http://localhost:3000'
 		const path = '/auth/42/login'
-		try {
-			window.location.href = `${servID}${path}`
-		}
-		catch {
-			console.error('[ERROR] fetch() failed')
-		}
+		window.location.href = `${servID}${path}`
 	}
 
 	const btnHdl = { onMouseUp: () => !animating.current && connect() }
@@ -118,7 +113,7 @@ const Root: React.FC = () => {
 			else setShowHeader(true)
 		}
 		else if (!logged) {
-			location.pathname !== '/login' && navigate('/login')
+			if (location.pathname !== '/login') navigate('/login')
 			setShowHeader(false)
 		}
 	}, [logged])

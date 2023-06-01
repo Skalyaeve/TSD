@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { Timer } from '../tsx-utils/ftNumbers.tsx'
 import { fade, heightChangeByPx, bouncyYMove } from '../tsx-utils/ftMotion.tsx'
+import { io, Socket } from 'socket.io-client'
 
 // --------GAME-INFOS------------------------------------------------------ //
 export const GameInfos: React.FC = () => {
@@ -37,6 +38,26 @@ export const GameInfos: React.FC = () => {
 }
 
 // --------MATCHMAKER------------------------------------------------------ //
+export let gameSocket: Socket
+
+const startGameSockets = () => {
+	const navigate = useNavigate()
+	// Connect to the backend server
+	gameSocket = io("http://localhost:3000/game")
+
+	// ********** BACK TO CLIENT SPECIFIC EVENTS ********** //
+	// WORKER <x= BACK ==> CLIENT
+
+	// Get the player's own ID
+	gameSocket.on('Welcome', () => {
+		gameSocket.emit('identification', "PHASER-WEB-CLIENT")
+	})
+
+	gameSocket.on('Matched', () => {
+		navigate('/game')
+	})
+}
+
 const Matchmaker: React.FC = () => {
 	// ----ROUTER----------------------------- //
 	const navigate = useNavigate()
@@ -51,14 +72,12 @@ const Matchmaker: React.FC = () => {
 	// ----EFFECTS---------------------------- //
 	useEffect(() => {
 		if (!matchmaking) return
+		setMatchmaking(false)
+		startGameSockets()
 
-		const timer = setTimeout(() => {
-			setMatchmaking(false)
-			setInGame(true)
-			navigate('/game')
-			localStorage.setItem('inGame', '1')
-		}, 2000)
-		return () => clearTimeout(timer)
+		setInGame(true)
+		
+		localStorage.setItem('inGame', '1')
 	}, [matchmaking])
 
 	// ----HANDLERS--------------------------- //

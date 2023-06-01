@@ -1,9 +1,7 @@
 # compiled output
 /node_modules
 /dist
-/headless/dist
-/headless/bundle
-/controller/dist
+/toolDist
 
 # Logs
 logs

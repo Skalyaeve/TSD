@@ -152,6 +152,41 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		return newPlayer
 	}
 
+	
+	// Set session id in player object and emit to each client it's side
+	initialiseWebClients(leftPlayerId: string, rightPlayerId: string, newParty: party){
+		this.players[leftPlayerId].sessionId = newParty.id
+		this.players[rightPlayerId].sessionId = newParty.id
+		this.sockets[leftPlayerId].socket.emit('clientSide', 'left')
+		this.sockets[rightPlayerId].socket.emit('clientSide', 'right')
+	}
+
+	// Create the loginData object to store the session id and send it to the session
+	createWorker(newParty: party){
+		let sessionLoginData: loginData = { sessionId: newParty.id }
+		newParty.worker.postMessage(sessionLoginData)
+	}
+
+	// Create the player construct objects for clients and emit them to each client
+	createWebConstructs(leftPlayerId: string, rightPlayerId: string){
+		let leftClientConstruct: clientPlayerConstruct = this.newClientConstruct('left')
+		let rightClientConstruct: clientPlayerConstruct = this.newClientConstruct('right')
+		this.sockets[leftPlayerId].socket.emit('playerConstruct', leftClientConstruct)
+		this.sockets[rightPlayerId].socket.emit('playerConstruct', leftClientConstruct)
+		this.sockets[leftPlayerId].socket.emit('playerConstruct', rightClientConstruct)
+		this.sockets[rightPlayerId].socket.emit('playerConstruct', rightClientConstruct)
+	}
+
+	// Get skins for both side, create the session construct objects and emit them to the session
+	createSessionConstructs(leftPlayerId: string, rightPlayerId: string, newParty: party){
+		let leftSkin = this.skins[this.players[leftPlayerId].skin]
+		let rightSkin = this.skins[this.players[rightPlayerId].skin]
+		let leftSessionConstruct: sessionPlayerConstruct = this.newSessionConstruct('left', leftSkin.width, leftSkin.height)
+		let rightSessionConstruct: sessionPlayerConstruct = this.newSessionConstruct('right', rightSkin.width, rightSkin.height)
+		newParty.worker.postMessage(leftSessionConstruct)
+		newParty.worker.postMessage(rightSessionConstruct)
+	}
+
 	// Starts a new party
 	async createParty(leftPlayerId: string, rightPlayerId: string) {
 		// Create new session
@@ -166,33 +201,10 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		console.log("New party: ", newParty.id)
 		// Wait for party to be created and sens constructs to clients and session
 		setTimeout(() => {
-			// Set session id in player object
-			this.players[leftPlayerId].sessionId = newParty.id
-			this.players[rightPlayerId].sessionId = newParty.id
-			// Emit to each client it's side
-			this.sockets[leftPlayerId].socket.emit('clientSide', 'left')
-			this.sockets[rightPlayerId].socket.emit('clientSide', 'right')
-			// Create the loginData object to store the session id
-			let sessionLoginData: loginData = { sessionId: newParty.id }
-			// Send the loginData object to the session
-			newParty.worker.postMessage(sessionLoginData)
-			// Create the player construct objects for clients
-			let leftClientConstruct: clientPlayerConstruct = this.newClientConstruct('left')
-			let rightClientConstruct: clientPlayerConstruct = this.newClientConstruct('right')
-			// Emit to each client the player construct objects
-			this.sockets[leftPlayerId].socket.emit('playerConstruct', leftClientConstruct)
-			this.sockets[rightPlayerId].socket.emit('playerConstruct', leftClientConstruct)
-			this.sockets[leftPlayerId].socket.emit('playerConstruct', rightClientConstruct)
-			this.sockets[rightPlayerId].socket.emit('playerConstruct', rightClientConstruct)
-			// Get skins for left and right side
-			let leftSkin = this.skins[this.players[leftPlayerId].skin]
-			let rightSkin = this.skins[this.players[rightPlayerId].skin]
-			// Create the player construct objects for session
-			let leftSessionConstruct: sessionPlayerConstruct = this.newSessionConstruct('left', leftSkin.width, leftSkin.height)
-			let rightSessionConstruct: sessionPlayerConstruct = this.newSessionConstruct('right', rightSkin.width, rightSkin.height)
-			// Emit to session the player construct objects
-			newParty.worker.postMessage(leftSessionConstruct)
-			newParty.worker.postMessage(rightSessionConstruct)
+			this.initialiseWebClients(leftPlayerId, rightPlayerId, newParty)
+			this.createWorker(newParty)
+			this.createWebConstructs(leftPlayerId, rightPlayerId)
+			this.createSessionConstructs(leftPlayerId, rightPlayerId, newParty)
 		}, 100)
 		// Session message listener
 		newParty.worker.on('message', (incomingProps: newPropsFromSession) => {
@@ -281,7 +293,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		}
 	}
 
-	/* -------------------------CONTROLLER EVENT LISTENERS------------------------- */
+	/* -----------{ --------------CONTROLLER EVENT LISTENERS------------------------- */
 
 	// Display a connected socket to the controller
 	@SubscribeMessage('displaySocket')
