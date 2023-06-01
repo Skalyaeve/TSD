@@ -1,0 +1,105 @@
+/* 
+#1 Éléments
+#2 Forme
+#3 Position
+#4 Margin - Padding
+#5 Animations
+*/
+div.modal-chan-create{
+    position: absolute;
+    top: 20%;
+    left: 35%;
+    width: 60%;  
+    height: 60%; 
+    background-color: rgb(33 9 153 / 75%);
+    box-sizing: border-box;
+    text-align: center;
+    align-items: center;
+    font-size: 10px !important;
+}
+
+.overlay-chan-create{
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.chan-create-grid{
+    display: grid;
+    grid-template-rows: 1fr 3fr 1fr;
+    height: 100%;
+    grid-auto-flow: row; 
+    font-size: 10px;
+}
+
+.chan-create-grid .create-title {
+    text-align: center;
+    place-items: center;
+    padding: 25px;
+}
+
+.modal-chan-create h2 {
+    font-size: 18px;
+}
+
+.chan-create-grid .create-form {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+}
+
+.chan-create-grid .create-form .create-name {
+    font-size: 10px; 
+}
+.chan-create-grid .create-form .create-name input{
+    font-size: 18px;
+    border: solid;
+    background: transparent;
+}
+
+.chan-create-grid .create-form .create-name input::placeholder{
+    color: white;
+    text-align: center;
+}
+
+.chan-create-grid .create-form .select-members {
+    font-size: 10px;
+}
+
+.chan-create-grid .create-form .select-members input{
+    font-size: 18px;
+    background: transparent;
+    border: solid;
+}
+
+.chan-create-grid .create-form .select-members input::placeholder{
+    color: white;
+    text-align: center;
+}
+
+.chan-create-grid .create-form .select-type {
+    font-size: 10px;
+}
+
+.chan-create-grid .create-form .select-type select{
+    font-size: 18px;
+    background: transparent;
+    height: 30px;
+    border: solid white;
+}
+
+.chan-create-grid .create-form .select-type option{
+    font-size: 18px;
+}
+
+.chan-create-grid .chan-create-submit {
+    text-align: center;
+    max-width: 100%;
+}
+
+.chan-create-btn{
+    background: transparent;
+    border: solid white;
+    font-size: 18px;
+}

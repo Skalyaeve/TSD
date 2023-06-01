@@ -3,6 +3,7 @@
 @import url("ManageRooms.css");
 @import url("DirectMessages.css");
 @import url("ManageChannels.css");
+@import url("ChannelCreate.css");
 
 .chat-main-grid {
     display: grid;
