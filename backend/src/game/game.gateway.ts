@@ -165,6 +165,16 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	createWorker(newParty: party){
 		let sessionLoginData: loginData = { sessionId: newParty.id }
 		newParty.worker.postMessage(sessionLoginData)
+		// Session message listener
+		newParty.worker.on('message', (incomingProps: newPropsFromSession) => {
+			let outgoingProps: newPropsToClient = {
+				leftProps: incomingProps.leftProps,
+				rightProps: incomingProps.rightProps,
+				ballProps: incomingProps.ballProps
+			}
+			this.sockets[newParty.leftPlayerId].socket.emit('newProps', outgoingProps)
+			this.sockets[newParty.rightPlayerId].socket.emit('newProps', outgoingProps)
+		})
 	}
 
 	// Create the player construct objects for clients and emit them to each client
@@ -189,6 +199,8 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
 	// Starts a new party
 	async createParty(leftPlayerId: string, rightPlayerId: string) {
+		this.sockets[leftPlayerId].socket.emit('matched')
+		this.sockets[rightPlayerId].socket.emit('matched')
 		// Create new session
 		let newParty: party = {
 			id: uuidv4(),
@@ -206,23 +218,15 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			this.createWebConstructs(leftPlayerId, rightPlayerId)
 			this.createSessionConstructs(leftPlayerId, rightPlayerId, newParty)
 		}, 100)
-		// Session message listener
-		newParty.worker.on('message', (incomingProps: newPropsFromSession) => {
-			let outgoingProps: newPropsToClient = {
-				leftProps: incomingProps.leftProps,
-				rightProps: incomingProps.rightProps,
-				ballProps: incomingProps.ballProps
-			}
-			this.sockets[newParty.leftPlayerId].socket.emit('newProps', outgoingProps)
-			this.sockets[newParty.rightPlayerId].socket.emit('newProps', outgoingProps)
-		})
 	}
 
 	// Creates a new party if 
 	checkMatchQueue() {
 		if (this.matchQueue.length >= 2) {
 			console.log("More than 2 players in matchmaking queue starting a new session")
-			this.createParty(this.matchQueue.pop(), this.matchQueue.pop())
+			let firstPlayer = this.matchQueue.pop()
+			let secondPlayer = this.matchQueue.pop()
+			this.createParty(firstPlayer, secondPlayer)
 		}
 	}
 

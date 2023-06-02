@@ -48,7 +48,7 @@ export class AuthController {
     @Get('logout')
     @UseGuards(JwtGuard)
     logout(@Req() req: Request, @Res({ passthrough: true }) res: Response): any {
-        res.clearCookie('access_token', {
+		res.clearCookie('access_token', {
             httpOnly: true,
             maxAge: 60 * 60 * 24 * 7,
             sameSite: 'lax',

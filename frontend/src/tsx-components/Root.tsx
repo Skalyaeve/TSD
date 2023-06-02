@@ -1,9 +1,8 @@
-import { useMemo } from 'react';
+
 import React, { useRef, useState, useLayoutEffect } from 'react'
 import { Routes, Route, useLocation, useNavigate } from 'react-router-dom'
-import Cookies from 'js-cookie';
 import { AnimatePresence, motion } from 'framer-motion'
-import { bouncyPopUp, bouncyYMove } from '../tsx-utils/ftMotion.tsx'
+import { bouncyPopUp } from '../tsx-utils/ftMotion.tsx'
 import NavBar from './NavBar.tsx'
 import Chat from './Chat.tsx'
 import Matchmaker from './Matchmaker.tsx'
@@ -15,15 +14,11 @@ import Party from './Game.tsx'
 import Leader from './Leader.tsx'
 import ErrorPage from './ErrorPage.tsx'
 import '../css/Root.css'
-import background from '../resource/background.png';
 import { io } from 'socket.io-client';
-import Modal from 'react-modal';
 
 
 // --------IS-CONNECTED---------------------------------------------------- //
 const isConnected = async () => {
-	if (!Cookies.get('access_token')) return false
-
 	const servID = 'http://localhost:3000'
 	const path = '/users/connected'
 	try {
@@ -46,10 +41,8 @@ const isConnected = async () => {
 }
 
 // --------LOGIN-BTN------------------------------------------------------- //
-interface LogginBtnProps {
-	setLogged: React.Dispatch<React.SetStateAction<boolean>>
-}
-const LoginBtn: React.FC<LogginBtnProps> = ({ setLogged }) => {
+
+const LoginBtn: React.FC = () => {
 	// ----REFS------------------------------- //
 	const animating = useRef(false)
 
@@ -90,37 +83,27 @@ const Root: React.FC = () => {
 	const navigate = useNavigate()
 
 	// ----STATES----------------------------- //
-	const [logged, setLogged] = useState(false)
 	const [showHeader, setShowHeader] = useState(false)
 
 	// ----EFFECTS---------------------------- //
-	useLayoutEffect(() => {
-		const checkConnection = async () => {
-			const connected = await isConnected()
-			if (connected) setLogged(true)
-			else navigate("/login")
-		}
-		checkConnection()
-	}, [])
 
-	useLayoutEffect(() => {
-		if (logged) {
-			if (location.pathname === '/login') {
+	const checkConnection = async () => {
+		if (await isConnected()) {
+			if (location.pathname == '/login') {
 				navigate('/')
 				const timer = setTimeout(() => setShowHeader(true), 500)
 				return () => clearTimeout(timer)
 			}
 			else setShowHeader(true)
 		}
-		else if (!logged) {
-			if (location.pathname !== '/login') navigate('/login')
+		else if (location.pathname != '/login') {
+			window.location.href = '/login'
 			setShowHeader(false)
 		}
-	}, [logged])
+	}
 
 	useLayoutEffect(() => {
-		if (logged && localStorage.getItem('inGame') === '1')
-			navigate('/game')
+		checkConnection()
 	}, [location.pathname])
 
 	// ----CLASSNAMES------------------------- //
@@ -130,14 +113,14 @@ const Root: React.FC = () => {
 	return <>
 		<AnimatePresence>
 			{showHeader && <header className={headerName}>
-				<NavBar setLogged={setLogged} />
+				<NavBar />
 				<Chat />
 				<Matchmaker />
 			</header>}
 		</AnimatePresence>
 		<AnimatePresence mode='wait'>
 			<Routes location={location} key={location.pathname}>
-				<Route path='/login' element={<LoginBtn setLogged={setLogged} />} />
+				<Route path='/login' element={<LoginBtn />} />
 				<Route path='/' element={<Home />} />
 				<Route path='/profile' element={<AccountInfos />} />
 				<Route path='/profile/friends' element={<Friends />} />

@@ -53,7 +53,8 @@ const startGameSockets = () => {
 		gameSocket.emit('identification', "PHASER-WEB-CLIENT")
 	})
 
-	gameSocket.on('Matched', () => {
+	gameSocket.on('matched', () => {
+		console.log('Opponent found, starting game')
 		navigate('/game')
 	})
 }
@@ -71,18 +72,20 @@ const Matchmaker: React.FC = () => {
 
 	// ----EFFECTS---------------------------- //
 	useEffect(() => {
+		console.log("matchmaking now:", matchmaking)
 		if (!matchmaking) return
 		setMatchmaking(false)
-		startGameSockets()
-
+		//startGameSockets()
 		setInGame(true)
-		
 		localStorage.setItem('inGame', '1')
 	}, [matchmaking])
 
 	// ----HANDLERS--------------------------- //
 	const toggleMatchmaker = () => {
-		if (!matchmaking && !inGame) setMatchmaking(true)
+		if (!matchmaking && !inGame) {
+			console.log("toggling matchmaker")
+			setMatchmaking(true)
+		}
 		else if (inGame) {
 			setInGame(false)
 			navigate('/')

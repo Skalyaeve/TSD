@@ -47,15 +47,12 @@ const NavBarLink: React.FC<NavBarLinkProps> = ({ index, to, ext }) => {
 }
 
 // --------RENDER-FROM-HOME------------------------------------------------ //
-interface FromHomeProps {
-	setLogged: React.Dispatch<React.SetStateAction<boolean>>
-}
-const FromHome: React.FC<FromHomeProps> = ({ setLogged }) => {
+const FromHome: React.FC = () => {
 	// ----HANDLERS--------------------------- //
 	const logoutBtnHdl = {
 		onMouseUp: () => {
 			Cookies.remove('access_token', { path: '/', domain: 'localhost' })
-			setLogged(false)
+			window.location.href = '/login'
 		}
 	}
 
@@ -168,10 +165,7 @@ const FromChat: React.FC = () => (
 )
 
 // --------NAVBAR---------------------------------------------------------- //
-interface NavBarProps {
-	setLogged: React.Dispatch<React.SetStateAction<boolean>>
-}
-const NavBar: React.FC<NavBarProps> = ({ setLogged }) => {
+const NavBar: React.FC = () => {
 	// ----ROUTER----------------------------- //
 	const location = useLocation()
 
@@ -179,7 +173,7 @@ const NavBar: React.FC<NavBarProps> = ({ setLogged }) => {
 	return <AnimatePresence mode='wait'>
 		<Routes location={location} key={location.pathname}>
 			<Route path='/login' element={<></>} />
-			<Route path='/' element={<FromHome setLogged={setLogged} />} />
+			<Route path='/' element={<FromHome />} />
 			<Route path='/profile' element={<FromInfos />} />
 			<Route path='/profile/friends' element={<FromFriends />} />
 			<Route path='/characters' element={<FromCharacters />} />
