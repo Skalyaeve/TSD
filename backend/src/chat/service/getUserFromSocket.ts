@@ -7,7 +7,7 @@ export async function getUserFromSocket (client: Socket) {
   if (cookie)
   {
       const { access_token: authenticationToken} = parse(cookie);
-      console.log('authentication token', authenticationToken);
+      // console.log('authentication token', authenticationToken);
       const user = await this.authservice.getUserfromAuthenticationToken(authenticationToken);
       if (!user){
           throw new WsException('Invalid credentials');

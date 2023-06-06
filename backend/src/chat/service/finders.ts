@@ -1,4 +1,4 @@
-import { ChanMember, ChanMessage, Channel } from "@prisma/client";
+import { ChanMember, ChanMessage, Channel, User } from "@prisma/client";
 
 export async function findChannelbyId(id: number): Promise<Channel | null> {
   try {
@@ -153,3 +153,23 @@ export async function findAllChanMessages(chanId: number): Promise<ChanMessage[]
   }
 }
 
+
+export async function findUserStartsby(startBy:string): Promise<User[]> {
+  try {
+    const users: User[] = await this.prisma.user.findMany({
+      where: {
+        nickname: {
+          startsWith: startBy,
+        }
+      }
+    });
+    if (!users) {
+      throw new Error('users by member not found');
+    }
+    return users;
+  }
+  catch (error) {
+    console.error(error);
+    throw error;
+  }
+}

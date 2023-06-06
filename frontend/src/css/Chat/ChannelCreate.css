@@ -56,6 +56,8 @@ div.modal-chan-create{
     font-size: 18px;
     border: solid;
     background: transparent;
+    width: 80%;
+    text-align: center;
 }
 
 .chan-create-grid .create-form .create-name input::placeholder{
@@ -71,6 +73,7 @@ div.modal-chan-create{
     font-size: 18px;
     background: transparent;
     border: solid;
+    width: 80%;
 }
 
 .chan-create-grid .create-form .select-members input::placeholder{
@@ -80,13 +83,36 @@ div.modal-chan-create{
 
 .chan-create-grid .create-form .select-type {
     font-size: 10px;
+    display: grid;
+    grid-template-rows: 1fr 1fr;
+    /* align-items: center; */
 }
 
 .chan-create-grid .create-form .select-type select{
     font-size: 18px;
     background: transparent;
     height: 30px;
+    width: 80%;
+    text-align: center;
     border: solid white;
+    grid-row: 1;
+    text-align: center;
+}
+
+.chan-create-grid .create-form .select-type .chan-password-input{
+    grid-row: 2;
+}
+
+.chan-create-grid .create-form .select-type .chan-password-input input{
+    font-size: 18px;
+    background: transparent;
+    border: solid;
+    width: 80%;
+    text-align: center;
+}
+
+.chan-create-grid .create-form .select-type .chan-password-input input::placeholder{
+    color: white;
 }
 
 .chan-create-grid .create-form .select-type option{

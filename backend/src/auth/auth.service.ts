@@ -26,7 +26,7 @@ export class AuthService {
     });
     if (payload.id){
       const userReturned = await this.userService.findOneById(payload.id);
-      console.log('userReturned: ', userReturned);
+      // console.log('userReturned: ', userReturned);
       return userReturned;
     }
   }

@@ -14,7 +14,8 @@ import {
   findChannelbyId, 
   findManyChanMessages, 
   findAllProtectedChannels, 
-  findAllPublicChannels } from './finders.js';
+  findAllPublicChannels,
+  findUserStartsby } from './finders.js';
 import { isAdmin, isMember, isOwner, psswdMatch, isBanned, isMuted } from './verifications.js'
 import { getPrivateConversation, createOnePrivMessage, blockUser, unblockUser, isBlocked} from './private.js'
 
@@ -56,7 +57,7 @@ export class ChatService {
   findManyChanMessages = findManyChanMessages
   findAllPublicChannels = findAllPublicChannels
   findAllProtectedChannels = findAllProtectedChannels
-
+  findUserStartsby = findUserStartsby
 
   //Verification methods
   isAdmin = isAdmin

@@ -619,7 +619,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
   }
 
   //--------------------------------------------------------------------------//
-  //                        CONNECTION SET UP EVENTS                          //
+  //                                 USER EVENTS                              //
   //--------------------------------------------------------------------------//
 
   /**
@@ -638,20 +638,52 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
         throw new WsException('user was not found');
       }
       const { id, email, nickname, avatarFilename } = userData;
-  
-      client.emit('userInfo', {
+
+      this.server.emit('userInfo', {
         id,
         email,
         nickname,
         avatarFilename,
       });
+  
+      // client.emit('userInfo', {
+      //   id,
+      //   email,
+      //   nickname,
+      //   avatarFilename,
+      // });
     }
     catch (error) {
       console.log(error);
       throw new WsException(error.message || 'Could get user info');
     }
   }
+
+  @SubscribeMessage('getUserStartsBy')
+  async handleGetUsersStartBy(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() startBy:string) : Promise<void>
+  {
+    try {
+      console.log('calling startsby event');
+      const users = await this.chatService.findUserStartsby(startBy);
+      const userData = await this.chatService.getUserFromSocket(client);
+      if (!userData){
+        throw new WsException('user was not found');
+      }
+      const userRoomId = 'userID_' + userData.id.toString() + '_room';
+      this.server.to(userRoomId).emit('usersStartByFound', users);
+      // client.emit('channelNameChanged', updatedChannel);
+    }
+    catch (error) {
+      console.log(error);
+      throw new WsException(error.message || 'Could not set channel name');
+    }
+  }
   
+  //--------------------------------------------------------------------------//
+  //                        CONNECTION SET UP EVENTS                          //
+  //--------------------------------------------------------------------------//
   /**
    * Still don't know the purpose of this :|
    * @param server 
@@ -661,7 +693,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
   }
 
   /**
-   * Handling connection of the socket
+   * Handling connection of the socket 
    * @param client 
    * @param args 
    */

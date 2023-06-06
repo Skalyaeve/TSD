@@ -3,14 +3,20 @@ import { BsSearchHeart } from "react-icons/bs";
 import { BsPlusCircle } from "react-icons/bs";
 import Modal from 'react-modal';
 import "../../css/Chat/ChannelCreate.css"
+import { socket } from '../Root.tsx'
+
 
 export default function ChatChannels()
 {   
     const [channel, setChannel] = useState("");
     const [newChannel, setNewChannel] = useState("");
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [members, setMembers] = useState("");
+    // const [members, setMembers] = useState("");
+    const [members, setMembers] = useState<{id: number; nickname: string; avatarFilename: string}[]>([]);
+    const [matchedUsers, setMatchedUsers] = useState<{id: number; nickname: string; avatarFilename: string}[]>([]);
+    const [searchQuery, setSearchQuery] = useState("");
     const [channelType, setChannelType] = useState("");
+    const [password, setPassword] = useState("");
 
     const handleSubmit = (e: any) =>
     {
@@ -29,6 +35,30 @@ export default function ChatChannels()
 
     const handleOpenModal = () => {
         setIsModalOpen(true);
+    }
+
+    useEffect(() => {
+        console.log('receiving users that start by');
+        socket.on('usersStartByFound', (users: {id: number; nickname: string; avatarFilename: string}[]) => {
+            setMatchedUsers(users);
+        });
+
+        // Clean up when component unmounts
+        return () => {
+            socket.off('usersStartByFound');
+        };
+    }, []);
+
+    const handleMembersChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setSearchQuery(e.target.value);
+        // Emit 'getUserStartsBy' event with the input value
+        console.log('getting users that start by');
+        socket.emit('getUserStartsBy', e.target.value);
+    }
+
+    const handleSelectUser = (user: {id: number; nickname: string; avatarFilename: string}) => {
+        console.log('adding selected member to channel');
+        setMembers([...members, user]);  // Add selected user to members
     }
 
     return (
@@ -87,21 +117,40 @@ export default function ChatChannels()
                     </div>
                     <div className="select-members">
                         <input 
-                            onChange={(e)=>setMembers(e.target.value)}
+                            //onChange={(e)=>setMembers(e.target.value)}
+                            onChange={handleMembersChange}
                             placeholder="Add members"
-                            value={members}
+                            value={searchQuery}
                         />
+                        {/* Dropdown */}
+                        {matchedUsers.length > 0 && (
+                            <div className="dropdown">
+                                {matchedUsers.map(user => (
+                                    <div className="dropdown-item" onClick={() => handleSelectUser(user)}>
+                                        {user.nickname}
+                                    </div>
+                                ))}
+                            </div>
+                        )}
                     </div>
                     <div className="select-type">
                         <select 
                             onChange={(e)=>setChannelType(e.target.value)}
-                            value={channelType}
-                        >
-                            {/* <option value="" selected disabled>Select channel type</option> */}
-                            <option value="private">Private</option>
-                            <option value="public">Public</option>
-                            <option value="protected">Protected</option>
+                            value={channelType} >
+                            <option value="" selected disabled>Select channel type</option>
+                            <option value="PRIVATE">Private</option>
+                            <option value="PUBLIC">Public</option>
+                            <option value="PROTECTED">Protected</option>
                         </select>
+                        {channelType === 'PROTECTED' && 
+                        <div className="chan-password-input">
+                            <input 
+                                type="password"
+                                onChange={(e)=>setPassword(e.target.value)}
+                                placeholder="Enter password"
+                                value={password}
+                            />
+                        </div>}
                     </div>
                 </form>
                 <div className="chan-create-submit">
@@ -112,104 +161,3 @@ export default function ChatChannels()
     </div>
     )
 }
-
-
-// import React, { useState } from "react";
-// import { BsSearchHeart } from "react-icons/bs";
-// import { BsPlusCircle } from "react-icons/bs";
-// import Modal from 'react-modal';
-
-// export default function ChatChannels()
-// {
-
-//     const [channel, setChannel] = useState("");
-//     const [newChannel, setNewChannel] = useState("");
-//     const [isModalOpen, setIsModalOpen] = useState(false);
-//     const [members, setMembers] = useState("");
-//     const [channelType, setChannelType] = useState("");
-
-//     const handleSubmit = (e: React.FormEvent) =>
-//     {
-//         e.preventDefault();
-//         //here send the value;
-//         setChannel("");
-//     }
-
-//     const handleSubmitNewChannel = (e: React.FormEvent) =>
-//     {
-//         e.preventDefault();
-//         //here send the value
-//         setNewChannel("");
-//     }
-
-//     const handleOpenModal = () => {
-//         setIsModalOpen(true);
-//     }
-
-//     return (
-//     <div className='channels'>
-//         <div className="Chan-title">
-//             <h1>
-//                [Channels] 
-//             </h1>
-//         </div>
-//         <div className="Chan-find">
-//             <div className="Chan-find-text">
-//                 <input 
-//                     onChange={(e)=>setChannel(e.target.value)}
-//                     placeholder="Search channel"
-//                     value={channel}
-//                 />
-//             </div>
-//             <button className="Chan-find-btn">
-//                 <BsSearchHeart/>
-//             </button>
-//             <div className="Chan-find-text">
-//                 <input 
-//                     onChange={(e)=>setNewChannel(e.target.value)}
-//                     placeholder="Type new channel name"
-//                     value={newChannel}
-//                 />
-//             </div>
-//             <button className="Chan-find-btn" onClick={handleOpenModal}>
-//                 <BsPlusCircle/>
-//             </button >
-//         </div>
-//         <div className="Chan-all-channels">
-//             <div className="channel-convo">Channel 1</div>
-//             <div className="channel-convo">Channel 2</div>
-//             <div className="channel-convo">Channel 3</div>
-//             <div className="channel-convo">Channel 4</div>
-//         </div>
-
-//         <Modal
-//             isOpen={isModalOpen}
-//             onRequestClose={() => setIsModalOpen(false)}
-//         >
-//             <h2>Create a new channel</h2>
-//             <form onSubmit={handleSubmitNewChannel}>
-//                 <input 
-//                     onChange={(e)=>setNewChannel(e.target.value)}
-//                     placeholder="Type new channel name"
-//                     value={newChannel}
-//                 />
-//                 <input
-//                     onChange={(e)=>setMembers(e.target.value)}
-//                     placeholder="Type members"
-//                     value={members}
-//                 />
-//                 <select
-//                     onChange={(e)=>setChannelType(e.target.value)}
-//                     value={channelType}
-//                 >
-//                     <option value="">select channel type</option>
-//                     <option value="private">Private</option>
-//                     <option value="public">Public</option>
-//                     <option value="protected">Protected</option>
-//                 </select>
-//                 <button type="submit">Create Channel</button>
-//             </form>
-//         </Modal>
-//     </div>
-//     )
-// }
