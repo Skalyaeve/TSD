@@ -4,9 +4,11 @@ import { BsSearchHeart } from "react-icons/bs";
 interface DmHandlerProps {
     allUsers: {id: number; email: string; nickname: string; avatarFilename: string}[];
     setSelectedContact: React.Dispatch<React.SetStateAction<{id: number; email: string; nickname: string; avatarFilename: string} | null>>
+    userInfo: {id: number; email: string; nickname: string; avatarFilename: string} | null;
+    setUserInfo: React.Dispatch<React.SetStateAction<{id: number; email: string; nickname: string; avatarFilename: string} | null>>;
 }
 
-export default function DmHandler({ allUsers, setSelectedContact }: DmHandlerProps)
+export default function DmHandler({ allUsers, setSelectedContact, userInfo, setUserInfo }: DmHandlerProps)
 {
 
     const [contact, setContact] = useState("");

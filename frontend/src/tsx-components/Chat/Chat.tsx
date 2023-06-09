@@ -1,3 +1,10 @@
+// const socket = useMemo(()=>{
+//     console.log("NEW CONNECTION")
+//     return io("http://localhost:3000/chat", { 
+//         transports: ["websocket"], 
+//         withCredentials: true
+//     })
+// }, []);
 import React, { useCallback, useMemo } from 'react'
 import { useEffect, useState } from 'react'
 import { socket } from '../Root.tsx'
@@ -11,24 +18,17 @@ import HeaderContactInfo from './HeaderContactInfo.tsx'
 import ChatChannels from './ChatChannels.tsx'
 import DmHandler from './DmHandler.tsx'
 import axios from 'axios'
-// const socket = useMemo(()=>{
-//     console.log("NEW CONNECTION")
-//     return io("http://localhost:3000/chat", { 
-//         transports: ["websocket"], 
-//         withCredentials: true
-//     })
-// }, []);
 
 function Chat({}) {
 
     const [allMessages, setAllMessages] = useState<{user: string; message: string; type: string}[]>([]);
     const [user, setUser] = useState(() => `User${Math.floor(Math.random() * 10)}`); // this will change 
     const [isOpen, setIsOpen] = useState<boolean>(false);
-    const [userInfo, setUserInfo] = useState(null);
+    const [userInfo, setUserInfo] = useState<{id: number; email: string; nickname: string; avatarFilename: string} | null>(null);
     const [allUsers, setAllUsers] = useState<{id: number; email: string; nickname: string; avatarFilename: string}[]>([]);
     const [error, setError] = useState<any>(null);
     const [selectedContact, setSelectedContact] = useState<{id: number; email: string; nickname: string; avatarFilename: string} | null>(null);
-    
+    const [selectedChannel, setSelectedChannel] = useState("");
     const send = useCallback((value: string, user: string) => {
             console.log("value: ", value);
             console.log("user: ", user);
@@ -49,7 +49,7 @@ function Chat({}) {
     }
 
     useEffect(() => {
-        socket.on('userInfo', (userData) => {
+        socket.on('userInfo', (userData: {id: number; email: string; nickname: string; avatarFilename: string}) => {
           setUserInfo(userData);
           const { nickname } = userData;
           console.log(' nickname ', nickname);
@@ -100,8 +100,8 @@ function Chat({}) {
     return (
         <div className={`chat-main-grid ${isOpen?"open":"close"}`}>
             <div className="manage-rooms">
-                <DmHandler allUsers={allUsers} setSelectedContact={setSelectedContact}/>
-                <ChatChannels/>
+                <DmHandler allUsers={allUsers} setSelectedContact={setSelectedContact} userInfo={userInfo} setUserInfo={setUserInfo}/>
+                <ChatChannels userInfo={userInfo} setUserInfo={setUserInfo}/>
             </div>
             <div className="chatbox">
                 <ChatHeader contactName={selectedContact?.nickname || 'No conversation selected'} setIsOpen={setIsOpen}/>

@@ -176,6 +176,8 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       if (type == 'PROTECTED') {
         await this.chatService.setChanPassword(chanID, userId, psswd);
       }
+      const chanRoomId = 'chan_'+ chanID + '_room';
+      client.join(chanRoomId);
       this.server.emit('created channel', channel);
     }
     catch (error)
@@ -639,7 +641,8 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       }
       const { id, email, nickname, avatarFilename } = userData;
 
-      this.server.emit('userInfo', {
+      const userRoomId = 'userID_' + id.toString() + '_room';
+      this.server.to(userRoomId).emit('userInfo', {
         id,
         email,
         nickname,
@@ -662,16 +665,19 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
   @SubscribeMessage('getUserStartsBy')
   async handleGetUsersStartBy(
     @ConnectedSocket() client: Socket,
-    @MessageBody() startBy:string) : Promise<void>
+    @MessageBody() data: {startBy:string, userId:number}) : Promise<void>
   {
     try {
+      const {startBy, userId} = data;
       console.log('calling startsby event');
-      const users = await this.chatService.findUserStartsby(startBy);
-      const userData = await this.chatService.getUserFromSocket(client);
-      if (!userData){
-        throw new WsException('user was not found');
-      }
-      const userRoomId = 'userID_' + userData.id.toString() + '_room';
+      console.log('startby:', startBy);
+      console.log('userid:',userId);
+      const users = await this.chatService.findUserStartsby(startBy, userId);
+      // const userData = await this.chatService.getUserFromSocket(client);
+      // if (!userData){
+      //   throw new WsException('user was not found');
+      // }
+      const userRoomId = 'userID_' + userId.toString() + '_room';
       this.server.to(userRoomId).emit('usersStartByFound', users);
       // client.emit('channelNameChanged', updatedChannel);
     }

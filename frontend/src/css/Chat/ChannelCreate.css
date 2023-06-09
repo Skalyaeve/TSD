@@ -1,3 +1,4 @@
+
 /* 
 #1 Éléments
 #2 Forme
@@ -49,6 +50,10 @@ div.modal-chan-create{
     grid-template-columns: 1fr 1fr 1fr;
 }
 
+/*
+Select channel name
+*/
+
 .chan-create-grid .create-form .create-name {
     font-size: 10px; 
 }
@@ -61,15 +66,28 @@ div.modal-chan-create{
 }
 
 .chan-create-grid .create-form .create-name input::placeholder{
-    color: white;
+    color: rgb(255, 255, 255, 0.8);
     text-align: center;
 }
 
+.chan-name-confirmation{
+    font-size: 15px;
+}
+
+/*
+Select channel members
+*/
+
 .chan-create-grid .create-form .select-members {
     font-size: 10px;
+    display: grid;
+    grid-template-rows: 1fr 3.5fr;
 }
 
 .chan-create-grid .create-form .select-members input{
+    display: flex;
+    justify-self: center;
+    grid-row: 1;
     font-size: 18px;
     background: transparent;
     border: solid;
@@ -77,10 +95,31 @@ div.modal-chan-create{
 }
 
 .chan-create-grid .create-form .select-members input::placeholder{
-    color: white;
+    color: rgb(255, 255, 255, 0.8);
+    /* color: white; */
     text-align: center;
 }
 
+.chan-create-grid .create-form .select-members .select-members-dropdown{
+    grid-row: 2;
+    text-align: center;
+    justify-self: center;
+    border: solid;
+}
+
+.chan-create-grid .create-form .select-members .select-members-dropdown-item{
+    /* border: solid; */
+    text-align: center;
+    font-size: 15px;
+}
+
+.chan-create-grid .create-form .select-members .select-members-dropdown-item.selected {
+    background-color: rgb(202, 1, 112);  /* Change this to your desired color */
+}
+
+/*
+Select channel type
+*/
 .chan-create-grid .create-form .select-type {
     font-size: 10px;
     display: grid;
@@ -89,6 +128,8 @@ div.modal-chan-create{
 }
 
 .chan-create-grid .create-form .select-type select{
+    display: flex;
+    justify-self: center;
     font-size: 18px;
     background: transparent;
     height: 30px;
@@ -112,7 +153,8 @@ div.modal-chan-create{
 }
 
 .chan-create-grid .create-form .select-type .chan-password-input input::placeholder{
-    color: white;
+    color: rgb(255, 255, 255, 0.8);
+    /* color: white; */
 }
 
 .chan-create-grid .create-form .select-type option{
@@ -124,8 +166,13 @@ div.modal-chan-create{
     max-width: 100%;
 }
 
+/*
+Create channel final button
+*/
+
 .chan-create-btn{
     background: transparent;
     border: solid white;
     font-size: 18px;
+    align-self: center;
 }

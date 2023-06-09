@@ -154,15 +154,31 @@ export async function findAllChanMessages(chanId: number): Promise<ChanMessage[]
 }
 
 
-export async function findUserStartsby(startBy:string): Promise<User[]> {
+export async function findUserStartsby(startBy:string, userId:number): Promise<User[]> {
   try {
     const users: User[] = await this.prisma.user.findMany({
       where: {
-        nickname: {
-          startsWith: startBy,
-        }
+        AND: [
+          {
+            nickname: {
+              startsWith: startBy,
+            }
+          },
+          {
+            id: {
+              not: userId,
+            }
+          }
+        ]
       }
     });
+    // const users: User[] = await this.prisma.user.findMany({
+    //   where: {
+    //     nickname: {
+    //       startsWith: startBy,
+    //     }
+    //   }
+    // });
     if (!users) {
       throw new Error('users by member not found');
     }
