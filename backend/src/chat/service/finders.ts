@@ -52,6 +52,30 @@ export async function findAllChannelsByMember(member: number): Promise<ChanMembe
   }
 }
 
+export async function findAllChannelsByUserId(member: number): Promise<Channel[]> {
+  try {
+    const channels: Channel[] = await this.prisma.chanMember.findMany({
+      where: {
+        member,
+      },
+      include: {
+        chanRef: true, // Assuming that this is the correct relation field name
+      },
+    }).then(chanMembers => chanMembers.map(chanMember => chanMember.chanRef));
+
+    if (!channels || channels.length === 0) {
+      throw new Error('channels by member not found');
+    }
+
+    return channels;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
+
+
 export async function findChannelsthatStartby(startBy:string): Promise<Channel[]> {
   try {
     const channels: Channel[] = await this.prisma.channel.findMany({

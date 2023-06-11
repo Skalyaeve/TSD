@@ -60,3 +60,18 @@
     scrollbar-width: thin;
     scrollbar-color: #888 #f1f1f1;
 }
+
+.channel-btn {
+    display: block;
+    width: 80%;
+    text-align: center;
+    background: transparent;
+    border: 1px solid #fffcfc;
+    padding: 8px 12px; /* Adjust the padding as needed */
+    margin: 5px auto;
+    font-size: 15px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    cursor: pointer;
+}

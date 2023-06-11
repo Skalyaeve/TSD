@@ -21,6 +21,29 @@ import axios from 'axios'
 
 function Chat({}) {
 
+    interface ChanMember {
+        chanId: number;
+        member: number;
+        isAdmin: boolean;
+        muteTime: string; // or Date, depending on how you want to handle it
+    }
+
+    interface Channel {
+        id: number;
+        name: string;
+        chanOwner: number;
+        type: string; // Or your ChanType if defined
+        passwd: string | null;
+        // Add more fields as necessary
+    }
+
+    interface ChanMessage {
+        sender: number;
+        chanId: number;
+        timeSent: string;
+        content: string;
+    }
+
     // const [allMessages, setAllMessages] = useState<{user: string; message: string; type: string}[]>([]);
     const [allMessages, setAllMessages] = useState<
     {
@@ -38,6 +61,48 @@ function Chat({}) {
     const [error, setError] = useState<any>(null);
     const [selectedContact, setSelectedContact] = useState<{id: number; email: string; nickname: string; avatarFilename: string} | null>(null);
     const [selectedChannel, setSelectedChannel] = useState("");
+    const [userChannelsMember, setUserChannelsMember] = useState<ChanMember[]>([]);
+    const [allChannelsbyUser, setAllChannelsbyUser] = useState<Channel[]>([]);
+
+    /**
+     * Users Info
+     */
+    useEffect(() => {
+        socket.on('userInfo', (userData: {id: number; email: string; nickname: string; avatarFilename: string}) => {
+          setUserInfo(userData);
+          const { nickname } = userData;
+          console.log(' nickname ', nickname);
+        });
+
+        socket.emit('getUserInfo', () => {});
+    
+        return () => {
+          socket.off('userInfo');
+        };
+    }, []);
+
+    const axiosInstance = axios.create({
+        withCredentials: true,
+      });
+
+    useEffect(() => {
+        const fetchAllUsers =async () => {
+            try {
+                const response = await axiosInstance.get('http://localhost:3000/users/all');
+                const users = response.data;
+                setAllUsers(users);
+                console.log(users);
+            }
+            catch (error) {
+                setError(error)
+            }
+        };
+        fetchAllUsers();
+    }, []);
+
+    /**
+     * Private message
+     */
 
     const sendPrivateMessage = useCallback((value: string) => {
         if (!userInfo || !selectedContact) {
@@ -81,9 +146,6 @@ function Chat({}) {
                 }
     }, []);
 
-
-
-
     useEffect(() => {
         const conversationListener = (conversation: { sender: number; recipient: number; timeSent: Date; content: string }[]) => {
             console.log(conversation); 
@@ -121,50 +183,42 @@ function Chat({}) {
     }
 
     useEffect(() => {
-        socket.on('userInfo', (userData: {id: number; email: string; nickname: string; avatarFilename: string}) => {
-          setUserInfo(userData);
-          const { nickname } = userData;
-          console.log(' nickname ', nickname);
-        });
-
-        socket.emit('getUserInfo', () => {});
-    
-        return () => {
-          socket.off('userInfo');
-        };
-    }, []);
-
-    const axiosInstance = axios.create({
-        withCredentials: true,
-      });
-
-    useEffect(() => {
-        const fetchAllUsers =async () => {
-            try {
-                const response = await axiosInstance.get('http://localhost:3000/users/all');
-                const users = response.data;
-                setAllUsers(users);
-                console.log(users);
-            }
-            catch (error) {
-                setError(error)
-            }
-        };
-        fetchAllUsers();
-    }, []);
-
-    useEffect(() => {
         const chatMessages = document.getElementById("chat-messages");
         if (chatMessages) {
           chatMessages.scrollTop = chatMessages.scrollHeight;
         }
       }, [allMessages]);
 
+    /**
+     * Channel
+     */
+
+    
+useEffect(() => {
+    if (!userInfo) {
+      console.log("user is not set");
+      return;
+    }
+  
+    const userId = userInfo.id;
+  
+    socket.on('channelsByUserFound', (channels: Channel[]) => {
+        setAllChannelsbyUser(channels);
+      console.log("channels of the user: ", channels);
+    });
+  
+    socket.emit('GetChannelsByUser', userId);
+  
+    return () => {
+      socket.off('channelsByUserFound');
+    };
+  }, [userInfo]);
+
     return (
         <div className={`chat-main-grid ${isOpen?"open":"close"}`}>
             <div className="manage-rooms">
                 <DmHandler allUsers={allUsers} setSelectedContact={setSelectedContact} userInfo={userInfo} setUserInfo={setUserInfo}/>
-                <ChatChannels userInfo={userInfo} setUserInfo={setUserInfo}/>
+                <ChatChannels userInfo={userInfo} allChannelsbyUser={allChannelsbyUser} selectedChannel={selectedChannel} setSelectedChannel={setSelectedChannel}/>
             </div>
             <div className="chatbox">
                 <ChatHeader contactName={selectedContact?.nickname || 'No conversation selected'} setIsOpen={setIsOpen}/>

@@ -62,7 +62,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     try {
       const { firstUser, secondUser} = data;
       const conversation = await this.chatService.getPrivateConversation(firstUser, secondUser);
-      console.log("conversation:", conversation); // Add this line
+      // console.log("conversation:", conversation); // Add this line
       const firstUserChatRoom = 'userID_' + firstUser.toString() + '_room';
       const secondUserChatRoom = 'userID_' + secondUser.toString() + '_room';
       this.server.to(firstUserChatRoom).to(secondUserChatRoom).emit('foundPrivateConversation', conversation);
@@ -245,14 +245,33 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     }
   }
 
+  @SubscribeMessage('GetUserChansMember')
+  async handleGetUserChansMember(
+      @ConnectedSocket() client: Socket,
+      @MessageBody() userId: number) : Promise<void>
+  {
+    try{
+      const channels = await this.chatService.findAllChannelsByMember(userId);
+      console.log("channels:", channels);
+      const userRoomId = 'userID_' + userId.toString() + '_room';
+      this.server.to(userRoomId).emit('UserChansMemberFound', channels);
+    }
+    catch (error){
+      console.log(error);
+      throw new WsException(error.message || 'Could not get user`s channels');
+    }
+  }
+
   @SubscribeMessage('GetChannelsByUser')
   async handleGetChannelbyUser(
       @ConnectedSocket() client: Socket,
       @MessageBody() userId: number) : Promise<void>
   {
     try{
-      const channels = await this.chatService.findAllChannelsByMember(userId);
-      client.emit('channelsByUserFound', channels);
+      const channels = await this.chatService.findAllChannelsByUserId(userId);
+      console.log("channels:", channels);
+      const userRoomId = 'userID_' + userId.toString() + '_room';
+      this.server.to(userRoomId).emit('channelsByUserFound', channels);
     }
     catch (error){
       console.log(error);

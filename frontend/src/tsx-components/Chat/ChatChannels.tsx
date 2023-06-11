@@ -5,11 +5,23 @@ import Modal from 'react-modal';
 import "../../css/Chat/ChannelCreate.css"
 import { socket } from '../Root.tsx'
 
+
+interface Channel {
+    id: number;
+    name: string;
+    chanOwner: number;
+    type: string; // Or your ChanType if defined
+    passwd: string | null;
+    // Add more fields as necessary
+  }
+
 interface ChatChannelsProps {
     userInfo: {id: number; email: string; nickname: string; avatarFilename: string};
-    setUserInfo: React.Dispatch<React.SetStateAction<{id: number; email: string; nickname: string; avatarFilename: string} | null>>;
+    allChannelsbyUser: Channel[];
+    selectedChannel: Channel;
+    setSelectedChannel: React.Dispatch<React.SetStateAction<Channel | null>>
 }
-export default function ChatChannels({userInfo, setUserInfo} : ChatChannelsProps)
+export default function ChatChannels({userInfo, allChannelsbyUser, selectedChannel, setSelectedChannel} : ChatChannelsProps)
 {   
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [channel, setChannel] = useState("");
@@ -28,12 +40,7 @@ export default function ChatChannels({userInfo, setUserInfo} : ChatChannelsProps
     const [channelType, setChannelType] = useState("");
     const [password, setPassword] = useState("");
 
-    const handleSubmit = (e: any) =>
-    {
-        e.preventDefault();
-        //here send the value;
-        setChannel("");
-    }
+
 
     const handleSubmitNewChannelName = (e: any) =>
     {
@@ -159,10 +166,11 @@ export default function ChatChannels({userInfo, setUserInfo} : ChatChannelsProps
             </button>
         </div>
         <div className="Chan-all-channels">
-            <div className="channel-convo">Channel 1</div>
-            <div className="channel-convo">Channel 2</div>
-            <div className="channel-convo">Channel 3</div>
-            <div className="channel-convo">Channel 4</div>
+            {allChannelsbyUser.map((channel) => (
+                <button className="channel-btn" key={channel.id} onClick={() => setSelectedChannel(channel)}>
+                    {channel.name}
+                </button>
+            ))}
         </div>
         <Modal 
             isOpen={isModalOpen}
