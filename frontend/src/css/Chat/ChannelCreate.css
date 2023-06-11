@@ -6,20 +6,24 @@
 #4 Margin - Padding
 #5 Animations
 */
-div.modal-chan-create{
+div.modal-chan-create {
     position: absolute;
     top: 20%;
     left: 35%;
     width: 60%;  
     height: 60%; 
-    background-color: rgb(33 9 153 / 75%);
+    /* background-color: rgb(33 9 153 / 75%); */
+    backdrop-filter: blur(25px);
+    background: rgba(0, 255, 0, 0.2);
     box-sizing: border-box;
     text-align: center;
     align-items: center;
     font-size: 10px !important;
+    box-shadow: 5px 5px 15px black;
+    border-radius: 2%;
 }
 
-.overlay-chan-create{
+.overlay-chan-create {
     position: fixed;
     top: 0;
     left: 0;
@@ -27,7 +31,7 @@ div.modal-chan-create{
     bottom: 0;
 }
 
-.chan-create-grid{
+.chan-create-grid {
     display: grid;
     grid-template-rows: 1fr 3fr 1fr;
     height: 100%;
@@ -123,7 +127,7 @@ Select channel type
 .chan-create-grid .create-form .select-type {
     font-size: 10px;
     display: grid;
-    grid-template-rows: 1fr 1fr;
+    grid-template-rows: max-content 3.5fr;
     /* align-items: center; */
 }
 
@@ -132,12 +136,9 @@ Select channel type
     justify-self: center;
     font-size: 18px;
     background: transparent;
-    height: 30px;
     width: 80%;
     text-align: center;
     border: solid white;
-    grid-row: 1;
-    text-align: center;
 }
 
 .chan-create-grid .create-form .select-type .chan-password-input{
@@ -159,6 +160,7 @@ Select channel type
 
 .chan-create-grid .create-form .select-type option{
     font-size: 18px;
+    line-height: 30px !important;
 }
 
 .chan-create-grid .chan-create-submit {

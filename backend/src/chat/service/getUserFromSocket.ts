@@ -7,6 +7,7 @@ export async function getUserFromSocket (client: Socket) {
   if (cookie)
   {
       const { access_token: authenticationToken} = parse(cookie);
+      if (!authenticationToken) return;
       // console.log('authentication token', authenticationToken);
       const user = await this.authservice.getUserfromAuthenticationToken(authenticationToken);
       if (!user){

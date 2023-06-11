@@ -58,6 +58,7 @@ function Chat({}) {
             message: value,
             type: "sent"
         };
+        console.log('sendPrivateMessage', { message })
         setAllMessages((allMessages)=>[...allMessages, message]);
         // The message emitted should match with what your server expects
         console.log('going to create private message');
@@ -68,23 +69,24 @@ function Chat({}) {
 
     const privateMessageCreatedListener = useCallback((message: {
         sender: number;
-        receiver: number;
-        content: string; 
-        type: string;
+        recipient: number;
+        content: string;
     }) => {
-        console.log("Received message", message);  // Add this line
-        if (!allMessages.find(m => m.message === message.content && 
-            m.sender === message.sender && // Change here
-            m.receiver === message.receiver)) 
-            { // Change here
-                const formatedMessage = {
-                    sender: message.sender,
-                    message: message.content,
-                    receiver: message.receiver,
-                    type: message.type
+        // console.log("Received message", message);  // Add this line
+        if (message.sender && message.recipient && message.content)
+             
+                { // Change here
+                    const { recipient: receiver, content, ...msg } = message;
+                    const formated = { ...msg, receiver, message: content, type: 'received' };
+                    console.log('privateMessageCreatedListener', { formated })
+                    setAllMessages((allMessages) => {
+                        if (!allMessages.find(m => m.message === message.content && 
+                            m.sender === message.sender && // Change here
+                            m.receiver === message.recipient))
+                            return [...allMessages, formated]
+                        else return allMessages
+                    });
                 }
-                setAllMessages((allMessages) => [...allMessages, formatedMessage]);
-            }
     }, []);
 
 

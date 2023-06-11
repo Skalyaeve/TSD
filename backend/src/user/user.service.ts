@@ -27,6 +27,23 @@ export class UserService {
     return user;
   }
 
+  async findOrCreateOne42(email: string, nickname: string): Promise<User> {
+  
+    let user: User = await this.findOneByEmail(email);
+    if (user) {
+      return user;
+    }
+
+    user = await this.createOne({
+      email,
+      nickname,
+    });
+  
+    return user;
+  }
+
+
+
   async findOrCreateOne(email: string): Promise<User> {
   
     let user: User = await this.findOneByEmail(email);

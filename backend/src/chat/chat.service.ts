@@ -25,6 +25,9 @@ export class ChatService {
         if (cookie)
         {
             const { access_token: authenticationToken} = parse(cookie);
+            if (!authenticationToken) {
+                throw new WsException('Invalid credentials');
+            }
             console.log('authentication token', authenticationToken);
             const user = await this.authservice.getUserfromAuthenticationToken(authenticationToken);
             if (!user){

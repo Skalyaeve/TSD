@@ -21,6 +21,7 @@ export class AuthService {
   }
 
   public async getUserfromAuthenticationToken(token: string) {
+    if (!token) return;
     const payload: any = this.jwtService.verify(token, {
       secret: process.env.jwtSecret
     });

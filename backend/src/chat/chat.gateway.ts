@@ -84,7 +84,8 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
           const { senderID, recipientID, content} = data;
           const privateMessage = await this.chatService.createOnePrivMessage(senderID, recipientID, content);
           const senderUserChatRoom = 'userID_' + senderID.toString() + '_room';
-          this.server.to(senderUserChatRoom).emit('privateMessageCreated', privateMessage);
+          const recipientUserChatRoom = 'userID_' + recipientID.toString() + '_room';
+          this.server.to(senderUserChatRoom).to(recipientUserChatRoom).emit('privateMessageCreated', privateMessage);
       } catch (error) {
           console.log(error);
           throw new WsException(error.message || 'Could not create private message');
