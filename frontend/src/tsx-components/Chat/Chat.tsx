@@ -39,14 +39,6 @@ function Chat({}) {
     const [selectedContact, setSelectedContact] = useState<{id: number; email: string; nickname: string; avatarFilename: string} | null>(null);
     const [selectedChannel, setSelectedChannel] = useState("");
 
-    // const send = useCallback((value: string, user: string) => {
-    //         console.log("value: ", value);
-    //         console.log("user: ", user);
-    //         const message = {user, message: value, type: "sent"};
-    //         setAllMessages((allMessages)=>[...allMessages, message]);
-    //         socket.emit('message', message);
-    // }, [socket]);
-
     const sendPrivateMessage = useCallback((value: string) => {
         if (!userInfo || !selectedContact) {
             console.log("user or selected contact is not set");
@@ -73,7 +65,7 @@ function Chat({}) {
         content: string;
     }) => {
         // console.log("Received message", message);  // Add this line
-        if (message.sender && message.recipient && message.content)
+        if (message.sender && message.recipient && message.content && (selectedContact?.id === message.sender))
              
                 { // Change here
                     const { recipient: receiver, content, ...msg } = message;
@@ -94,7 +86,7 @@ function Chat({}) {
 
     useEffect(() => {
         const conversationListener = (conversation: { sender: number; recipient: number; timeSent: Date; content: string }[]) => {
-            console.log(conversation); // Add this line
+            console.log(conversation); 
             // Transform the conversation here to match with your message structure
             const transformedConversation = conversation.map(msg => {
               return {
@@ -123,13 +115,6 @@ function Chat({}) {
             socket.emit('getPrivateConversation', { firstUser: userInfo.id, secondUser: selectedContact.id });
         }
     }, [userInfo, selectedContact]);
-
-    // const messageListener = useCallback((message: { user: string; message: string}) => {
-    //     console.log("i received");
-    //     const newMessage = {...message, type: "received"};
-    //     setAllMessages((allMessages)=>[...allMessages, newMessage]);
-    // }, []);
-
     const connectionResult = (message: { msg: string}) => {
         const newMessage = {...message};
         console.log(newMessage);
@@ -168,17 +153,6 @@ function Chat({}) {
         fetchAllUsers();
     }, []);
 
-
-    // useEffect(() => {
-    //     if (socket){
-    //         console.log('messagelistener');
-    //         socket.on("message", messageListener)
-    //         return () => {
-    //             socket.off("message", messageListener)
-    //         }
-    //     }
-    // },[socket])
-
     useEffect(() => {
         const chatMessages = document.getElementById("chat-messages");
         if (chatMessages) {
@@ -196,10 +170,6 @@ function Chat({}) {
                 <ChatHeader contactName={selectedContact?.nickname || 'No conversation selected'} setIsOpen={setIsOpen}/>
                 <div className='chat-messages' id="chat-messages">
                     {selectedContact && <Messages key={selectedContact} messages={allMessages || []} userInfo={userInfo} selectedContact={selectedContact}/>}
-
-                    {/* {selectedContact && allMessages.map((message, index) => (
-                    <Messages key={index} messages={allMessages} userInfo={userInfo} selectedContact={selectedContact}/>
-                    ))} */}
                 </div>
                 <div className='chat-input-text'>
                     <MessageInput sendPrivateMessage={sendPrivateMessage} userInfo={userInfo} selectedContact={selectedContact} />

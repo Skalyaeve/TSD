@@ -55,16 +55,15 @@ export default function ChatChannels({userInfo, setUserInfo} : ChatChannelsProps
         setIncompleteFormMessage("");
         console.log('channel name: ', confirmedChannelName);
         console.log('userID: ', userInfo.id);
-        console.log('userID: ', userInfo.id);
         console.log('type: ', channelType);
         console.log('password: ', password);
         console.log('members:', members);
-        // socket.emit('createChannel', {
-        //     name: confirmedChannelName,
-        //     userId: userInfo.id,
-        //     type: channelType,
-        //     psswd: password
-        // })
+        socket.emit('createChannel', {
+            name: confirmedChannelName,
+            userId: userInfo.id,
+            type: channelType,
+            psswd: password
+        })
         setConfirmedChannelName("");
         setSelectedUsers([]);
         setMembers([]);
@@ -98,18 +97,26 @@ export default function ChatChannels({userInfo, setUserInfo} : ChatChannelsProps
     }
 
     const handleSelectUser = (user: {id: number; nickname: string; avatarFilename: string}) => {
-        console.log('adding selected member to channel');
-
-        if (!members.some(member => member.id === user.id)) {
-            setMembers([...members, user]);  // Add selected user to members
+        console.log('adding or removing selected member from channel');
+      
+        // Check if user is already selected
+        if (members.some(member => member.id === user.id)) {
+            // If user is already selected, remove them from the members
+            setMembers(members.filter(member => member.id !== user.id));
+        } else {
+            // If user is not selected, add them to the members
+            setMembers([...members, user]);
         }
-        // Check if user is not already in the selectedUsers array
-        if (!selectedUsers.some(selectedUser => selectedUser.id === user.id)) {
+      
+        // Handle selectedUsers state
+        if (selectedUsers.some(selectedUser => selectedUser.id === user.id)) {
+            // If user is already selected, remove them from the selectedUsers
+            setSelectedUsers(selectedUsers.filter(selectedUser => selectedUser.id !== user.id));
+        } else {
+            // If user is not selected, add them to the selectedUsers
             setSelectedUsers([...selectedUsers, user]);
         }
         console.log('channel members: ', members);
-        setSearchQuery("");
-        // setSelectedUser(user);
     }
 
     return (
