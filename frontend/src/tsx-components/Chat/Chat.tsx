@@ -21,7 +21,16 @@ import axios from 'axios'
 
 function Chat({}) {
 
-    const [allMessages, setAllMessages] = useState<{user: string; message: string; type: string}[]>([]);
+    // const [allMessages, setAllMessages] = useState<{user: string; message: string; type: string}[]>([]);
+    const [allMessages, setAllMessages] = useState<
+    {
+        sender: number;
+        receiver: number;
+        message: string;
+        type: string;
+    }[]
+    >([]);
+
     const [user, setUser] = useState(() => `User${Math.floor(Math.random() * 10)}`); // this will change 
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const [userInfo, setUserInfo] = useState<{id: number; email: string; nickname: string; avatarFilename: string} | null>(null);
@@ -29,19 +38,94 @@ function Chat({}) {
     const [error, setError] = useState<any>(null);
     const [selectedContact, setSelectedContact] = useState<{id: number; email: string; nickname: string; avatarFilename: string} | null>(null);
     const [selectedChannel, setSelectedChannel] = useState("");
-    const send = useCallback((value: string, user: string) => {
-            console.log("value: ", value);
-            console.log("user: ", user);
-            const message = {user, message: value, type: "sent"};
-            setAllMessages((allMessages)=>[...allMessages, message]);
-            socket.emit('message', message);
-    }, [socket]);
 
-    const messageListener = useCallback((message: { user: string; message: string}) => {
-        console.log("i received");
-        const newMessage = {...message, type: "received"};
-        setAllMessages((allMessages)=>[...allMessages, newMessage]);
-    }, []);
+    // const send = useCallback((value: string, user: string) => {
+    //         console.log("value: ", value);
+    //         console.log("user: ", user);
+    //         const message = {user, message: value, type: "sent"};
+    //         setAllMessages((allMessages)=>[...allMessages, message]);
+    //         socket.emit('message', message);
+    // }, [socket]);
+
+    const sendPrivateMessage = useCallback((value: string) => {
+        if (!userInfo || !selectedContact) {
+            console.log("user or selected contact is not set");
+            return;
+        }
+        const message = {
+            sender: userInfo.id,
+            receiver: selectedContact.id,
+            message: value,
+            type: "sent"
+        };
+        setAllMessages((allMessages)=>[...allMessages, message]);
+        // The message emitted should match with what your server expects
+        console.log('going to create private message');
+        socket.emit('createPrivateMessage', { senderID: userInfo.id, recipientID: selectedContact.id, content: value });
+        console.log('going to send private message');
+        socket.emit('sendPrivateMessage', { senderID: userInfo.id, recipientID: selectedContact.id, content: value });
+    }, [userInfo, selectedContact]);
+
+    const privateMessageCreatedListener = useCallback((message: {
+        sender: number;
+        receiver: number;
+        message: string; 
+        type: string;
+    }) => {
+        if (!allMessages.find(m => m.message === message.message && 
+            m.sender === message.sender && // Change here
+            m.receiver === message.receiver)) 
+            { // Change here
+                setAllMessages((allMessages) => [...allMessages, message]);
+            }
+    // if (!allMessages.find(m => m.message === message.message && 
+    //                            m.sender === message.sender && // Change here
+    //                            m.receiver === message.receiver)) 
+    // { // Change here
+    //     setAllMessages((allMessages) => [...allMessages, message]);
+    // }
+    }, [allMessages]);
+
+
+
+
+    useEffect(() => {
+        const conversationListener = (conversation: { sender: number; recipient: number; timeSent: Date; content: string }[]) => {
+            console.log(conversation); // Add this line
+            // Transform the conversation here to match with your message structure
+            const transformedConversation = conversation.map(msg => {
+              return {
+                sender: msg.sender,
+                receiver: msg.recipient,
+                message: msg.content,
+                type: "received"
+              };
+            });
+            setAllMessages(transformedConversation);
+        };
+    
+        socket.on("foundPrivateConversation", conversationListener);
+        socket.on("privateMessageCreated", privateMessageCreatedListener);
+        socket.on("privateMessageSent", privateMessageCreatedListener);
+    
+        return () => {
+            socket.off("foundPrivateConversation", conversationListener);
+            socket.off("privateMessageCreated", privateMessageCreatedListener);
+            socket.off("privateMessageSent", privateMessageCreatedListener);
+        };
+    }, [privateMessageCreatedListener]);
+    
+    useEffect(() => {
+        if (userInfo && selectedContact) {
+            socket.emit('getPrivateConversation', { firstUser: userInfo.id, secondUser: selectedContact.id });
+        }
+    }, [userInfo, selectedContact]);
+
+    // const messageListener = useCallback((message: { user: string; message: string}) => {
+    //     console.log("i received");
+    //     const newMessage = {...message, type: "received"};
+    //     setAllMessages((allMessages)=>[...allMessages, newMessage]);
+    // }, []);
 
     const connectionResult = (message: { msg: string}) => {
         const newMessage = {...message};
@@ -80,15 +164,17 @@ function Chat({}) {
         };
         fetchAllUsers();
     }, []);
-    useEffect(() => {
-        if (socket){
-            console.log('messagelistener');
-            socket.on("message", messageListener)
-            return () => {
-                socket.off("message", messageListener)
-            }
-        }
-    },[socket])
+
+
+    // useEffect(() => {
+    //     if (socket){
+    //         console.log('messagelistener');
+    //         socket.on("message", messageListener)
+    //         return () => {
+    //             socket.off("message", messageListener)
+    //         }
+    //     }
+    // },[socket])
 
     useEffect(() => {
         const chatMessages = document.getElementById("chat-messages");
@@ -106,12 +192,12 @@ function Chat({}) {
             <div className="chatbox">
                 <ChatHeader contactName={selectedContact?.nickname || 'No conversation selected'} setIsOpen={setIsOpen}/>
                 <div className='chat-messages' id="chat-messages">
-                    {allMessages.map((message, index) => (
-                    <Messages key={index} messages={[message]} currentUser={user} />
+                    {selectedContact && allMessages.map((message, index) => (
+                    <Messages key={index} messages={[message]} userInfo={userInfo} selectedContact={selectedContact}/>
                     ))}
                 </div>
                 <div className='chat-input-text'>
-                    <MessageInput send={send} user={user} setUser={setUser} />
+                    <MessageInput sendPrivateMessage={sendPrivateMessage} userInfo={userInfo} selectedContact={selectedContact} />
                 </div>
             </div>
             <div className={`contact-info ${isOpen?"open":"close"}`}>

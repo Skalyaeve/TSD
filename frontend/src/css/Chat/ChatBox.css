@@ -33,12 +33,28 @@
 
 .chat-main-grid .chatbox .chat-messages{
     border: 1px solid rgb(121, 199, 245, 0.1);
-    max-height: 1100px;
+    max-height: 550px;
     overflow-y: scroll;
     /* overflow-y: scroll; */
     scroll-behavior: smooth;
+    padding-right: 6px;
+    padding-left: 3px;
 }
 
+.message{
+    font-size: 18px;
+}
+
+.message.sent{
+    /* color: red; */
+    text-align: right;  
+    margin-left: auto;
+}
+
+.message_user {
+    font-size: 19px;
+    color: black;
+}
 .chat-main-grid .chatbox .chat-input-text{
     border: 1px solid rgb(121, 199, 245, 0.1);
     background: rgba(0, 0, 0, 0.4);

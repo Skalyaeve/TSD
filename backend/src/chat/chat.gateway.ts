@@ -62,6 +62,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     try {
       const { firstUser, secondUser} = data;
       const conversation = await this.chatService.getPrivateConversation(firstUser, secondUser);
+      console.log("conversation:", conversation); // Add this line
       const firstUserChatRoom = 'userID_' + firstUser.toString() + '_room';
       const secondUserChatRoom = 'userID_' + secondUser.toString() + '_room';
       this.server.to(firstUserChatRoom).to(secondUserChatRoom).emit('foundPrivateConversation', conversation);
@@ -74,6 +75,23 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 
   //SEND A MESSAGE
 
+  @SubscribeMessage('createPrivateMessage')
+  async handleCreateMessage(
+      @ConnectedSocket() client: Socket, 
+      @MessageBody() data: {senderID: number; recipientID: number; content: string}) : Promise<void>
+  {
+      try {
+          const { senderID, recipientID, content} = data;
+          const privateMessage = await this.chatService.createOnePrivMessage(senderID, recipientID, content);
+          const senderUserChatRoom = 'userID_' + senderID.toString() + '_room';
+          this.server.to(senderUserChatRoom).emit('privateMessageCreated', privateMessage);
+      } catch (error) {
+          console.log(error);
+          throw new WsException(error.message || 'Could not create private message');
+      }
+  }
+  
+
   @SubscribeMessage('sendPrivateMessage')
   async handleSendPrivateMessage(
     @ConnectedSocket() client: Socket, 
@@ -85,14 +103,12 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       if (!isBlocked)
       {
         const senderUserChatRoom = 'userID_' + senderID.toString() + '_room';
-        const privateMessage = await this.chatService.createOnePrivMessage(senderID, recipientID, content);
-        this.server.to(senderUserChatRoom).emit('foundPrivateMessage', privateMessage);
+        this.server.to(senderUserChatRoom).emit('privateMessageSent', data);
       }
       else {
-        const privateMessage = await this.chatService.createOnePrivMessage(senderID, recipientID, content);
         const senderUserChatRoom = 'userID_' + senderID.toString() + '_room';
         const recipientUserChatRoom = 'userID_' + recipientID.toString() + '_room';
-        this.server.to(senderUserChatRoom).to(recipientUserChatRoom).emit('foundPrivateMessage', privateMessage);
+        this.server.to(senderUserChatRoom).to(recipientUserChatRoom).emit('privateMessageSent', data);
       }
     }
     catch (error) {
