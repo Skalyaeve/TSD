@@ -69,22 +69,23 @@ function Chat({}) {
     const privateMessageCreatedListener = useCallback((message: {
         sender: number;
         receiver: number;
-        message: string; 
+        content: string; 
         type: string;
     }) => {
-        if (!allMessages.find(m => m.message === message.message && 
+        console.log("Received message", message);  // Add this line
+        if (!allMessages.find(m => m.message === message.content && 
             m.sender === message.sender && // Change here
             m.receiver === message.receiver)) 
             { // Change here
-                setAllMessages((allMessages) => [...allMessages, message]);
+                const formatedMessage = {
+                    sender: message.sender,
+                    message: message.content,
+                    receiver: message.receiver,
+                    type: message.type
+                }
+                setAllMessages((allMessages) => [...allMessages, formatedMessage]);
             }
-    // if (!allMessages.find(m => m.message === message.message && 
-    //                            m.sender === message.sender && // Change here
-    //                            m.receiver === message.receiver)) 
-    // { // Change here
-    //     setAllMessages((allMessages) => [...allMessages, message]);
-    // }
-    }, [allMessages]);
+    }, []);
 
 
 
@@ -192,9 +193,11 @@ function Chat({}) {
             <div className="chatbox">
                 <ChatHeader contactName={selectedContact?.nickname || 'No conversation selected'} setIsOpen={setIsOpen}/>
                 <div className='chat-messages' id="chat-messages">
-                    {selectedContact && allMessages.map((message, index) => (
-                    <Messages key={index} messages={[message]} userInfo={userInfo} selectedContact={selectedContact}/>
-                    ))}
+                    {selectedContact && <Messages key={selectedContact} messages={allMessages || []} userInfo={userInfo} selectedContact={selectedContact}/>}
+
+                    {/* {selectedContact && allMessages.map((message, index) => (
+                    <Messages key={index} messages={allMessages} userInfo={userInfo} selectedContact={selectedContact}/>
+                    ))} */}
                 </div>
                 <div className='chat-input-text'>
                     <MessageInput sendPrivateMessage={sendPrivateMessage} userInfo={userInfo} selectedContact={selectedContact} />
