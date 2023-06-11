@@ -193,9 +193,22 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       if (type == 'PROTECTED') {
         await this.chatService.setChanPassword(chanID, userId, psswd);
       }
-      const chanRoomId = 'chan_'+ chanID + '_room';
-      client.join(chanRoomId);
-      this.server.emit('created channel', channel);
+      const userSockets = this.userSocketsService.getUserSocketIds(userId);
+      console.log('this.server', this.server);
+      console.log('this.server.sockets', this.server.sockets);
+      for (const socket of userSockets) {
+        if (socket){
+          const ChanRoomId = 'chan_'+ chanID + '_room';
+          socket.join(ChanRoomId);
+        }
+      }
+      // userSockets.forEach(SocketID =>{
+      //   const socket = this.server.sockets.sockets.get(SocketID);
+      //   if (socket) {
+      //     socket.join(chanRoomId);
+      //   }
+      // })
+      this.server.emit('channelCreated', channel);
     }
     catch (error)
     {
@@ -368,6 +381,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
   {
     try {
       const {chanID, userID} = data;
+      console.log("chanID: ", chanID);
       const isBanned = await this.chatService.isBanned(chanID, userID);
       if (isBanned) {
         const userRoomId = 'userID_' + userID.toString() + '_room';
@@ -376,15 +390,14 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       }
       const chanMember = await this.chatService.createOneChanMember(chanID, userID);
       const userSockets = this.userSocketsService.getUserSocketIds(userID);
-      userSockets.forEach(SocketID =>{
-        const socket = this.server.sockets.sockets.get(SocketID);
-        if (socket) {
+      for (const socket of userSockets) {
+        if (socket){
           const ChanRoomId = 'chan_'+ chanID + '_room';
           socket.join(ChanRoomId);
         }
-      })
+      }
       const userRoomId = 'userID_' + userID.toString() + '_room';
-      this.server.to(userRoomId).emit('joinRoom', String(chanID));
+      this.server.to(userRoomId).emit('joinnedRoom', chanID);
       // client.emit('userJoinedChannel', chanMember);
       // In the above code, this.server.to(userRoomId).emit('joinRoom', String(chanID)); will emit a 'joinRoom' event to all sockets in the user-specific room. You will then need to handle this 'joinRoom' event on the client-side, where each socket will join the channel room upon receiving the 'joinRoom' event.
     }
@@ -413,13 +426,13 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       }
       const chanMember = await this.chatService.createOneChanMember(chanID, userID);
       const userSockets = this.userSocketsService.getUserSocketIds(userID);
-      userSockets.forEach(SocketID =>{
-        const socket = this.server.sockets.sockets.get(SocketID);
-        if (socket) {
-          const ChanRoomId = 'chan_'+ chanID + '_room';
-          socket.join(ChanRoomId);
-        }
-      })
+      // userSockets.forEach(SocketID =>{
+      //   const socket = this.server.sockets.sockets.get(SocketID);
+      //   if (socket) {
+      //     const ChanRoomId = 'chan_'+ chanID + '_room';
+      //     socket.join(ChanRoomId);
+      //   }
+      // })
       const userRoomId = 'userID_' + userID.toString() + '_room';
       this.server.to(userRoomId).emit('joinRoom', String(chanID));
       // client.emit('userJoinedChannel', chanMember);
@@ -489,12 +502,12 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
         const ChanRoomId = 'chan_'+ chanId + '_room';
         //leave room 
         const userSockets = this.userSocketsService.getUserSocketIds(memberToBanId);
-        userSockets.forEach(SocketID =>{
-          const socket = this.server.sockets.sockets.get(SocketID);
-          if (socket) {
+        for (const socket of userSockets) {
+          if (socket){
+            const ChanRoomId = 'chan_'+ chanId + '_room';
             socket.leave(ChanRoomId);
           }
-        })
+        }
         this.server.to(ChanRoomId).emit('memberBanned');
         // client.emit('memberIsBanned', bannedMember);
     } 
@@ -514,12 +527,12 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       await this.chatService.kickMember(data);
       const ChanRoomId = 'chan_'+ chanId + '_room';
       const userSockets = this.userSocketsService.getUserSocketIds(memberToKickId);
-      userSockets.forEach(SocketID =>{
-        const socket = this.server.sockets.sockets.get(SocketID);
-        if (socket) {
+      for (const socket of userSockets) {
+        if (socket){
+          const ChanRoomId = 'chan_'+ chanId + '_room';
           socket.leave(ChanRoomId);
         }
-      })
+      }
       this.server.to(ChanRoomId).emit('memberKicked');
     } 
     catch (error) {
@@ -538,12 +551,12 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       await this.chatService.leaveChannel(chanId, userId);
       const ChanRoomId = 'chan_'+ chanId + '_room';
       const userSockets = this.userSocketsService.getUserSocketIds(userId);
-      userSockets.forEach(SocketID =>{
-        const socket = this.server.sockets.sockets.get(SocketID);
-        if (socket) {
-          socket.leave(ChanRoomId);
-        }
-      })
+      // userSockets.forEach(SocketID =>{
+      //   const socket = this.server.sockets.sockets.get(socket);
+      //   if (socket) {
+      //     socket.leave(ChanRoomId);
+      //   }
+      // })
       this.server.to(ChanRoomId).emit('user left channel');
     }
     catch (error) {
@@ -735,7 +748,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       console.log('userData: ', userData);
       const userID = userData.id;
       console.log('userID: ', userID);
-      this.userSocketsService.setUser(userID, client.id);
+      this.userSocketsService.setUser(userID, client);
       // const userWithSocket = this.userSocketsService.getUserSocketIds(userID);
       // console.log('userWithSocket: ',userWithSocket);
       const userRoomId = 'userID_' + userID.toString() + '_room';
@@ -774,7 +787,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     if (userData)
     {
       const userID = userData.id;
-      this.userSocketsService.deleteUserSocket(userID, client.id);
+      this.userSocketsService.deleteUserSocket(userID, client);
       const userWithSocket = this.userSocketsService.getUserSocketIds(userID);
       console.log('userWithSocket: ',userWithSocket);
       const userRoomId = 'userID_' + userID.toString() + '_room';

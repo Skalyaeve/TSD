@@ -1,22 +1,23 @@
 import { Injectable} from "@nestjs/common";
+import {Socket} from 'socket.io';
 
 @Injectable()
 export class UserSocketsService{
-    private userSocketIdMap = new Map<number, string[]>();
+    private userSocketIdMap = new Map<number, Socket[]>();
 
-    public setUser(userID: number, socketID: string): void {
+    public setUser(userID: number, socket: Socket): void {
         const userSockets = this.userSocketIdMap.get(userID) || [];
-        userSockets.push(socketID);
+        userSockets.push(socket);
         this.userSocketIdMap.set(userID, userSockets);
     }
 
-    public getUserSocketIds(userID: number) : string[] {
+    public getUserSocketIds(userID: number) : Socket[] {
         return this.userSocketIdMap.get(userID) || [];
     }
 
-    public deleteUserSocket(userID: number, socketID: string): void {
+    public deleteUserSocket(userID: number, socket: Socket): void {
         const userSockets = this.userSocketIdMap.get(userID) || [];
-        const updatedSockets = userSockets.filter((id) => id !== socketID);
+        const updatedSockets = userSockets.filter((s) => s !== socket);
         this.userSocketIdMap.set(userID, updatedSockets);
     }
 }

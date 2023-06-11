@@ -80,8 +80,13 @@ export async function psswdMatch(chanId: number, password: string): Promise<bool
 
 export async function isBanned(chanId:number, userId: number): Promise<boolean> {
   try {
-    const channel = await this.prisma.channel.findUnique(chanId);
-    if (channel) {
+    const channel = await this.prisma.channel.findUnique({
+      where: {
+        id: chanId,
+      }
+    });
+    
+    if (!channel) {
       throw new Error('channel does not exist');
     }
     const banRecord = await this.prisma.chanBan.findFirst({

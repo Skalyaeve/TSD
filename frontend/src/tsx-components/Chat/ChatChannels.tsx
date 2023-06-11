@@ -63,7 +63,17 @@ export default function ChatChannels({userInfo, setUserInfo} : ChatChannelsProps
             userId: userInfo.id,
             type: channelType,
             psswd: password
-        })
+        });
+
+        socket.once('channelCreated', (channel: any) => {
+            console.log("channel received: ", channel);
+            const channelId = channel.id;
+            console.log('channelid sent from front: ', channelId )
+            // Emit 'joinChannel' event for each member to server
+            members.forEach((member) => {
+                socket.emit('joinChannel', { chanID: channelId, userID: member.id });
+            });
+        });
         setConfirmedChannelName("");
         setSelectedUsers([]);
         setMembers([]);
