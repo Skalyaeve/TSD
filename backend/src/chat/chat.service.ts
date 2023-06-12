@@ -67,24 +67,24 @@ export class ChatService {
         return chanMember;
     }
     
-    async createOneChanMessage(senderId: number, chanId: number, content: string): Promise<ChanMessage> {
-        const message: ChanMessage = await this.prisma.chanMessage.create({
-            data: {
-                senderRef: {
-                    connect: {
-                        id: senderId,
-                    },
-                },
-                chanRef: {
-                    connect: {
-                        id: chanId,
-                    },
-                },
-                content,
-            },
-        });
-        return message;
-    }
+    // async createOneChanMessage(senderId: number, chanId: number, content: string): Promise<ChanMessage> {
+    //     const message: ChanMessage = await this.prisma.chanMessage.create({
+    //         data: {
+    //             senderRef: {
+    //                 connect: {
+    //                     id: senderId,
+    //                 },
+    //             },
+    //             chanRef: {
+    //                 connect: {
+    //                     id: chanId,
+    //                 },
+    //             },
+    //             content,
+    //         },
+    //     });
+    //     return message;
+    // }
 
     //setters that don't create but change values
 

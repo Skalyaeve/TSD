@@ -1,14 +1,24 @@
 import React, { useState } from "react";
 import { BsSearchHeart } from "react-icons/bs";
 
+interface Channel {
+    id: number;
+    name: string;
+    chanOwner: number;
+    type: string; // Or your ChanType if defined
+    passwd: string | null;
+    // Add more fields as necessary
+}
+
 interface DmHandlerProps {
     allUsers: {id: number; email: string; nickname: string; avatarFilename: string}[];
     setSelectedContact: React.Dispatch<React.SetStateAction<{id: number; email: string; nickname: string; avatarFilename: string} | null>>
-    userInfo: {id: number; email: string; nickname: string; avatarFilename: string} | null;
-    setUserInfo: React.Dispatch<React.SetStateAction<{id: number; email: string; nickname: string; avatarFilename: string} | null>>;
+    // userInfo: {id: number; email: string; nickname: string; avatarFilename: string} | null;
+    // setUserInfo: React.Dispatch<React.SetStateAction<{id: number; email: string; nickname: string; avatarFilename: string} | null>>;
+    setSelectedChannel: React.Dispatch<React.SetStateAction<Channel | null>>
 }
 
-export default function DmHandler({ allUsers, setSelectedContact, userInfo, setUserInfo }: DmHandlerProps)
+export default function DmHandler({ allUsers, setSelectedContact, setSelectedChannel}: DmHandlerProps)
 {
 
     const [contact, setContact] = useState("");
@@ -39,7 +49,10 @@ export default function DmHandler({ allUsers, setSelectedContact, userInfo, setU
         </div>
         <div className="DM-conversations">
             {allUsers.map((user) => (
-                <button className="conversation-btn" key={user.id} onClick={() => setSelectedContact(user)}>
+                <button className="conversation-btn" key={user.id} onClick={() => {
+                    setSelectedContact(user);
+                    setSelectedChannel(null);
+                    }}>
                     {user.nickname}
                 </button>
             ))}

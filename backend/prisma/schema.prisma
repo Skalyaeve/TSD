@@ -95,6 +95,7 @@ model ChanBan {
 model ChanMessage {
 	senderRef	User		@relation(fields: [sender], references: [id])
 	sender		Int
+	senderNick	String
 	chanRef		Channel		@relation(fields: [chanId], references: [id])
 	chanId		Int
 	timeSent	DateTime	@default(now())

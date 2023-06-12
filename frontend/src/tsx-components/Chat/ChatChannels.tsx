@@ -13,15 +13,15 @@ interface Channel {
     type: string; // Or your ChanType if defined
     passwd: string | null;
     // Add more fields as necessary
-  }
+}
 
 interface ChatChannelsProps {
-    userInfo: {id: number; email: string; nickname: string; avatarFilename: string};
+    userInfo: {id: number; email: string; nickname: string; avatarFilename: string} | null;
     allChannelsbyUser: Channel[];
-    selectedChannel: Channel;
     setSelectedChannel: React.Dispatch<React.SetStateAction<Channel | null>>
+    setSelectedContact: React.Dispatch<React.SetStateAction<{id: number; email: string; nickname: string; avatarFilename: string} | null>>
 }
-export default function ChatChannels({userInfo, allChannelsbyUser, selectedChannel, setSelectedChannel} : ChatChannelsProps)
+export default function ChatChannels({userInfo, allChannelsbyUser, setSelectedChannel, setSelectedContact} : ChatChannelsProps)
 {   
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [channel, setChannel] = useState("");
@@ -60,6 +60,10 @@ export default function ChatChannels({userInfo, allChannelsbyUser, selectedChann
             return;
         }
         setIncompleteFormMessage("");
+        if (!userInfo) {
+            console.log("handleSubmitNewChannel: no userInfo");
+            return;
+        }
         console.log('channel name: ', confirmedChannelName);
         console.log('userID: ', userInfo.id);
         console.log('type: ', channelType);
@@ -109,6 +113,10 @@ export default function ChatChannels({userInfo, allChannelsbyUser, selectedChann
         setSearchQuery(e.target.value);
         // Emit 'getUserStartsBy' event with the input value
         console.log('getting users that start by');
+        if (!userInfo) {
+            console.log('handleMembersChange:  no userInfo');
+            return;
+        }
         console.log('user.id: ', userInfo.id);
         socket.emit('getUserStartsBy', {startBy: e.target.value, userId: userInfo.id});
     }
@@ -167,7 +175,10 @@ export default function ChatChannels({userInfo, allChannelsbyUser, selectedChann
         </div>
         <div className="Chan-all-channels">
             {allChannelsbyUser.map((channel) => (
-                <button className="channel-btn" key={channel.id} onClick={() => setSelectedChannel(channel)}>
+                <button className="channel-btn" key={channel.id} onClick={() => {
+                    setSelectedChannel(channel);
+                    setSelectedContact(null);
+                }}>
                     {channel.name}
                 </button>
             ))}

@@ -60,7 +60,7 @@ function Chat({}) {
     const [allUsers, setAllUsers] = useState<{id: number; email: string; nickname: string; avatarFilename: string}[]>([]);
     const [error, setError] = useState<any>(null);
     const [selectedContact, setSelectedContact] = useState<{id: number; email: string; nickname: string; avatarFilename: string} | null>(null);
-    const [selectedChannel, setSelectedChannel] = useState("");
+    const [selectedChannel, setSelectedChannel] = useState<Channel | null >(null);
     const [userChannelsMember, setUserChannelsMember] = useState<ChanMember[]>([]);
     const [allChannelsbyUser, setAllChannelsbyUser] = useState<Channel[]>([]);
 
@@ -129,10 +129,10 @@ function Chat({}) {
         recipient: number;
         content: string;
     }) => {
-        // console.log("Received message", message);  // Add this line
         if (message.sender && message.recipient && message.content && (selectedContact?.id === message.sender))
              
                 { // Change here
+                    console.log("entering here");
                     const { recipient: receiver, content, ...msg } = message;
                     const formated = { ...msg, receiver, message: content, type: 'received' };
                     console.log('privateMessageCreatedListener', { formated })
@@ -144,7 +144,8 @@ function Chat({}) {
                         else return allMessages
                     });
                 }
-    }, []);
+                console.log("after if statement");
+    }, [selectedContact]);
 
     useEffect(() => {
         const conversationListener = (conversation: { sender: number; recipient: number; timeSent: Date; content: string }[]) => {
@@ -206,7 +207,7 @@ useEffect(() => {
         setAllChannelsbyUser(channels);
       console.log("channels of the user: ", channels);
     });
-  
+   
     socket.emit('GetChannelsByUser', userId);
   
     return () => {
@@ -217,11 +218,11 @@ useEffect(() => {
     return (
         <div className={`chat-main-grid ${isOpen?"open":"close"}`}>
             <div className="manage-rooms">
-                <DmHandler allUsers={allUsers} setSelectedContact={setSelectedContact} userInfo={userInfo} setUserInfo={setUserInfo}/>
-                <ChatChannels userInfo={userInfo} allChannelsbyUser={allChannelsbyUser} selectedChannel={selectedChannel} setSelectedChannel={setSelectedChannel}/>
+                <DmHandler allUsers={allUsers} setSelectedContact={setSelectedContact} setSelectedChannel={setSelectedChannel}/>
+                <ChatChannels userInfo={userInfo} allChannelsbyUser={allChannelsbyUser} setSelectedChannel={setSelectedChannel} setSelectedContact={setSelectedContact}/>
             </div>
             <div className="chatbox">
-                <ChatHeader contactName={selectedContact?.nickname || 'No conversation selected'} setIsOpen={setIsOpen}/>
+                <ChatHeader chatName={selectedContact?.nickname || selectedChannel?.name ||'No conversation selected' } setIsOpen={setIsOpen}/>
                 <div className='chat-messages' id="chat-messages">
                     {selectedContact && <Messages key={selectedContact} messages={allMessages || []} userInfo={userInfo} selectedContact={selectedContact}/>}
                 </div>

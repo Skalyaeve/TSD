@@ -44,24 +44,24 @@ export class ChannelService {
         return channels;
     }
 
-    async createOneChanMessage(senderId: number, chanId: number, content: string): Promise<ChanMessage> {
-        const message: ChanMessage = await this.prisma.chanMessage.create({
-            data: {
-                senderRef: {
-                    connect: {
-                        id: senderId,
-                    },
-                },
-                chanRef: {
-                    connect: {
-                        id: chanId,
-                    },
-                },
-                content,
-            },
-        });
-        return message;
-    }
+    // async createOneChanMessage(senderId: number, chanId: number, content: string): Promise<ChanMessage> {
+    //     const message: ChanMessage = await this.prisma.chanMessage.create({
+    //         data: {
+    //             senderRef: {
+    //                 connect: {
+    //                     id: senderId,
+    //                 },
+    //             },
+    //             chanRef: {
+    //                 connect: {
+    //                     id: chanId,
+    //                 },
+    //             },
+    //             content,
+    //         },
+    //     });
+    //     return message;
+    // }
 
     async findManyChanMessages(chanId: number, count: number): Promise<ChanMessage[]> {
         const messages: ChanMessage[] = await this.prisma.chanMessage.findMany({

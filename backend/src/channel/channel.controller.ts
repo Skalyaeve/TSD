@@ -20,11 +20,11 @@ export class ChannelController {
         return this.channelService.createOneChanMember(chanId, req.user.id);
     }
 
-    @Post(':id/messages')
-    @UseGuards(JwtGuard, ChannelMemberGuard)
-    async addMessageToChannel(@Req() req: any, @Param('id', ParseIntPipe) chanId: number, @Body('content') content: string): Promise<ChanMessage> {
-       return this.channelService.createOneChanMessage(req.user.id, chanId, content);
-    }
+    // @Post(':id/messages')
+    // @UseGuards(JwtGuard, ChannelMemberGuard)
+    // async addMessageToChannel(@Req() req: any, @Param('id', ParseIntPipe) chanId: number, @Body('content') content: string): Promise<ChanMessage> {
+    //    return this.channelService.createOneChanMessage(req.user.id, chanId, content);
+    // }
 
     @Get(':id/messages/:count')
     @UseGuards(JwtGuard, ChannelMemberGuard)

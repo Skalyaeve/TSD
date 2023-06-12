@@ -5,8 +5,8 @@ import {AiOutlineSend} from 'react-icons/ai';
 
 interface Props {
     sendPrivateMessage: (value: string) => void;
-    userInfo: {id: number; email: string; nickname: string; avatarFilename: string};
-    selectedContact: {id: number; email: string; nickname: string; avatarFilename: string};
+    userInfo: {id: number; email: string; nickname: string; avatarFilename: string} | null;
+    selectedContact: {id: number; email: string; nickname: string; avatarFilename: string} | null;
 }
 
 export default function MessageInput({
