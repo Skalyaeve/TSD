@@ -49,6 +49,7 @@ function Chat({}) {
         senderNick: string;
         chanId: number;
         content: string;
+        type: string;
         };
     
 
@@ -153,6 +154,7 @@ function Chat({}) {
                 senderNick: userInfo.nickname,
                 chanId: selectedChannel.id,
                 content: value,
+                type: "sent",
             };
             console.log('sendMessage', { message });
             setAllChannelMessages((allChannelMessages) => [...allChannelMessages, message]);
@@ -236,10 +238,41 @@ function Chat({}) {
         chanId: number,
         content: string,
     }) => {
-        console.log("inside channelMessageCreatedListener");
-        console.log("inside channelMessageCreatedListener: ", message);
-        setAllChannelMessages((allChannelMessages) => [...allChannelMessages, message]);
-    }, []);
+        if (message.sender && message.senderNick && message.content) {
+            console.log("entering here");
+            const { sender, content, ...msg } = message;
+            const formatted = { 
+                ...msg, 
+                sender, 
+                content: content, 
+                type: sender === userInfo?.id ? 'sent' : 'received' // Determine the type based on sender
+            };
+            console.log('channelMessageCreatedListener', { formatted })
+            setAllChannelMessages((allChannelMessages) => {
+                if (!allChannelMessages.find(m => m.content === message.content && 
+                    m.sender === message.sender && 
+                    m.chanId === message.chanId)) {
+                    return [...allChannelMessages, formatted]
+                } else {
+                    return allChannelMessages
+                }
+            });
+        }
+    }, [userInfo]);
+    
+    // const channelMessageCreatedListener = useCallback((message: {
+    //     sender: number,
+    //     senderNick: string,
+    //     chanId: number,
+    //     content: string,
+    // }) => {
+    //     if (message.sender && message.senderNick && message.content)
+    //     {
+    //         console.log("inside channelMessageCreatedListener: ", message);
+    //         console.log("type: ", message.type);
+    //         setAllChannelMessages((allChannelMessages) => [...allChannelMessages, message]);
+    //     }
+    // }, []);
 
 
     useEffect(() => {
