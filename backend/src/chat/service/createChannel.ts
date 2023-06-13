@@ -58,32 +58,32 @@ export async function createOneChanMember(chanId: number, memberId: number): Pro
   }
 }
 
-// export async function createOneChanMessage(senderId: number, senderNick: string, chanId: number, content: string): Promise<ChanMessage> {
+export async function createOneChanMessage(senderId: number, senderNick: string, chanId: number, content: string): Promise<ChanMessage> {
 
-//   try {
-//     const message: ChanMessage = await this.prisma.chanMessage.create({
-//       data: {
-//         senderRef: {
-//           connect: {
-//             id: senderId,
-//           },
-//         },
-//         chanRef: {
-//           connect: {
-//             id: chanId,
-//           },
-//         },
-//         content,
-//         senderNick,
-//       },
-//     });
-//     if (!message) {
-//       throw new Error('could not create chan message');
-//     }
-//     return message;
-//   }
-//   catch (error) {
-//     console.error(error);
-//     throw error;
-//   }
-// }
+  try {
+    const message: ChanMessage = await this.prisma.chanMessage.create({
+      data: {
+        senderRef: {
+          connect: {
+            id: senderId,
+          },
+        },
+        chanRef: {
+          connect: {
+            id: chanId,
+          },
+        },
+        content,
+        senderNick,
+      },
+    });
+    if (!message) {
+      throw new Error('could not create chan message');
+    }
+    return message;
+  }
+  catch (error) {
+    console.error(error);
+    throw error;
+  }
+}

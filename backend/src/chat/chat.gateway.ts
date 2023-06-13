@@ -329,40 +329,41 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
    * @param client 
    * @param data 
    */
-  // @SubscribeMessage('sendChanMessage')
-  // async handleSendChanMessage(
-  //   @ConnectedSocket() client: Socket,
-  //   @MessageBody() data: {senderId: number; senderNick: string; chanId: number; content: string}) : Promise<void>
-  // {
-  //   try {
-  //     const {senderId, senderNick, chanId, content} = data;
-  //     //check if i am in the channel
-  //     const isMember = await this.chatService.isMember(chanId, senderId);
-  //     if (!isMember) {
-  //       const userRoomId = 'userID_' + senderId.toString() + '_room';
-  //       this.server.to(userRoomId).emit('userIsNotMember');
-  //       throw new WsException('user not in channel');
-  //     }
-  //     //check if i am not muted
-  //     const isMuted = await this.chatService.isMuted(chanId, senderId);
-  //     if (isMuted){
-  //       const userRoomId = 'userID_' + senderId.toString() + '_room';
-  //       this.server.to(userRoomId).emit('userIsMuted');
-  //       throw new WsException('user is muted');
-  //     }
-  //     const chanMessage = await this.chatService.createOneChanMessage(senderId, senderNick, chanId, content);
-  //     const ChanRoomId = 'chan_'+ chanId + '_room';
-  //     // client.to(ChanRoomId).emit('SentChanMessage', chanMessage);
+  @SubscribeMessage('sendChanMessage')
+  async handleSendChanMessage(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() data: {senderId: number; senderNick: string; chanId: number; content: string}) : Promise<void>
+  {
+    console.log("entering sendChanMessage");
+    try {
+      const {senderId, senderNick, chanId, content} = data;
+      //check if i am in the channel
+      const isMember = await this.chatService.isMember(chanId, senderId);
+      if (!isMember) {
+        const userRoomId = 'userID_' + senderId.toString() + '_room';
+        this.server.to(userRoomId).emit('userIsNotMember');
+        throw new WsException('user not in channel');
+      }
+      //check if i am not muted
+      const isMuted = await this.chatService.isMuted(chanId, senderId);
+      if (isMuted){
+        const userRoomId = 'userID_' + senderId.toString() + '_room';
+        this.server.to(userRoomId).emit('userIsMuted');
+        throw new WsException('user is muted');
+      }
+      const chanMessage = await this.chatService.createOneChanMessage(senderId, senderNick, chanId, content);
+      const ChanRoomId = 'chan_'+ chanId + '_room';
+      // client.to(ChanRoomId).emit('SentChanMessage', chanMessage);
 
-  //     this.server.in(ChanRoomId).emit('SentChanMessage', chanMessage);
-  //     // Remember that client.to(room) targets all sockets in a room, but not the sender. If you also want to include the sender, you could use:
-  //   }
-  //   catch (error)
-  //   {
-  //     console.log(error);
-  //     throw new WsException(error.message || 'Could not send message to channel');
-  //   }
-  // }
+      this.server.to(ChanRoomId).emit('SentChanMessage', chanMessage);
+      // Remember that client.to(room) targets all sockets in a room, but not the sender. If you also want to include the sender, you could use:
+    }
+    catch (error)
+    {
+      console.log(error);
+      throw new WsException(error.message || 'Could not send message to channel');
+    }
+  }
 
   @SubscribeMessage('GetChannelMessages')
   async handleGetChannelMessages(
@@ -370,8 +371,13 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       @MessageBody() chanId: number) : Promise<void>
   {
     try{
+      console.log("getallChannelMessages backend socket event");
+      console.log("chanID:", chanId);
       const messages = await this.chatService.findAllChanMessages(chanId);
-      client.emit('channelMessagesFound', channel);
+      console.log("channel messages: ", messages);
+      const userData = await this.chatService.getUserFromSocket(client);
+      const userRoomId = 'userID_' + userData.id.toString() + '_room';
+      this.server.to(userRoomId).emit('channelMessagesFound', messages);
     }
     catch (error){
       console.log(error);
@@ -806,7 +812,6 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       const userID = userData.id;
       this.userSocketsService.deleteUserSocket(userID, client);
       const userWithSocket = this.userSocketsService.getUserSocketIds(userID);
-      console.log('userWithSocket: ',userWithSocket);
       const userRoomId = 'userID_' + userID.toString() + '_room';
       client.leave(userRoomId);
       const userChannels = await this.chatService.findAllChannelsByMember(userID);

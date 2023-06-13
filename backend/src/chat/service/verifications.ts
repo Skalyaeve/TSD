@@ -118,8 +118,7 @@ export async function isMuted(chanId:number, userId:number) : Promise<boolean> {
 
     const now = new Date();
     const {muteTime} = memberRecord;
-
-    const isMute = now.valueOf() >= muteTime.valueOf();
+    const isMute = now.valueOf() <= muteTime.valueOf();
     return isMute;
   }
   catch (error) {

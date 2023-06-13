@@ -3,22 +3,33 @@ import "../../css/Chat/SendMessage.css"
 import "../../css/Chat/InputText.css"
 import {AiOutlineSend} from 'react-icons/ai';
 
+interface Channel {
+    id: number;
+    name: string;
+    chanOwner: number;
+    type: string; // Or your ChanType if defined
+    passwd: string | null;
+    // Add more fields as necessary
+}
+
 interface Props {
-    sendPrivateMessage: (value: string) => void;
+    sendMessage: (value: string) => void;
     userInfo: {id: number; email: string; nickname: string; avatarFilename: string} | null;
     selectedContact: {id: number; email: string; nickname: string; avatarFilename: string} | null;
+    selectedChannel: Channel | null;
 }
 
 export default function MessageInput({
-    sendPrivateMessage,
+    sendMessage,
     userInfo,
     selectedContact,
+    selectedChannel,
 } : Props ) {
     const [value, setValue] = useState("")
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        sendPrivateMessage(value);
+        sendMessage(value);
         setValue("");
     };
 

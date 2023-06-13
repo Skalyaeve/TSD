@@ -34,17 +34,35 @@ function Chat({}) {
         chanOwner: number;
         type: string; // Or your ChanType if defined
         passwd: string | null;
-        // Add more fields as necessary
     }
 
     interface ChanMessage {
         sender: number;
+        senderNick: string;
         chanId: number;
-        timeSent: string;
+        timeSent?: string;
         content: string;
     }
 
+    type ChannelMessage = {
+        sender: number;
+        senderNick: string;
+        chanId: number;
+        content: string;
+        };
+    
+
     // const [allMessages, setAllMessages] = useState<{user: string; message: string; type: string}[]>([]);
+    
+    const [isOpen, setIsOpen] = useState<boolean>(false);
+    const [error, setError] = useState<any>(null);
+    
+    //Users
+    const [userInfo, setUserInfo] = useState<{id: number; email: string; nickname: string; avatarFilename: string} | null>(null);
+    const [allUsers, setAllUsers] = useState<{id: number; email: string; nickname: string; avatarFilename: string}[]>([]);
+    
+    //PrivateMessage
+    const [selectedContact, setSelectedContact] = useState<{id: number; email: string; nickname: string; avatarFilename: string} | null>(null);
     const [allMessages, setAllMessages] = useState<
     {
         sender: number;
@@ -54,15 +72,12 @@ function Chat({}) {
     }[]
     >([]);
 
-    const [user, setUser] = useState(() => `User${Math.floor(Math.random() * 10)}`); // this will change 
-    const [isOpen, setIsOpen] = useState<boolean>(false);
-    const [userInfo, setUserInfo] = useState<{id: number; email: string; nickname: string; avatarFilename: string} | null>(null);
-    const [allUsers, setAllUsers] = useState<{id: number; email: string; nickname: string; avatarFilename: string}[]>([]);
-    const [error, setError] = useState<any>(null);
-    const [selectedContact, setSelectedContact] = useState<{id: number; email: string; nickname: string; avatarFilename: string} | null>(null);
+    //Channel
+    const [allChannelsbyUser, setAllChannelsbyUser] = useState<Channel[]>([]);
     const [selectedChannel, setSelectedChannel] = useState<Channel | null >(null);
     const [userChannelsMember, setUserChannelsMember] = useState<ChanMember[]>([]);
-    const [allChannelsbyUser, setAllChannelsbyUser] = useState<Channel[]>([]);
+    const [allChannelMessages, setAllChannelMessages] = useState<ChanMessage[]>([]);
+    const [chanMembers, setChanMembers] = useState<ChanMember[]>([]);
 
     /**
      * Users Info
@@ -104,25 +119,50 @@ function Chat({}) {
      * Private message
      */
 
-    const sendPrivateMessage = useCallback((value: string) => {
-        if (!userInfo || !selectedContact) {
-            console.log("user or selected contact is not set");
+    const SendMessage = useCallback((value: string) => {
+        if (!userInfo) {
+            console.log("user is not set");
+            console.log("user:", userInfo);
+            console.log("selectedContact:", selectedContact);
+            console.log("selectedChannel:", selectedChannel);
             return;
         }
-        const message = {
-            sender: userInfo.id,
-            receiver: selectedContact.id,
-            message: value,
-            type: "sent"
-        };
-        console.log('sendPrivateMessage', { message })
-        setAllMessages((allMessages)=>[...allMessages, message]);
-        // The message emitted should match with what your server expects
-        console.log('going to create private message');
-        socket.emit('createPrivateMessage', { senderID: userInfo.id, recipientID: selectedContact.id, content: value });
-        console.log('going to send private message');
-        socket.emit('sendPrivateMessage', { senderID: userInfo.id, recipientID: selectedContact.id, content: value });
-    }, [userInfo, selectedContact]);
+        if (!selectedContact && !selectedChannel)
+        {
+            console.log("selected contact or selected channel are not set");
+            return;
+        }
+        if (selectedContact) {
+            const message = {
+                sender: userInfo.id,
+                receiver: selectedContact.id,
+                message: value,
+                type: "sent"
+            };
+            console.log('sendPrivateMessage', { message })
+            setAllMessages((allMessages)=>[...allMessages, message]);
+            // The message emitted should match with what your server expects
+            console.log('going to create private message');
+            socket.emit('createPrivateMessage', { senderID: userInfo.id, recipientID: selectedContact.id, content: value });
+            console.log('going to send private message');
+            socket.emit('sendPrivateMessage', { senderID: userInfo.id, recipientID: selectedContact.id, content: value })
+        }
+        else if (selectedChannel) {
+            const message = {
+                sender: userInfo.id,
+                senderNick: userInfo.nickname,
+                chanId: selectedChannel.id,
+                content: value,
+            };
+            console.log('sendMessage', { message });
+            setAllChannelMessages((allChannelMessages) => [...allChannelMessages, message]);
+            console.log('going to send channel message');
+            socket.emit('sendChanMessage', { senderId: userInfo.id, senderNick: userInfo.nickname, chanId: selectedChannel.id, content: value });
+        }
+        else {
+            console.log("Neither user nor channel is selected for the message to be sent");
+        }
+    }, [userInfo, selectedContact, selectedChannel]);
 
     const privateMessageCreatedListener = useCallback((message: {
         sender: number;
@@ -178,10 +218,6 @@ function Chat({}) {
             socket.emit('getPrivateConversation', { firstUser: userInfo.id, secondUser: selectedContact.id });
         }
     }, [userInfo, selectedContact]);
-    const connectionResult = (message: { msg: string}) => {
-        const newMessage = {...message};
-        console.log(newMessage);
-    }
 
     useEffect(() => {
         const chatMessages = document.getElementById("chat-messages");
@@ -194,26 +230,56 @@ function Chat({}) {
      * Channel
      */
 
+    const channelMessageCreatedListener = useCallback((message: {
+        sender: number,
+        senderNick: string,
+        chanId: number,
+        content: string,
+    }) => {
+        console.log("inside channelMessageCreatedListener");
+        console.log("inside channelMessageCreatedListener: ", message);
+        setAllChannelMessages((allChannelMessages) => [...allChannelMessages, message]);
+    }, []);
+
+
+    useEffect(() => {
+        const channelMessageListener = (messages: ChannelMessage[]) => {
+            setAllChannelMessages(messages);
+        }
+        socket.on("channelMessagesFound", channelMessageListener);
+        socket.on("SentChanMessage", channelMessageCreatedListener);
+
+        return () => {
+            socket.off("channelMessagesFound", channelMessageListener);
+            socket.off("channelMessageCreated", channelMessageCreatedListener);
+        };
+    }, [channelMessageCreatedListener]);
+
+    useEffect(() => {
+        if (userInfo && selectedChannel) {
+            socket.emit('GetChannelMessages', selectedChannel.id);
+        }
+    }, [userInfo, selectedChannel]);
     
-useEffect(() => {
-    if (!userInfo) {
-      console.log("user is not set");
-      return;
-    }
-  
-    const userId = userInfo.id;
-  
-    socket.on('channelsByUserFound', (channels: Channel[]) => {
-        setAllChannelsbyUser(channels);
-      console.log("channels of the user: ", channels);
-    });
-   
-    socket.emit('GetChannelsByUser', userId);
-  
-    return () => {
-      socket.off('channelsByUserFound');
-    };
-  }, [userInfo]);
+    useEffect(() => {
+        if (!userInfo) {
+        console.log("user is not set");
+        return;
+        }
+    
+        const userId = userInfo.id;
+    
+        socket.on('channelsByUserFound', (channels: Channel[]) => {
+            setAllChannelsbyUser(channels);
+        console.log("channels of the user: ", channels);
+        });
+    
+        socket.emit('GetChannelsByUser', userId);
+    
+        return () => {
+        socket.off('channelsByUserFound');
+        };
+    }, [userInfo]);
 
     return (
         <div className={`chat-main-grid ${isOpen?"open":"close"}`}>
@@ -225,9 +291,10 @@ useEffect(() => {
                 <ChatHeader chatName={selectedContact?.nickname || selectedChannel?.name ||'No conversation selected' } setIsOpen={setIsOpen}/>
                 <div className='chat-messages' id="chat-messages">
                     {selectedContact && <Messages key={selectedContact} messages={allMessages || []} userInfo={userInfo} selectedContact={selectedContact}/>}
+                    {selectedChannel && <Messages key={selectedChannel} messages={allChannelMessages || []} userInfo={userInfo} selectedChannel={selectedChannel}/>}
                 </div>
                 <div className='chat-input-text'>
-                    <MessageInput sendPrivateMessage={sendPrivateMessage} userInfo={userInfo} selectedContact={selectedContact} />
+                    <MessageInput sendMessage={SendMessage} userInfo={userInfo} selectedContact={selectedContact} selectedChannel={selectedChannel}/>
                 </div>
             </div>
             <div className={`contact-info ${isOpen?"open":"close"}`}>
