@@ -49,14 +49,6 @@ export default function Messages({messages, userInfo, selectedContact, selectedC
                         <strong className="message_user">{senderName}:</strong>
                         <p>{messageContent}</p>
                     </div>
-                    // <div key={index} className={`message ${messageClass}`}>
-                    //     {isCurrentUSer ? (
-                    //         <strong className="message_user">You:</strong>
-                    //     ) : (
-                    //         <strong className="message_user">{selectedContact?.nickname}:</strong>
-                    //     )}{" "}
-                    //     <p>{message.message}</p>
-                    // </div>
                 );
             })}
         </div>

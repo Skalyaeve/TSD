@@ -12,6 +12,7 @@ import {
 import { Socket, Server } from "socket.io";
 import { ChanType, User } from '@prisma/client';
 import { ChatService } from './service/index.js';
+import { UserService } from '../user/user.service.js'
 import { Logger } from '@nestjs/common';
 import { UserSocketsService } from './chat.userSocketsService.js';
 import { cli } from 'webpack';
@@ -33,6 +34,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
   constructor(
     private readonly chatService: ChatService,
     private readonly userSocketsService: UserSocketsService,
+    private readonly userService: UserService,
     ){}
 
   private logger: Logger = new Logger('ChatGateway');
@@ -200,12 +202,6 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
           socket.join(ChanRoomId);
         }
       }
-      // userSockets.forEach(SocketID =>{
-      //   const socket = this.server.sockets.sockets.get(SocketID);
-      //   if (socket) {
-      //     socket.join(chanRoomId);
-      //   }
-      // })
       this.server.emit('channelCreated', channel);
     }
     catch (error)
@@ -213,8 +209,6 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       console.log(error);
       throw new WsException(error.message || 'Could not create channel');
     }
-    // this.server.emit('created channel');
-    // client.emit('channelCreated', channel);
   }
 
 
@@ -274,6 +268,23 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     catch (error){
       console.log(error);
       throw new WsException(error.message || 'Could not get user`s channels');
+    }
+  }
+
+  @SubscribeMessage('GetNotJoinedChannels')
+  async handleGetChannelsUserNonMember(
+      @ConnectedSocket() client: Socket,
+      @MessageBody() userId: number) : Promise<void>
+  {
+    try{
+      const channels = await this.chatService.findAllChannelsNonMember(userId);
+      console.log("channels:", channels);
+      const userRoomId = 'userID_' + userId.toString() + '_room';
+      this.server.to(userRoomId).emit('notJoinedChannelsFound', channels);
+    }
+    catch (error){
+      console.log(error);
+      throw new WsException(error.message || 'Could not get channels user is not member');
     }
   }
 
@@ -368,11 +379,18 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
   @SubscribeMessage('GetChannelMessages')
   async handleGetChannelMessages(
       @ConnectedSocket() client: Socket,
-      @MessageBody() chanId: number) : Promise<void>
+      @MessageBody() data: {chanId: number, userId: number}) : Promise<void>
   {
     try{
       console.log("getallChannelMessages backend socket event");
+      const {chanId, userId} = data;
       console.log("chanID:", chanId);
+      const isMember = await this.chatService.isMember(chanId, userId);
+      if (!isMember) {
+        const userRoomId = 'userID_' + userId.toString() + '_room';
+        this.server.to(userRoomId).emit('userIsMuted');
+        throw new WsException('user not in channel');
+      }
       const messages = await this.chatService.findAllChanMessages(chanId);
       console.log("channel messages: ", messages);
       const userData = await this.chatService.getUserFromSocket(client);
@@ -449,13 +467,12 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       }
       const chanMember = await this.chatService.createOneChanMember(chanID, userID);
       const userSockets = this.userSocketsService.getUserSocketIds(userID);
-      // userSockets.forEach(SocketID =>{
-      //   const socket = this.server.sockets.sockets.get(SocketID);
-      //   if (socket) {
-      //     const ChanRoomId = 'chan_'+ chanID + '_room';
-      //     socket.join(ChanRoomId);
-      //   }
-      // })
+      for (const socket of userSockets) {
+        if (socket){
+          const ChanRoomId = 'chan_'+ chanID + '_room';
+          socket.join(ChanRoomId);
+        }
+      }
       const userRoomId = 'userID_' + userID.toString() + '_room';
       this.server.to(userRoomId).emit('joinRoom', String(chanID));
       // client.emit('userJoinedChannel', chanMember);
@@ -736,10 +753,33 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     }
     catch (error) {
       console.log(error);
-      throw new WsException(error.message || 'Could not set channel name');
+      throw new WsException(error.message || 'Could not get users that start by');
     }
   }
-  
+
+  @SubscribeMessage('getAllUsers')
+  async handleGetAllUsers(
+    @ConnectedSocket() client: Socket) : Promise<void>
+  {
+    try {
+      const users = await this.userService.findAll();
+      if (!users){
+        throw new WsException('users were not found');
+      }
+      const userData = await this.chatService.getUserFromSocket(client);
+      if (!userData){
+        throw new WsException('user was not found');
+      }
+      const userRoomId = 'userID_' + userData.id.toString() + '_room';
+      this.server.to(userRoomId).emit('allUsersFound', users);
+    }
+    catch (error) {
+      console.log(error);
+      throw new WsException(error.message || 'Could not get all users');
+    }
+  }
+
+
   //--------------------------------------------------------------------------//
   //                        CONNECTION SET UP EVENTS                          //
   //--------------------------------------------------------------------------//

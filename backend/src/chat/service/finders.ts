@@ -42,7 +42,7 @@ export async function findAllChannelsByMember(member: number): Promise<ChanMembe
       },
     });
     if (!channels) {
-      throw new Error('channels by member not found')
+      throw new Error('channels by member not found');
     }
     return channels;
   }
@@ -51,6 +51,36 @@ export async function findAllChannelsByMember(member: number): Promise<ChanMembe
     throw error;
   }
 }
+
+
+export async function findAllChannelsNonMember(member: number): Promise<Channel[]> {
+  try {
+    const memberChannels: ChanMember[] = await this.prisma.chanMember.findMany({
+      where: {
+        member,
+      },
+    });
+
+    const memberChannelIds = memberChannels.map(channel => channel.chanId);
+
+    const nonMemberChannels: Channel[] = await this.prisma.channel.findMany({
+      where: {
+        id: {
+          notIn: memberChannelIds,
+        },
+      },
+    });
+    if (!nonMemberChannels) {
+      throw new Error('channels user is not member not found');
+    }
+    return nonMemberChannels;
+  }
+  catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
 
 export async function findAllChannelsByUserId(member: number): Promise<Channel[]> {
   try {
@@ -134,6 +164,27 @@ export async function findAllProtectedChannels(): Promise<Channel[]>{
   }
 }
 
+export async function findAllChannelsNotMember(): Promise<Channel[]>{
+  try {
+    const channels: Channel[] = await this.prisma.channel.findMany(
+      {
+        where: {
+          type: 'PROTECTED'
+        }
+      }
+    );
+    if (!channels) {
+      throw new Error('no protected channels');
+    }
+    return channels;
+  }
+  catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
+
 export async function findManyChanMessages(chanId: number, count: number): Promise<ChanMessage[]> {
   try {
     const messages: ChanMessage[] = await this.prisma.chanMessage.findMany({
@@ -196,13 +247,6 @@ export async function findUserStartsby(startBy:string, userId:number): Promise<U
         ]
       }
     });
-    // const users: User[] = await this.prisma.user.findMany({
-    //   where: {
-    //     nickname: {
-    //       startsWith: startBy,
-    //     }
-    //   }
-    // });
     if (!users) {
       throw new Error('users by member not found');
     }

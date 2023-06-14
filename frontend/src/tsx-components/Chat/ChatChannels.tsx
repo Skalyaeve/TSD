@@ -18,10 +18,16 @@ interface Channel {
 interface ChatChannelsProps {
     userInfo: {id: number; email: string; nickname: string; avatarFilename: string} | null;
     allChannelsbyUser: Channel[];
+    allChannelsNotJoined: Channel[];
     setSelectedChannel: React.Dispatch<React.SetStateAction<Channel | null>>
     setSelectedContact: React.Dispatch<React.SetStateAction<{id: number; email: string; nickname: string; avatarFilename: string} | null>>
 }
-export default function ChatChannels({userInfo, allChannelsbyUser, setSelectedChannel, setSelectedContact} : ChatChannelsProps)
+export default function ChatChannels({
+    userInfo,
+    allChannelsbyUser,
+    allChannelsNotJoined,
+    setSelectedChannel,
+    setSelectedContact} : ChatChannelsProps)
 {   
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [channel, setChannel] = useState("");
@@ -39,8 +45,12 @@ export default function ChatChannels({userInfo, allChannelsbyUser, setSelectedCh
     /*type*/
     const [channelType, setChannelType] = useState("");
     const [password, setPassword] = useState("");
-
-
+    /*channelsDisplay*/
+    const [showChannelsbyUser, setShowChannelsByUser] = useState(true);
+    /*channel join*/
+    const [isPasswordPrompOpen, setIsPasswordPromptOpen] = useState(false);
+    const [passwordInput, setPasswordInput] = useState("");
+    const [channelToJoin, setChannelToJoin] = useState<Channel | null>(null);
 
     const handleSubmitNewChannelName = (e: any) =>
     {
@@ -144,6 +154,37 @@ export default function ChatChannels({userInfo, allChannelsbyUser, setSelectedCh
         console.log('channel members: ', members);
     }
 
+    //Channel Joining
+
+    const handleJoinChannel = (channel: Channel) => {
+        setChannelToJoin(channel);
+        if (channel.type === 'PUBLIC'){
+            if(userInfo){
+                socket.emit("joinChannel", {chanID: channel.id, userID: userInfo.id});
+            }
+        }
+        else if (channel.type == "PROTECTED") {
+            setIsPasswordPromptOpen(true);
+        }
+        else if (channel.type == "PRIVATE") {
+            alert("cannot join private channel");
+        }
+    };
+
+    const handlePasswordSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+
+        if(channelToJoin && userInfo) {
+            socket.emit("JoinProtectedChannel", {
+                chanID: channelToJoin.id,
+                userID: userInfo.id,
+                password: passwordInput
+            });
+        }
+        setIsPasswordPromptOpen(false);
+        setPasswordInput("");
+    };
+
     return (
     <div className='channels'>
         <div className="Chan-title">
@@ -162,25 +203,35 @@ export default function ChatChannels({userInfo, allChannelsbyUser, setSelectedCh
             <button className="Chan-find-btn">
                 <BsSearchHeart/>
             </button>
-            <div className="Chan-find-text">
+            {/* <div className="Chan-find-text">
                 <input 
                     onChange={(e)=>setNewChannelName(e.target.value)}
                     placeholder="Type new channel name"
                     value={newChannelName}
                 />
-            </div>
+            </div> */}
             <button className="Chan-find-btn" onClick={handleOpenModal}>
                 <BsPlusCircle/>
             </button>
         </div>
         <div className="Chan-all-channels">
-            {allChannelsbyUser.map((channel) => (
-                <button className="channel-btn" key={channel.id} onClick={() => {
-                    setSelectedChannel(channel);
-                    setSelectedContact(null);
-                }}>
-                    {channel.name}
-                </button>
+            <button className="chan-create-btn" onClick={() => setShowChannelsByUser(!showChannelsbyUser)}>
+                {showChannelsbyUser ? 'Joined': 'Not joined'}
+            </button>
+            {(showChannelsbyUser ? allChannelsbyUser : allChannelsNotJoined).map((channel) => (
+                <div key={channel.id}>
+                    <button className="channel-btn" key={channel.id} onClick={() => {
+                        setSelectedChannel(channel);
+                        setSelectedContact(null);
+                    }}>
+                        {channel.name}
+                    </button>
+                    {!showChannelsbyUser && (
+                        <button onClick={() => handleJoinChannel(channel)}>
+                                Join
+                        </button>
+                    )}
+                </div>
             ))}
         </div>
         <Modal 

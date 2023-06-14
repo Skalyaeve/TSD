@@ -75,6 +75,7 @@ function Chat({}) {
 
     //Channel
     const [allChannelsbyUser, setAllChannelsbyUser] = useState<Channel[]>([]);
+    const [allChannelsNotJoined, setAllChannelsNotJoined] = useState<Channel[]>([]);
     const [selectedChannel, setSelectedChannel] = useState<Channel | null >(null);
     const [userChannelsMember, setUserChannelsMember] = useState<ChanMember[]>([]);
     const [allChannelMessages, setAllChannelMessages] = useState<ChanMessage[]>([]);
@@ -97,23 +98,12 @@ function Chat({}) {
         };
     }, []);
 
-    const axiosInstance = axios.create({
-        withCredentials: true,
-      });
-
     useEffect(() => {
-        const fetchAllUsers =async () => {
-            try {
-                const response = await axiosInstance.get('http://localhost:3000/users/all');
-                const users = response.data;
-                setAllUsers(users);
-                console.log(users);
-            }
-            catch (error) {
-                setError(error)
-            }
-        };
-        fetchAllUsers();
+        socket.on('allUsersFound', (userData: {id: number; email: string; nickname: string; avatarFilename: string}[]) => {
+            setAllUsers(userData);
+            console.log('getting all the users')
+        });
+        socket.emit('getAllUsers')
     }, []);
 
     /**
@@ -226,7 +216,7 @@ function Chat({}) {
         if (chatMessages) {
           chatMessages.scrollTop = chatMessages.scrollHeight;
         }
-      }, [allMessages]);
+      }, [allMessages, allChannelMessages]);
 
     /**
      * Channel
@@ -259,21 +249,6 @@ function Chat({}) {
             });
         }
     }, [userInfo]);
-    
-    // const channelMessageCreatedListener = useCallback((message: {
-    //     sender: number,
-    //     senderNick: string,
-    //     chanId: number,
-    //     content: string,
-    // }) => {
-    //     if (message.sender && message.senderNick && message.content)
-    //     {
-    //         console.log("inside channelMessageCreatedListener: ", message);
-    //         console.log("type: ", message.type);
-    //         setAllChannelMessages((allChannelMessages) => [...allChannelMessages, message]);
-    //     }
-    // }, []);
-
 
     useEffect(() => {
         const channelMessageListener = (messages: ChannelMessage[]) => {
@@ -289,11 +264,16 @@ function Chat({}) {
     }, [channelMessageCreatedListener]);
 
     useEffect(() => {
-        if (userInfo && selectedChannel) {
-            socket.emit('GetChannelMessages', selectedChannel.id);
+        if (userInfo && selectedChannel &&
+            !allChannelsNotJoined.some(notJoinedChannel => notJoinedChannel.id === selectedChannel.id)) {
+            socket.emit('GetChannelMessages', {chanId: selectedChannel.id, userId: userInfo.id});
+        }
+        else{
+            setAllChannelMessages([]);
         }
     }, [userInfo, selectedChannel]);
     
+    //retrieving joined channels
     useEffect(() => {
         if (!userInfo) {
         console.log("user is not set");
@@ -314,11 +294,32 @@ function Chat({}) {
         };
     }, [userInfo]);
 
+    //retrieving not joine channels
+    useEffect(() => {
+        if (!userInfo) {
+        console.log("user is not set");
+        return;
+        }
+    
+        const userId = userInfo.id;
+    
+        socket.on('notJoinedChannelsFound', (channels: Channel[]) => {
+            setAllChannelsNotJoined(channels);
+        console.log("not joined channels: ", channels);
+        });
+    
+        socket.emit('GetNotJoinedChannels', userId);
+    
+        return () => {
+        socket.off('notJoinedChannelsFound');
+        };
+    }, [userInfo]);
+
     return (
         <div className={`chat-main-grid ${isOpen?"open":"close"}`}>
             <div className="manage-rooms">
                 <DmHandler allUsers={allUsers} setSelectedContact={setSelectedContact} setSelectedChannel={setSelectedChannel}/>
-                <ChatChannels userInfo={userInfo} allChannelsbyUser={allChannelsbyUser} setSelectedChannel={setSelectedChannel} setSelectedContact={setSelectedContact}/>
+                <ChatChannels userInfo={userInfo} allChannelsbyUser={allChannelsbyUser} allChannelsNotJoined={allChannelsNotJoined} setSelectedChannel={setSelectedChannel} setSelectedContact={setSelectedContact}/>
             </div>
             <div className="chatbox">
                 <ChatHeader chatName={selectedContact?.nickname || selectedChannel?.name ||'No conversation selected' } setIsOpen={setIsOpen}/>
