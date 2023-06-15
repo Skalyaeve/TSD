@@ -1,6 +1,8 @@
 import { WsException } from '@nestjs/websockets';
 import { ChanMember, Channel } from "@prisma/client";
 import { ChanType } from '@prisma/client';
+import * as bcrypt from 'bcrypt';
+
 
 export async function setChanPassword(chanId: number, userId: number, newPasswd: string): Promise<Channel | null> {
   try {

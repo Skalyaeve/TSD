@@ -6,6 +6,64 @@
 #4 Margin - Padding
 #5 Animations
 */
+
+/*psswd setup*/
+
+div.modal-chan-psswd {
+    position: absolute;
+    top: 20%;
+    left: 35%;
+    width: 40%;  
+    height: 30%; 
+    /* background-color: rgb(33 9 153 / 75%); */
+    backdrop-filter: blur(25px);
+    background: rgba(0, 255, 0, 0.2);
+    box-sizing: border-box;
+    text-align: center;
+    align-items: center;
+    font-size: 10px !important;
+    box-shadow: 5px 5px 15px black;
+    border-radius: 2%;
+}
+
+.overlay-chan-psswd {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.chan-psswd{
+    display: grid;
+    grid-template-rows: 1fr 1fr 1fr;
+    height: 100%;
+}
+
+.chan-psswd .title-chan-psswd {
+    text-align: center;
+    place-items: center;
+    font-size: 18px;
+}
+
+.chan-psswd .form-chan-psswd {
+    /* display: flex; */
+    font-size: 18px;
+    align-items: center;
+}
+
+.chan-psswd .form-chan-psswd input{
+    background: transparent;
+    border: solid;
+    width: 95%;
+}
+
+.chan-psswd .close-chan-psswd {
+    font-size: 18px;
+}
+
+/*chan creation*/
+
 div.modal-chan-create {
     position: absolute;
     top: 20%;

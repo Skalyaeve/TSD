@@ -70,6 +70,7 @@ export async function psswdMatch(chanId: number, password: string): Promise<bool
     }
     const hashedPassword = channel.passwd;
     const isMatch = await bcrypt.compare(password, hashedPassword);
+    console.log("isMatch:", isMatch);
     return isMatch;
   }
   catch (error) {

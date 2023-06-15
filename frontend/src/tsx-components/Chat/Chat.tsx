@@ -319,7 +319,7 @@ function Chat({}) {
         <div className={`chat-main-grid ${isOpen?"open":"close"}`}>
             <div className="manage-rooms">
                 <DmHandler allUsers={allUsers} setSelectedContact={setSelectedContact} setSelectedChannel={setSelectedChannel}/>
-                <ChatChannels userInfo={userInfo} allChannelsbyUser={allChannelsbyUser} allChannelsNotJoined={allChannelsNotJoined} setSelectedChannel={setSelectedChannel} setSelectedContact={setSelectedContact}/>
+                <ChatChannels userInfo={userInfo} allChannelsbyUser={allChannelsbyUser} allChannelsNotJoined={allChannelsNotJoined} setAllChannelsNotJoined={setAllChannelsNotJoined} setAllChannelsbyUser={setAllChannelsbyUser }setSelectedChannel={setSelectedChannel} setSelectedContact={setSelectedContact}/>
             </div>
             <div className="chatbox">
                 <ChatHeader chatName={selectedContact?.nickname || selectedChannel?.name ||'No conversation selected' } setIsOpen={setIsOpen}/>
@@ -332,7 +332,7 @@ function Chat({}) {
                 </div>
             </div>
             <div className={`contact-info ${isOpen?"open":"close"}`}>
-                <HeaderContactInfo/>
+                <HeaderContactInfo chatName={selectedContact?.nickname || selectedChannel?.name ||'No conversation selected' }/>
                 <div className='body-contact'>
                     body of contact info
                 </div>

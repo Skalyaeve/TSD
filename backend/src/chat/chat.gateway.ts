@@ -193,7 +193,9 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       }
       await this.chatService.setChannelType(userId, chanID, ChanType[type as keyof typeof ChanType]);
       if (type == 'PROTECTED') {
-        await this.chatService.setChanPassword(chanID, userId, psswd);
+        const saltRounds = 10;
+        const hashedPassword = await bcrypt.hash(psswd, saltRounds);
+        await this.chatService.setChanPassword(chanID, userId, hashedPassword);
       }
       const userSockets = this.userSocketsService.getUserSocketIds(userId);
       for (const socket of userSockets) {
@@ -454,6 +456,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       @MessageBody() data: {chanID: number, userID: number, password: string}) : Promise<void>
   {
     try {
+      console.log('joining protected channel');
       const {chanID, userID, password} = data;
       const isBanned = await this.chatService.isBanned(chanID, userID);
       if (isBanned) {
@@ -461,10 +464,14 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
         this.server.to(userRoomId).emit('userIsBanned');
         return;
       }
-      const passwordMatches = this.chatService.psswdMatch(chanID, password);
+      console.log('passed is banned');
+      console.log(userID);
+      console.log(password);
+      const passwordMatches = await this.chatService.psswdMatch(chanID, password);
       if (!passwordMatches) {
         throw new WsException('password does not match');
       }
+      console.log('passed passwd matches');
       const chanMember = await this.chatService.createOneChanMember(chanID, userID);
       const userSockets = this.userSocketsService.getUserSocketIds(userID);
       for (const socket of userSockets) {
@@ -474,7 +481,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
         }
       }
       const userRoomId = 'userID_' + userID.toString() + '_room';
-      this.server.to(userRoomId).emit('joinRoom', String(chanID));
+      this.server.to(userRoomId).emit('joinRoom', chanID);
       // client.emit('userJoinedChannel', chanMember);
       // In the above code, this.server.to(userRoomId).emit('joinRoom', String(chanID)); will emit a 'joinRoom' event to all sockets in the user-specific room. You will then need to handle this 'joinRoom' event on the client-side, where each socket will join the channel room upon receiving the 'joinRoom' event.
     }

@@ -75,3 +75,9 @@
     overflow: hidden;
     cursor: pointer;
 }
+
+.channel-container {
+    display: flex;
+    justify-content: space-between;  /* This separates the channel button and "+" button */
+    align-items: center;  /* This vertically centers the content if needed */
+}

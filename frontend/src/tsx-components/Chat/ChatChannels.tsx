@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { BsSearchHeart } from "react-icons/bs";
 import { BsPlusCircle } from "react-icons/bs";
+import { AiOutlinePlusCircle } from "react-icons/ai";
 import Modal from 'react-modal';
 import "../../css/Chat/ChannelCreate.css"
 import { socket } from '../Root.tsx'
@@ -19,6 +20,8 @@ interface ChatChannelsProps {
     userInfo: {id: number; email: string; nickname: string; avatarFilename: string} | null;
     allChannelsbyUser: Channel[];
     allChannelsNotJoined: Channel[];
+    setAllChannelsNotJoined: React.Dispatch<React.SetStateAction<Channel[]>>
+    setAllChannelsbyUser: React.Dispatch<React.SetStateAction<Channel[]>>
     setSelectedChannel: React.Dispatch<React.SetStateAction<Channel | null>>
     setSelectedContact: React.Dispatch<React.SetStateAction<{id: number; email: string; nickname: string; avatarFilename: string} | null>>
 }
@@ -26,6 +29,8 @@ export default function ChatChannels({
     userInfo,
     allChannelsbyUser,
     allChannelsNotJoined,
+    setAllChannelsNotJoined,
+    setAllChannelsbyUser,
     setSelectedChannel,
     setSelectedContact} : ChatChannelsProps)
 {   
@@ -48,7 +53,7 @@ export default function ChatChannels({
     /*channelsDisplay*/
     const [showChannelsbyUser, setShowChannelsByUser] = useState(true);
     /*channel join*/
-    const [isPasswordPrompOpen, setIsPasswordPromptOpen] = useState(false);
+    const [isPasswordPromptOpen, setIsPasswordPromptOpen] = useState(false);
     const [passwordInput, setPasswordInput] = useState("");
     const [channelToJoin, setChannelToJoin] = useState<Channel | null>(null);
 
@@ -74,11 +79,6 @@ export default function ChatChannels({
             console.log("handleSubmitNewChannel: no userInfo");
             return;
         }
-        console.log('channel name: ', confirmedChannelName);
-        console.log('userID: ', userInfo.id);
-        console.log('type: ', channelType);
-        console.log('password: ', password);
-        console.log('members:', members);
         socket.emit('createChannel', {
             name: confirmedChannelName,
             userId: userInfo.id,
@@ -173,9 +173,10 @@ export default function ChatChannels({
 
     const handlePasswordSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-
+        console.log("inside handlePasswordSubmit");
         if(channelToJoin && userInfo) {
-            socket.emit("JoinProtectedChannel", {
+            console.log("going to emit socket event to join private channel")
+            socket.emit("joinProtectedChannel", {
                 chanID: channelToJoin.id,
                 userID: userInfo.id,
                 password: passwordInput
@@ -184,6 +185,52 @@ export default function ChatChannels({
         setIsPasswordPromptOpen(false);
         setPasswordInput("");
     };
+    
+    /**
+     * 
+     */
+
+    const fetchChannels = () => {
+        if (!userInfo) {
+            console.log("user is not set");
+            return;
+        }
+    
+        const userId = userInfo.id;
+    
+        // Retrieving channels by user
+        const getChannelsByUser = () => {
+            socket.on('channelsByUserFound', (channels: Channel[]) => {
+                setAllChannelsbyUser(channels);
+                console.log("channels of the user: ", channels);
+            });
+    
+            socket.emit('GetChannelsByUser', userId);
+        };
+    
+        // Retrieving not joined channels
+        const getNotJoinedChannels = () => {
+            socket.on('notJoinedChannelsFound', (channels: Channel[]) => {
+                setAllChannelsNotJoined(channels);
+                console.log("not joined channels: ", channels);
+            });
+    
+            socket.emit('GetNotJoinedChannels', userId);
+        };
+    
+        getChannelsByUser();
+        getNotJoinedChannels();
+    };
+    
+    useEffect(() => {
+        fetchChannels();
+    
+        return () => {
+            socket.off('channelsByUserFound');
+            socket.off('notJoinedChannelsFound');
+        };
+    }, [userInfo]);
+    
 
     return (
     <div className='channels'>
@@ -191,6 +238,9 @@ export default function ChatChannels({
             <h1>
                [Channels] 
             </h1>
+            <button onClick={fetchChannels}>
+                Refresh
+            </button>
         </div>
         <div className="Chan-find">
             <div className="Chan-find-text">
@@ -219,7 +269,7 @@ export default function ChatChannels({
                 {showChannelsbyUser ? 'Joined': 'Not joined'}
             </button>
             {(showChannelsbyUser ? allChannelsbyUser : allChannelsNotJoined).map((channel) => (
-                <div key={channel.id}>
+                <div key={channel.id} className="channel-container">
                     <button className="channel-btn" key={channel.id} onClick={() => {
                         setSelectedChannel(channel);
                         setSelectedContact(null);
@@ -227,13 +277,39 @@ export default function ChatChannels({
                         {channel.name}
                     </button>
                     {!showChannelsbyUser && (
-                        <button onClick={() => handleJoinChannel(channel)}>
-                                Join
+                        <button className="Chan-find-btn" onClick={() => handleJoinChannel(channel)}>
+                                <AiOutlinePlusCircle/>
                         </button>
                     )}
                 </div>
             ))}
         </div>
+        <Modal
+          isOpen={isPasswordPromptOpen}
+          onRequestClose={() => setIsPasswordPromptOpen(false)}
+          className="modal-chan-psswd"
+          overlayClassName="overlay-chan-psswd"
+        >
+          <div className="chan-psswd">
+            <div className="title-chan-psswd">
+                <h2>Enter Password</h2>
+            </div>
+            <div className="form-chan-psswd">
+                <form onSubmit={handlePasswordSubmit}>
+                    <input
+                    type="password"
+                    value={passwordInput}
+                    onChange={(e) => setPasswordInput(e.target.value)}
+                    required
+                    />
+                    <button className="chan-create-btn" type="submit">Join</button>
+                </form>
+            </div>
+            <div className="close-chan-psswd">
+                <button className="chan-create-btn" onClick={() => setIsPasswordPromptOpen(false)}>Close</button>
+            </div>
+          </div>
+        </Modal>
         <Modal 
             isOpen={isModalOpen}
             onRequestClose={() => {
