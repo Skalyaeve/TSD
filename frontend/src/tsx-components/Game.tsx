@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef } from 'react'
 import Phaser from 'phaser'
-import { Socket, io } from 'socket.io-client'
+import { Socket } from 'socket.io-client'
 import { gameSocket } from './Matchmaker.tsx'
 
 /* -------------------------ASSETS IMPORTS------------------------- */
@@ -14,6 +14,7 @@ import mageIdle__Sheet from '../resource/assets-game/Mage/Idle.png'
 import mageRun__Sheet from '../resource/assets-game/Mage/Run.png'
 import blank__Sheet from '../resource/assets-game/blank.png'
 import black__Sheet from '../resource/assets-game/black.png'
+import ball__Sheet from '../resource/assets-game/basicBall.png'
 
 /* -------------------------TYPES------------------------- */
 
@@ -113,9 +114,6 @@ function Party() {
 	const screenWidth: number = 1920
 	const screenHeight: number = 1080
 	const gameSpeed: number = 1000
-
-	// Player socket
-	let socket: Socket
 
 	// Keyboard keys
 	let keys: keys
@@ -226,6 +224,10 @@ function Party() {
 		}
 	}
 
+	function ballInitialisation(scene: Phaser.Scene){
+		scene.load.spritesheet('ball', ball__Sheet, { frameWidth: 52, frameHeight: 52 })
+	}
+
 	/****** SCENE CREATION ******/
 
 	// Create players for this scene
@@ -259,6 +261,15 @@ function Party() {
 			rightPlayer = newPlayer
 	}
 
+	function createBall(scene: Phaser.Scene){
+		ball = {
+			sprite: scene.physics.add.sprite(960, 540, 'ball')
+		}
+		ball.sprite?.body?.setCircle(25)
+		ball.sprite?.setBounce(1, 1)
+		ball.sprite?.setCollideWorldBounds(true, undefined, undefined, undefined)
+	}
+
 	// Create animation for this scene
 	function createAnims(scene: Phaser.Scene) {
 		for (let skinName in skins) {
@@ -289,7 +300,7 @@ function Party() {
 	// Send player movements to the server
 	// WORKER <= BACK <= CLIENT
 	const sendPlayerMovement = () => {
-		gameSocket.emit('playerKeyUpdate', actualKeyStates)
+		gameSocket?.emit('playerKeyUpdate', actualKeyStates)
 	}
 
 	// Send player start to the server
@@ -383,11 +394,11 @@ function Party() {
 			console.log('players to move')
 			leftPlayer.sprite?.setPosition(moveQueue.leftProps.xPos, moveQueue.leftProps.yPos)
 			rightPlayer.sprite?.setPosition(moveQueue.rightProps.xPos, moveQueue.rightProps.yPos)
-			//ball.sprite?.setPosition(moveQueue.ballProps.xPos, moveQueue.ballProps.yPos)
+			ball?.sprite?.setPosition(moveQueue.ballProps.xPos, moveQueue.ballProps.yPos)
 
 			leftPlayer.sprite?.setVelocity(moveQueue.leftProps.xVel, moveQueue.leftProps.yVel)
 			rightPlayer.sprite?.setVelocity(moveQueue.rightProps.xVel, moveQueue.rightProps.yVel)
-			//ball.sprite?.setVelocity(moveQueue.ballProps.xVel, moveQueue.ballProps.yVel)
+			ball?.sprite?.setVelocity(moveQueue.ballProps.xVel, moveQueue.ballProps.yVel)
 			moveQueue = undefined
 		}
 	}
@@ -398,10 +409,12 @@ function Party() {
 	function preload(this: Phaser.Scene) {
 		keysInitialisation(this)
 		skinsInitialisation(this)
+		ballInitialisation(this)
 	}
 
 	// Scene creation
 	function create(this: Phaser.Scene) {
+		createBall(this)
 		createAnims(this)
 	}
 
@@ -465,11 +478,11 @@ function Party() {
 		// ********** BACK TO ALL EVENTS ********** //
 		// WORKER <== BACK ==> CLIENT
 
-		socket.on('clientSide', (side: "left" | "right") => {
+		gameSocket?.on('clientSide', (side: "left" | "right") => {
 			mySide = side
 		})
 
-		socket.on('playerConstruct', (construct: playerConstruct) => {
+		gameSocket?.on('playerConstruct', (construct: playerConstruct) => {
 			if (construct.side == 'left')
 				creationQueue.left = construct
 			else
@@ -487,11 +500,11 @@ function Party() {
 		// WORKER ==> BACK ==> CLIENT
 
 		// Update the moved player's velocity in the players list
-		socket.on('newProps', (properties: newPropsToClient) => {
+		gameSocket?.on('newProps', (properties: newPropsToClient) => {
 			moveQueue = properties
 		})
 
-		return socket
+		return gameSocket
 	}
 
 	// Construction of the whole page

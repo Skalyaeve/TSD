@@ -273,6 +273,17 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
 	/* -------------------------WEB EVENT LISTENERS------------------------- */
 
+	@SubscribeMessage('stopMatchmaking')
+	handleStopMatchmaking(socket: Socket){
+		for (let index = 0; index < this.matchQueue.length; index++){
+			if (this.matchQueue[index] == socket.id){
+				this.matchQueue.splice(index, 1)
+			}
+			break
+		}
+		socket.emit('unmatched')
+	}
+
 	@SubscribeMessage('playerKeyUpdate')
 	handlePlayerKeyUpdate(socket: Socket, payload: keyStates) {
 		if (this.sockets[socket.id].type == this.clientType && this.players[socket.id].sessionId) {

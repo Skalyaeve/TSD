@@ -38,26 +38,7 @@ export const GameInfos: React.FC = () => {
 }
 
 // --------MATCHMAKER------------------------------------------------------ //
-export let gameSocket: Socket
-
-const startGameSockets = () => {
-	const navigate = useNavigate()
-	// Connect to the backend server
-	gameSocket = io("http://localhost:3000/game")
-
-	// ********** BACK TO CLIENT SPECIFIC EVENTS ********** //
-	// WORKER <x= BACK ==> CLIENT
-
-	// Get the player's own ID
-	gameSocket.on('Welcome', () => {
-		gameSocket.emit('identification', "PHASER-WEB-CLIENT")
-	})
-
-	gameSocket.on('matched', () => {
-		console.log('Opponent found, starting game')
-		navigate('/game')
-	})
-}
+export let gameSocket: Socket | undefined = undefined
 
 const Matchmaker: React.FC = () => {
 	// ----ROUTER----------------------------- //
@@ -70,28 +51,63 @@ const Matchmaker: React.FC = () => {
 		return value === '1'
 	})
 
+	const startGameSockets = () => {
+		gameSocket = io("http://localhost:3000/game")
+		console.log("Requesting matchmaking")
+
+		gameSocket.on('Welcome', () => {
+			gameSocket?.emit('identification', "PHASER-WEB-CLIENT")
+			setMatchmaking(true)
+			console.log("Ongoing matchmaging")
+		})
+
+		gameSocket.on('matched', () => {
+			console.log('Opponent found, starting game')
+			setMatchmaking(false)
+			setInGame(true)
+			localStorage.setItem('inGame', '1')
+			navigate('/game')
+		})
+
+		gameSocket.on('unmatched', () => {
+			console.log("Succesfully stoped matchmaking")
+			gameSocket?.disconnect()
+			gameSocket = undefined
+			setMatchmaking(false)
+		})
+	}
+
+	const stopMatchmaking = () => {
+		console.log("Requesting stop matchmaking")
+		gameSocket?.emit('stopMatchmaking')
+	}
+
 	// ----EFFECTS---------------------------- //
 	useEffect(() => {
-		console.log("matchmaking now:", matchmaking)
-		if (!matchmaking) return
-		setMatchmaking(false)
-		//startGameSockets()
-		setInGame(true)
-		localStorage.setItem('inGame', '1')
+		console.log("matchmaking:", matchmaking)
 	}, [matchmaking])
+
+	useEffect(() => {
+		console.log("inGame:", inGame)
+	}, [inGame])
 
 	// ----HANDLERS--------------------------- //
 	const toggleMatchmaker = () => {
+		console.log("test")
 		if (!matchmaking && !inGame) {
 			console.log("toggling matchmaker")
-			setMatchmaking(true)
+			startGameSockets()
+		}
+		else if (matchmaking && !inGame) {
+			console.log("cancelling matchmaking")
+			stopMatchmaking()
 		}
 		else if (inGame) {
 			setInGame(false)
+			localStorage.removeItem('inGame')
 			navigate('/')
 			localStorage.setItem('inGame', '0')
 		}
-		else setMatchmaking(false)
 	}
 	const matchmakerBtnHdl = { onMouseUp: toggleMatchmaker }
 
