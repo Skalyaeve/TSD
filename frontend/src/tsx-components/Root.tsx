@@ -14,7 +14,7 @@ import Party from './Game.tsx'
 import Leader from './Leader.tsx'
 import ErrorPage from './ErrorPage.tsx'
 import '../css/Root.css'
-import { io } from 'socket.io-client';
+import { Socket, io } from 'socket.io-client';
 
 
 // --------IS-CONNECTED---------------------------------------------------- //
@@ -70,11 +70,7 @@ const LoginBtn: React.FC = () => {
 
 // ----SOCKET----------------------------- //
 
-export const socket = io("http://localhost:3000/chat", {
-	transports: ["websocket"],
-	withCredentials: true,
-	//   autoConnect: false,
-});
+export let socket: Socket | undefined = undefined
 
 // --------ROOT------------------------------------------------------------ //
 const Root: React.FC = () => {
@@ -95,10 +91,21 @@ const Root: React.FC = () => {
 				return () => clearTimeout(timer)
 			}
 			else setShowHeader(true)
+			if (socket == undefined) {
+				socket = io("http://localhost:3000/chat", {
+					transports: ["websocket"],
+					withCredentials: true,
+					//   autoConnect: false,
+				});
+			}
 		}
-		else if (location.pathname != '/login') {
-			window.location.href = '/login'
-			setShowHeader(false)
+		else {
+			if (location.pathname != '/login') {
+				window.location.href = '/login'
+				setShowHeader(false)
+			}
+			if (socket != undefined)
+				socket.disconnect()
 		}
 	}
 
