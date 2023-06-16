@@ -1,0 +1,270 @@
+/* ------------------------------ */
+/* #1 Éléments */
+/* #2 Forme */
+/* #3 Position */
+/* #4 Margin - Padding */
+/* #5 Animations */
+/* ------------------------------ */
+
+/* ---CHARACTERS----------------- */
+.characters {
+	/* #1 Éléments */
+	display: grid;
+	grid-template-columns: 1fr 500px;
+	grid-gap: 5px;
+	overflow: hidden;
+
+	/* #4 Margin - Padding */
+	padding: 10px;
+	padding-left: 0;
+}
+
+.characters-select {
+	/* #1 Éléments */
+	background-image: url('../resources/assets/ui/backgrounds/div-black2.png');
+	border: 6px double rgb(255, 255, 255);
+	border-top-left-radius: 10px;
+	border-bottom-left-radius: 10px;
+	display: grid;
+	grid-template-columns: repeat(auto-fill, 200px);
+	grid-template-rows: repeat(auto-fill, 200px);
+	grid-gap: 30px;
+	justify-content: center;
+	overflow-x: hidden;
+
+	/* #4 Margin - Padding */
+	padding: 60px;
+
+	/* #5 Animations */
+	transform-origin: right;
+}
+
+.character-box {
+	/* #1 Éléments */
+	border: 3px solid rgb(255, 255, 255);
+	border-top-right-radius: 10px;
+	border-bottom-left-radius: 10px;
+	cursor: pointer;
+
+	/* #2 Forme */
+	min-width: 200px;
+	min-height: 200px;
+}
+
+.character-box-Boreas {
+	/* #1 Éléments */
+	/*
+	background-image: url('../resources/assets/ui/characters/avatars/boreas.jfif');
+	*/
+}
+
+.character-box-Helios {
+	/* #1 Éléments */
+	/*
+	background-image: url('../resources/assets/ui/characters/avatars/helios.jfif');
+	*/
+}
+
+.character-box-Selene {
+	/* #1 Éléments */
+	/*
+	background-image: url('../resources/assets/ui/characters/avatars/selene.jfif');
+	*/
+}
+
+.character-box-Liliana {
+	/* #1 Éléments */
+	/*
+	background-image: url('../resources/assets/ui/characters/avatars/liliana.jfif');
+	*/
+}
+
+.character-box-Orion {
+	/* #1 Éléments */
+	/*
+	background-image: url('../resources/assets/ui/characters/avatars/orion.jfif');
+	*/
+}
+
+.character-box-Faeleen {
+	/* #1 Éléments */
+	/*
+	background-image: url('../resources/assets/ui/characters/avatars/faeleen.jfif');
+	*/
+}
+
+.character-box-Rylan {
+	/* #1 Éléments */
+	/*
+	background-image: url('../resources/assets/ui/characters/avatars/rylan.jfif');
+	*/
+}
+
+.character-box-Garrick {
+	/* #1 Éléments */
+	/*
+	background-image: url('../resources/assets/ui/characters/avatars/garrick.jfif');
+	*/
+}
+
+.character-box-Thorian {
+	/* #1 Éléments */
+	/*
+	background-image: url('../resources/assets/ui/characters/avatars/thorian.jfif');
+	*/
+}
+
+/* ---CHARACTER------------------ */
+.character {
+	/* #1 Éléments */
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	grid-template-rows: 300px auto 200px;
+	grid-gap: 5px;
+}
+
+.character-skin-box {
+	/* #1 Éléments */
+	background-image: url('../resources/assets/ui/backgrounds/div-black1.png');
+	border: 6px double rgb(255, 255, 255);
+	border-bottom: 2px solid rgb(255, 255, 255);
+	border-top-right-radius: 10px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	/* #3 Position */
+	grid-column: 1 / -1;
+}
+
+.character-stats {
+	/* #1 Éléments */
+	background-image: url('../resources/assets/ui/backgrounds/div-black1.png');
+	border: 3px solid rgb(255, 255, 255);
+	border-left: 6px double rgb(255, 255, 255);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	/* #4 Margin - Padding */
+	padding: 5px;
+}
+
+.character-story {
+	/* #1 Éléments */
+	background-image: url('../resources/assets/ui/backgrounds/div-black1.png');
+	border: 3px solid rgb(255, 255, 255);
+	border-right: 6px double rgb(255, 255, 255);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	/* #4 Margin - Padding */
+	padding: 5px;
+}
+
+.character-skin {
+	/* #1 Éléments */
+	background-size: auto;
+	background-repeat: no-repeat;
+
+	/* #2 Forme */
+	height: 100%;
+	width: 100%;
+}
+
+.character-skin-Boreas {
+	/* #1 Éléments */
+	background-image: url('../resources/assets/ui/characters/frontview-sprite/boreas.png');
+}
+
+.character-skin-Helios {
+	/* #1 Éléments */
+	background-image: url('../resources/assets/ui/characters/frontview-sprite/helios.png');
+}
+
+.character-skin-Selene {
+	/* #1 Éléments */
+	background-image: url('../resources/assets/ui/characters/frontview-sprite/selene.png');
+}
+
+.character-skin-Liliana {
+	/* #1 Éléments */
+	background-image: url('../resources/assets/ui/characters/frontview-sprite/liliana.png');
+}
+
+.character-skin-Orion {
+	/* #1 Éléments */
+	background-image: url('../resources/assets/ui/characters/frontview-sprite/orion.png');
+}
+
+.character-skin-Faeleen {
+	/* #1 Éléments */
+	background-image: url('../resources/assets/ui/characters/frontview-sprite/fealeen.png');
+}
+
+.character-skin-Rylan {
+	/* #1 Éléments */
+	background-image: url('../resources/assets/ui/characters/frontview-sprite/rylan.png');
+}
+
+.character-skin-Garrick {
+	/* #1 Éléments */
+	background-image: url('../resources/assets/ui/characters/frontview-sprite/garrick.png');
+}
+
+.character-skin-Thorian {
+	/* #1 Éléments */
+	background-image: url('../resources/assets/ui/characters/frontview-sprite/thorian.png');
+}
+
+/* ---CHARACTER-SPELLS----------- */
+.character-spells {
+	/* #1 Éléments */
+	background-image: url('../resources/assets/ui/backgrounds/div-black1.png');
+	border: 6px double rgb(255, 255, 255);
+	border-top: 2px solid rgb(255, 255, 255);
+	border-bottom-right-radius: 10px;
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+
+	/* #3 Position */
+	grid-column: 1 / -1;
+
+	/* #4 Margin - Padding */
+	padding: 0 40px;
+}
+
+.character-spell {
+	/* #1 Éléments */
+	border: 2px solid rgb(255, 255, 255);
+	border-top-left-radius: 10px;
+	border-bottom-right-radius: 10px;
+
+	/* #2 Forme */
+	height: 140px;
+	width: 140px;
+
+	/* #3 Position */
+	align-self: center;
+	justify-self: center;
+}
+
+.character-spell-tooltip {
+	/* #1 Éléments */
+	background-image: url('../resources/assets/ui/backgrounds/div-black1.png');
+	border: 3px solid rgb(255, 255, 255);
+	border-bottom-left-radius: 10px;
+	border-top-right-radius: 10px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	/* #2 Forme */
+	height: 300px;
+	width: 400px;
+
+	/* #3 Position */
+	position: fixed;
+	z-index: 1;
+}

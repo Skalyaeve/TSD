@@ -1,0 +1,85 @@
+/* ------------------------------ */
+/* #1 Éléments */
+/* #2 Forme */
+/* #3 Position */
+/* #4 Margin - Padding */
+/* #5 Animations */
+/* ------------------------------ */
+
+/* ---NAVBAR--------------------- */
+.navBar {
+	/* #1 Éléments */
+	display: grid;
+	grid-template-rows: 60px;
+	grid-auto-rows: 75px;
+
+	/* #3 Position */
+	grid-row: 1 / 1;
+	z-index: 3;
+}
+
+.navBar-link-motion {
+	/* #1 Éléments */
+	background-image: url('../resources/assets/ui/backgrounds/button-black1-255x78.png');
+	border: 3px solid rgb(182, 50, 95);
+	cursor: pointer;
+	overflow: hidden;
+}
+
+.navBar-link-motion:first-child {
+	/* #1 Éléments */
+	background-image: url('../resources/assets/ui/backgrounds/button-black1-255x63.png');
+	border-top-left-radius: 10px;
+	border-top-right-radius: 10px;
+}
+
+.navBar-link-motion:last-child {
+	/* #1 Éléments */
+	border-bottom-left-radius: 10px;
+	border-bottom-right-radius: 10px;
+}
+
+.navBar-link {
+	/* #1 Éléments */
+	display: block;
+}
+
+.navBar-link-logout {
+	/* #1 Éléments */
+	background-image: url('../resources/assets/ui/text/logout.png');
+}
+
+.navBar-link-back {
+	/* #1 Éléments */
+	background-image: url('../resources/assets/ui/text/back.png');
+}
+
+.navBar-link-home {
+	/* #1 Éléments */
+	background-image: url('../resources/assets/ui/text/home.png');
+}
+
+.navBar-link-profile {
+	/* #1 Éléments */
+	background-image: url('../resources/assets/ui/text/profile.png');
+}
+
+.navBar-link-characters {
+	/* #1 Éléments */
+	background-image: url('../resources/assets/ui/text/characters.png');
+}
+
+.navBar-link-leader {
+	/* #1 Éléments */
+	background-image: url('../resources/assets/ui/text/leader.png');
+}
+
+.navBar-link-infos {
+	/* #1 Éléments */
+	background-image: url('../resources/assets/ui/text/infos.png');
+}
+
+.navBar-link-friends {
+	/* #1 Éléments */
+	background-image: url('../resources/assets/ui/text/friends.png');
+}

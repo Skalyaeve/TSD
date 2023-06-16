@@ -1,0 +1,149 @@
+/* ------------------------------ */
+/* #1 Éléments */
+/* #2 Forme */
+/* #3 Position */
+/* #4 Margin - Padding */
+/* #5 Animations */
+/* ------------------------------ */
+
+@import url('NavBar.css');
+@import url('Chat.css');
+@import url('ChatSettings.css');
+@import url('Matchmaker.css');
+@import url('Home.css');
+@import url('AccountInfos.css');
+@import url('Friends.css');
+@import url('Characters.css');
+@import url('Leader.css');
+@import url('Errors.css');
+@import url('Game.css');
+
+/* ---FONTS---------------------- */
+@font-face {
+	font-family: Main;
+	src: url('../resources/font.ttf');
+	font-weight: normal;
+	font-style: normal;
+}
+
+/* ---TAGS----------------------- */
+* {
+	/* #1 Éléments */
+	box-sizing: border-box;
+	background-position: center;
+	background-size: cover;
+	font-family: Main, serif;
+	font-size: 20px;
+	color: rgb(255, 255, 255);
+
+	/* #4 Margin - Padding */
+	margin: 0;
+	padding: 0;
+}
+
+a {
+	/* #1 Éléments */
+	text-decoration: none;
+}
+
+button {
+	/* #1 Éléments */
+	border: none;
+	cursor: pointer;
+}
+
+input {
+	/* #1 Éléments */
+	background-color: rgb(20, 20, 20);
+	border: none;
+
+	/* #4 Margin - Padding */
+	padding: 0 10px
+}
+
+input:focus {
+	/* #1 Éléments */
+	outline: none;
+}
+
+/* ---ROOT----------------------- */
+.root {
+	/* #1 Éléments */
+	background-image: url('../resources/background.png');
+	display: grid;
+	grid-template-columns: 275px 1fr;
+	overflow: hidden;
+
+	/* #2 Forme */
+	width: 100vw;
+	height: 100vh;
+	min-width: 1024px;
+	min-height: 768px;
+}
+
+/* ---LOGIN-BTN------------------ */
+.login-select {
+	/* #1 Éléments */
+	font-size: 25px;
+
+	/* #3 Position */
+	position: fixed;
+	top: calc(50% - 70px);
+	left: 50%;
+	translate: -50% -50%;
+}
+
+.login42-btn {
+	/* #1 Éléments */
+	background-color: transparent;
+	border: 3px solid rgb(255, 255, 255);
+	border-radius: 10px;
+
+	/* #2 Forme */
+	width: 100px;
+	height: 100px;
+
+	/* #3 Position */
+	position: fixed;
+	z-index: 1;
+	top: 50%;
+	left: 50%;
+	translate: -50% -50%;
+}
+
+.login42-btn-txt {
+	/* #1 Éléments */
+	border-radius: 10px;
+	background-image: url('../resources/assets/ui/buttons/login.png');
+}
+
+/* ---HEADER--------------------- */
+.header {
+	/* #1 Éléments */
+	display: grid;
+	grid-template-rows: auto 1fr 100px;
+	grid-gap: 5px;
+
+	/* #3 Position */
+	grid-column: 1 / 1;
+
+	/* #4 Margin - Padding */
+	padding: 10px;
+}
+
+/* ---MAIN----------------------- */
+.main {
+	/* #3 Position */
+	grid-column: 2 / 2;
+}
+
+/* ---CUSTOM-TXT----------------- */
+.custom-txt {
+	/* #1 Éléments */
+	background-size: unset;
+	background-repeat: no-repeat;
+
+	/* #2 Forme */
+	width: 100%;
+	height: 100%;
+}
