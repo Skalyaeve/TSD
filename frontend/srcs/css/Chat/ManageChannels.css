@@ -1,0 +1,62 @@
+.Chan-title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.Chan-title h1 {
+    font-size: 25px;
+}
+
+.Chan-find {
+    display: flex;
+    flex-direction: column;
+    align-items: top;
+    justify-content: center;
+}
+
+.Chan-find-text {
+    align-items: center;
+    background: rgba(76, 175, 80, 0.0);
+    text-align: center;
+    width: auto;
+}
+
+.Chan-find-text input {
+    background: rgba(255, 255, 255, 0.3);
+    align-items: center;
+    text-align: center;
+    width: auto;
+    font-size: 16px;
+}
+
+.Chan-find-text input::placeholder {
+    font-size: 16px;
+    text-align: center;
+    align-items: center;
+    color: rgba(255, 255, 255, 0.945);
+    width: auto;
+}
+
+.Chan-find-btn {
+    display: flex;
+    align-items: top;
+    justify-content: top;
+    margin-left: auto;
+    margin-right: auto;
+    background: rgba(255, 255, 255, 0.0);
+    border: none;
+    border-radius: 50%;
+}
+
+.Chan-all-channels {
+    display: grid;
+    grid-template-rows: repeat(auto-fill, minmax(50px, 1fr));
+    align-items: center;
+    justify-content: center;
+    border: 1px outset rgb(121, 199, 245, 0.1);
+    overflow: auto;
+
+    scrollbar-width: thin;
+    scrollbar-color: #888 #f1f1f1;
+}

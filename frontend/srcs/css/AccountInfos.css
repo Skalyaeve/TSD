@@ -1,0 +1,168 @@
+/* ------------------------------ */
+/* #1 Éléments */
+/* #2 Forme */
+/* #3 Position */
+/* #4 Margin - Padding */
+/* #5 Animations */
+/* ------------------------------ */
+
+/* ---PROFILE-INFOS-------------- */
+.profile-infos {
+	/* #1 Éléments */
+	display: grid;
+	grid-template-columns: minmax(350px, 1fr) 1.25fr;
+	grid-template-rows: 275px 1fr;
+	grid-gap: 5px;
+	overflow: hidden;
+
+	/* #4 Margin - Padding */
+	margin: 10px;
+	margin-left: 0;
+}
+
+.profile-accountInfos {
+	/* #1 Éléments */
+	background-image: url('../resources/assets/ui/backgrounds/div-black1.png');
+	border: 6px double rgb(255, 255, 255);
+	border-top-left-radius: 10px;
+	display: grid;
+	grid-template-columns: 175px auto;
+	grid-template-rows: 175px auto;
+
+	/* #4 Margin - Padding */
+	padding: 15px;
+}
+
+.profile-picture {
+	/* #1 Éléments */
+	border: 2px solid rgb(255, 255, 255);
+	border-top-left-radius: 10px;
+	border-bottom-right-radius: 10px;
+}
+
+/* ---PROFILE-ACHIEVEMENTS------- */
+.profile-achievements {
+	/* #1 Éléments */
+	border: 6px double rgb(255, 255, 255);
+	border-bottom-left-radius: 10px;
+	display: grid;
+	grid-template-rows: 75px 1fr;
+	overflow-y: hidden;
+
+	/* #3 Position */
+	grid-row: 2 / -1;
+}
+
+.profile-achievements-head {
+	/* #1 Éléments */
+	background-image: url('../resources/assets/ui/backgrounds/div-black1.png');
+	border-bottom: 3px solid rgb(255, 255, 255);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.profile-achievements-list {
+	/* #1 Éléments */
+	background-image: url('../resources/assets/ui/backgrounds/div-black2.png');
+	display: flex;
+	flex-wrap: wrap;
+	align-content: flex-start;
+	justify-content: center;
+	overflow-y: auto;
+
+	/* #4 Margin - Padding */
+	padding: 10px;
+}
+
+.profile-achievement {
+	/* #1 Éléments */
+	background-image: url('../resources/assets/ui/backgrounds/div-black1.png');
+	border: 2px solid rgb(255, 255, 255);
+	border-top-right-radius: 10px;
+	border-bottom-left-radius: 10px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	/* #2 Forme */
+	width: 300px;
+	height: 100px;
+
+	/* #4 Margin - Padding */
+	margin: 10px;
+}
+
+/* ---PROFILE-HISTORY------------ */
+.profile-history-box {
+	/* #1 Éléments */
+	background-image: url('../resources/assets/ui/backgrounds/div-black2.png');
+	border: 6px double rgb(255, 255, 255);
+	border-top-right-radius: 10px;
+	border-bottom-right-radius: 10px;
+	display: grid;
+	grid-template-rows: 200px 1fr;
+
+	/* #3 Position */
+	grid-row: 1 / -1;
+}
+
+.profile-stats {
+	/* #1 Éléments */
+	background-image: url('../resources/assets/ui/backgrounds/div-black1.png');
+	border-bottom: 3px solid rgb(255, 255, 255);
+	border-top-right-radius: 10px;
+	display: grid;
+	grid-gap: 5px;
+
+	/* #4 Margin - Padding */
+	padding: 10px;
+}
+
+.profile-stats-firstLine {
+	/* #1 Éléments */
+	font-size: 30px;
+	text-wrap: nowrap;
+	text-align: center;
+	text-overflow: ellipsis;
+	overflow: hidden;
+
+	/* #2 Forme */
+	width: 100%;
+
+	/* #3 Position */
+	align-self: flex-end;
+	justify-self: center;
+}
+
+.profile-stats-firstLine:hover {
+	/* #2 Forme */
+	width: auto;
+}
+
+.profile-stats-secondLine {
+	/* #1 Éléments */
+	font-size: 25px;
+
+	/* #3 Position */
+	align-self: flex-start;
+	justify-self: center;
+}
+
+.profile-history {
+	/* #1 Éléments */
+	border-bottom-right-radius: 10px;
+	overflow-y: auto;
+}
+
+.profile-history-match {
+	/* #1 Éléments */
+	background-image: url('../resources/assets/ui/backgrounds/div-black2.png');
+	border-bottom: 2px solid rgb(255, 255, 255);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	/* #2 Forme */
+	height: 72px;
+}

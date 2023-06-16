@@ -10,7 +10,7 @@ const envKeys = Object.keys(env).reduce((prev, next) => {
 }, {});
 
 module.exports = {
-	entry: './src/index.tsx',
+	entry: './srcs/index.tsx',
 	module: {
 		rules: [
 			{
@@ -31,7 +31,7 @@ module.exports = {
 	plugins: [
 		new webpack.DefinePlugin(envKeys),
 		new HtmlWebpackPlugin({
-			template: './src/index.html',
+			template: './srcs/index.html',
 			filename: 'index.html',
 			inject: 'body'
 		})
@@ -43,7 +43,7 @@ module.exports = {
 	},
 	devtool: 'source-map',
 	devServer: {
-		static: { directory: path.join(__dirname, './src/resource/') },
+		static: { directory: path.join(__dirname, './srcs/resources/') },
 		hot: true,
 		historyApiFallback: true
 	}

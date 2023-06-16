@@ -1,0 +1,25 @@
+/*The column showing the contact info*/
+
+.chat-main-grid .contact-info {
+    display: grid;
+    grid-template-rows: 2.5fr 6fr;
+    border: 1px outset rgb(121, 199, 245);
+    border-radius: 5px;
+    height: 100%;
+}
+
+.header-contact,
+.body-contact {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.chat-main-grid .contact-info .header-contact {
+    border: 1px outset rgb(121, 199, 245);
+}
+
+.chat-main-grid .contact-info .body-contact {
+    border: 1px outset rgb(121, 199, 245);
+    /* overflow: auto; */
+}
