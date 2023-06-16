@@ -2,7 +2,6 @@
 
 import React, { useEffect, useRef } from 'react'
 import Phaser from 'phaser'
-import { Socket } from 'socket.io-client'
 import { gameSocket } from './Matchmaker.tsx'
 
 /* -------------------------ASSETS IMPORTS------------------------- */
@@ -157,9 +156,9 @@ function Party() {
 	function keysInitialisation(scene: Phaser.Scene) {
 		if (scene.input.keyboard) {
 			keys = {
-				up: scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.W),
+				up: scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.Z),
 				down: scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.S),
-				left: scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.A),
+				left: scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.Q),
 				right: scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.D)
 			}
 		}
@@ -397,9 +396,9 @@ function Party() {
 			rightPlayer.sprite?.setPosition(moveQueue.rightProps.xPos, moveQueue.rightProps.yPos)
 			ball?.sprite?.setPosition(moveQueue.ballProps.xPos, moveQueue.ballProps.yPos)
 
-			leftPlayer.sprite?.setVelocity(moveQueue.leftProps.xVel, moveQueue.leftProps.yVel)
+			/*leftPlayer.sprite?.setVelocity(moveQueue.leftProps.xVel, moveQueue.leftProps.yVel)
 			rightPlayer.sprite?.setVelocity(moveQueue.rightProps.xVel, moveQueue.rightProps.yVel)
-			ball?.sprite?.setVelocity(moveQueue.ballProps.xVel, moveQueue.ballProps.yVel)
+			ball?.sprite?.setVelocity(moveQueue.ballProps.xVel, moveQueue.ballProps.yVel)*/
 			moveQueue = undefined
 		}
 	}

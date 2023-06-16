@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { Worker } from 'worker_threads'
 import { Server, Socket } from 'socket.io';
 import { SubscribeMessage, WebSocketGateway, WebSocketServer, OnGatewayConnection, OnGatewayDisconnect } from '@nestjs/websockets';
+import { UserSocketsService } from '../chat/chat.userSocketsService.js';
 
 /* -------------------------TYPES------------------------- */
 
@@ -105,18 +106,19 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	@WebSocketServer()
 	server: Server;
 
-	readonly clientType: string = "PHASER-WEB-CLIENT"
-	readonly controllerType: string = "CONTROLLER"
+	private readonly clientType: string = "PHASER-WEB-CLIENT"
+	private readonly controllerType: string = "CONTROLLER"
+	private readonly UserSocketsService: UserSocketsService
 
-	matchQueue: string[] = []
+	private matchQueue: string[] = []
 
-	sockets: { [id: string]: socketInfo } = {}
+	private sockets: { [id: string]: socketInfo } = {}
 
-	players: { [id: string]: player } = {}
+	private players: { [id: string]: player } = {}
 
-	parties: { [partyId: string]: party } = {}
+	private parties: { [partyId: string]: party } = {}
 
-	skins: { [key: string]: skin } = {
+	private skins: { [key: string]: skin } = {
 		['player']: {
 			name: 'player',
 			width: 100,
@@ -296,7 +298,8 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		}	
 	}
 
-	@SubscribeMessage('playerStart')
+	
+	/*@SubscribeMessage('playerStart')
 	handlePlayerStart(socket: Socket) {
 		if (this.sockets[socket.id].type == this.clientType) {
 		}
@@ -306,11 +309,11 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	handlePlayerStop(socket: Socket) {
 		if (this.sockets[socket.id].type == this.clientType) {
 		}
-	}
+	}*/
 
-	/* -----------{ --------------CONTROLLER EVENT LISTENERS------------------------- */
+	/* -------------------------CONTROLLER EVENT LISTENERS------------------------- */
 
-	// Display a connected socket to the controller
+	/*// Display a connected socket to the controller
 	@SubscribeMessage('displaySocket')
 	handleDisplaySocket(socket: Socket, payload: string) {
 		if (this.sockets[socket.id].type == this.controllerType) {
@@ -330,5 +333,5 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 				socket.emit('displayLine', "Socket: " + socketId + " type: " + this.sockets[socketId].type)
 			socket.emit('endOfDisplay')
 		}
-	}
+	}*/
 }
