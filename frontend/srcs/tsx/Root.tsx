@@ -1,5 +1,6 @@
 import React, { useRef, useState, useLayoutEffect } from 'react'
 import { Routes, Route, useLocation, useNavigate } from 'react-router-dom'
+import { io } from 'socket.io-client';
 import Cookies from 'js-cookie';
 import { AnimatePresence, motion } from 'framer-motion'
 import { bouncyPopUp } from './ftMotion.tsx'
@@ -14,7 +15,6 @@ import Party from './Game.tsx'
 import Leader from './Leader.tsx'
 import ErrorPage from './ErrorPage.tsx'
 import '../css/Root.css'
-import { io } from 'socket.io-client';
 
 
 // --------IS-CONNECTED---------------------------------------------------- //

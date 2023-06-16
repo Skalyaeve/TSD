@@ -17,6 +17,8 @@ model User {
 	avatarFilename	String	@default("default.png")
 	rankPoints	Int	@default(0)
 	twoFactorAuth	Boolean	@default(false)
+	charRef	Character	@relation(fields: [character], references: [name])
+	character	String	@default("Boreas")
 
 	requester	FriendRequest[]	@relation("requester")
 	requestee	FriendRequest[]	@relation("requestee")
@@ -38,6 +40,7 @@ model User {
 	player1		Game[]	@relation("player1")
 	player2		Game[]	@relation("player2")
 	winner		Game[]	@relation("winner")
+
 }
 
 model FriendRequest {
@@ -82,11 +85,13 @@ model ChanMember {
 	@@id([chanId, member])
 }
 
+
 model ChanBan {
 	chanRef		Channel	@relation(fields: [chanId], references: [id])
 	chanId		Int
 	bannedRef	User	@relation(fields: [bannedUser], references: [id])
 	bannedUser	Int
+
 
 	@@id([chanId, bannedUser])
 }
@@ -125,6 +130,17 @@ model Game {
 	winner		Int
 }
 
+model Character {
+	name	String	@id
+	story	String
+	hp	Int
+	attack	Int
+	defense	Int
+	speed	Int
+	rank	Int
+
+	owner	User[]
+}
 
 enum ChanType {
 	PUBLIC

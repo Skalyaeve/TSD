@@ -7,6 +7,7 @@ import { ChatModule } from './chat/chat.module.js';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule } from '@nestjs/config';
 import { ChannelModule } from './channel/channel.module.js';
+import { CharacterModule } from './character/character.module.js';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { ChannelModule } from './channel/channel.module.js';
     ConfigModule,
     GameModule,
     ChannelModule,
+    CharacterModule,
   ]
 })
 export class AppModule { }

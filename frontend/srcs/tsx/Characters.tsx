@@ -156,8 +156,9 @@ const Spell: React.FC<SpellProps> = ({ content }) => {
 // --------CHARACTER------------------------------------------------------- //
 interface CharacterProps {
 	selected: number
+	characters: {}
 }
-const Character: React.FC<CharacterProps> = ({ selected }) => {
+const Character: React.FC<CharacterProps> = ({ selected, characters }) => {
 	// ----ANIMATIONS------------------------- //
 	const boxMotion = fade({ inDuration: 0.3, outDuration: 0.3 })
 	const fromTop = yMove({ from: -150, inDuration: 0.7 })
@@ -212,11 +213,35 @@ const Character: React.FC<CharacterProps> = ({ selected }) => {
 
 // --------CHARACTERS------------------------------------------------------ //
 const Characters: React.FC = () => {
+	// ----VALUES----------------------------- //
+	let characters: Object = {}
+
 	// ----REFS------------------------------- //
 	const swapping = useRef(false)
 
 	// ----STATES----------------------------- //
 	const [selected, setSelected] = useState(1)
+
+	// ----EFFECTS---------------------------- //
+	useEffect(() => {
+		const fetchData = async () => {
+			try {
+				const userId = 'characters/all'
+				const response = await fetch(`http://localhost:3000/${userId}`)
+				if (response.ok) {
+					characters = await response.json()
+					const arr = Object.values(characters)
+					for (let c of arr) {
+						console.log(c.name);
+					}
+				} else
+					console.error(`[ERROR] fetch('http://localhost:3000/${userId}') failed`)
+			} catch (error) {
+				console.error('[ERROR] ', error)
+			}
+		}
+		fetchData()
+	}, [])
 
 	// ----ANIMATIONS------------------------- //
 	const boxMotion = fade({ inDuration: 1 })
@@ -227,7 +252,7 @@ const Characters: React.FC = () => {
 	// ----RENDER----------------------------- //
 	return <motion.main className={boxName} {...boxMotion}>
 		<CharBoxes swapping={swapping} setSelected={setSelected} />
-		<Character selected={selected} />
+		<Character selected={selected} characters={characters} />
 	</motion.main>
 }
 export default Characters
