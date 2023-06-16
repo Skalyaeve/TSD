@@ -1,7 +1,7 @@
 {
 	// Spécifie les options de compilation TypeScript
 	"compilerOptions": {
-		// Le code sera compilé en utilisant la syntaxe ECMAScript 2022
+		// Le code sera compilé en utilisant la syntaxe ESNext
 		"module": "ESNext",
 		// Définit la version d'ECMAScript que le compilateur TypeScript doit générer en JavaScript
 		"target": "es2022",
@@ -22,6 +22,6 @@
 	},
 	// Spécifie les fichiers à inclure dans la compilation
 	"include": [
-		"./src/**/*"
+		"./srcs/**/*"
 	],
 }

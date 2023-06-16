@@ -1,0 +1,237 @@
+/* ------------------------------ */
+/* #1 Éléments */
+/* #2 Forme */
+/* #3 Position */
+/* #4 Margin - Padding */
+/* #5 Animations */
+/* ------------------------------ */
+
+/* ---LEADER--------------------- */
+.leader {
+	/* #1 Éléments */
+	background-image: url('../resources/assets/ui/backgrounds/div-black2.png');
+	border: 6px double rgb(255, 255, 255);
+	border-radius: 10px;
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+
+	/* #4 Margin - Padding */
+	margin: 10px;
+	margin-left: 0;
+	padding: 0;
+}
+
+.leader-btn {
+	/* #1 Éléments */
+	background-image: url('../resources/assets/ui/backgrounds/button-black1-60x45.png');
+	border: 2px solid rgb(255, 255, 255);
+
+	/* #2 Forme */
+	width: 60px;
+	height: 45px;
+}
+
+/* ---LEADER-HEAD---------------- */
+.leader-head {
+	/* #1 Éléments */
+	border-bottom: 3px solid rgb(255, 255, 255);
+	display: flex;
+	flex-direction: row-reverse;
+	align-items: flex-end;
+
+	/* #4 Margin - Padding */
+	padding: 10px;
+}
+
+.leader-input {
+	/* #1 Éléments */
+	border: 2px solid rgb(255, 255, 255);
+	border-top-left-radius: 5px;
+	border-bottom-left-radius: 5px;
+
+	/* #2 Forme */
+	height: 45px;
+}
+
+.leader-input-btn {
+	/* #1 Éléments */
+	border-top-right-radius: 5px;
+	border-bottom-right-radius: 5px;
+
+	/* #4 Margin - Padding */
+	margin-left: 5px;
+	margin-right: 15px;
+}
+
+.leader-findTop-btn {
+	/* #1 Éléments */
+	background-image: url('../resources/assets/ui/backgrounds/button-black1-120x45.png');
+	border-top-left-radius: 5px;
+	border-bottom-left-radius: 5px;
+
+	/* #2 Forme */
+	width: 120px;
+}
+
+.leader-findMe-btn {
+	/* #1 Éléments */
+	background-image: url('../resources/assets/ui/backgrounds/button-black1-120x45.png');
+	border-top-right-radius: 5px;
+	border-bottom-right-radius: 5px;
+
+	/* #2 Forme */
+	width: 120px;
+
+	/* #4 Margin - Padding */
+	margin-left: 5px;
+	margin-right: 15px;
+}
+
+.leader-up-btn {
+	/* #1 Éléments */
+	border-top-left-radius: 5px;
+	border-bottom-left-radius: 5px;
+
+	/* #4 Margin - Padding */
+	margin-right: 5px;
+}
+
+.leader-down-btn {
+	/* #1 Éléments */
+	border-top-right-radius: 5px;
+	border-bottom-right-radius: 5px;
+}
+
+/* ---LEADER-BODY---------------- */
+.leader-body {
+	/* #1 Éléments */
+	overflow-x: hidden;
+	overflow-y: auto;
+
+	/* #2 Forme */
+	height: 100%;
+}
+
+.leader-boardHead {
+	/* #1 Éléments */
+	background-image: url('../resources/assets/ui/backgrounds/div-black1.png');
+	border-bottom: 3px solid rgb(255, 255, 255);
+	display: flex;
+	cursor: pointer;
+
+	/* #2 Forme */
+	height: 65px;
+
+	/* #3 Position */
+	position: sticky;
+	z-index: 1;
+	top: 0;
+}
+
+.leader-col {
+	/* #1 Éléments */
+	font-size: 24px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	/* #2 Forme */
+	width: 14%;
+	height: 100%;
+}
+
+.leader-col:first-child {
+	/* #2 Forme */
+	width: 25%;
+	min-width: 225px;
+}
+
+.leader-col:nth-child(2) {
+	/* #2 Forme */
+	min-width: 120px;
+}
+
+.leader-col:last-child {
+	/* #2 Forme */
+	width: 19%;
+}
+
+.leader-col--bigFont {
+	/* #1 Éléments */
+	font-size: 34px;
+}
+
+.leader-boardHead .leader-col:first-child {
+	/* #1 Éléments */
+	cursor: auto;
+}
+
+/* ---LEADER-USR----------------- */
+.leader-usr {
+	/* #1 Éléments */
+	background-image: url('../resources/assets/ui/backgrounds/div-black2.png');
+	border-bottom: 2px solid rgb(255, 255, 255);
+	display: flex;
+
+	/* #2 Forme */
+	height: 80px;
+}
+
+.leader-usr-rank {
+	/* #1 Éléments */
+	font-size: 22px;
+	text-align: center;
+	text-overflow: ellipsis;
+	overflow: hidden;
+
+	/* #2 Forme */
+	width: 55px;
+}
+
+.leader-usr-rank:hover {
+	/* #1 Éléments */
+	overflow: visible;
+
+	/* #3 Position */
+	z-index: 1;
+}
+
+.leader-usr-pic {
+	/* #1 Éléments */
+	border: 2px solid rgb(255, 255, 255);
+	border-top-right-radius: 5px;
+	border-bottom-left-radius: 5px;
+
+	/* #2 Forme */
+	width: 65px;
+	height: 65px;
+}
+
+.leader-usr-link {
+	/* #1 Éléments */
+	font-size: 24px;
+	text-overflow: ellipsis;
+	overflow: hidden;
+
+	/* #2 Forme */
+	width: calc(100% - 120px);
+
+	/* #4 Margin - Padding */
+	padding-left: 15px;
+}
+
+.leader-usr-link:hover {
+	/* #1 Éléments */
+	overflow: visible;
+
+	/* #3 Position */
+	position: relative;
+	z-index: 1;
+}
+
+.leader-usr .leader-col:first-child {
+	/* #1 Éléments */
+	justify-content: flex-start;
+	cursor: pointer;
+}

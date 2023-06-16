@@ -4,7 +4,7 @@
 	"author": "pcamaren rbourdil jchene anguinau",
 	"repository": "https://github.com/Skalyaeve/TSD",
 	"type": "module",
-	"main": "./src/index.jsx",
+	"main": "./srcs/index.jsx",
 	"scripts": {
 		"start": "npm run getIp && npm run dev",
 		"dev": "webpack serve --mode=development",

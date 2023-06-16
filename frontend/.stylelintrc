@@ -2,7 +2,7 @@
 	"extends": "stylelint-config-standard",
 	"rules": {
 		"max-nesting-depth": 3,
-		"selector-class-pattern": "^[a-zA-Z]+(?:-[a-zA-Z]+)*(?:--[a-zA-Z]+)*$",
+		"selector-class-pattern": "*",
 		"indentation": "tab",
 		"number-leading-zero": "always",
 		"color-named": "never",

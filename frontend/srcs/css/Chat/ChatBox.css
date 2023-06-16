@@ -1,0 +1,47 @@
+/*Column showing the actual chat, header, messages and text input*/
+
+.chat-main-grid .chatbox {
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    /* Header, Messages, Text Input */
+    /* grid-template-rows: 0.5fr 6.5fr 0.7fr; */
+    /* border: 1px outset green; */
+    /* height: 100%; */
+}
+
+.chat-main-grid .chatbox .chat-header {
+    display: flex;
+    border: none;
+    align-items: center;
+    justify-content: left;
+    gap: 10px;
+    padding: 10px;
+    background: rgba(0, 0, 0, 0.4);
+
+}
+
+.chat-header-btn {
+    border-radius: 50%;
+    background: rgba(255, 253, 253, 0.0);
+
+}
+
+.chat-header-photo {
+
+    border-radius: 50%;
+    width: 80px;
+    height: 80px;
+}
+
+.chat-main-grid .chatbox .chat-messages {
+    border: 1px outset rgb(121, 199, 245, 0.1);
+    max-height: 1100px;
+    overflow-y: scroll;
+    /* overflow-y: scroll; */
+    scroll-behavior: smooth;
+}
+
+.chat-main-grid .chatbox .chat-input-text {
+    border: 1px outset rgb(121, 199, 245, 0.1);
+    background: rgba(0, 0, 0, 0.4);
+}

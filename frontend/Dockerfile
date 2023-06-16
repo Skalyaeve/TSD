@@ -10,7 +10,7 @@ RUN		apk update			\
 COPY	*.json	/front
 COPY	*.cjs	/front
 COPY	.babel*	/front
-COPY	src		/front/src
+COPY	srcs	/front/srcs
 COPY	dist	/front/dist
 
 WORKDIR	/front
