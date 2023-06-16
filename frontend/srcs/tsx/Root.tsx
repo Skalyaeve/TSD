@@ -106,7 +106,8 @@ const Root: React.FC = () => {
 		}
 		else {
 			if (location.pathname != '/login') {
-				window.location.href = '/login'
+				try { window.location.href = '/login' }
+				catch { console.log("[ERROR] Couldn't redirect to /login") }
 				setShowHeader(false)
 			}
 			if (socket != undefined)

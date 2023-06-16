@@ -53,14 +53,11 @@ const Matchmaker: React.FC = () => {
 
 	const startGameSockets = () => {
 		gameSocket = io("http://localhost:3000/game")
-		console.log("Requesting matchmaking")
-
 		gameSocket.on('Welcome', () => {
 			gameSocket?.emit('identification', "PHASER-WEB-CLIENT")
 			setMatchmaking(true)
 			console.log("Ongoing matchmaging")
 		})
-
 		gameSocket.on('matched', () => {
 			console.log('Opponent found, starting game')
 			setMatchmaking(false)
@@ -68,7 +65,6 @@ const Matchmaker: React.FC = () => {
 			localStorage.setItem('inGame', '1')
 			navigate('/game')
 		})
-
 		gameSocket.on('unmatched', () => {
 			console.log("Succesfully stoped matchmaking")
 			gameSocket?.disconnect()
@@ -94,19 +90,14 @@ const Matchmaker: React.FC = () => {
 	// ----HANDLERS--------------------------- //
 	const toggleMatchmaker = () => {
 		console.log("test")
-		if (!matchmaking && !inGame) {
-			console.log("toggling matchmaker")
+		if (!matchmaking && !inGame)
 			startGameSockets()
-		}
-		else if (matchmaking && !inGame) {
-			console.log("cancelling matchmaking")
+		else if (matchmaking && !inGame)
 			stopMatchmaking()
-		}
 		else if (inGame) {
 			setInGame(false)
-			localStorage.removeItem('inGame')
-			navigate('/')
 			localStorage.setItem('inGame', '0')
+			navigate('/')
 		}
 	}
 	const matchmakerBtnHdl = { onMouseUp: toggleMatchmaker }
