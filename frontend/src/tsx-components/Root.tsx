@@ -82,7 +82,6 @@ const Root: React.FC = () => {
 	const [showHeader, setShowHeader] = useState(false)
 
 	// ----EFFECTS---------------------------- //
-
 	const checkConnection = async () => {
 		if (await isConnected()) {
 			if (location.pathname == '/login') {
@@ -104,8 +103,7 @@ const Root: React.FC = () => {
 				window.location.href = '/login'
 				setShowHeader(false)
 			}
-			if (socket != undefined)
-				socket.disconnect()
+			socket?.disconnect()
 		}
 	}
 
