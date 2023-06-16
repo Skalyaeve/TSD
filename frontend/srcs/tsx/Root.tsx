@@ -14,7 +14,7 @@ import Party from './Game.tsx'
 import Leader from './Leader.tsx'
 import ErrorPage from './ErrorPage.tsx'
 import '../css/Root.css'
-import { io } from 'socket.io-client';
+import { Socket, io } from 'socket.io-client';
 
 
 // --------IS-CONNECTED---------------------------------------------------- //
@@ -49,24 +49,6 @@ const LoginBtn: React.FC = () => {
 
 	// ----HANDLERS--------------------------- //
 	const connect = async () => {
-		let address
-		let clientID
-		let redirectURI
-		if (process.env.OA42_API_ADDR)
-			address = process.env.OA42_API_ADDR
-		else return
-		if (process.env.OA42_API_KEY)
-			clientID = encodeURIComponent(process.env.OA42_API_KEY)
-		else return
-		if (process.env.OA42_API_REDIR)
-			redirectURI = encodeURIComponent(process.env.OA42_API_REDIR)
-		else return
-
-		const urlBase = `${address}?response_type=code`
-		const urlArg1 = `&redirect_uri=${redirectURI}`
-		const urlArg2 = `&client_id=${clientID}`
-		window.location.href = urlBase + urlArg1 + urlArg2
-
 		const servID = 'http://localhost:3000'
 		const path = '/auth/42/login'
 		try {
@@ -93,52 +75,47 @@ const LoginBtn: React.FC = () => {
 }
 
 // ----SOCKET----------------------------- //
-
-export const socket = io("http://localhost:3000/chat", {
-	transports: ["websocket"],
-	withCredentials: true,
-	//   autoConnect: false,
-});
+export let socket: Socket | undefined = undefined
 
 // --------ROOT------------------------------------------------------------ //
 const Root: React.FC = () => {
+
 	// ----ROUTER----------------------------- //
 	const location = useLocation()
 	const navigate = useNavigate()
 
 	// ----STATES----------------------------- //
-	const [logged, setLogged] = useState(false)
 	const [showHeader, setShowHeader] = useState(false)
 
 	// ----EFFECTS---------------------------- //
-	useLayoutEffect(() => {
-		const checkConnection = async () => {
-			const connected = await isConnected()
-			if (connected) setLogged(true)
-			else navigate("/login")
-		}
-		//checkConnection()
-		setLogged(true)
-	}, [])
-
-	useLayoutEffect(() => {
-		if (logged) {
-			if (location.pathname === '/login') {
+	const checkConnection = async () => {
+		if (await isConnected()) {
+			if (location.pathname == '/login') {
 				navigate('/')
 				const timer = setTimeout(() => setShowHeader(true), 500)
 				return () => clearTimeout(timer)
 			}
 			else setShowHeader(true)
+			if (socket == undefined) {
+				socket = io("http://localhost:3000/chat", {
+					transports: ["websocket"],
+					withCredentials: true,
+					//   autoConnect: false,
+				});
+			}
 		}
-		else if (!logged) {
-			location.pathname !== '/login' && navigate('/login')
-			setShowHeader(false)
+		else {
+			if (location.pathname != '/login') {
+				window.location.href = '/login'
+				setShowHeader(false)
+			}
+			if (socket != undefined)
+				socket.disconnect()
 		}
-	}, [logged])
+	}
 
 	useLayoutEffect(() => {
-		if (logged && localStorage.getItem('inGame') === '1')
-			navigate('/game')
+		checkConnection()
 	}, [location.pathname])
 
 	// ----CLASSNAMES------------------------- //

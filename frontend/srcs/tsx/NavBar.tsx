@@ -19,10 +19,10 @@ const navBarLinkMotion = (from: number, index: number) => ({
 	),
 	whileHover: {
 		scale: 1.05,
-		borderTopLeftRadius: index ? 5 : 10,
-		borderTopRightRadius: index ? 5 : 10,
-		borderBottomLeftRadius: index < 0 ? 10 : 5,
-		borderBottomRightRadius: index < 0 ? 10 : 5,
+		borderTopLeftRadius: index ? '5px' : '10px',
+		borderTopRightRadius: index ? '5px' : '10px',
+		borderBottomLeftRadius: index < 0 ? '10px' : '5px',
+		borderBottomRightRadius: index < 0 ? '10px' : '5px',
 	}
 })
 
