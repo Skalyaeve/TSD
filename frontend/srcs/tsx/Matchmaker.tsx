@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { Timer } from '../tsx-utils/ftNumbers.tsx'
-import { fade, heightChangeByPx, bouncyYMove } from '../tsx-utils/ftMotion.tsx'
+import { Timer } from './ftNumbers.tsx'
+import { fade, heightChangeByPx, bouncyYMove } from './ftMotion.tsx'
+import { Socket, io } from 'socket.io-client'
 
 // --------GAME-INFOS------------------------------------------------------ //
 export const GameInfos: React.FC = () => {
@@ -37,6 +38,8 @@ export const GameInfos: React.FC = () => {
 }
 
 // --------MATCHMAKER------------------------------------------------------ //
+export let gameSocket: Socket | undefined = undefined
+
 const Matchmaker: React.FC = () => {
 	// ----ROUTER----------------------------- //
 	const navigate = useNavigate()
@@ -48,28 +51,63 @@ const Matchmaker: React.FC = () => {
 		return value === '1'
 	})
 
-	// ----EFFECTS---------------------------- //
-	useEffect(() => {
-		if (!matchmaking) return
+	const startGameSockets = () => {
+		gameSocket = io("http://localhost:3000/game")
+		console.log("Requesting matchmaking")
 
-		const timer = setTimeout(() => {
+		gameSocket.on('Welcome', () => {
+			gameSocket?.emit('identification', "PHASER-WEB-CLIENT")
+			setMatchmaking(true)
+			console.log("Ongoing matchmaging")
+		})
+
+		gameSocket.on('matched', () => {
+			console.log('Opponent found, starting game')
 			setMatchmaking(false)
 			setInGame(true)
-			navigate('/game')
 			localStorage.setItem('inGame', '1')
-		}, 2000)
-		return () => clearTimeout(timer)
+			navigate('/game')
+		})
+
+		gameSocket.on('unmatched', () => {
+			console.log("Succesfully stoped matchmaking")
+			gameSocket?.disconnect()
+			gameSocket = undefined
+			setMatchmaking(false)
+		})
+	}
+
+	const stopMatchmaking = () => {
+		console.log("Requesting stop matchmaking")
+		gameSocket?.emit('stopMatchmaking')
+	}
+
+	// ----EFFECTS---------------------------- //
+	useEffect(() => {
+		console.log("matchmaking:", matchmaking)
 	}, [matchmaking])
+
+	useEffect(() => {
+		console.log("inGame:", inGame)
+	}, [inGame])
 
 	// ----HANDLERS--------------------------- //
 	const toggleMatchmaker = () => {
-		if (!matchmaking && !inGame) setMatchmaking(true)
+		console.log("test")
+		if (!matchmaking && !inGame) {
+			console.log("toggling matchmaker")
+			startGameSockets()
+		}
+		else if (matchmaking && !inGame) {
+			console.log("cancelling matchmaking")
+			stopMatchmaking()
+		}
 		else if (inGame) {
 			setInGame(false)
+			localStorage.removeItem('inGame')
 			navigate('/')
 			localStorage.setItem('inGame', '0')
 		}
-		else setMatchmaking(false)
 	}
 	const matchmakerBtnHdl = { onMouseUp: toggleMatchmaker }
 
@@ -80,9 +118,24 @@ const Matchmaker: React.FC = () => {
 			extra: -10,
 			inDuration: 0.7,
 			outDuration: 0.4,
-		})
+		}),
+		whileHover: {
+			scale: 1.05,
+			borderTopLeftRadius: 5,
+			borderTopRightRadius: 5,
+		}
 	}
 
 	// ----CLASSNAMES------------------------- //
 	const boxName = 'matchmaker'
 	const txtName = `${boxName}-txt custom-txt`
+
+	// ----RENDER----------------------------- //
+	return <motion.button
+		className={boxName}
+		{...matchmakerBtnHdl}
+		{...boxMotion}>
+		<div className={txtName}>{matchmaking && <Timer />}</div>
+	</motion.button>
+}
+export default Matchmaker

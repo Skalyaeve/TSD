@@ -1,9 +1,8 @@
-import { useMemo } from 'react';
 import React, { useRef, useState, useLayoutEffect } from 'react'
 import { Routes, Route, useLocation, useNavigate } from 'react-router-dom'
 import Cookies from 'js-cookie';
 import { AnimatePresence, motion } from 'framer-motion'
-import { bouncyPopUp, bouncyYMove } from '../tsx-utils/ftMotion.tsx'
+import { bouncyPopUp } from './ftMotion.tsx'
 import NavBar from './NavBar.tsx'
 import Chat from './Chat.tsx'
 import Matchmaker from './Matchmaker.tsx'
@@ -15,9 +14,7 @@ import Party from './Game.tsx'
 import Leader from './Leader.tsx'
 import ErrorPage from './ErrorPage.tsx'
 import '../css/Root.css'
-import background from '../resource/background.png';
 import { io } from 'socket.io-client';
-import Modal from 'react-modal';
 
 
 // --------IS-CONNECTED---------------------------------------------------- //
@@ -46,10 +43,7 @@ const isConnected = async () => {
 }
 
 // --------LOGIN-BTN------------------------------------------------------- //
-interface LogginBtnProps {
-	setLogged: React.Dispatch<React.SetStateAction<boolean>>
-}
-const LoginBtn: React.FC<LogginBtnProps> = ({ setLogged }) => {
+const LoginBtn: React.FC = () => {
 	// ----REFS------------------------------- //
 	const animating = useRef(false)
 
@@ -123,7 +117,8 @@ const Root: React.FC = () => {
 			if (connected) setLogged(true)
 			else navigate("/login")
 		}
-		checkConnection()
+		//checkConnection()
+		setLogged(true)
 	}, [])
 
 	useLayoutEffect(() => {
@@ -153,14 +148,14 @@ const Root: React.FC = () => {
 	return <>
 		<AnimatePresence>
 			{showHeader && <header className={headerName}>
-				<NavBar setLogged={setLogged} />
-				<Chat />
+				<NavBar />
+				<Chat location={location.pathname} />
 				<Matchmaker />
 			</header>}
 		</AnimatePresence>
 		<AnimatePresence mode='wait'>
 			<Routes location={location} key={location.pathname}>
-				<Route path='/login' element={<LoginBtn setLogged={setLogged} />} />
+				<Route path='/login' element={<LoginBtn />} />
 				<Route path='/' element={<Home />} />
 				<Route path='/profile' element={<AccountInfos />} />
 				<Route path='/profile/friends' element={<Friends />} />
