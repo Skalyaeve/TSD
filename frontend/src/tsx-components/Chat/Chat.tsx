@@ -17,6 +17,7 @@ import ChatHeader from './ChatHeader.tsx'
 import HeaderContactInfo from './HeaderContactInfo.tsx'
 import ChatChannels from './ChatChannels.tsx'
 import DmHandler from './DmHandler.tsx'
+import ChatInfo from './ChatInfo.tsx'
 import axios from 'axios'
 
 function Chat({}) {
@@ -318,7 +319,7 @@ function Chat({}) {
     return (
         <div className={`chat-main-grid ${isOpen?"open":"close"}`}>
             <div className="manage-rooms">
-                <DmHandler allUsers={allUsers} setSelectedContact={setSelectedContact} setSelectedChannel={setSelectedChannel}/>
+                <DmHandler allUsers={allUsers} setAllUsers={setAllUsers} setSelectedContact={setSelectedContact} setSelectedChannel={setSelectedChannel}/>
                 <ChatChannels userInfo={userInfo} allChannelsbyUser={allChannelsbyUser} allChannelsNotJoined={allChannelsNotJoined} setAllChannelsNotJoined={setAllChannelsNotJoined} setAllChannelsbyUser={setAllChannelsbyUser }setSelectedChannel={setSelectedChannel} setSelectedContact={setSelectedContact}/>
             </div>
             <div className="chatbox">
@@ -334,7 +335,7 @@ function Chat({}) {
             <div className={`contact-info ${isOpen?"open":"close"}`}>
                 <HeaderContactInfo chatName={selectedContact?.nickname || selectedChannel?.name ||'No conversation selected' }/>
                 <div className='body-contact'>
-                    body of contact info
+                    <ChatInfo userInfo={userInfo} selectedChannel={selectedChannel} selectedContact={selectedContact}/>
                 </div>
             </div>
         </div>

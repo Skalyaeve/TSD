@@ -19,7 +19,7 @@ interface Channel {
 interface ChanMessagesProps {
     messages: ChanMessage[];
     userInfo: {id: number; email: string; nickname: string; avatarFilename: string};
-    selectedChannel: Channel;
+    selectedChannel: Channel | null;
 }
 export default function ChatMessages({messages, userInfo, selectedChannel} : ChanMessagesProps) {
     return (

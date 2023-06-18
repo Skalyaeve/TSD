@@ -77,6 +77,7 @@ model ChanMember {
 	chanId		Int
 	memberRef	User			@relation(fields: [member], references: [id])
 	member		Int
+	nickname	String?
 	isAdmin		Boolean		@default(false)
 	muteTime	DateTime	@default(now())
 

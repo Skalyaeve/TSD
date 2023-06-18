@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { BsSearchHeart } from "react-icons/bs";
 import { BsPlusCircle } from "react-icons/bs";
 import { AiOutlinePlusCircle } from "react-icons/ai";
+import { FiRefreshCw } from "react-icons/fi";
+
 import Modal from 'react-modal';
 import "../../css/Chat/ChannelCreate.css"
 import { socket } from '../Root.tsx'
@@ -238,8 +240,8 @@ export default function ChatChannels({
             <h1>
                [Channels] 
             </h1>
-            <button onClick={fetchChannels}>
-                Refresh
+            <button className="Chan-refresh-btn" onClick={fetchChannels}>
+                <FiRefreshCw/>
             </button>
         </div>
         <div className="Chan-find">

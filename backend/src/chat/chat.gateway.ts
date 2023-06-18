@@ -20,6 +20,7 @@ import { promises } from 'dns';
 import { channel } from 'diagnostics_channel';
 import { type } from 'os';
 import * as bcrypt from 'bcrypt';
+import { disconnect } from 'process';
 
 
 @WebSocketGateway({cors:
@@ -293,11 +294,13 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
   @SubscribeMessage('GetChannelMembers')
   async handleChannelMembers(
       @ConnectedSocket() client: Socket,
-      @MessageBody() chanId: number) : Promise<void>
+      @MessageBody() data: {chanId: number, userId: number}) : Promise<void>
   {
     try{
+      const {chanId, userId} = data;
       const members = await this.chatService.findAllMembersByChanID(chanId);
-      client.emit('MembersofChannelFound', members);
+      const userRoomId = 'userID_' + userId.toString() + '_room';
+      this.server.to(userRoomId).emit('MembersofChannelFound', members);
     }
     catch (error){
       console.log(error);
@@ -725,19 +728,36 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
         nickname,
         avatarFilename,
       });
-  
-      // client.emit('userInfo', {
-      //   id,
-      //   email,
-      //   nickname,
-      //   avatarFilename,
-      // });
     }
     catch (error) {
       console.log(error);
       throw new WsException(error.message || 'Could get user info');
     }
   }
+
+  @SubscribeMessage('getUserStatus')
+  async handleGetUserStatus(@ConnectedSocket() client: Socket,
+  @MessageBody() data: {userId: number; memberId:number}): Promise<void> {
+    try {
+      const { userId, memberId } = data;
+      const userSockets = this.userSocketsService.getUserSocketIds(memberId);
+      const userRoomId = 'userID_' + userId.toString() + '_room';
+  
+      if (userSockets.length === 0)
+      {
+        this.server.to(userRoomId).emit('foundUserStatus', { status: false, memberId });
+      }
+      else {
+        this.server.to(userRoomId).emit('foundUserStatus', { status: true, memberId });
+      }
+  
+    }
+    catch (error) {
+      console.log(error);
+      throw new WsException(error.message || 'Could not get user info');
+    }
+  }
+  
 
   @SubscribeMessage('getUserStartsBy')
   async handleGetUsersStartBy(
