@@ -15,6 +15,11 @@ import blank__Sheet from '../resources/assets/game/blank.png'
 import black__Sheet from '../resources/assets/game/black.png'
 import ball__Sheet from '../resources/assets/game/basicBall.png'
 
+import Boreas_front_Sheet from '../resources/assets/game/character/Boreas/front.png'
+import Boreas_back_Sheet from '../resources/assets/game/character/Boreas/back.png'
+import Boreas_left_Sheet from '../resources/assets/game/character/Boreas/left.png'
+import Boreas_right_Sheet from '../resources/assets/game/character/Boreas/right.png'
+
 
 /* -------------------------TYPES------------------------- */
 
@@ -39,6 +44,17 @@ interface skin {
 	xOffset: number								// Skin X offset between sprite and hitbox
 	yOffset: number								// Skin Y offset between sprite and hitbox
 	scaleFactor: number							// Skin sprite scale factor
+}
+
+interface newSkin {
+	name: string
+	frontSheet: string
+	backSheet: string
+	leftSheet: string
+	rightSheet: string
+	xSize: number
+	ySize: number
+	scaleFactor: number
 }
 
 // Players
@@ -78,17 +94,10 @@ interface newPropsToClient {
 	ballProps: objectProps						// Ball properties
 }
 
-// Player update (sent by the client to the back)
-interface playerUpdateFromClient {
-	keyStates: keyStates						// Player key states
-}
-
 // Properties of a game object (sent to the client)
 interface objectProps {
 	xPos: number
 	yPos: number
-	xVel: number
-	yVel: number
 }
 
 interface creationQueue {
@@ -113,7 +122,7 @@ function Party() {
 	// Canvas constants
 	const screenWidth: number = 1920
 	const screenHeight: number = 1080
-	const gameSpeed: number = 1000
+	const skinFrameNumber: number = 3
 
 	// Keyboard keys
 	let keys: keys
@@ -138,7 +147,7 @@ function Party() {
 	let ball: ball | undefined = undefined
 
 	// Skins list
-	let skins: { [key: string]: skin } = {}
+	let skins: { [key: string]: newSkin } = {}
 
 	// Player event queues
 	let creationQueue: creationQueue = {
@@ -147,7 +156,6 @@ function Party() {
 	}
 	let moveQueue: newPropsToClient | undefined = undefined
 
-	let animationQueue: string[] = []
 	let deletionQueue: string[] = []
 
 	/****** SCENE PRELOADING ******/
@@ -156,9 +164,9 @@ function Party() {
 	function keysInitialisation(scene: Phaser.Scene) {
 		if (scene.input.keyboard) {
 			keys = {
-				up: scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.Z),
+				up: scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.W),
 				down: scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.S),
-				left: scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.Q),
+				left: scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.A),
 				right: scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.D)
 			}
 		}
@@ -166,65 +174,25 @@ function Party() {
 
 	// Initialise all skins of the scene
 	function skinsInitialisation(scene: Phaser.Scene) {
-		skins['player'] = {
-			name: 'player',
-			idleSheet: playerIdle__Sheet,
-			runSheet: playerRun__Sheet,
-			nbFrames: 2,
-			xSize: 100,
-			ySize: 175,
-			xResize: 100,
-			yResize: 175,
-			xOffset: 0,
-			yOffset: 0,
-			scaleFactor: 1
-		}
-		skins['mage'] = {
-			name: 'mage',
-			idleSheet: mageIdle__Sheet,
-			runSheet: mageRun__Sheet,
-			nbFrames: 8,
-			xSize: 250,
-			ySize: 250,
-			xResize: 50,
-			yResize: 52,
-			xOffset: 100,
-			yOffset: 114,
-			scaleFactor: 2.5
-		}
-		skins['black'] = {
-			name: 'black',
-			idleSheet: black__Sheet,
-			runSheet: black__Sheet,
-			nbFrames: 2,
-			xSize: 125,
-			ySize: 250,
-			xResize: 125,
-			yResize: 250,
-			xOffset: 0,
-			yOffset: 0,
-			scaleFactor: 2.5
-		}
-		skins['blank'] = {
-			name: 'blank',
-			idleSheet: blank__Sheet,
-			runSheet: blank__Sheet,
-			nbFrames: 2,
-			xSize: 125,
-			ySize: 250,
-			xResize: 125,
-			yResize: 250,
-			xOffset: 0,
-			yOffset: 0,
-			scaleFactor: 2.5
+		skins['Boreas'] = {
+			name: 'Boreas',
+			frontSheet: Boreas_front_Sheet,
+			backSheet: Boreas_back_Sheet,
+			leftSheet: Boreas_left_Sheet,
+			rightSheet: Boreas_right_Sheet,
+			xSize: 16,
+			ySize: 20,
+			scaleFactor: 5
 		}
 		for (let skinName in skins) {
-			scene.load.spritesheet(skinName + 'Idle', skins[skinName].idleSheet, { frameWidth: skins[skinName].xSize, frameHeight: skins[skinName].ySize })
-			scene.load.spritesheet(skinName + 'Run', skins[skinName].runSheet, { frameWidth: skins[skinName].xSize, frameHeight: skins[skinName].ySize })
+			scene.load.spritesheet(skinName + '_front', skins[skinName].frontSheet, { frameWidth: skins[skinName].xSize, frameHeight: skins[skinName].ySize })
+			scene.load.spritesheet(skinName + '_back', skins[skinName].backSheet, { frameWidth: skins[skinName].xSize, frameHeight: skins[skinName].ySize })
+			scene.load.spritesheet(skinName + '_left', skins[skinName].leftSheet, { frameWidth: skins[skinName].xSize, frameHeight: skins[skinName].ySize })
+			scene.load.spritesheet(skinName + '_right', skins[skinName].rightSheet, { frameWidth: skins[skinName].xSize, frameHeight: skins[skinName].ySize })
 		}
 	}
 
-	function ballInitialisation(scene: Phaser.Scene){
+	function ballInitialisation(scene: Phaser.Scene) {
 		scene.load.spritesheet('ball', ball__Sheet, { frameWidth: 52, frameHeight: 52 })
 	}
 
@@ -236,36 +204,28 @@ function Party() {
 			xDir: (construct.side == 'left' ? 'right' : 'left'),
 			lastMove: "none",
 			move: "idle",
-			skin: "mage",
+			skin: construct.skin,
 			anim: "IdleAnim"
 		}
 		let skin = skins[newPlayer.skin]
 		let xPos = (construct.side == 'left' ? 250 : 1670)
 		let yPos = 540
-		newPlayer.sprite = scene.physics.add.sprite(xPos, yPos, newPlayer.skin + 'Idle')
-		if (newPlayer.sprite.body) {
-			newPlayer.sprite.body.setSize(skin.xResize, skin.yResize)
-			newPlayer.sprite.body.setOffset(skin.xOffset, skin.yOffset)
-		}
+		newPlayer.sprite = scene.physics.add.sprite(xPos, yPos, newPlayer.skin + '_' + newPlayer.xDir)
 		newPlayer.sprite.setScale(skin.scaleFactor, skin.scaleFactor)
 		newPlayer.sprite.setBounce(1)
 		newPlayer.sprite.setCollideWorldBounds(true)
 		newPlayer.sprite.setImmovable(true)
-		if (newPlayer.xDir == 'left')
-			newPlayer.sprite.setFlipX(true)
-		else
-			newPlayer.sprite.setFlipX(false)
 		if (construct.side == 'left')
 			leftPlayer = newPlayer
 		else
 			rightPlayer = newPlayer
 	}
 
-	function createBall(scene: Phaser.Scene){
+	function createBall(scene: Phaser.Scene) {
 		ball = {
 			sprite: scene.physics.add.sprite(960, 540, 'ball')
 		}
-		ball.sprite?.body?.setCircle(25)
+		ball.sprite?.body?.setCircle(26)
 		ball.sprite?.setBounce(1, 1)
 		ball.sprite?.setCollideWorldBounds(true, undefined, undefined, undefined)
 	}
@@ -274,15 +234,27 @@ function Party() {
 	function createAnims(scene: Phaser.Scene) {
 		for (let skinName in skins) {
 			scene.anims.create({
-				key: skinName + 'IdleAnim',
-				frames: scene.anims.generateFrameNumbers(skinName + 'Idle', { start: 0, end: skins[skinName].nbFrames - 1 }),
-				frameRate: skins[skinName].nbFrames,
+				key: skinName + '_frontAnim',
+				frames: scene.anims.generateFrameNumbers(skinName + '_front', { start: 0, end: skinFrameNumber - 1 }),
+				frameRate: skinFrameNumber,
 				repeat: -1
 			})
 			scene.anims.create({
-				key: skinName + 'RunAnim',
-				frames: scene.anims.generateFrameNumbers(skinName + 'Run', { start: 0, end: skins[skinName].nbFrames - 1 }),
-				frameRate: skins[skinName].nbFrames,
+				key: skinName + '_backAnim',
+				frames: scene.anims.generateFrameNumbers(skinName + '_back', { start: 0, end: skinFrameNumber - 1 }),
+				frameRate: skinFrameNumber,
+				repeat: -1
+			})
+			scene.anims.create({
+				key: skinName + '_leftAnim',
+				frames: scene.anims.generateFrameNumbers(skinName + '_left', { start: 0, end: skinFrameNumber - 1 }),
+				frameRate: skinFrameNumber,
+				repeat: -1
+			})
+			scene.anims.create({
+				key: skinName + '_rightAnim',
+				frames: scene.anims.generateFrameNumbers(skinName + '_right', { start: 0, end: skinFrameNumber - 1 }),
+				frameRate: skinFrameNumber,
 				repeat: -1
 			})
 		}
@@ -322,7 +294,7 @@ function Party() {
 	// Adapts player moveState and devolity following the pressed keys
 	function checkKeyInputs() {
 		let player: player
-		
+
 		if (leftPlayer && rightPlayer) {
 			if (mySide && mySide == 'left')
 				player = leftPlayer
@@ -338,9 +310,9 @@ function Party() {
 			if (actualKeyStates.up != oldKeyStates.up ||
 				actualKeyStates.down != oldKeyStates.down ||
 				actualKeyStates.left != oldKeyStates.left ||
-				actualKeyStates.right != oldKeyStates.right){
-					sendPlayerMovement()
-				}
+				actualKeyStates.right != oldKeyStates.right) {
+				sendPlayerMovement()
+			}
 
 			if (allKeysUp()) {
 				if (player.move == 'run') {
@@ -382,23 +354,23 @@ function Party() {
 
 	// Set player animations following anim state
 	/*function checkAnims() {
-		for (let queueId = 0; queueId < animationQueue.length; queueId++) {
-			players[animationQueue[queueId]].sprite?.play(players[animationQueue[queueId]].skin + players[animationQueue[queueId]].anim)
-		}
-		animationQueue = []
+		if (leftPlayer && rightPlayer) {
 	}*/
 
 	// Set player position following xPos and yPos
 	function checkMove() {
 		if (moveQueue && leftPlayer && rightPlayer /*&& ball*/) {
-			console.log('players to move')
-			leftPlayer.sprite?.setPosition(moveQueue.leftProps.xPos, moveQueue.leftProps.yPos)
-			rightPlayer.sprite?.setPosition(moveQueue.rightProps.xPos, moveQueue.rightProps.yPos)
+			let skin: newSkin = skins[leftPlayer.skin]
+			let xOffset: number = skin.xSize / 2 * skin.scaleFactor
+			let yOffset: number = skin.xSize / 2 * skin.scaleFactor
+			leftPlayer.sprite?.setPosition(moveQueue.leftProps.xPos + xOffset, moveQueue.leftProps.yPos + yOffset)
+			
+			skin = skins[rightPlayer.skin]
+			xOffset = skin.xSize  / 2 * skin.scaleFactor
+			yOffset = skin.xSize  / 2 * skin.scaleFactor
+			rightPlayer.sprite?.setPosition(moveQueue.rightProps.xPos + xOffset, moveQueue.rightProps.yPos + yOffset)
+			
 			ball?.sprite?.setPosition(moveQueue.ballProps.xPos, moveQueue.ballProps.yPos)
-
-			/*leftPlayer.sprite?.setVelocity(moveQueue.leftProps.xVel, moveQueue.leftProps.yVel)
-			rightPlayer.sprite?.setVelocity(moveQueue.rightProps.xVel, moveQueue.rightProps.yVel)
-			ball?.sprite?.setVelocity(moveQueue.ballProps.xVel, moveQueue.ballProps.yVel)*/
 			moveQueue = undefined
 		}
 	}

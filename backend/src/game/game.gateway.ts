@@ -4,7 +4,8 @@ import { v4 as uuidv4 } from 'uuid';
 import { Worker } from 'worker_threads'
 import { Server, Socket } from 'socket.io';
 import { SubscribeMessage, WebSocketGateway, WebSocketServer, OnGatewayConnection, OnGatewayDisconnect } from '@nestjs/websockets';
-import { UserSocketsService } from '../chat/chat.userSocketsService.js';
+/*import { UserSocketsService } from '../chat/chat.userSocketsService.js';
+import { ChatService } from '../chat/chat.service.js';*/
 
 /* -------------------------TYPES------------------------- */
 
@@ -52,7 +53,7 @@ interface loginData {
 // Player construction interface (sent to the client)
 interface clientPlayerConstruct {
 	side: 'left' | 'right'							// Player side
-	skin: "player" | "mage" | "blank" | "black"		// Player skin
+	skin: string									// Player skin
 }
 
 // Players construction interface (sent to the session)
@@ -62,11 +63,6 @@ interface sessionPlayerConstruct {
 	yPos: number									// Player initial Y position
 	width: number									// Player width
 	height: number									// Player height
-}
-
-// Player update (sent by the client to the back)
-interface playerUpdateFromClient {
-	keyStates: keyStates							// Player key states
 }
 
 // Player update (sent by the back to the session)
@@ -94,8 +90,6 @@ interface newPropsToClient {
 interface objectProps {
 	xPos: number									// X coordinate of object
 	yPos: number									// Y coordinate of object
-	xVel: number									// X velocity of object
-	yVel: number									// Y velocity of object
 }
 
 /* -------------------------WEBSOCKET-CLASS------------------------- */
@@ -108,7 +102,8 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
 	private readonly clientType: string = "PHASER-WEB-CLIENT"
 	private readonly controllerType: string = "CONTROLLER"
-	private readonly UserSocketsService: UserSocketsService
+	/*private readonly userService: UserSocketsService = new UserSocketsService
+	private readonly chatService: ChatService*/
 
 	private matchQueue: string[] = []
 
@@ -119,15 +114,10 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	private parties: { [partyId: string]: party } = {}
 
 	private skins: { [key: string]: skin } = {
-		['player']: {
-			name: 'player',
-			width: 100,
-			height: 175
-		},
-		['mage']: {
-			name: 'mage',
-			width: 250,
-			height: 250
+		['Boreas']: {
+			name: 'Boreas',
+			width: 16,
+			height: 20
 		}
 	}
 
@@ -137,7 +127,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	newClientConstruct(side: "left" | "right"): clientPlayerConstruct {
 		let newPlayer: clientPlayerConstruct = {
 			side: side,
-			skin: 'mage',
+			skin: 'Boreas',
 		}
 		return newPlayer
 	}
@@ -239,6 +229,13 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			socket: socket,
 			type: undefined,
 		};
+		/*let userData = await this.chatService.getUserFromSocket(socket)
+		let userSockets = this.userService.getUserSocketIds(userData.id)
+		if (!userData)
+			console.log("Not connected")
+		else{
+			this.userService.setUser(userData.id, socket)
+		}*/
 		socket.emit('Welcome');
 	}
 
@@ -258,7 +255,8 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 				this.players[socket.id] = {
 					id: socket.id,
 					sessionId: undefined,
-					skin: "mage"
+					skin: "Boreas"
+					// CALL DB TO GET SKIN
 				}
 				this.matchQueue[this.matchQueue.length] = socket.id
 				this.checkMatchQueue()

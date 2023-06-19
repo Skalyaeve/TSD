@@ -97,8 +97,8 @@ const physics: ArcadePhysics = new ArcadePhysics({
 
 // Create the ball
 function createBall() {
-	ball = { body: physics.add.body(screenHeight / 2, screenWidth / 2) }
-	ball.body.setCircle(25)
+	ball = { body: physics.add.body(screenWidth / 2, screenHeight / 2) }
+	ball.body.setCircle(26)
 	ball.body.setBounce(1, 1)
 	ball.body.setCollideWorldBounds(true, undefined, undefined, undefined)
 	console.log("[", sessionId?.slice(0,4),"] Added ball")
@@ -108,9 +108,10 @@ function createBall() {
 function createPlayer(construct: playerConstruct) {
 	let newPlayer: player = {
 		side: construct.side,
-		body: physics.add.body(construct.xPos, construct.yPos, construct.width, construct.height)
+		body: physics.add.body(construct.xPos, construct.yPos, construct.width * 5, construct.height * 5)
 	}
 	newPlayer.body.setCollideWorldBounds(true, undefined, undefined, undefined)
+	newPlayer.body.setImmovable(true)
 	if (ball) physics.add.collider(ball.body, newPlayer.body)
 	if (leftPlayer) {
 		rightPlayer = newPlayer
@@ -137,7 +138,6 @@ function updatePlayer(updatedPlayer: playerUpdate) {
 	if (updatedPlayer.keyStates.left) xVel = xVel - playerSpeed
 	if (updatedPlayer.keyStates.right) xVel = xVel + playerSpeed
 	if (leftPlayer && rightPlayer) {
-		console.log("[", sessionId?.slice(0,4),"] Updating player vel")
 		if (updatedPlayer.side == leftPlayer.side) leftPlayer.body.setVelocity(xVel, yVel)
 		else rightPlayer.body.setVelocity(xVel, yVel)
 	}
