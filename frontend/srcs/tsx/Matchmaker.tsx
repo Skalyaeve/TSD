@@ -5,6 +5,7 @@ import { Timer } from './ftNumbers.tsx'
 import { fade, heightChangeByPx, bouncyYMove } from './ftMotion.tsx'
 import { Socket, io } from 'socket.io-client'
 
+
 // --------GAME-INFOS------------------------------------------------------ //
 export const GameInfos: React.FC = () => {
 	// ----ANIMATIONS------------------------- //
@@ -21,6 +22,17 @@ export const GameInfos: React.FC = () => {
 	const scoreName = `${name}-score`
 	const timerName = `${name}-timer`
 
+	const [leftScore, setLeftScore] = useState(0)
+	const [rightScore, setRightScore] = useState(0)
+
+	const getLeft = (): number => {
+		return leftScore
+	}
+
+	const getRight = (): number => {
+		return rightScore
+	}
+
 	// ----RENDER----------------------------- //
 	return <motion.div className={boxName} {...boxMotion}>
 		<motion.div className={playerPPName} {...childMotion} />
@@ -36,6 +48,17 @@ export const GameInfos: React.FC = () => {
 		</motion.div>
 	</motion.div>
 }
+
+// ----EXPORTED FUNCTIONS----------------------------- //
+
+export const getLeft = () => {
+	return GameInfos.getLeft();
+};
+
+export const getRight = () => {
+	return GameInfos.getRight();
+};
+
 
 // --------MATCHMAKER------------------------------------------------------ //
 export let gameSocket: Socket | undefined = undefined
@@ -90,7 +113,7 @@ const Matchmaker: React.FC = () => {
 	}, [inGame])
 
 	// ----HANDLERS--------------------------- //
-	const toggleMatchmaker = () => {
+	function toggleMatchmaker() {
 		console.log("test")
 		if (!matchmaking && !inGame)
 			startGameSockets()

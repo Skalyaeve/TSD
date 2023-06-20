@@ -88,6 +88,8 @@ const Root: React.FC = () => {
 
 	// ----STATES----------------------------- //
 	const [showHeader, setShowHeader] = useState(false)
+	const [leftScore, setLeftScore] = useState(0)
+	const [rightScore, setRightScore] = useState(0)
 
 	// ----EFFECTS---------------------------- //
 	const checkConnection = async () => {

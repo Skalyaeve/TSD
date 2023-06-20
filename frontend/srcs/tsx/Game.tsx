@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef } from 'react'
 import Phaser from 'phaser'
-import { gameSocket } from './Matchmaker.tsx'
+import { gameSocket, setLeft, getLeft, setRight, getRight } from './Matchmaker.tsx'
 
 /* -------------------------ASSETS IMPORTS------------------------- */
 
@@ -19,6 +19,7 @@ import Boreas_front_Sheet from '../resources/assets/game/character/Boreas/front.
 import Boreas_back_Sheet from '../resources/assets/game/character/Boreas/back.png'
 import Boreas_left_Sheet from '../resources/assets/game/character/Boreas/left.png'
 import Boreas_right_Sheet from '../resources/assets/game/character/Boreas/right.png'
+import { Socket } from 'socket.io-client'
 
 
 /* -------------------------TYPES------------------------- */
@@ -67,6 +68,11 @@ interface player {
 	sprite?: Phaser.Physics.Arcade.Sprite 		// Player sprite
 }
 
+interface playerDirections {
+	left: "up" | "down" | "left" | "right" | "none" | undefined
+	right: "up" | "down" | "left" | "right" | "none" | undefined
+}
+
 // Player constructor
 interface playerConstruct {
 	id: string									// Player ID
@@ -85,6 +91,17 @@ interface keyStates {
 	down: boolean								// Player DOWN key state
 	left: boolean								// Player LEFT key state
 	right: boolean								// Player RIGHT key state
+}
+
+interface newDirection {
+	left: "up" | "down" | "left" | "right" | "none" | undefined
+	right: "up" | "down" | "left" | "right" | "none" | undefined
+}
+
+// New properties (sent by the client to the back)
+interface newPropsFromClient {
+	keys: keyStates,
+	dir: "up" | "down" | "left" | "right" | "none" | undefined
 }
 
 // New properties (sent by the back to the client)
@@ -155,6 +172,11 @@ function Party() {
 		right: undefined
 	}
 	let moveQueue: newPropsToClient | undefined = undefined
+
+	let animationQueue: playerDirections = {
+		left: undefined,
+		right: undefined
+	}
 
 	let deletionQueue: string[] = []
 
@@ -234,65 +256,79 @@ function Party() {
 	function createAnims(scene: Phaser.Scene) {
 		for (let skinName in skins) {
 			scene.anims.create({
-				key: skinName + '_frontAnim',
+				key: skinName + '_downAnim',
 				frames: scene.anims.generateFrameNumbers(skinName + '_front', { start: 0, end: skinFrameNumber - 1 }),
-				frameRate: skinFrameNumber,
+				frameRate: skinFrameNumber * 2,
 				repeat: -1
 			})
 			scene.anims.create({
-				key: skinName + '_backAnim',
+				key: skinName + '_upAnim',
 				frames: scene.anims.generateFrameNumbers(skinName + '_back', { start: 0, end: skinFrameNumber - 1 }),
-				frameRate: skinFrameNumber,
+				frameRate: skinFrameNumber * 2,
 				repeat: -1
 			})
 			scene.anims.create({
 				key: skinName + '_leftAnim',
 				frames: scene.anims.generateFrameNumbers(skinName + '_left', { start: 0, end: skinFrameNumber - 1 }),
-				frameRate: skinFrameNumber,
+				frameRate: skinFrameNumber * 2,
 				repeat: -1
 			})
 			scene.anims.create({
 				key: skinName + '_rightAnim',
 				frames: scene.anims.generateFrameNumbers(skinName + '_right', { start: 0, end: skinFrameNumber - 1 }),
-				frameRate: skinFrameNumber,
+				frameRate: skinFrameNumber * 2,
 				repeat: -1
 			})
 		}
 	}
 
 	// Check if directional keys are pressed
-	function allKeysUp() {
-		if (keys.up.isUp && keys.down.isUp && keys.left.isUp && keys.right.isUp)
-			return true
-		return false
+	function allKeysUp(): boolean {
+		return (keys.up.isUp && keys.down.isUp && keys.left.isUp && keys.right.isUp)
 	}
 
-	//WORK IN PROGRESS HERE
-
 	// Send player movements to the server
-	// WORKER <= BACK <= CLIENT
-	const sendPlayerMovement = () => {
-		gameSocket?.emit('playerKeyUpdate', actualKeyStates)
+	function sendPlayerMovement(direction: "up" | "down" | "left" | "right" | "none" | undefined): void {
+		let props: newPropsFromClient = {
+			keys: actualKeyStates,
+			dir: direction
+		}
+		gameSocket?.emit('playerKeyUpdate', props)
 	}
 
 	// Send player start to the server
-	// WORKER x BACK <= CLIENT
 	/*const sendPlayerStart = () => {
 		players[myId].sprite?.play(players[myId].skin + 'RunAnim')
 		gameSocket.emit('playerStart')
-	}player.move
+	}player.move*/
 
 	// Send player stop to the server
-	// WORKER x BACK <= CLIENT
 	const sendPlayerStop = () => {
-		players[myId].sprite?.play(players[myId].skin + 'IdleAnim')
-		gameSocket.emit('playerStop')
-	}*/
+		gameSocket?.emit('playerStop')
+	}
 
 	/****** SCENE UPDATE ******/
 
+	function getDirection(): "up" | "down" | "left" | "right" | "none" | undefined {
+		if (allKeysUp())
+			return "none"
+		else if (!oldKeyStates.left && actualKeyStates.left) {
+			return "left"
+		}
+		else if (!oldKeyStates.right && actualKeyStates.right) {
+			return "right"
+		}
+		else if (!oldKeyStates.up && actualKeyStates.up) {
+			return "up"
+		}
+		else if (!oldKeyStates.down && actualKeyStates.down) {
+			return "down"
+		}
+		return undefined
+	}
+
 	// Adapts player moveState and devolity following the pressed keys
-	function checkKeyInputs() {
+	function checkKeyInputs(): void {
 		let player: player
 
 		if (leftPlayer && rightPlayer) {
@@ -311,14 +347,11 @@ function Party() {
 				actualKeyStates.down != oldKeyStates.down ||
 				actualKeyStates.left != oldKeyStates.left ||
 				actualKeyStates.right != oldKeyStates.right) {
-				sendPlayerMovement()
+				sendPlayerMovement(getDirection())
 			}
 
 			if (allKeysUp()) {
-				if (player.move == 'run') {
-					//sendPlayerStop()
-					player.move = 'idle'
-				}
+				sendPlayerStop()
 			}
 			else {
 				if (player.move == 'idle') {
@@ -330,7 +363,7 @@ function Party() {
 	}
 
 	// Create new player upon connection
-	function checkNewPlayer(scene: Phaser.Scene) {
+	function checkNewPlayer(scene: Phaser.Scene): void {
 		if (creationQueue.left) {
 			createPlayer(creationQueue.left, scene)
 			creationQueue.left = undefined
@@ -353,23 +386,49 @@ function Party() {
 	}*/
 
 	// Set player animations following anim state
-	/*function checkAnims() {
+	function checkAnims() {
 		if (leftPlayer && rightPlayer) {
-	}*/
+			if (animationQueue.left != undefined) {
+				if (animationQueue.left != "none") {
+					console.log("new left")
+					console.log(leftPlayer.skin + "_" + animationQueue.left + "Anim")
+					leftPlayer.sprite?.play(leftPlayer.skin + "_" + animationQueue.left + "Anim")
+					setLeft(getLeft() + 1)
+				}
+				else {
+					console.log("left stop")
+					leftPlayer.sprite?.stop()
+				}
+				animationQueue.left = undefined
+			}
+			if (animationQueue.right != undefined) {
+				if (animationQueue.right != "none") {
+					console.log("new right")
+					console.log(rightPlayer.skin + "_" + animationQueue.right + "Anim")
+					leftPlayer.sprite?.play(rightPlayer.skin + "_" + animationQueue.right + "Anim")
+				}
+				else {
+					console.log("right stop")
+					rightPlayer.sprite?.stop()
+				}
+				animationQueue.right = undefined
+			}
+		}
+	}
 
 	// Set player position following xPos and yPos
-	function checkMove() {
+	function checkMove(): void {
 		if (moveQueue && leftPlayer && rightPlayer /*&& ball*/) {
 			let skin: newSkin = skins[leftPlayer.skin]
 			let xOffset: number = skin.xSize / 2 * skin.scaleFactor
 			let yOffset: number = skin.xSize / 2 * skin.scaleFactor
 			leftPlayer.sprite?.setPosition(moveQueue.leftProps.xPos + xOffset, moveQueue.leftProps.yPos + yOffset)
-			
+
 			skin = skins[rightPlayer.skin]
-			xOffset = skin.xSize  / 2 * skin.scaleFactor
-			yOffset = skin.xSize  / 2 * skin.scaleFactor
+			xOffset = skin.xSize / 2 * skin.scaleFactor
+			yOffset = skin.xSize / 2 * skin.scaleFactor
 			rightPlayer.sprite?.setPosition(moveQueue.rightProps.xPos + xOffset, moveQueue.rightProps.yPos + yOffset)
-			
+
 			ball?.sprite?.setPosition(moveQueue.ballProps.xPos, moveQueue.ballProps.yPos)
 			moveQueue = undefined
 		}
@@ -378,31 +437,31 @@ function Party() {
 	/****** OVERLOADED PHASER FUNCTIONS ******/
 
 	// Scene preloading for textures & keys
-	function preload(this: Phaser.Scene) {
+	function preload(this: Phaser.Scene): void {
 		keysInitialisation(this)
 		skinsInitialisation(this)
 		ballInitialisation(this)
 	}
 
 	// Scene creation
-	function create(this: Phaser.Scene) {
+	function create(this: Phaser.Scene): void {
 		createBall(this)
 		createAnims(this)
 	}
 
 	// Scene update
-	function update(this: Phaser.Scene) {
+	function update(this: Phaser.Scene): void {
 		checkNewPlayer(this)
 		//checkDisconnect()
 		checkKeyInputs()
 		checkMove()
-		//checkAnims()
+		checkAnims()
 	}
 
 	/****** PAGE REACT Élément ******/
 
 	// Create the game
-	const createGame = () => {
+	function createGame(): void {
 		const config: Phaser.Types.Core.GameConfig = {
 			type: Phaser.AUTO,
 			width: screenWidth,
@@ -429,7 +488,7 @@ function Party() {
 	}
 
 	// Start socket comunication with game server
-	const socketListeners = () => {
+	function socketListeners(): Socket | undefined {
 		// ********** BACK TO CLIENT SPECIFIC EVENTS ********** //
 		// WORKER <x= BACK ==> CLIENT
 
@@ -474,6 +533,13 @@ function Party() {
 		// Update the moved player's velocity in the players list
 		gameSocket?.on('newProps', (properties: newPropsToClient) => {
 			moveQueue = properties
+		})
+
+		gameSocket?.on('changeDirection', (dir: newDirection) => {
+			if (dir.left != undefined)
+				animationQueue.left = dir.left
+			if (dir.right != undefined)
+				animationQueue.right = dir.right
 		})
 
 		return gameSocket

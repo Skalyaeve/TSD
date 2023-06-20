@@ -79,11 +79,22 @@ interface newPropsFromSession {
 	ballProps: objectProps							// Ball properties
 }
 
+// New properties (sent by the client to the back)
+interface newPropsFromClient {
+	keys: keyStates,
+	dir: "up" | "down" | "left" | "right" | "none" | undefined
+}
+
 // New properties (sent by the back to the client)
 interface newPropsToClient {
 	leftProps: objectProps							// Left player properties
 	rightProps: objectProps							// Right player properties
 	ballProps: objectProps							// Ball properties
+}
+
+interface newDirection {
+	left: "up" | "down" | "left" | "right" | "none" | undefined
+	right: "up" | "down" | "left" | "right" | "none" | undefined
 }
 
 // Properties of a game object (sent to the client)
@@ -188,7 +199,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		newParty.worker.postMessage(leftSessionConstruct)
 		newParty.worker.postMessage(rightSessionConstruct)
 	}
-	20
+	
 	// Starts a new party
 	async createParty(leftPlayerId: string, rightPlayerId: string) {
 		this.sockets[leftPlayerId].socket.emit('matched')
@@ -285,14 +296,22 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	}
 
 	@SubscribeMessage('playerKeyUpdate')
-	handlePlayerKeyUpdate(socket: Socket, payload: keyStates) {
+	handlePlayerKeyUpdate(socket: Socket, payload: newPropsFromClient) {
 		if (this.sockets[socket.id].type == this.clientType && this.players[socket.id].sessionId) {
 			let sessionId: string = this.players[socket.id].sessionId
 			let update: playerUpdateToSession = {
 				side: (this.parties[sessionId].leftPlayerId == socket.id ? 'left' : 'right'),
-				keyStates: payload
+				keyStates: payload.keys
 			}
 			this.parties[sessionId].worker.postMessage(update)
+			let leftPlayerId: string = this.parties[sessionId].leftPlayerId
+			let rightPlayerId: string = this.parties[sessionId].rightPlayerId
+			let dir: newDirection = {
+				left: (leftPlayerId == socket.id ? payload.dir :  undefined),
+				right: (rightPlayerId == socket.id ? payload.dir :  undefined)
+			}
+			this.sockets[this.parties[sessionId].leftPlayerId].socket.emit('changeDirection', dir)
+			this.sockets[this.parties[sessionId].leftPlayerId].socket.emit('changeDirection', dir)
 		}	
 	}
 
@@ -304,8 +323,10 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	}
 
 	@SubscribeMessage('playerStop')
-	handlePlayerStop(socket: Socket) {
+	handlePlayerStop(socket: Socket, payload: "up" | "down" | "left" | "right" | "none") {
 		if (this.sockets[socket.id].type == this.clientType) {
+			let leftPlayerId: string = this.parties[socket.id].leftPlayerId
+			let rightPlayerId: string = this.parties[socket.id].rightPlayerId
 		}
 	}*/
 
