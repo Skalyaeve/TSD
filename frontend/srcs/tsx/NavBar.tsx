@@ -67,9 +67,10 @@ const NavBarLink: React.FC<NavBarLinkProps> = ({
 // --------RENDER-FROM-HOME------------------------------------------------ //
 const FromHome: React.FC = () => {
 	// ----HANDLERS--------------------------- //
+	const hostIp = process.env.HOST_IP
 	const logoutBtnHdl = {
 		onMouseUp: () => {
-			Cookies.remove('access_token', { path: '/', domain: 'localhost' })
+			Cookies.remove('access_token', { path: '/', domain: hostIp })
 			window.location.href = '/login'
 		}
 	}

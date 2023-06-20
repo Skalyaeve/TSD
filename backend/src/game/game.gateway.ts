@@ -188,7 +188,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		newParty.worker.postMessage(leftSessionConstruct)
 		newParty.worker.postMessage(rightSessionConstruct)
 	}
-
+	20
 	// Starts a new party
 	async createParty(leftPlayerId: string, rightPlayerId: string) {
 		this.sockets[leftPlayerId].socket.emit('matched')

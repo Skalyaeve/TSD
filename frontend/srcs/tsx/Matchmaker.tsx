@@ -51,8 +51,10 @@ const Matchmaker: React.FC = () => {
 		return value === '1'
 	})
 
+	const hostIp = process.env.HOST_IP
+
 	const startGameSockets = () => {
-		gameSocket = io("http://localhost:3000/game")
+		gameSocket = io('http://' + hostIp + ':3000/game')
 		gameSocket.on('Welcome', () => {
 			gameSocket?.emit('identification', "PHASER-WEB-CLIENT")
 			setMatchmaking(true)

@@ -17,11 +17,13 @@ import '../css/Root.css'
 import { Socket, io } from 'socket.io-client';
 
 
+const hostIp: string | undefined = process.env.HOST_IP
+
 // --------IS-CONNECTED---------------------------------------------------- //
 const isConnected = async () => {
 	if (!Cookies.get('access_token')) return false
 
-	const servID = 'http://localhost:3000'
+	const servID = 'http://' + hostIp + ':3000'
 	const path = '/users/connected'
 	try {
 		const response = await fetch(`${servID}${path}`, {
@@ -49,7 +51,7 @@ const LoginBtn: React.FC = () => {
 
 	// ----HANDLERS--------------------------- //
 	const connect = async () => {
-		const servID = 'http://localhost:3000'
+		const servID = 'http://' + hostIp + ':3000'
 		const path = '/auth/42/login'
 		try {
 			window.location.href = `${servID}${path}`
@@ -97,7 +99,7 @@ const Root: React.FC = () => {
 			}
 			else setShowHeader(true)
 			if (socket == undefined) {
-				socket = io("http://localhost:3000/chat", {
+				socket = io('http://' + hostIp + ':3000/chat', {
 					transports: ["websocket"],
 					withCredentials: true,
 					//   autoConnect: false,

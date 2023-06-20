@@ -29,6 +29,7 @@ function Chat({}) {
     const [error, setError] = useState<any>(null);
     const [selectedContact, setSelectedContact] = useState<{id: number; email: string; nickname: string; avatarFilename: string} | null>(null);
     
+	const hostIp = process.env.HOST_IP
     const send = useCallback((value: string, user: string) => {
             console.log("value: ", value);
             console.log("user: ", user);
@@ -69,7 +70,7 @@ function Chat({}) {
     useEffect(() => {
         const fetchAllUsers =async () => {
             try {
-                const response = await axiosInstance.get('http://localhost:3000/users/all');
+                const response = await axiosInstance.get('http://' + hostIp + ':3000/users/all');
                 const users = response.data;
                 setAllUsers(users);
                 console.log(users);
