@@ -6,12 +6,14 @@
 @import url("ChannelCreate.css");
 
 .chat-main-grid {
+    padding-top: 6px;
     display: grid;
     grid-template-columns: 1.1fr 3fr 1fr;
     gap: 1px;
-    height: 100vh;
+    height: 99%;
     transition: grid-template-columns 0.4s;
-    background-color: rgba(17, 171, 218, 0.3);
+    background-color: rgba(66, 195, 217, 0.6);
+    overflow-y: hidden;
 }
 
 .chat-main-grid.close {

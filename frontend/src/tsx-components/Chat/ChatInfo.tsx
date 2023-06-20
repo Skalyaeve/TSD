@@ -45,9 +45,6 @@ interface ChatInfoProps {
 
 
 function renderMemberStatus(member: ChanMember, membersStatus: Map<number, boolean>) {
-    // console.log("GOING TO RENDER MEMBER STATUS");
-    // console.log(member);
-    // console.log(membersStatus);
     const status = membersStatus.get(member.member);
     
     return (
@@ -100,8 +97,13 @@ export default function ChatInfo({ userInfo, selectedChannel, selectedContact}: 
 
 return (
     <div>
-        {selectedChannel && members.map(member => renderMemberStatus(member, membersStatus))}
-        {/* ... other components */}
+        <div className="members-title">
+            Members
+        </div>
+        <div>
+            {selectedChannel && members.map(member => renderMemberStatus(member, membersStatus))}
+            {/* ... other components */}
+        </div>
     </div>
 );
 

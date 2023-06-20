@@ -16,11 +16,40 @@
 
 .chat-main-grid .contact-info .header-contact
 {
-    border: 1px solid rgb(121, 199, 245);
+    backdrop-filter: blur(25px);
+    /* border: 1px solid rgb(121, 199, 245); */
 }
 
 .chat-main-grid .contact-info .body-contact
 {
-    border: 1px solid rgb(121, 199, 245);
+    border: 1px solid rgb(245, 175, 121);
+    font-size: 18px;
+    backdrop-filter: blur(25px);
+    background-color: rgba(93, 13, 113, 0.1);
+    font-family: sans-serif;
     /* overflow: auto; */
 }
+
+.members-title{
+    text-align: center;
+}
+
+.member-status{
+    font-size: 18px;
+}
+
+.status-indicator {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-right: 5px;
+  }
+  
+  .online {
+    background-color: green;
+  }
+  
+  .offline {
+    background-color: red;
+  }
