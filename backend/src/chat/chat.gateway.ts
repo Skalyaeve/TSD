@@ -839,29 +839,16 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       const userID = userData.id;
       console.log('userID: ', userID);
       this.userSocketsService.setUser(userID, client);
-      // const userWithSocket = this.userSocketsService.getUserSocketIds(userID);
-      // console.log('userWithSocket: ',userWithSocket);
       const userRoomId = 'userID_' + userID.toString() + '_room';
       const userChannels = await this.chatService.findAllChannelsByMember(userID);
 
       
       client.join(userRoomId);
-
-      // const userChannels = 
-      // Function that retrieve channels where in member;
-      // const userDM = 
-      // Function that retrieve private discussions;
-
       userChannels.forEach(channel =>{
         const chanRoomId = 'chan_'+ channel.chanId + '_room';
         client.join(chanRoomId);
       })
       client.emit('connectionResult', { msg: 'connected successfully'});
-
-
-      // client.emit('connectionResult', { msg: 'helloworld', userChannels: userChannels, userDM: userDM});
-
-     //  userDM.senderRef.nickname == userData.nickname ? userDM.receiptRef.nickname :  userDM.senderRef.nickname
 
     }
   }

@@ -22,17 +22,26 @@ export async function findAllMembersByChanID(chanId: number): Promise<ChanMember
       where: {
         chanId,
       },
+      include: {
+        memberRef: {
+          select: {
+            nickname: true,
+          },
+        },
+      },
     });
     if (!members) {
       throw new Error('members for given chanID not found');
     }
     return members;
+
   }
   catch (error) {
     console.error(error);
     throw error;
   }
 }
+
 
 export async function findAllChannelsByMember(member: number): Promise<ChanMember[]> {
   try {

@@ -9,6 +9,10 @@ import Modal from 'react-modal';
 import "../../css/Chat/ChannelCreate.css"
 import { socket } from '../Root.tsx'
 
+interface User {
+    nickname: string;
+}
+
 interface Channel {
     id: number;
     name: string;
@@ -30,6 +34,7 @@ interface ChanMember {
     member: number;
     isAdmin: boolean;
     muteTime: string; // or Date, depending on how you want to handle it
+    memberRef: User;
 }
 
 interface ChatInfoProps {
@@ -40,15 +45,15 @@ interface ChatInfoProps {
 
 
 function renderMemberStatus(member: ChanMember, membersStatus: Map<number, boolean>) {
-    console.log("GOING TO RENDER MEMBER STATUS");
-    console.log(member);
-    console.log(membersStatus);
+    // console.log("GOING TO RENDER MEMBER STATUS");
+    // console.log(member);
+    // console.log(membersStatus);
     const status = membersStatus.get(member.member);
     
     return (
       <div className="member-status">
         <span className={`status-indicator ${status ? 'online' : 'offline'}`}></span>
-        {member.member}
+        {member.memberRef.nickname}
       </div>
     );
   }
