@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef } from 'react'
 import Phaser from 'phaser'
-import { gameSocket, setLeft, getLeft, setRight, getRight } from './Matchmaker.tsx'
+import { gameSocket } from './Matchmaker.tsx'
 
 /* -------------------------ASSETS IMPORTS------------------------- */
 
@@ -393,7 +393,7 @@ function Party() {
 					console.log("new left")
 					console.log(leftPlayer.skin + "_" + animationQueue.left + "Anim")
 					leftPlayer.sprite?.play(leftPlayer.skin + "_" + animationQueue.left + "Anim")
-					setLeft(getLeft() + 1)
+					//setLeft(getLeft() + 1)
 				}
 				else {
 					console.log("left stop")

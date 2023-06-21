@@ -23,10 +23,6 @@ const navBarLinkMotion = (from: number, index: number) => ({
 		borderTopRightRadius: index ? '5px' : '10px',
 		borderBottomLeftRadius: index < 0 ? '10px' : '5px',
 		borderBottomRightRadius: index < 0 ? '10px' : '5px',
-		borderTopLeftRadius: index ? '5px' : '10px',
-		borderTopRightRadius: index ? '5px' : '10px',
-		borderBottomLeftRadius: index < 0 ? '10px' : '5px',
-		borderBottomRightRadius: index < 0 ? '10px' : '5px',
 		zIndex: 4
 	}
 })
@@ -58,9 +54,6 @@ const NavBarLink: React.FC<NavBarLinkProps> = ({
 	const comeFrom = (
 		index ? BACK_LINK_HEIGHT + LINK_HEIGHT * (index - 1) : 0
 	)
-	console.log(-comeFrom)
-	console.log(index)
-	console.log(isLast ? -1 : index)
 	const linkMotion = navBarLinkMotion(-comeFrom, isLast ? -1 : index)
 
 	// ----CLASSNAMES------------------------- //
@@ -80,12 +73,16 @@ const NavBarLink: React.FC<NavBarLinkProps> = ({
 // --------RENDER-FROM-HOME------------------------------------------------ //
 const FromHome: React.FC = () => {
 	// ----HANDLERS--------------------------- //
+	/*
 	const hostIp = process.env.HOST_IP
+	*/
 	const logoutBtnHdl = {
-		onMouseUp: () => {
-			Cookies.remove('access_token', { path: '/', domain: hostIp })
-			window.location.href = '/login'
-		}
+		/*
+			onMouseUp: () => {
+				Cookies.remove('access_token', { path: '/', domain: hostIp })
+				window.location.href = '/login'
+	}
+		*/
 	}
 
 	// ----ANIMATIONS------------------------- //

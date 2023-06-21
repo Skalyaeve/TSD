@@ -1,6 +1,6 @@
-import React, { useRef, useState, useLayoutEffect } from 'react'
+import React, { useRef, useState, useEffect, useLayoutEffect } from 'react'
 import { Routes, Route, useLocation, useNavigate } from 'react-router-dom'
-import { io } from 'socket.io-client';
+import { Socket, io } from 'socket.io-client';
 import Cookies from 'js-cookie';
 import { AnimatePresence, motion } from 'framer-motion'
 import { bouncyPopUp } from './ftMotion.tsx'
@@ -15,9 +15,9 @@ import Party from './Game.tsx'
 import Leader from './Leader.tsx'
 import ErrorPage from './ErrorPage.tsx'
 import '../css/Root.css'
-import { Socket, io } from 'socket.io-client';
 
-
+/*
+// --------VALUES---------------------------------------------------------- //
 const hostIp: string | undefined = process.env.HOST_IP
 
 // --------IS-CONNECTED---------------------------------------------------- //
@@ -44,6 +44,7 @@ const isConnected = async () => {
 	catch { console.error('[ERROR] isConnected() -> fetch(): failed') }
 	return false
 }
+*/
 
 // --------LOGIN-BTN------------------------------------------------------- //
 const LoginBtn: React.FC = () => {
@@ -52,16 +53,13 @@ const LoginBtn: React.FC = () => {
 
 	// ----HANDLERS--------------------------- //
 	const connect = async () => {
+		/*
 		const servID = 'http://' + hostIp + ':3000'
 		const path = '/auth/42/login'
-		try {
-			window.location.href = `${servID}${path}`
-		}
-		catch {
-			console.error('[ERROR] fetch() failed')
-		}
+		try { window.location.href = `${servID}${path}` }
+		catch { console.error('[ERROR] fetch() failed') }
+		*/
 	}
-
 	const btnHdl = { onMouseUp: () => !animating.current && connect() }
 
 	// ----ANIMATIONS------------------------- //
@@ -91,43 +89,46 @@ const Root: React.FC = () => {
 	const [showHeader, setShowHeader] = useState(false)
 	const [leftScore, setLeftScore] = useState(0)
 	const [rightScore, setRightScore] = useState(0)
-
-	// ----EFFECTS---------------------------- //
-	const checkConnection = async () => {
-		if (await isConnected()) {
-			if (location.pathname == '/login') {
-				navigate('/')
-				const timer = setTimeout(() => setShowHeader(true), 500)
-				return () => clearTimeout(timer)
+	/*
+		// ----EFFECTS---------------------------- //
+		const checkConnection = async () => {
+			if (await isConnected()) {
+				if (location.pathname == '/login') {
+					navigate('/')
+					const timer = setTimeout(() => setShowHeader(true), 500)
+					return () => clearTimeout(timer)
+				}
+				else setShowHeader(true)
+				if (socket == undefined) {
+					socket = io('http://' + hostIp + ':3000/chat', {
+						transports: ["websocket"],
+						withCredentials: true,
+						//   autoConnect: false,
+					});
+				}
 			}
-			else setShowHeader(true)
-			if (socket == undefined) {
-				socket = io('http://' + hostIp + ':3000/chat', {
-					transports: ["websocket"],
-					withCredentials: true,
-					//   autoConnect: false,
-				});
+			else {
+				if (location.pathname != '/login') {
+					try { window.location.href = '/login' }
+					catch { console.log("[ERROR] Couldn't redirect to /login") }
+					setShowHeader(false)
+				}
+				if (socket != undefined)
+					socket.disconnect()
 			}
 		}
-		else {
-			if (location.pathname != '/login') {
-				try { window.location.href = '/login' }
-				catch { console.log("[ERROR] Couldn't redirect to /login") }
-				setShowHeader(false)
-			}
-			if (socket != undefined)
-				socket.disconnect()
-		}
-	}
-
-	useLayoutEffect(() => {
-		checkConnection()
-	}, [location.pathname])
+	*/
+	useEffect(() => {
+		//checkConnection()
+		if (location.pathname === '/login') navigate('/')
+		if (!showHeader) setShowHeader(true)
+	}, [])
 
 	// ----CLASSNAMES------------------------- //
 	const headerName = 'header'
 
 	// ----RENDER----------------------------- //
+	console.log(showHeader)
 	return <>
 		<AnimatePresence>
 			{showHeader && <header className={headerName}>

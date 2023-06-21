@@ -50,7 +50,7 @@ export const GameInfos: React.FC = () => {
 }
 
 // ----EXPORTED FUNCTIONS----------------------------- //
-
+/*
 export const getLeft = () => {
 	return GameInfos.getLeft();
 };
@@ -59,7 +59,7 @@ export const getRight = () => {
 	return GameInfos.getRight();
 };
 
-
+*/
 // --------MATCHMAKER------------------------------------------------------ //
 export let gameSocket: Socket | undefined = undefined
 
@@ -74,6 +74,7 @@ const Matchmaker: React.FC = () => {
 		return value === '1'
 	})
 
+	/*
 	const hostIp = process.env.HOST_IP
 
 	const startGameSockets = () => {
@@ -102,7 +103,6 @@ const Matchmaker: React.FC = () => {
 		console.log("Requesting stop matchmaking")
 		gameSocket?.emit('stopMatchmaking')
 	}
-
 	// ----EFFECTS---------------------------- //
 	useEffect(() => {
 		console.log("matchmaking:", matchmaking)
@@ -126,6 +126,8 @@ const Matchmaker: React.FC = () => {
 		}
 	}
 	const matchmakerBtnHdl = { onMouseUp: toggleMatchmaker }
+*/
+	const matchmakerBtnHdl = {}
 
 	// ----ANIMATIONS------------------------- //
 	const boxMotion = {
