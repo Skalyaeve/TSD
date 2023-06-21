@@ -1,8 +1,7 @@
-version: "3.9"
 services:
   postgres_db:
     container_name: db
-    image: postgres:15.2-alpine
+    image: postgres:latest
     restart: unless-stopped
     environment:
       - POSTGRES_USER=${POSTGRES_USER}
@@ -10,29 +9,24 @@ services:
       - PGDATA=${PGDATA}
       - POSTGRES_DB=${POSTGRES_DB}
       - POSTGRES_HOST=${POSTGRES_HOST}
-    ports:
-      - 5432:5432
     volumes:
       - pgdata:/var/lib/postgresql/data
     env_file:
       - .env
     networks:
-      - my_net
-  
-  pgadmin:
-    container_name: pgadmin
-    image: dpage/pgadmin4
+      - tsd-net
+  nest_backend:
+    container_name: nest
+    image: backend_image
+    build: ./backend
     restart: unless-stopped
-    environment:
-      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_DEFAULT_EMAIL}
-      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_DEFAULT_PASSWORD}
-    ports:
-      - 8081:80
+    depends_on:
+      - postgres_db
     networks:
-      - my_net
+      - tsd-net
 
 networks:
-  my_net:
+  tsd-net:
 
 volumes:
   pgdata:
