@@ -39,8 +39,8 @@ const FriendName: React.FC<FriendNameProps> = ({ id }) => {
 		...xMove({ from: 30, inDuration: 0.3, outDuration: 0.3 }),
 		whileHover: {
 			scale: 1.05,
-			borderTopLeftRadius: 5,
-			borderBottomRightRadius: 5
+			borderTopLeftRadius: '5px',
+			borderBottomRightRadius: '5px'
 		}
 	}
 	const txtMotion = {
@@ -125,15 +125,15 @@ const FriendSearch: React.FC = () => {
 		...movetMotion,
 		animate: {
 			...movetMotion.animate,
-			borderBottomLeftRadius: searchin ? 0 : 5,
-			borderBottomRightRadius: searchin ? 5 : 0
+			borderBottomLeftRadius: searchin ? '0px' : '5px',
+			borderBottomRightRadius: searchin ? '5px' : '0px'
 		},
 		whileHover: {
 			scale: 1.05,
-			borderTopLeftRadius: 5,
-			borderTopRightRadius: 5,
-			borderBottomLeftRadius: 5,
-			borderBottomRightRadius: 5
+			borderTopLeftRadius: '5px',
+			borderTopRightRadius: '5px',
+			borderBottomLeftRadius: '5px',
+			borderBottomRightRadius: '5px'
 		}
 	}
 
@@ -218,10 +218,10 @@ const Friends: React.FC = () => {
 		...boxMove(index),
 		whileHover: {
 			scale: 1.05,
-			borderTopLeftRadius: 5,
-			borderTopRightRadius: 5,
-			borderBottomLeftRadius: 5,
-			borderBottomRightRadius: 5,
+			borderTopLeftRadius: '5px',
+			borderTopRightRadius: '5px',
+			borderBottomLeftRadius: '5px',
+			borderBottomRightRadius: '5px',
 		}
 	})
 	const headInputMotion = mergeMotions(

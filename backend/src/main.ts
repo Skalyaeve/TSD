@@ -14,11 +14,13 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 dotenv.config();
 
+const hostIp = process.env.HOST_IP
+
 async function bootstrap() {
 	const app = await NestFactory.create<NestExpressApplication>(AppModule);
 	const { httpAdapter } = app.get(HttpAdapterHost);
 	app.enableCors({
-		origin: 'http://localhost:8080',
+		origin: 'http://' + hostIp + ':8080',
 		credentials: true
 	});
 	app.useGlobalPipes(new ValidationPipe({

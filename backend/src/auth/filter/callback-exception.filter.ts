@@ -4,6 +4,7 @@ import { Request, Response } from 'express';
 @Catch(UnauthorizedException)
 export class CallbackExceptionFilter implements ExceptionFilter {
     catch(exception: UnauthorizedException, host: ArgumentsHost) {
+		const hostIp = process.env.HOST_IP
         const ctx = host.switchToHttp();
         const response = ctx.getResponse<Response>();
         const request = ctx.getRequest<Request>();
@@ -11,6 +12,6 @@ export class CallbackExceptionFilter implements ExceptionFilter {
 
         response
             .status(status)
-            .redirect('http://localhost:8080');
+            .redirect('http://' + hostIp + ':8080');
     }
 }
