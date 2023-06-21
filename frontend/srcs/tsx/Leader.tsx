@@ -107,7 +107,7 @@ const Leader: React.FC = () => {
 			borderTopLeftRadius: '5px',
 			borderTopRightRadius: '5px',
 			borderBottomLeftRadius: '5px',
-			borderBottomRightRadius: '5px'
+			borderBottomRightRadius: '5px',
 		}
 	})
 	const headInputMotion = mergeMotions(

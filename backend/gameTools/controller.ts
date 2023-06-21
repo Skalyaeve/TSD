@@ -8,6 +8,7 @@ import * as readline from 'readline'
 /* -------------------------VARIABLES------------------------- */
 
 const loginID: string = "CONTROLLER"
+const hostIp = process.env.HOST_IP
 
 let socket: Socket
 let ownId: string
@@ -74,7 +75,7 @@ function prompt(socket: Socket) {
 
 /* -------------------------MAIN CODE------------------------- */
 
-socket = io('http://localhost:3000/game')
+socket = io('http://' + hostIp + ':3000/game')
 
 socket.on('ownID', (playerId) => {
 	ownId = playerId

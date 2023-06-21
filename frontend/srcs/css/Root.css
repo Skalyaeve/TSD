@@ -94,7 +94,7 @@ input:focus {
 	translate: -50% -50%;
 }
 
-.login42-btn {
+.login-btn {
 	/* #1 Éléments */
 	background-color: transparent;
 	border: 3px solid rgb(255, 255, 255);
@@ -112,7 +112,7 @@ input:focus {
 	translate: -50% -50%;
 }
 
-.login42-btn-txt {
+.login-btn-txt {
 	/* #1 Éléments */
 	border-radius: 10px;
 	background-image: url('../resources/assets/ui/buttons/login.png');

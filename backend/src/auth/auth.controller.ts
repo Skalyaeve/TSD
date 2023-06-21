@@ -10,6 +10,8 @@ import { User } from '@prisma/client';
 
 @Controller('auth')
 export class AuthController {
+	private readonly hostIp = process.env.HOST_IP
+
     constructor(
         private authService: AuthService,
         private userService: UserService, // REMOVE
@@ -27,7 +29,7 @@ export class AuthController {
         res.cookie('access_token', access_token, {
             maxAge: 60 * 60 * 24 * 7,
         });
-        res.redirect('http://localhost:8080');
+        res.redirect('http://' + this.hostIp + ':8080');
     }
 
     @Get('google/login')
@@ -53,7 +55,7 @@ export class AuthController {
             maxAge: 60 * 60 * 24 * 7,
             sameSite: 'lax',
         });
-        res.redirect('http://localhost:8080');
+        res.redirect('http://' + this.hostIp + ':8080');
         return (req.user);
     }
 

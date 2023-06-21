@@ -4,6 +4,8 @@ import { v4 as uuidv4 } from 'uuid';
 import { Worker } from 'worker_threads'
 import { Server, Socket } from 'socket.io';
 import { SubscribeMessage, WebSocketGateway, WebSocketServer, OnGatewayConnection, OnGatewayDisconnect } from '@nestjs/websockets';
+/*import { UserSocketsService } from '../chat/chat.userSocketsService.js';
+import { ChatService } from '../chat/chat.service.js';*/
 
 /* -------------------------TYPES------------------------- */
 
@@ -51,7 +53,7 @@ interface loginData {
 // Player construction interface (sent to the client)
 interface clientPlayerConstruct {
 	side: 'left' | 'right'							// Player side
-	skin: "player" | "mage" | "blank" | "black"		// Player skin
+	skin: string									// Player skin
 }
 
 // Players construction interface (sent to the session)
@@ -61,11 +63,6 @@ interface sessionPlayerConstruct {
 	yPos: number									// Player initial Y position
 	width: number									// Player width
 	height: number									// Player height
-}
-
-// Player update (sent by the client to the back)
-interface playerUpdateFromClient {
-	keyStates: keyStates							// Player key states
 }
 
 // Player update (sent by the back to the session)
@@ -82,6 +79,12 @@ interface newPropsFromSession {
 	ballProps: objectProps							// Ball properties
 }
 
+// New properties (sent by the client to the back)
+interface newPropsFromClient {
+	keys: keyStates,
+	dir: "up" | "down" | "left" | "right" | "none" | undefined
+}
+
 // New properties (sent by the back to the client)
 interface newPropsToClient {
 	leftProps: objectProps							// Left player properties
@@ -89,12 +92,15 @@ interface newPropsToClient {
 	ballProps: objectProps							// Ball properties
 }
 
+interface newDirection {
+	left: "up" | "down" | "left" | "right" | "none" | undefined
+	right: "up" | "down" | "left" | "right" | "none" | undefined
+}
+
 // Properties of a game object (sent to the client)
 interface objectProps {
 	xPos: number									// X coordinate of object
 	yPos: number									// Y coordinate of object
-	xVel: number									// X velocity of object
-	yVel: number									// Y velocity of object
 }
 
 /* -------------------------WEBSOCKET-CLASS------------------------- */
@@ -105,27 +111,24 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	@WebSocketServer()
 	server: Server;
 
-	readonly clientType: string = "PHASER-WEB-CLIENT"
-	readonly controllerType: string = "CONTROLLER"
+	private readonly clientType: string = "PHASER-WEB-CLIENT"
+	private readonly controllerType: string = "CONTROLLER"
+	/*private readonly userService: UserSocketsService = new UserSocketsService
+	private readonly chatService: ChatService*/
 
-	matchQueue: string[] = []
+	private matchQueue: string[] = []
 
-	sockets: { [id: string]: socketInfo } = {}
+	private sockets: { [id: string]: socketInfo } = {}
 
-	players: { [id: string]: player } = {}
+	private players: { [id: string]: player } = {}
 
-	parties: { [partyId: string]: party } = {}
+	private parties: { [partyId: string]: party } = {}
 
-	skins: { [key: string]: skin } = {
-		['player']: {
-			name: 'player',
-			width: 100,
-			height: 175
-		},
-		['mage']: {
-			name: 'mage',
-			width: 250,
-			height: 250
+	private skins: { [key: string]: skin } = {
+		['Boreas']: {
+			name: 'Boreas',
+			width: 16,
+			height: 20
 		}
 	}
 
@@ -135,7 +138,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	newClientConstruct(side: "left" | "right"): clientPlayerConstruct {
 		let newPlayer: clientPlayerConstruct = {
 			side: side,
-			skin: 'mage',
+			skin: 'Boreas',
 		}
 		return newPlayer
 	}
@@ -196,7 +199,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		newParty.worker.postMessage(leftSessionConstruct)
 		newParty.worker.postMessage(rightSessionConstruct)
 	}
-
+	
 	// Starts a new party
 	async createParty(leftPlayerId: string, rightPlayerId: string) {
 		this.sockets[leftPlayerId].socket.emit('matched')
@@ -237,6 +240,13 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			socket: socket,
 			type: undefined,
 		};
+		/*let userData = await this.chatService.getUserFromSocket(socket)
+		let userSockets = this.userService.getUserSocketIds(userData.id)
+		if (!userData)
+			console.log("Not connected")
+		else{
+			this.userService.setUser(userData.id, socket)
+		}*/
 		socket.emit('Welcome');
 	}
 
@@ -256,7 +266,8 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 				this.players[socket.id] = {
 					id: socket.id,
 					sessionId: undefined,
-					skin: "mage"
+					skin: "Boreas"
+					// CALL DB TO GET SKIN
 				}
 				this.matchQueue[this.matchQueue.length] = socket.id
 				this.checkMatchQueue()
@@ -285,32 +296,43 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	}
 
 	@SubscribeMessage('playerKeyUpdate')
-	handlePlayerKeyUpdate(socket: Socket, payload: keyStates) {
+	handlePlayerKeyUpdate(socket: Socket, payload: newPropsFromClient) {
 		if (this.sockets[socket.id].type == this.clientType && this.players[socket.id].sessionId) {
 			let sessionId: string = this.players[socket.id].sessionId
 			let update: playerUpdateToSession = {
 				side: (this.parties[sessionId].leftPlayerId == socket.id ? 'left' : 'right'),
-				keyStates: payload
+				keyStates: payload.keys
 			}
 			this.parties[sessionId].worker.postMessage(update)
+			let leftPlayerId: string = this.parties[sessionId].leftPlayerId
+			let rightPlayerId: string = this.parties[sessionId].rightPlayerId
+			let dir: newDirection = {
+				left: (leftPlayerId == socket.id ? payload.dir :  undefined),
+				right: (rightPlayerId == socket.id ? payload.dir :  undefined)
+			}
+			this.sockets[this.parties[sessionId].leftPlayerId].socket.emit('changeDirection', dir)
+			this.sockets[this.parties[sessionId].leftPlayerId].socket.emit('changeDirection', dir)
 		}	
 	}
 
-	@SubscribeMessage('playerStart')
+	
+	/*@SubscribeMessage('playerStart')
 	handlePlayerStart(socket: Socket) {
 		if (this.sockets[socket.id].type == this.clientType) {
 		}
 	}
 
 	@SubscribeMessage('playerStop')
-	handlePlayerStop(socket: Socket) {
+	handlePlayerStop(socket: Socket, payload: "up" | "down" | "left" | "right" | "none") {
 		if (this.sockets[socket.id].type == this.clientType) {
+			let leftPlayerId: string = this.parties[socket.id].leftPlayerId
+			let rightPlayerId: string = this.parties[socket.id].rightPlayerId
 		}
-	}
+	}*/
 
-	/* -----------{ --------------CONTROLLER EVENT LISTENERS------------------------- */
+	/* -------------------------CONTROLLER EVENT LISTENERS------------------------- */
 
-	// Display a connected socket to the controller
+	/*// Display a connected socket to the controller
 	@SubscribeMessage('displaySocket')
 	handleDisplaySocket(socket: Socket, payload: string) {
 		if (this.sockets[socket.id].type == this.controllerType) {
@@ -330,5 +352,5 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 				socket.emit('displayLine', "Socket: " + socketId + " type: " + this.sockets[socketId].type)
 			socket.emit('endOfDisplay')
 		}
-	}
+	}*/
 }

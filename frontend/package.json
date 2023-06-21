@@ -9,7 +9,7 @@
 		"start": "npm run getIp && npm run dev",
 		"dev": "webpack serve --mode=development",
 		"prod": "webpack --mode=production",
-		"getIp": "cat .env | grep -v 'HOST_IP' > .env && echo \"\\nHOST_IP=\"$(ip addr | grep \"inet 10.\" | cut -d\" \" -f6 | cut -d\"/\" -f1) >> .env"
+		"getIp": "sh ./ipconfig.sh"
 	},
 	"dependencies": {
 		"axios": "^1.4.0",
