@@ -154,7 +154,7 @@
 
 .profile-friends-search-btn--active {
 	/* #1 Éléments */
-	background-image: url('../resources/assets/ui/backgrounds/button-black1-50x40.png');
+	background-image: url('../resources/assets/ui/buttons/x.png');
 }
 
 .profile-friends-search-input {
@@ -233,7 +233,7 @@
 
 .profile-friend-del-btn {
 	/* #1 Éléments */
-	background-image: url('../resources/assets/ui/backgrounds/button-black1-50x40.png');
+	background-image: url('../resources/assets/ui/buttons/x.png');
 	border: 2px solid rgb(255, 255, 255);
 	border-top-right-radius: 5px;
 	border-bottom-left-radius: 5px;

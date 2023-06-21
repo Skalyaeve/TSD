@@ -104,10 +104,10 @@ const Leader: React.FC = () => {
 		...boxMove(index),
 		whileHover: {
 			scale: 1.05,
-			borderTopLeftRadius: 5,
-			borderTopRightRadius: 5,
-			borderBottomLeftRadius: 5,
-			borderBottomRightRadius: 5,
+			borderTopLeftRadius: '5px',
+			borderTopRightRadius: '5px',
+			borderBottomLeftRadius: '5px',
+			borderBottomRightRadius: '5px'
 		}
 	})
 	const headInputMotion = mergeMotions(
