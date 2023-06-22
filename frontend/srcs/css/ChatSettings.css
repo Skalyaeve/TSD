@@ -209,6 +209,11 @@
 	padding-left: 5px;
 }
 
+.chat-roomSettings-usr-link:hover {
+	/* #1 Éléments */
+	text-shadow: 0 0 5px;
+}
+
 .chat-roomSettings-usr-btns {
 	/* #1 Éléments */
 	display: flex;

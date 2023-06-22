@@ -331,7 +331,17 @@
 	height: 70%;
 }
 
+.chat-newRoom-btn-txt:hover {
+	/* #1 Éléments */
+	background-image: url('../resources/assets/ui/icons/+-hover.png');
+}
+
 .chat-newRoom-btn-txt--active {
 	/* #1 Éléments */
 	background-image: url('../resources/assets/ui/icons/-.png');
+}
+
+.chat-newRoom-btn-txt--active:hover {
+	/* #1 Éléments */
+	background-image: url('../resources/assets/ui/icons/--hover.png');
 }

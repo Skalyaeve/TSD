@@ -1,9 +1,9 @@
-import React, { useRef, useState, useLayoutEffect, useEffect } from 'react'
+import React, { useRef, useState, useLayoutEffect } from 'react'
 import { Routes, Route, useLocation, useNavigate } from 'react-router-dom'
 import { Socket, io } from 'socket.io-client'
 import Cookies from 'js-cookie'
 import { AnimatePresence, motion } from 'framer-motion'
-import { bouncyPopUp } from './ftMotion.tsx'
+import { popUp, yMove } from './ftMotion.tsx'
 import NavBar from './NavBar.tsx'
 import Chat from './Chat.tsx'
 import Matchmaker from './Matchmaker.tsx'
@@ -23,6 +23,7 @@ export let socket: Socket | undefined = undefined
 
 // --------IS-CONNECTED---------------------------------------------------- //
 const isConnected = async () => {
+	return true
 	if (!Cookies.get('access_token')) return false
 
 	const servID = 'http://' + hostIp + ':3000'
@@ -58,19 +59,33 @@ const LoginBtn: React.FC = () => {
 		try { window.location.href = `${servID}${path}` }
 		catch { console.log('[ERROR] Couldn\'t redirect to' + `${servID}${path}`) }
 	}
-	const btnHdl = { onMouseUp: () => !animating.current && connect() }
+	const login42btnHdl = { onMouseUp: () => !animating.current && connect() }
 
 	// ----ANIMATIONS------------------------- //
-	const btnMotion = bouncyPopUp({})
+	const loginSelectMotion = yMove({ from: -30 })
+	const login42btnMotion = {
+		...popUp({}),
+		whileHover: {
+			scaleX: 1.1,
+			scaleY: 1.1
+		}
+	}
 
 	// ----CLASSNAMES------------------------- //
-	const boxName = `login-btn`
-	const txtName = `${boxName}-txt custom-txt`
+	const loginSelectName = `login-select`
+	const login42btnName = `login-btn`
 
 	// ----RENDER----------------------------- //
-	return <motion.button className={boxName} {...btnHdl} {...btnMotion}>
-		<div className={txtName} />
-	</motion.button>
+	return <>
+		<motion.div className={loginSelectName} {...loginSelectMotion}>
+			login with
+		</motion.div>
+		<motion.button
+			className={login42btnName}
+			{...login42btnHdl}
+			{...login42btnMotion}
+		/>
+	</>
 }
 
 // --------ROOT------------------------------------------------------------ //
@@ -79,19 +94,15 @@ const Root: React.FC = () => {
 	const location = useLocation()
 	const navigate = useNavigate()
 
+	// ----REFS------------------------------- //
+	const selectedCharacter = useRef(1)
+
 	// ----STATES----------------------------- //
 	const [showHeader, setShowHeader] = useState(false)
 
 	// ----EFFECTS---------------------------- //
-	useEffect(() => {
-		if (location.pathname === '/login') {
-			navigate('/')
-		}
-		if (!showHeader) setShowHeader(true)
-	}, [])
-
 	useLayoutEffect(() => {
-		//checkConnection()
+		checkConnection()
 	}, [location.pathname])
 
 	// ----HANDLERS--------------------------- //
@@ -138,7 +149,7 @@ const Root: React.FC = () => {
 		<AnimatePresence mode='wait'>
 			<Routes location={location} key={location.pathname}>
 				<Route path='/login' element={<LoginBtn />} />
-				<Route path='/' element={<Home />} />
+				<Route path='/' element={<Home selectedCharacter={selectedCharacter.current} />} />
 				<Route path='/profile' element={<AccountInfos />} />
 				<Route path='/profile/friends' element={<Friends />} />
 				<Route path='/characters' element={<Characters />} />

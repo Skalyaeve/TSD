@@ -72,10 +72,10 @@ const NavBarLink: React.FC<NavBarLinkProps> = ({
 
 // --------RENDER-FROM-HOME------------------------------------------------ //
 const FromHome: React.FC = () => {
-	// ----HANDLERS--------------------------- //
-
+	// ----VQLUES----------------------------- //
 	const hostIp = process.env.HOST_IP
 
+	// ----HANDLERS--------------------------- //
 	const logoutBtnHdl = {
 		onMouseUp: () => {
 			Cookies.remove('access_token', { path: '/', domain: hostIp })
@@ -94,10 +94,10 @@ const FromHome: React.FC = () => {
 	// ----RENDER----------------------------- //
 	return <motion.nav
 		className={NAME}
-		{...navBarMotion(BACK_LINK_HEIGHT + LINK_HEIGHT * 3)}>
+		{...navBarMotion(BACK_LINK_HEIGHT + LINK_HEIGHT * 2)}>
 		<motion.button
 			className={logoutBtnName}
-			style={{ zIndex: 3 }}
+			style={{ zIndex: 2 }}
 			{...logoutBtnHdl}
 			{...logoutBtnMotion}>
 			<div className={logoutBtnTxTName} />
@@ -106,16 +106,10 @@ const FromHome: React.FC = () => {
 			index={1}
 			to='/profile'
 			ext='profile'
-			zindex={2}
-		/>
-		<NavBarLink
-			index={2}
-			to='/characters'
-			ext='characters'
 			zindex={1}
 		/>
 		<NavBarLink
-			index={3}
+			index={2}
 			to='/leader'
 			ext='leader'
 			isLast={true}

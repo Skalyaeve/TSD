@@ -3,7 +3,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { fade, xMove, yMove } from './ftMotion.tsx'
 
 // --------VALUES---------------------------------------------------------- //
-const characterNames = (id: number) => {
+export const characterNames = (id: number) => {
 	switch (id) {
 		case 1: return 'Selene'
 		case 2: return 'Rylan'
