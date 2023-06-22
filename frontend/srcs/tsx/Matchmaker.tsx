@@ -52,7 +52,7 @@ const Matchmaker: React.FC = () => {
 		return value === '1'
 	})
 
-	/*
+	
 	const hostIp = process.env.HOST_IP
 
 	const startGameSockets = () => {
@@ -120,8 +120,6 @@ const Matchmaker: React.FC = () => {
 		}
 	}
 	const matchmakerBtnHdl = { onMouseUp: toggleMatchmaker }
-*/
-	const matchmakerBtnHdl = {}
 
 	// ----ANIMATIONS------------------------- //
 	const boxMotion = {

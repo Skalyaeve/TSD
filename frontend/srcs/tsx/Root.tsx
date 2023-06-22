@@ -16,7 +16,7 @@ import Leader from './Leader.tsx'
 import ErrorPage from './ErrorPage.tsx'
 import '../css/Root.css'
 
-/*
+
 // --------VALUES---------------------------------------------------------- //
 const hostIp: string | undefined = process.env.HOST_IP
 
@@ -44,7 +44,7 @@ const isConnected = async () => {
 	catch { console.log('[ERROR] isConnected() -> fetch(): failed') }
 	return false
 }
-*/
+
 
 // --------LOGIN-BTN------------------------------------------------------- //
 const LoginBtn: React.FC = () => {
@@ -53,7 +53,7 @@ const LoginBtn: React.FC = () => {
 
 	// ----HANDLERS--------------------------- //
 	const connect = async () => {
-		/*
+		
 		const servID = 'http://' + hostIp + ':3000'
 		const path = '/auth/42/login'
 		try { window.location.href = `${servID}${path}` }
