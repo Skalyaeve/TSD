@@ -5,15 +5,15 @@ import { fade, xMove, yMove } from './ftMotion.tsx'
 // --------VALUES---------------------------------------------------------- //
 const characterNames = (id: number) => {
 	switch (id) {
-		case 1: return 'Helios'
-		case 2: return 'Boreas'
-		case 3: return 'Selene'
+		case 1: return 'Selene'
+		case 2: return 'Rylan'
+		case 3: return 'Thorian'
 		case 4: return 'Liliana'
-		case 5: return 'Orion'
-		case 6: return 'Faeleen'
-		case 7: return 'Rylan'
-		case 8: return 'Garrick'
-		case 9: return 'Thorian'
+		case 5: return 'Garrick'
+		case 6: return 'Orion'
+		case 7: return 'Faeleen'
+		case 8: return 'Boreas'
+		case 9: return 'Helios'
 		default: return 'error'
 	}
 }
