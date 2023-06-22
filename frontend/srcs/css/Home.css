@@ -7,4 +7,79 @@
 /* ------------------------------ */
 
 /* ---HOME----------------------- */
-.home {}
+.home {
+	/* #1 Éléments */
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.home-char-box {
+	/* #1 Éléments */
+	background-image: url('../resources/assets/ui/backgrounds/div-black2.png');
+	border: 3px solid rgb(255, 255, 255);
+	border-top-right-radius: 10px;
+	border-bottom-left-radius: 10px;
+	display: flex;
+	flex-direction: column-reverse;
+	position: relative;
+
+	/* #2 Forme */
+	width: 350px;
+	height: 400px;
+}
+
+.home-char-box-txt {
+	/* #1 Éléments */
+	font-size: 23px;
+
+	/* #3 Position */
+	position: absolute;
+	align-self: center;
+	top: 10px
+}
+
+.home-character {
+	/* #3 Position */
+	position: absolute;
+}
+
+.home-swap-box {
+	/* #1 Éléments */
+	background-image: url('../resources/assets/ui/backgrounds/div-black2.png');
+	border-top: 2px solid rgb(255, 255, 255);
+	border-bottom-left-radius: 10px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	/* #2 Forme */
+	height: 65px;
+}
+
+.home-swap-btn {
+	/* #1 Éléments */
+	background-image: url('../resources/assets/ui/backgrounds/button-black1-150x45.png');
+	border: 2px solid rgb(255, 255, 255);
+	border-top-right-radius: 5px;
+	border-bottom-left-radius: 5px;
+	display: flex;
+
+	/* #2 Forme */
+	width: 150px;
+	height: 45px;
+
+	/* #3 Position */
+	position: relative;
+}
+
+.home-swap-btn-txt {
+	/* #1 Éléments */
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 17px;
+
+	/* #2 Forme */
+	width: 100%;
+}

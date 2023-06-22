@@ -140,9 +140,6 @@ const RoomBoxes: React.FC<RoomBoxesProps> = ({
 		}
 	}
 
-	// ----ANIMATIONS------------------------- //
-	const btnTxtMotion = { whileHover: { rotate: settingsOpen ? 180 : 90 } }
-
 	// ----CLASSNAMES------------------------- //
 	const boxName = `${NAME}-rooms`
 	const btnName = `${NAME}-newRoom-btn`
@@ -166,7 +163,7 @@ const RoomBoxes: React.FC<RoomBoxesProps> = ({
 		<div className={boxName}>
 			{roomz.map(box => newRoomBox(box))}
 			<button className={btnName} {...btnHdl}>
-				<motion.div className={btnTxtName} {...btnTxtMotion} />
+				<div className={btnTxtName} />
 			</button>
 		</div >
 		<AnimatePresence>
@@ -391,7 +388,7 @@ const Chat: React.FC<ChatProps> = ({ location }) => {
 	// ----VALUES----------------------------- //
 	const yTransform = () => {
 		switch (location) {
-			case '/': return 293
+			case '/': return 218
 			case '/profile': return 143
 			default: return 68
 		}

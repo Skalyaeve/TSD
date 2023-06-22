@@ -3,7 +3,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { fade, xMove, yMove } from './ftMotion.tsx'
 
 // --------VALUES---------------------------------------------------------- //
-const characterNames = (id: number) => {
+export const characterNames = (id: number) => {
 	switch (id) {
 		case 1: return 'Selene'
 		case 2: return 'Rylan'
@@ -35,7 +35,7 @@ const CharBox: React.FC<CharBoxProps> = ({ id, swapping, setSelected }) => {
 			if (!swapping.current) {
 				setSelected(id)
 				swapping.current = true
-				const timer = setTimeout(() => swapping.current = false, 300)
+				const timer = setTimeout(() => swapping.current = false, 500)
 				return () => clearTimeout(timer)
 			}
 		}
@@ -47,12 +47,31 @@ const CharBox: React.FC<CharBoxProps> = ({ id, swapping, setSelected }) => {
 		inDuration: 0.7 + 0.02 * id,
 		outDuration: 0.5 - 0.01 * id
 	})
+	const selectBtnMotion = {
+		whileHover: {
+			scale: 1.05,
+			borderTopLeftRadius: '5px',
+			borderBottomRightRadius: '5px'
+		}
+	}
 
 	// ----CLASSNAMES------------------------- //
-	const boxName = `${NAME}-box ${NAME}-box-${characterNames(id)}`
+	const boxName = `${NAME}-box`
+	const mainBoxName = `${boxName} ${boxName}-${characterNames(id)}`
+	const selectBoxName = `${NAME}-selectBox`
+	const selectBtnName = `${NAME}-select-btn`
 
 	// ----RENDER----------------------------- //
-	return <motion.div className={boxName} {...boxHdl} {...boxMotion} />
+	return <motion.div className={mainBoxName} {...boxHdl} {...boxMotion}>
+		<div className={selectBoxName}>
+			{id !== 1 && <>rank 0 required</>}
+			{id === 1 && <motion.button
+				className={selectBtnName}
+				{...selectBtnMotion}>
+				select
+			</motion.button>}
+		</div>
+	</motion.div>
 }
 
 // --------CHARACTER-BOXES------------------------------------------------- //
@@ -81,9 +100,9 @@ const CharBoxes: React.FC<CharBoxesProps> = memo(({ swapping, setSelected }) => 
 
 // --------SPELL----------------------------------------------------------- //
 interface SpellProps {
-	content: string
+	isPassive?: boolean
 }
-const Spell: React.FC<SpellProps> = ({ content }) => {
+const Spell: React.FC<SpellProps> = ({ isPassive = true }) => {
 	// ----REFS------------------------------- //
 	const spellNameRef = useRef<HTMLDivElement | null>(null)
 
@@ -129,6 +148,7 @@ const Spell: React.FC<SpellProps> = ({ content }) => {
 
 	// ----CLASSNAMES------------------------- //
 	const tooltipName = `${SPELLNAME}-tooltip`
+	const childBoxName = `${SPELLNAME}-childBox`
 
 	// ----RENDER----------------------------- //
 	return <>
@@ -137,7 +157,10 @@ const Spell: React.FC<SpellProps> = ({ content }) => {
 			className={SPELLNAME}
 			{...boxHdl}
 			{...boxMotion}>
-			{content}
+			<div className={childBoxName}>
+				{isPassive && <>passive</>}
+				{!isPassive && <>active</>}
+			</div>
 		</motion.div>
 		<AnimatePresence>
 			{tooltip && <motion.div
@@ -202,10 +225,10 @@ const Character: React.FC<CharacterProps> = ({ selected, characters }) => {
 
 		<motion.div className={spellzName} {...fromBottom}>
 			<AnimatePresence mode='wait'>
-				<Spell key={`${spellzName}-${selected}`} content='' />
+				<Spell key={`${spellzName}-${selected}`} />
 			</AnimatePresence>
 			<AnimatePresence mode='wait'>
-				<Spell key={`${spellzName}-${selected}`} content='' />
+				<Spell key={`${spellzName}-${selected}`} isPassive={false} />
 			</AnimatePresence>
 		</motion.div>
 	</div>
@@ -226,16 +249,15 @@ const Characters: React.FC = () => {
 	useEffect(() => {
 		const fetchData = async () => {
 			try {
-				const userId = 'characters/all'
-				const response = await fetch(`http://localhost:3000/${userId}`)
+				const uri = 'characters/all'
+				const response = await fetch(`http://10.12.3.19:3000/${uri}`)
 				if (response.ok) {
 					characters = await response.json()
 					const arr = Object.values(characters)
-					for (let c of arr) {
-						console.log(c.name);
-					}
-				} else
-					console.error(`[ERROR] fetch('http://localhost:3000/${userId}') failed`)
+					for (let x of arr) console.log(x.name)
+				}
+				else
+					console.error(`[ERROR] fetch('http://10.12.3.19:3000/${uri}') failed`)
 			} catch (error) {
 				console.error('[ERROR] ', error)
 			}

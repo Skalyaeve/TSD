@@ -43,6 +43,7 @@
 /* ---PROFILE-ACHIEVEMENTS------- */
 .profile-achievements {
 	/* #1 Éléments */
+	background-image: url('../resources/assets/ui/backgrounds/div-black2.png');
 	border: 6px double rgb(255, 255, 255);
 	border-bottom-left-radius: 10px;
 	display: grid;
@@ -57,6 +58,7 @@
 	/* #1 Éléments */
 	background-image: url('../resources/assets/ui/backgrounds/div-black1.png');
 	border-bottom: 3px solid rgb(255, 255, 255);
+	font-size: 23px;
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -64,7 +66,6 @@
 
 .profile-achievements-list {
 	/* #1 Éléments */
-	background-image: url('../resources/assets/ui/backgrounds/div-black2.png');
 	display: flex;
 	flex-wrap: wrap;
 	align-content: flex-start;

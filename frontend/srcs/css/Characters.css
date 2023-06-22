@@ -26,8 +26,8 @@
 	border-top-left-radius: 10px;
 	border-bottom-left-radius: 10px;
 	display: grid;
-	grid-template-columns: repeat(auto-fill, 200px);
-	grid-template-rows: repeat(auto-fill, 200px);
+	grid-template-columns: repeat(auto-fill, 250px);
+	grid-template-rows: repeat(auto-fill, 250px);
 	grid-gap: 30px;
 	justify-content: center;
 	overflow-x: hidden;
@@ -44,11 +44,43 @@
 	border: 3px solid rgb(255, 255, 255);
 	border-top-right-radius: 10px;
 	border-bottom-left-radius: 10px;
+	display: flex;
+	flex-direction: column-reverse;
 	cursor: pointer;
 
 	/* #2 Forme */
-	min-width: 200px;
-	min-height: 200px;
+	min-width: 250px;
+	min-height: 250px;
+}
+
+.character-selectBox {
+	/* #1 Éléments */
+	background-image: url('../resources/assets/ui/backgrounds/div-black2.png');
+	border-top: 2px solid rgb(255, 255, 255);
+	border-bottom-left-radius: 5px;
+	font-size: 17px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	/* #2 Forme */
+	height: 60px;
+}
+
+.character-select-btn {
+	/* #1 Éléments */
+	background-image: url('../resources/assets/ui/backgrounds/button-black1-120x45.png');
+	border: 2px solid rgb(255, 255, 255);
+	border-top-right-radius: 5px;
+	border-bottom-left-radius: 5px;
+	font-size: 17px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	/* #2 Forme */
+	width: 120px;
+	height: 40px;
 }
 
 .character-box-Boreas {
@@ -63,16 +95,12 @@
 
 .character-box-Selene {
 	/* #1 Éléments */
-	/*
 	background-image: url('../resources/assets/ui/characters/avatars/selene.jfif');
-	*/
 }
 
 .character-box-Liliana {
 	/* #1 Éléments */
-	/*
 	background-image: url('../resources/assets/ui/characters/avatars/liliana.jfif');
-	*/
 }
 
 .character-box-Orion {
@@ -236,6 +264,18 @@
 	/* #3 Position */
 	align-self: center;
 	justify-self: center;
+}
+
+.character-spell-childBox {
+	/* #1 Éléments */
+	background-image: url('../resources/assets/ui/backgrounds/div-black2.png');
+	border-bottom: 2px solid rgb(255, 255, 255);
+	border-top-left-radius: 5px;
+	font-size: 17px;
+	text-align: center;
+
+	/* #4 Margin - Padding */
+	padding: 5px;
 }
 
 .character-spell-tooltip {
