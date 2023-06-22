@@ -412,6 +412,8 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
   //                           CHANNEL MEMBER EVENTS                          //
   //--------------------------------------------------------------------------//
 
+
+
   /**
    * JoinChannel event, will make the giver user join the givne channel
    * and emit an event 'userJoinedChannel' 
@@ -494,6 +496,27 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     }
   }
 
+  @SubscribeMessage('isMemberAdmin')
+  async handleIsMemberAdmin(
+      @ConnectedSocket() client: Socket,
+      @MessageBody() data: {chanId: number, memberId: number}) : Promise<void>
+  {
+    try {
+    const {chanId, memberId} = data;
+    console.log("ISADMIN entering");
+      const isAdmin = await this.chatService.isAdmin(chanId, memberId);
+      const ChanRoomId = 'chan_'+ chanId + '_room';
+      const memberRoomId = 'userID_'+ memberId + '_room';
+      console.log("isAdmin", isAdmin);
+      this.server.to(memberRoomId).emit('foundAdminStatus', isAdmin);
+      // client.emit('MemberisAdmin', updatedChanMember);
+    }
+    catch (error) {
+      console.log(error);
+      throw new WsException(error.message || 'Could not make member admin');
+    }
+  }
+
   /**
    * makeMemberAdmin event makes a given member admin
    * and returns to the client an event with the updated
@@ -547,6 +570,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     @MessageBody() data: {chanId: number, memberToBanId: number, adminId: number}) : Promise<void>
   {
     try {
+      console.log("TOBAN");
       const {chanId, memberToBanId, adminId} = data;
       const bannedMember = await this.chatService.banMember(data);
         const ChanRoomId = 'chan_'+ chanId + '_room';
@@ -859,7 +883,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
    */
   async handleDisconnect(client: Socket)
   {
-    console.log('client disconnected: ', client.id);
+    console.log('CLIENT DISCONNETING: ', client.id);
     const userData = await this.chatService.getUserFromSocket(client);
     if (userData)
     {
