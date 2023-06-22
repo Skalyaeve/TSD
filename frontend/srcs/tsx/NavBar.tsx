@@ -14,7 +14,7 @@ const navBarLinkMotion = (from: number, index: number) => ({
 	...mergeMotions(
 		yMove({ from: from }),
 		heightChangeByPx({
-			finalHeight: (!index || !from ? BACK_LINK_HEIGHT : LINK_HEIGHT) + 3
+			finalHeight: (!index || !from ? BACK_LINK_HEIGHT : LINK_HEIGHT) + 3,
 		})
 	),
 	whileHover: {
@@ -23,6 +23,11 @@ const navBarLinkMotion = (from: number, index: number) => ({
 		borderTopRightRadius: index ? '5px' : '10px',
 		borderBottomLeftRadius: index < 0 ? '10px' : '5px',
 		borderBottomRightRadius: index < 0 ? '10px' : '5px',
+		borderTopLeftRadius: index ? '5px' : '10px',
+		borderTopRightRadius: index ? '5px' : '10px',
+		borderBottomLeftRadius: index < 0 ? '10px' : '5px',
+		borderBottomRightRadius: index < 0 ? '10px' : '5px',
+		zIndex: 4
 	}
 })
 
@@ -36,9 +41,10 @@ interface NavBarLinkProps {
 	to: string
 	ext: string
 	isLast?: boolean
+	zindex: number
 }
 const NavBarLink: React.FC<NavBarLinkProps> = ({
-	index, to, ext, isLast = false
+	index, to, ext, isLast = false, zindex
 }) => {
 	// ----HANDLERS--------------------------- //
 	const linkHdl = {
@@ -52,6 +58,9 @@ const NavBarLink: React.FC<NavBarLinkProps> = ({
 	const comeFrom = (
 		index ? BACK_LINK_HEIGHT + LINK_HEIGHT * (index - 1) : 0
 	)
+	console.log(-comeFrom)
+	console.log(index)
+	console.log(isLast ? -1 : index)
 	const linkMotion = navBarLinkMotion(-comeFrom, isLast ? -1 : index)
 
 	// ----CLASSNAMES------------------------- //
@@ -59,7 +68,11 @@ const NavBarLink: React.FC<NavBarLinkProps> = ({
 	const linkTxtName = `${LINK_NAME} ${LINK_NAME}-${ext} custom-txt`
 
 	// ----RENDER----------------------------- //
-	return <motion.div className={boxName} {...linkMotion} tabIndex={0}>
+	return <motion.div
+		className={boxName}
+		tabIndex={0}
+		style={{ zIndex: zindex }}
+		{...linkMotion}>
 		<NavLink to={to} {...linkHdl} className={linkTxtName} tabIndex={-1} />
 	</motion.div>
 }
@@ -89,6 +102,7 @@ const FromHome: React.FC = () => {
 		{...navBarMotion(BACK_LINK_HEIGHT + LINK_HEIGHT * 3)}>
 		<motion.button
 			className={logoutBtnName}
+			style={{ zIndex: 3 }}
 			{...logoutBtnHdl}
 			{...logoutBtnMotion}>
 			<div className={logoutBtnTxTName} />
@@ -97,17 +111,20 @@ const FromHome: React.FC = () => {
 			index={1}
 			to='/profile'
 			ext='profile'
+			zindex={2}
 		/>
 		<NavBarLink
 			index={2}
 			to='/characters'
 			ext='characters'
+			zindex={1}
 		/>
 		<NavBarLink
 			index={3}
 			to='/leader'
 			ext='leader'
 			isLast={true}
+			zindex={0}
 		/>
 	</motion.nav >
 }
@@ -121,12 +138,14 @@ const FromInfos: React.FC = () => (
 			index={0}
 			to='/'
 			ext='back'
+			zindex={1}
 		/>
 		<NavBarLink
-			index={2}
+			index={1}
 			to='/profile/friends'
 			ext='friends'
 			isLast={true}
+			zindex={0}
 		/>
 	</motion.nav>
 )
@@ -139,6 +158,7 @@ const FromFriends: React.FC = () => (
 			to='/profile'
 			ext='back'
 			isLast={true}
+			zindex={0}
 		/>
 	</motion.nav>
 )
@@ -151,6 +171,7 @@ const FromCharacters: React.FC = () => (
 			to='/'
 			ext='back'
 			isLast={true}
+			zindex={0}
 		/>
 	</motion.nav>
 )
@@ -163,6 +184,7 @@ const FromLeader: React.FC = () => (
 			to='/'
 			ext='back'
 			isLast={true}
+			zindex={0}
 		/>
 	</motion.nav>
 )
@@ -175,6 +197,7 @@ const From404: React.FC = () => (
 			to='/'
 			ext='home'
 			isLast={true}
+			zindex={0}
 		/>
 	</motion.nav>
 )
@@ -187,6 +210,7 @@ const FromChat: React.FC = () => (
 			to='/'
 			ext='home'
 			isLast={true}
+			zindex={0}
 		/>
 	</motion.nav>
 )

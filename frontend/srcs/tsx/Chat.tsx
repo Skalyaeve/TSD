@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { DragDrop } from './ftDragDrop.tsx'
-import { popUp, widthChangeByPercent, bouncyHeightChangeByPercent, xMove, bouncyYMove, mergeMotions, yMove } from './ftMotion.tsx'
+import { widthChangeByPercent, bouncyHeightChangeByPercent, xMove, bouncyYMove, mergeMotions, yMove } from './ftMotion.tsx'
 import ChatSettings from './ChatSettings.tsx'
 
 // --------CLASSNAMES------------------------------------------------------ //
@@ -49,10 +49,14 @@ const RoomBox: React.FC<RoomBoxProps> = ({
 	}
 
 	// ----ANIMATIONS------------------------- //
-	const setBtnMotion = popUp({
-		inDuration: 0.3,
-		outDuration: 0.3
-	})
+	const setBtnMotion = {
+		...xMove({
+			from: -15,
+			inDuration: 0.3,
+			outDuration: 0.3
+		}),
+		whileHover: { rotate: 45 }
+	}
 
 	// ----CLASSNAMES------------------------- //
 	const boxName = `${NAME}-room`
@@ -61,16 +65,13 @@ const RoomBox: React.FC<RoomBoxProps> = ({
 
 	// ----RENDER----------------------------- //
 	const boxContent = <>
-		<div className={linkName} {...linkHdl}>
-			#{id}
-		</div>
+		<div className={linkName} {...linkHdl}>#{id}</div>
 		<AnimatePresence>
 			{showRoomSet && <motion.button
 				className={setBtnName}
 				{...setBtnHdl}
-				{...setBtnMotion}>
-				*
-			</motion.button>}
+				{...setBtnMotion}
+			/>}
 		</AnimatePresence>
 	</>
 	return <DragDrop
@@ -139,9 +140,16 @@ const RoomBoxes: React.FC<RoomBoxesProps> = ({
 		}
 	}
 
+	// ----ANIMATIONS------------------------- //
+	const btnTxtMotion = { whileHover: { rotate: settingsOpen ? 180 : 90 } }
+
 	// ----CLASSNAMES------------------------- //
 	const boxName = `${NAME}-rooms`
 	const btnName = `${NAME}-newRoom-btn`
+	const btnTxtName = (settingsOpen != 1 ?
+		`${NAME}-newRoom-btn-txt`
+		: `${NAME}-newRoom-btn-txt ${NAME}-newRoom-btn-txt--active`
+	)
 
 	// ----RENDER----------------------------- //
 	const newRoomBox = (box: RoomBoxType) => <RoomBox
@@ -158,9 +166,9 @@ const RoomBoxes: React.FC<RoomBoxesProps> = ({
 		<div className={boxName}>
 			{roomz.map(box => newRoomBox(box))}
 			<button className={btnName} {...btnHdl}>
-				{settingsOpen !== 1 ? '+' : '-'}
+				<motion.div className={btnTxtName} {...btnTxtMotion} />
 			</button>
-		</div>
+		</div >
 		<AnimatePresence>
 			{settingsOpen && <ChatSettings
 				key={`${NAME}-roomSet-${settingsOpen}`}
@@ -197,6 +205,9 @@ const RoomUser: React.FC<RoomUserProps> = ({ id }) => {
 	const boxName = `${NAME}-roomUsr`
 	const linkName = `${boxName}-link`
 	const btnName = `${boxName}-btn`
+	const dualBtnName = `${btnName} ${btnName}-dual`
+	const msgBtnName = `${btnName} ${btnName}-msg`
+	const muteBtnName = `${btnName} ${btnName}-mute`
 	const btnsName = `${boxName}-btns`
 
 	// ----RENDER----------------------------- //
@@ -204,15 +215,9 @@ const RoomUser: React.FC<RoomUserProps> = ({ id }) => {
 		<div className={linkName}>#{id}</div>
 		<AnimatePresence>
 			{showButtons && <div className={btnsName}>
-				<motion.button className={btnName} {...btnMotion(3)}>
-					vs
-				</motion.button>
-				<motion.button className={btnName} {...btnMotion(2)}>
-					/w
-				</motion.button>
-				<motion.button className={btnName} {...btnMotion(1)}>
-					/x
-				</motion.button>
+				<motion.button className={dualBtnName} {...btnMotion(3)} />
+				<motion.button className={msgBtnName} {...btnMotion(2)} />
+				<motion.button className={muteBtnName} {...btnMotion(1)} />
 			</div>}
 		</AnimatePresence>
 	</div>
@@ -286,13 +291,16 @@ const MainContent: React.FC<MainContentProps> = ({ chatRef, extended }) => {
 // --------MAIN-BTN-------------------------------------------------------- //
 interface MainBtnProps {
 	chatOpen: boolean
-	extended: boolean
 	setChatOpen: React.Dispatch<React.SetStateAction<boolean>>
+	extended: boolean
 	setExtended: React.Dispatch<React.SetStateAction<boolean>>
-	animating: React.MutableRefObject<boolean>
+	animating: boolean
+	setAnimating: React.Dispatch<React.SetStateAction<boolean>>
+	animatingRef: React.MutableRefObject<boolean>
 }
 const MainBtn: React.FC<MainBtnProps> = ({
-	chatOpen, setChatOpen, extended, setExtended, animating
+	chatOpen, setChatOpen, extended, setExtended,
+	animating, setAnimating, animatingRef
 }) => {
 	// ----STATES----------------------------- //
 	const [showExtend, setShowExtend] = useState(false)
@@ -304,18 +312,31 @@ const MainBtn: React.FC<MainBtnProps> = ({
 	}
 	const extendBtnHdl = {
 		onMouseUp: () => {
-			animating.current = true
+			if (animating) return
+
+			animatingRef.current = true
+			setAnimating(true)
 			setExtended(x => !x)
-			const timer = setTimeout(() => animating.current = false, 500)
+			const timer = setTimeout(() => {
+				animatingRef.current = false
+				setAnimating(false)
+			}, 300)
 			return () => clearInterval(timer)
 		}
 	}
 	const btnTxTHdl = {
 		onMouseUp: () => {
-			animating.current = true
+			if (animating) return
+			console.log()
+
+			animatingRef.current = true
+			setAnimating(true)
 			setChatOpen(x => !x)
 			setExtended(false)
-			const timer = setTimeout(() => animating.current = false, 500)
+			const timer = setTimeout(() => {
+				animatingRef.current = false
+				setAnimating(false)
+			}, 300)
 			return () => clearInterval(timer)
 		}
 	}
@@ -324,14 +345,21 @@ const MainBtn: React.FC<MainBtnProps> = ({
 	const boxMotion = {
 		whileHover: {
 			scale: extended ? 1.01 : 1.05,
-			borderBottomLeftRadius: 5,
-			borderBottomRightRadius: 5,
+			borderBottomLeftRadius: '5px',
+			borderBottomRightRadius: '5px',
 		}
 	}
-	const extendBtnMotion = mergeMotions(
-		xMove({ from: -10, inDuration: 0.3, outDuration: 0.3 }),
-		yMove({ from: 10, inDuration: 0.3, outDuration: 0.3 }),
-	)
+	const extendBtnMotion = {
+		...mergeMotions(
+			xMove({ from: -10, inDuration: 0.3, outDuration: 0.3 }),
+			yMove({ from: 10, inDuration: 0.3, outDuration: 0.3 }),
+		),
+		whileHover: {
+			x: [0, (extended ? -5 : 5), 0],
+			y: [0, (extended ? 5 : -5), 0],
+			transition: { duration: 0.3, ease: 'easeOut' }
+		}
+	}
 
 	// ----CLASSNAMES------------------------- //
 	const btnName = `${NAME}-btn`
@@ -355,7 +383,7 @@ const MainBtn: React.FC<MainBtnProps> = ({
 	</motion.button>
 }
 
-// --------SIDE-CHAT------------------------------------------------------- //
+// --------CHAT------------------------------------------------------------ //
 interface ChatProps {
 	location: string
 }
@@ -371,15 +399,16 @@ const Chat: React.FC<ChatProps> = ({ location }) => {
 
 	// ----REFS------------------------------- //
 	const chatRef = useRef<HTMLDivElement | null>(null)
-	const animating = useRef(false)
+	const animatingRef = useRef(false)
 
 	// ----STATES----------------------------- //
 	const [chatOpen, setChatOpen] = useState(false)
 	const [extended, setExtended] = useState(false)
+	const [animating, setAnimating] = useState(false)
 
 	// ----ANIMATIONS------------------------- //
 	const boxMotion = bouncyYMove({ from: 150, extra: -10, inDuration: 0.8 })
-	const chatMotion = !extended || !chatOpen ? {
+	const chatMotion = !extended ? {
 		animate: {
 			width: '100%',
 			height: '100%',
@@ -387,21 +416,23 @@ const Chat: React.FC<ChatProps> = ({ location }) => {
 		}
 	} : {
 		animate: {
-			width: 'calc(100vw - 20px)',
-			height: 'calc(100vh - 20px)',
-			minWidth: animating.current ? '0' : '1004px',
-			minHeight: animating.current ? '0' : '748px',
+			width: `calc(100vw - 20px)`,
+			height: `calc(100vh - 20px)`,
 			y: `-${yTransform()}px`,
 			zIndex: 4
-		}
+		},
 	}
 
 	// ----CLASSNAMES------------------------- //
 	const boxName = `${NAME}-box`
+	const chatName = (!animatingRef.current ?
+		`${NAME}${extended ? ` ${NAME}--extended` : ''}`
+		: `${NAME}${extended ? ` ${NAME}--extended` : ''} ${NAME}--moving`
+	)
 
 	// ----RENDER----------------------------- //
 	return <motion.div className={boxName} {...boxMotion}>
-		<motion.div ref={chatRef} className={NAME} {...chatMotion}>
+		<motion.div ref={chatRef} className={chatName} {...chatMotion}>
 			<AnimatePresence>
 				{chatOpen && <MainContent
 					chatRef={chatRef}
@@ -413,7 +444,9 @@ const Chat: React.FC<ChatProps> = ({ location }) => {
 				setChatOpen={setChatOpen}
 				extended={extended}
 				setExtended={setExtended}
+				animatingRef={animatingRef}
 				animating={animating}
+				setAnimating={setAnimating}
 			/>
 		</motion.div>
 	</motion.div>

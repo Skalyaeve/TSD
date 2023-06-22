@@ -125,8 +125,8 @@ const FriendSearch: React.FC = () => {
 		...movetMotion,
 		animate: {
 			...movetMotion.animate,
-			borderBottomLeftRadius: searchin ? 0 : 5,
-			borderBottomRightRadius: searchin ? 5 : 0
+			borderBottomLeftRadius: searchin ? '0px' : '5px',
+			borderBottomRightRadius: searchin ? '5px' : '0px'
 		},
 		whileHover: {
 			scale: 1.05,
