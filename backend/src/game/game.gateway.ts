@@ -20,8 +20,14 @@ interface keyStates {
 // Skins
 interface skin {
 	name: string									// Skin name
-	width: number									// Skin width
-	height: number									// Skin height
+	leftSize: {
+		width: number
+		heigth: number
+	}
+	rightSize: {
+		width: number
+		heigth: number
+	}
 }
 
 // Players
@@ -119,9 +125,103 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	private skins: { [key: string]: skin } = {
 		['Boreas']: {
 			name: 'Boreas',
-			width: 16,
-			height: 20
-		}
+			leftSize: {
+				width: 15, // A CORRIGER
+				heigth: 19
+			},
+			rightSize: {
+				width: 15, // A CORRIGER
+				heigth: 19
+			},
+		},
+		['Fealeen']: {
+			name: 'Fealeen',
+			leftSize: {
+				width: 15, // A CORRIGER
+				heigth: 18
+			},
+			rightSize: {
+				width: 15, // A CORRIGER
+				heigth: 18
+			},
+		},
+		['Garrick']: {
+			name: 'Garrick',
+			leftSize: {
+				width: 15, // A CORRIGER
+				heigth: 19
+			},
+			rightSize: {
+				width: 15, // A CORRIGER
+				heigth: 19
+			},
+		},
+		['Helios']: {
+			name: 'Helios',
+			leftSize: {
+				width: 15, // A CORRIGER
+				heigth: 19
+			},
+			rightSize: {
+				width: 15, // A CORRIGER
+				heigth: 19
+			},
+		},
+		['Liliana']: {
+			name: 'Liliana',
+			leftSize: {
+				width: 15, // A CORRIGER
+				heigth: 18
+			},
+			rightSize: {
+				width: 15, // A CORRIGER
+				heigth: 18
+			},
+		},
+		['Orion']: {
+			name: 'Orion',
+			leftSize: {
+				width: 15,
+				heigth: 18
+			},
+			rightSize: {
+				width: 15,
+				heigth: 18
+			},
+		},
+		['Rylan']: {
+			name: 'Rylan',
+			leftSize: {
+				width: 15,
+				heigth: 18
+			},
+			rightSize: {
+				width: 15,
+				heigth: 18
+			},
+		},
+		['Selene']: {
+			name: 'Selene',
+			leftSize: {
+				width: 15, // A CORRIGER
+				heigth: 18
+			},
+			rightSize: {
+				width: 15, // A CORRIGER
+				heigth: 18
+			},
+		},
+		['Thorian']: {
+			name: 'Thorian',
+			leftSize: {
+				width: 15, // A CORRIGER
+				heigth: 18
+			},
+			rightSize: {
+				width: 15, // A CORRIGER
+				heigth: 18
+			},
+		},
 	}
 
 	/* -------------------------FUNCTIONS------------------------- */
@@ -144,7 +244,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	// Create the player construct objects for clients and emit them to each client
 	createWebConstructs(leftPlayerId: string, rightPlayerId: string) {
 		let leftClientConstruct: clientPlayerConstruct = { side: "left", skin: this.players[leftPlayerId].skin }
-		let rightClientConstruct: clientPlayerConstruct = { side: "left", skin: this.players[leftPlayerId].skin }
+		let rightClientConstruct: clientPlayerConstruct = { side: "right", skin: this.players[rightPlayerId].skin }
 		this.sockets[leftPlayerId].emit('playerConstruct', leftClientConstruct)
 		this.sockets[leftPlayerId].emit('playerConstruct', rightClientConstruct)
 		this.sockets[rightPlayerId].emit('playerConstruct', leftClientConstruct)
@@ -166,8 +266,8 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	createWorkerConstructs(leftPlayerId: string, rightPlayerId: string, newParty: party) {
 		let leftSkin = this.skins[this.players[leftPlayerId].skin]
 		let rightSkin = this.skins[this.players[rightPlayerId].skin]
-		let leftWorkerConstruct = this.newWorkerConstruct('left', leftSkin.width, leftSkin.height)
-		let rightWorkerConstruct = this.newWorkerConstruct('right', rightSkin.width, rightSkin.height)
+		let leftWorkerConstruct = this.newWorkerConstruct('left', leftSkin.rightSize.width, leftSkin.rightSize.heigth)
+		let rightWorkerConstruct = this.newWorkerConstruct('right', rightSkin.rightSize.width, rightSkin.rightSize.heigth)
 		newParty.worker.postMessage(leftWorkerConstruct)
 		newParty.worker.postMessage(rightWorkerConstruct)
 	}
@@ -219,7 +319,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		this.players[socket.id] = {
 			id: socket.id,
 			workerId: undefined,
-			skin: "Boreas"
+			skin: "Rylan"
 			// CALL DB TO GET SKIN
 		}
 		this.matchQueue.push(socket.id)

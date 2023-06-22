@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from 'react'
+import React, { useRef, useState, useLayoutEffect } from 'react'
 import { Routes, Route, useLocation, useNavigate } from 'react-router-dom'
 import { Socket, io } from 'socket.io-client';
 import Cookies from 'js-cookie';
@@ -22,6 +22,7 @@ const hostIp: string | undefined = process.env.HOST_IP
 
 // --------IS-CONNECTED---------------------------------------------------- //
 const isConnected = async () => {
+	return true
 	if (!Cookies.get('access_token')) return false
 
 	const servID = 'http://' + hostIp + ':3000'
@@ -86,8 +87,6 @@ const Root: React.FC = () => {
 
 	// ----STATES----------------------------- //
 	const [showHeader, setShowHeader] = useState(false)
-	const [leftScore, setLeftScore] = useState(0)
-	const [rightScore, setRightScore] = useState(0)
 
 	// ----EFFECTS---------------------------- //
 	const checkConnection = async () => {
