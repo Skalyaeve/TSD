@@ -47,7 +47,13 @@ const CharBox: React.FC<CharBoxProps> = ({ id, swapping, setSelected }) => {
 		inDuration: 0.7 + 0.02 * id,
 		outDuration: 0.5 - 0.01 * id
 	})
-	const selectBtnMotion = { whileHover: { scale: 1.05 } }
+	const selectBtnMotion = {
+		whileHover: {
+			scale: 1.05,
+			borderTopLeftRadius: '5px',
+			borderBottomRightRadius: '5px'
+		}
+	}
 
 	// ----CLASSNAMES------------------------- //
 	const boxName = `${NAME}-box`

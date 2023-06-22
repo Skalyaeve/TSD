@@ -34,7 +34,7 @@
 
 .chat-settings-input {
 	/* #1 Éléments */
-	border: 3px solid rgb(110, 210, 90);
+	border: 2px solid rgb(110, 210, 90);
 	text-align: center;
 
 	/* #2 Forme */
@@ -65,7 +65,7 @@
 .chat-settings-btn {
 	/* #1 Éléments */
 	background-image: url('../resources/assets/ui/backgrounds/button-black1-150x45.png');
-	border: 3px solid rgb(110, 210, 90);
+	border: 2px solid rgb(110, 210, 90);
 
 	/* #2 Forme */
 	width: 150px;
@@ -87,7 +87,7 @@
 .chat-settings-commit-btn {
 	/* #1 Éléments */
 	background-image: url('../resources/assets/ui/backgrounds/button-black1-150x45.png');
-	border: 3px solid rgb(110, 210, 90);
+	border: 2px solid rgb(110, 210, 90);
 
 	/* #2 Forme */
 	width: 150px;

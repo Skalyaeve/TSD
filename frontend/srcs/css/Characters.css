@@ -71,8 +71,8 @@
 	/* #1 Éléments */
 	background-image: url('../resources/assets/ui/backgrounds/button-black1-120x45.png');
 	border: 2px solid rgb(255, 255, 255);
-	border-top-right-radius: 10px;
-	border-bottom-left-radius: 10px;
+	border-top-right-radius: 5px;
+	border-bottom-left-radius: 5px;
 	font-size: 17px;
 	display: flex;
 	align-items: center;

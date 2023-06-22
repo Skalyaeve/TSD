@@ -57,6 +57,7 @@
 	/* #1 Éléments */
 	background-image: url('../resources/assets/ui/backgrounds/div-black1.png');
 	border-bottom: 3px solid rgb(255, 255, 255);
+	font-size: 23px;
 	display: flex;
 	align-items: center;
 	justify-content: center;

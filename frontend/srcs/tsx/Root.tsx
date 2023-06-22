@@ -1,7 +1,7 @@
-import React, { useRef, useState, useEffect, useLayoutEffect } from 'react'
+import React, { useRef, useState, useLayoutEffect, useEffect } from 'react'
 import { Routes, Route, useLocation, useNavigate } from 'react-router-dom'
-import { Socket, io } from 'socket.io-client';
-import Cookies from 'js-cookie';
+import { Socket, io } from 'socket.io-client'
+import Cookies from 'js-cookie'
 import { AnimatePresence, motion } from 'framer-motion'
 import { bouncyPopUp } from './ftMotion.tsx'
 import NavBar from './NavBar.tsx'
@@ -16,9 +16,10 @@ import Leader from './Leader.tsx'
 import ErrorPage from './ErrorPage.tsx'
 import '../css/Root.css'
 
-/*
 // --------VALUES---------------------------------------------------------- //
 const hostIp: string | undefined = process.env.HOST_IP
+
+export let socket: Socket | undefined = undefined
 
 // --------IS-CONNECTED---------------------------------------------------- //
 const isConnected = async () => {
@@ -30,7 +31,7 @@ const isConnected = async () => {
 		const response = await fetch(`${servID}${path}`, {
 			method: 'GET',
 			mode: 'cors',
-			credentials: 'include',
+			credentials: 'include'
 		})
 		if (response.ok) {
 			const txt = await response.json()
@@ -44,7 +45,6 @@ const isConnected = async () => {
 	catch { console.log('[ERROR] isConnected() -> fetch(): failed') }
 	return false
 }
-*/
 
 // --------LOGIN-BTN------------------------------------------------------- //
 const LoginBtn: React.FC = () => {
@@ -53,7 +53,6 @@ const LoginBtn: React.FC = () => {
 
 	// ----HANDLERS--------------------------- //
 	const connect = async () => {
-		/*
 		const servID = 'http://' + hostIp + ':3000'
 		const path = '/auth/42/login'
 		try { window.location.href = `${servID}${path}` }
@@ -74,22 +73,28 @@ const LoginBtn: React.FC = () => {
 	</motion.button>
 }
 
-// ----SOCKET----------------------------- //
-export let socket: Socket | undefined = undefined
-
 // --------ROOT------------------------------------------------------------ //
 const Root: React.FC = () => {
-
 	// ----ROUTER----------------------------- //
 	const location = useLocation()
 	const navigate = useNavigate()
 
 	// ----STATES----------------------------- //
 	const [showHeader, setShowHeader] = useState(false)
-	const [leftScore, setLeftScore] = useState(0)
-	const [rightScore, setRightScore] = useState(0)
 
 	// ----EFFECTS---------------------------- //
+	useEffect(() => {
+		if (location.pathname === '/login') {
+			navigate('/')
+		}
+		if (!showHeader) setShowHeader(true)
+	}, [])
+
+	useLayoutEffect(() => {
+		//checkConnection()
+	}, [location.pathname])
+
+	// ----HANDLERS--------------------------- //
 	const checkConnection = async () => {
 		if (await isConnected()) {
 			if (location.pathname == '/login') {
@@ -98,37 +103,30 @@ const Root: React.FC = () => {
 				return () => clearTimeout(timer)
 			}
 			else setShowHeader(true)
+
 			if (socket == undefined) {
 				try {
 					socket = io('http://' + hostIp + ':3000/chat', {
-						transports: ["websocket"],
+						transports: ['websocket'],
 						withCredentials: true,
 						//   autoConnect: false,
 					})
-				}
-				catch { console.log("[ERROR] Couldn't connect to chat gateway") }
+				} catch { console.log('[ERROR] Couldn\'t connect to chat gateway') }
 			}
-		}
-		else {
+		} else {
 			if (location.pathname != '/login') {
 				try { window.location.href = '/login' }
-				catch { console.log("[ERROR] Couldn't redirect to /login") }
+				catch { console.log('[ERROR] Couldn\'t redirect to /login') }
 				setShowHeader(false)
 			}
-			if (socket != undefined)
-				socket.disconnect()
+			if (socket != undefined) socket.disconnect()
 		}
 	}
-
-	useLayoutEffect(() => {
-		checkConnection()
-	}, [location.pathname])
 
 	// ----CLASSNAMES------------------------- //
 	const headerName = 'header'
 
 	// ----RENDER----------------------------- //
-	console.log(showHeader)
 	return <>
 		<AnimatePresence>
 			{showHeader && <header className={headerName}>
