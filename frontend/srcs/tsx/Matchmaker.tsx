@@ -22,17 +22,6 @@ export const GameInfos: React.FC = () => {
 	const scoreName = `${name}-score`
 	const timerName = `${name}-timer`
 
-	const [leftScore, setLeftScore] = useState(0)
-	const [rightScore, setRightScore] = useState(0)
-
-	const getLeft = (): number => {
-		return leftScore
-	}
-
-	const getRight = (): number => {
-		return rightScore
-	}
-
 	// ----RENDER----------------------------- //
 	return <motion.div className={boxName} {...boxMotion}>
 		<motion.div className={playerPPName} {...childMotion} />
@@ -48,17 +37,6 @@ export const GameInfos: React.FC = () => {
 		</motion.div>
 	</motion.div>
 }
-
-// ----EXPORTED FUNCTIONS----------------------------- //
-
-export const getLeft = () => {
-	return GameInfos.getLeft();
-};
-
-export const getRight = () => {
-	return GameInfos.getRight();
-};
-
 
 // --------MATCHMAKER------------------------------------------------------ //
 export let gameSocket: Socket | undefined = undefined
@@ -77,33 +55,49 @@ const Matchmaker: React.FC = () => {
 	const hostIp = process.env.HOST_IP
 
 	const startGameSockets = () => {
-		gameSocket = io('http://' + hostIp + ':3000/game')
-		gameSocket.on('Welcome', () => {
-			gameSocket?.emit('identification', "PHASER-WEB-CLIENT")
+		try {
+			gameSocket = io('http://' + hostIp + ':3000/game', {
+				transports: ["websocket"],
+				withCredentials: true,
+				//   autoConnect: false,
+			})
+		}
+		catch { console.log("[ERROR] Couldn't connect to chat gateway") }
+		gameSocket?.on('matching', () => {
 			setMatchmaking(true)
 			console.log("Ongoing matchmaging")
 		})
-		gameSocket.on('matched', () => {
+		gameSocket?.on('matched', () => {
 			console.log('Opponent found, starting game')
 			setMatchmaking(false)
 			setInGame(true)
 			localStorage.setItem('inGame', '1')
 			navigate('/game')
 		})
-		gameSocket.on('unmatched', () => {
+		gameSocket?.on('unmatched', () => {
 			console.log("Succesfully stoped matchmaking")
 			gameSocket?.disconnect()
 			gameSocket = undefined
 			setMatchmaking(false)
 		})
+		gameSocket?.on('gameEnded', () => {
+			
+		})
 	}
 
 	const stopMatchmaking = () => {
-		console.log("Requesting stop matchmaking")
+		console.log("Stoping matchmaking")
 		gameSocket?.emit('stopMatchmaking')
 	}
 
 	// ----EFFECTS---------------------------- //
+	useEffect(() => {
+		
+		return () => {
+
+		}
+	}, [])
+
 	useEffect(() => {
 		console.log("matchmaking:", matchmaking)
 	}, [matchmaking])

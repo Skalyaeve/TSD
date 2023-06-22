@@ -71,7 +71,8 @@ const FromHome: React.FC = () => {
 	const logoutBtnHdl = {
 		onMouseUp: () => {
 			Cookies.remove('access_token', { path: '/', domain: hostIp })
-			window.location.href = '/login'
+			try { window.location.href = '/login' }
+			catch { console.log("[ERROR] Couldn't redirect to /login") }
 		}
 	}
 

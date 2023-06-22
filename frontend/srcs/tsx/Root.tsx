@@ -36,11 +36,11 @@ const isConnected = async () => {
 			console.log(`[SUCCESS] isConnected() -> fetch(): ${txt}`)
 			return true
 		}
-		else console.error(
+		else console.log(
 			`[ERROR] isConnected() -> fetch(): ${response.status}`
 		)
 	}
-	catch { console.error('[ERROR] isConnected() -> fetch(): failed') }
+	catch { console.log('[ERROR] isConnected() -> fetch(): failed') }
 	return false
 }
 
@@ -53,12 +53,8 @@ const LoginBtn: React.FC = () => {
 	const connect = async () => {
 		const servID = 'http://' + hostIp + ':3000'
 		const path = '/auth/42/login'
-		try {
-			window.location.href = `${servID}${path}`
-		}
-		catch {
-			console.error('[ERROR] fetch() failed')
-		}
+		try { window.location.href = `${servID}${path}` }
+		catch { console.log('[ERROR] Couldn\'t redirect to' + `${servID}${path}`) }
 	}
 
 	const btnHdl = { onMouseUp: () => !animating.current && connect() }
@@ -101,11 +97,14 @@ const Root: React.FC = () => {
 			}
 			else setShowHeader(true)
 			if (socket == undefined) {
-				socket = io('http://' + hostIp + ':3000/chat', {
-					transports: ["websocket"],
-					withCredentials: true,
-					//   autoConnect: false,
-				});
+				try {
+					socket = io('http://' + hostIp + ':3000/chat', {
+						transports: ["websocket"],
+						withCredentials: true,
+						//   autoConnect: false,
+					})
+				}
+				catch { console.log("[ERROR] Couldn't connect to chat gateway") }
 			}
 		}
 		else {
