@@ -27,7 +27,7 @@ interface keyStates {
 }
 
 interface loginData {
-	sessionId: string
+	workerId: string
 }
 
 // Players construction interface (sent by the main process)
@@ -42,7 +42,7 @@ interface playerConstruct {
 // Player update event interface (sent by the main process)
 interface playerUpdate {
 	side: 'left' | 'right'						// Player side
-	keyStates: keyStates						// Player key statessessionId
+	keyStates: keyStates						// Player key states
 }
 
 // Properties of a game object (sent to the main process)
@@ -55,7 +55,7 @@ interface objectProps {
 
 // Properties of all updated game objects
 interface newProps {
-	sessionId: string
+	workerId: string
 	leftProps: objectProps
 	rightProps: objectProps
 	ballProps: objectProps
@@ -74,7 +74,7 @@ const targetFPS: number = 60
 const playerSpeed: number = 1000
 
 // Game variables
-let sessionId: string | undefined = undefined
+let workerId: string | undefined = undefined
 let leftPlayer: player | undefined = undefined
 let rightPlayer: player | undefined = undefined
 let ball: ball | undefined = undefined
@@ -101,7 +101,7 @@ function createBall() {
 	ball.body.setCircle(26)
 	ball.body.setBounce(1, 1)
 	ball.body.setCollideWorldBounds(true, undefined, undefined, undefined)
-	console.log("[", sessionId?.slice(0,4),"] Added ball")
+	console.log("[", workerId?.slice(0, 4), "] Added ball")
 }
 
 // Create a new player
@@ -115,16 +115,20 @@ function createPlayer(construct: playerConstruct) {
 	if (ball) physics.add.collider(ball.body, newPlayer.body)
 	if (leftPlayer) {
 		rightPlayer = newPlayer
-		console.log("[", sessionId?.slice(0,4),"] Added right player")
+		console.log("[", workerId?.slice(0, 4), "] Added right player")
 	}
 	else {
 		leftPlayer = newPlayer
-		console.log("[", sessionId?.slice(0,4),"] Added left player")
+		console.log("[", workerId?.slice(0, 4), "] Added left player")
 	}
-	if (leftPlayer && rightPlayer && ball)
+	if (leftPlayer && rightPlayer && ball) {
 		gameState = "on"
-	else
+		console.log("[S] Game is now running")
+	}
+	else {
 		gameState = "off"
+		console.log("[S] Game is now stopped")
+	}
 }
 
 /* -------------------------UPDATE FUNCTIONS------------------------- */
@@ -145,19 +149,35 @@ function updatePlayer(updatedPlayer: playerUpdate) {
 
 /* -------------------------PORT INPUT------------------------- */
 
-function isLogin(incomingData: playerConstruct | playerUpdate | loginData ): incomingData is loginData {
-	return (<loginData>incomingData).sessionId !== undefined
+function isLogin(incomingData: playerConstruct | playerUpdate | loginData): incomingData is loginData {
+	return (<loginData>incomingData).workerId !== undefined
 }
 
-function isConstruct(incomingData: playerConstruct | playerUpdate): incomingData is playerConstruct {
+function isConstruct(incomingData: playerConstruct | playerUpdate | loginData): incomingData is playerConstruct {
 	return (<playerConstruct>incomingData).xPos !== undefined
 }
 
+function isUpdate(incomingData: playerConstruct | playerUpdate | loginData): incomingData is playerUpdate {
+	return (<playerUpdate>incomingData).keyStates !== undefined
+}
+
 function portListener() {
-	parentPort?.on("message", (incomingData: playerConstruct | playerUpdate | loginData ) => {
-		if (isLogin(incomingData)) sessionId = incomingData.sessionId
-		else if (isConstruct(incomingData)) createPlayer(incomingData)
-		else updatePlayer(incomingData)
+	parentPort?.on("message", (incomingData: playerConstruct | playerUpdate | loginData) => {
+		if (isLogin(incomingData)) {
+			console.log("[S] worker id recieved")
+			workerId = incomingData.workerId
+		}
+		else if (isConstruct(incomingData)) {
+			console.log("[S] player recieved")
+			createPlayer(incomingData)
+		}
+		else if (isUpdate(incomingData)) {
+			console.log("[S] update recieved")
+			updatePlayer(incomingData)
+		}
+		else {
+			console.log("[S] ERROR: Wrong message type")
+		}
 	})
 }
 
@@ -174,16 +194,16 @@ function getProperties(body: Body): objectProps {
 
 // Send objects properties to
 function sendProperties() {
-	if (sessionId && leftPlayer && ball && rightPlayer && parentPort) {
+	if (workerId && leftPlayer && ball && rightPlayer && parentPort) {
 		if (newProps)
 			oldProps = Object.assign({}, newProps)
 		newProps = {
-			sessionId: sessionId,
+			workerId: workerId,
 			leftProps: getProperties(leftPlayer.body),
 			rightProps: getProperties(rightPlayer.body),
 			ballProps: getProperties(ball.body)
 		}
-		if (oldProps){
+		if (oldProps) {
 			parentPort.postMessage(newProps)
 		}
 	}

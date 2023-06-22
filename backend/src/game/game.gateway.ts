@@ -9,12 +9,6 @@ import { ChatService } from '../chat/chat.service.js';*/
 
 /* -------------------------TYPES------------------------- */
 
-// Socket and socket type
-interface socketInfo {
-	socket: Socket									// Socket
-	type: string | undefined						// Socket type
-}
-
 // Player key states
 interface keyStates {
 	up: boolean										// Player UP key state
@@ -33,11 +27,11 @@ interface skin {
 // Players
 interface player {
 	id: string										// Player ID
-	sessionId: string | undefined					// Player session ID
+	workerId: string | undefined					// Player worker ID
 	skin: string									// Player skin name
 }
 
-// Party session
+// Party worker
 interface party {
 	id: string										// Party id
 	worker: Worker									// Party worker	
@@ -47,7 +41,7 @@ interface party {
 
 // Party login data
 interface loginData {
-	sessionId: string
+	workerId: string
 }
 
 // Player construction interface (sent to the client)
@@ -56,8 +50,8 @@ interface clientPlayerConstruct {
 	skin: string									// Player skin
 }
 
-// Players construction interface (sent to the session)
-interface sessionPlayerConstruct {
+// Players construction interface (sent to the worker)
+interface workerPlayerConstruct {
 	side: 'left' | 'right'							// Player side
 	xPos: number									// Player initial X position
 	yPos: number									// Player initial Y position
@@ -65,15 +59,15 @@ interface sessionPlayerConstruct {
 	height: number									// Player height
 }
 
-// Player update (sent by the back to the session)
-interface playerUpdateToSession {
+// Player update (sent by the back to the worker)
+interface playerUpdateToWorker {
 	side: 'left' | 'right'							// Player side
 	keyStates: keyStates							// Player key states
 }
 
-// New properties (sent by the session to the back)
-interface newPropsFromSession {
-	sessionId: string								// Session ID
+// New properties (sent by the worker to the back)
+interface newPropsFromWorker {
+	workerId: string								// Worker ID
 	leftProps: objectProps							// Left player properties
 	rightProps: objectProps							// Right player properties
 	ballProps: objectProps							// Ball properties
@@ -111,14 +105,12 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	@WebSocketServer()
 	server: Server;
 
-	private readonly clientType: string = "PHASER-WEB-CLIENT"
-	private readonly controllerType: string = "CONTROLLER"
 	/*private readonly userService: UserSocketsService = new UserSocketsService
 	private readonly chatService: ChatService*/
 
 	private matchQueue: string[] = []
 
-	private sockets: { [id: string]: socketInfo } = {}
+	private sockets: { [id: string]: Socket } = {}
 
 	private players: { [id: string]: player } = {}
 
@@ -134,99 +126,77 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
 	/* -------------------------FUNCTIONS------------------------- */
 
-	// Create a new client player construct
-	newClientConstruct(side: "left" | "right"): clientPlayerConstruct {
-		let newPlayer: clientPlayerConstruct = {
-			side: side,
-			skin: 'Boreas',
-		}
-		return newPlayer
+	// Create the loginData object to store the worker id and send it to the worker
+	createWorker(newParty: party) {
+		let workerLoginData: loginData = { workerId: newParty.id }
+		newParty.worker.postMessage(workerLoginData)
+		newParty.worker.on('message', (incomingProps: newPropsFromWorker) => {
+			let outgoingProps: newPropsToClient = {
+				leftProps: incomingProps.leftProps,
+				rightProps: incomingProps.rightProps,
+				ballProps: incomingProps.ballProps
+			}
+			this.sockets[newParty.leftPlayerId].emit('newProps', outgoingProps)
+			this.sockets[newParty.rightPlayerId].emit('newProps', outgoingProps)
+		})
+	}
+
+	// Create the player construct objects for clients and emit them to each client
+	createWebConstructs(leftPlayerId: string, rightPlayerId: string) {
+		let leftClientConstruct: clientPlayerConstruct = { side: "left", skin: this.players[leftPlayerId].skin }
+		let rightClientConstruct: clientPlayerConstruct = { side: "left", skin: this.players[leftPlayerId].skin }
+		this.sockets[leftPlayerId].emit('playerConstruct', leftClientConstruct)
+		this.sockets[leftPlayerId].emit('playerConstruct', rightClientConstruct)
+		this.sockets[rightPlayerId].emit('playerConstruct', leftClientConstruct)
+		this.sockets[rightPlayerId].emit('playerConstruct', rightClientConstruct)
 	}
 
 	// Create a new sesion player construct
-	newSessionConstruct(side: "left" | "right", width: number, height: number): sessionPlayerConstruct {
-		let newPlayer: sessionPlayerConstruct = {
+	newWorkerConstruct(side: "left" | "right", width: number, height: number): workerPlayerConstruct {
+		return {
 			side: side,
 			xPos: (side == 'left' ? 250 : 1670),
 			yPos: 540,
 			width: width,
 			height: height,
 		}
-		return newPlayer
 	}
 
-	
-	// Set session id in player object and emit to each client it's side
-	initialiseWebClients(leftPlayerId: string, rightPlayerId: string, newParty: party){
-		this.players[leftPlayerId].sessionId = newParty.id
-		this.players[rightPlayerId].sessionId = newParty.id
-		this.sockets[leftPlayerId].socket.emit('clientSide', 'left')
-		this.sockets[rightPlayerId].socket.emit('clientSide', 'right')
-	}
-
-	// Create the loginData object to store the session id and send it to the session
-	createWorker(newParty: party){
-		let sessionLoginData: loginData = { sessionId: newParty.id }
-		newParty.worker.postMessage(sessionLoginData)
-		// Session message listener
-		newParty.worker.on('message', (incomingProps: newPropsFromSession) => {
-			let outgoingProps: newPropsToClient = {
-				leftProps: incomingProps.leftProps,
-				rightProps: incomingProps.rightProps,
-				ballProps: incomingProps.ballProps
-			}
-			this.sockets[newParty.leftPlayerId].socket.emit('newProps', outgoingProps)
-			this.sockets[newParty.rightPlayerId].socket.emit('newProps', outgoingProps)
-		})
-	}
-
-	// Create the player construct objects for clients and emit them to each client
-	createWebConstructs(leftPlayerId: string, rightPlayerId: string){
-		let leftClientConstruct: clientPlayerConstruct = this.newClientConstruct('left')
-		let rightClientConstruct: clientPlayerConstruct = this.newClientConstruct('right')
-		this.sockets[leftPlayerId].socket.emit('playerConstruct', leftClientConstruct)
-		this.sockets[rightPlayerId].socket.emit('playerConstruct', leftClientConstruct)
-		this.sockets[leftPlayerId].socket.emit('playerConstruct', rightClientConstruct)
-		this.sockets[rightPlayerId].socket.emit('playerConstruct', rightClientConstruct)
-	}
-
-	// Get skins for both side, create the session construct objects and emit them to the session
-	createSessionConstructs(leftPlayerId: string, rightPlayerId: string, newParty: party){
+	// Get skins for both side, create the worker construct objects and emit them to the worker
+	createWorkerConstructs(leftPlayerId: string, rightPlayerId: string, newParty: party) {
 		let leftSkin = this.skins[this.players[leftPlayerId].skin]
 		let rightSkin = this.skins[this.players[rightPlayerId].skin]
-		let leftSessionConstruct: sessionPlayerConstruct = this.newSessionConstruct('left', leftSkin.width, leftSkin.height)
-		let rightSessionConstruct: sessionPlayerConstruct = this.newSessionConstruct('right', rightSkin.width, rightSkin.height)
-		newParty.worker.postMessage(leftSessionConstruct)
-		newParty.worker.postMessage(rightSessionConstruct)
+		let leftWorkerConstruct = this.newWorkerConstruct('left', leftSkin.width, leftSkin.height)
+		let rightWorkerConstruct = this.newWorkerConstruct('right', rightSkin.width, rightSkin.height)
+		newParty.worker.postMessage(leftWorkerConstruct)
+		newParty.worker.postMessage(rightWorkerConstruct)
 	}
-	
+
 	// Starts a new party
 	async createParty(leftPlayerId: string, rightPlayerId: string) {
-		this.sockets[leftPlayerId].socket.emit('matched')
-		this.sockets[rightPlayerId].socket.emit('matched')
-		// Create new session
 		let newParty: party = {
 			id: uuidv4(),
-			worker: new Worker('./toolDist/session.js'),
+			worker: new Worker('./toolDist/worker.js'),
 			leftPlayerId: leftPlayerId,
 			rightPlayerId: rightPlayerId
 		}
-		// Store the new party in the parties object
 		this.parties[newParty.id] = newParty
-		console.log("New party: ", newParty.id)
-		// Wait for party to be created and sens constructs to clients and session
+		this.players[leftPlayerId].workerId = newParty.id
+		this.players[rightPlayerId].workerId = newParty.id
 		setTimeout(() => {
-			this.initialiseWebClients(leftPlayerId, rightPlayerId, newParty)
 			this.createWorker(newParty)
 			this.createWebConstructs(leftPlayerId, rightPlayerId)
-			this.createSessionConstructs(leftPlayerId, rightPlayerId, newParty)
+			this.createWorkerConstructs(leftPlayerId, rightPlayerId, newParty)
 		}, 100)
+		console.log("New party: ", newParty.id)
+		this.sockets[leftPlayerId].emit('matched')
+		this.sockets[rightPlayerId].emit('matched')
 	}
 
-	// Creates a new party if 
+	// Creates a new party if there is at least two player in the queue
 	checkMatchQueue() {
 		if (this.matchQueue.length >= 2) {
-			console.log("More than 2 players in matchmaking queue starting a new session")
+			console.log("More than 2 players in matchmaking queue starting a new worker")
 			let firstPlayer = this.matchQueue.pop()
 			let secondPlayer = this.matchQueue.pop()
 			this.createParty(firstPlayer, secondPlayer)
@@ -235,59 +205,33 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
 	/* -------------------------GLOBAL EVENT LISTENERS------------------------- */
 
+	// Event handler for connection
 	async handleConnection(socket: Socket, ...args: any[]) {
-		this.sockets[socket.id] = {
-			socket: socket,
-			type: undefined,
-		};
 		/*let userData = await this.chatService.getUserFromSocket(socket)
 		let userSockets = this.userService.getUserSocketIds(userData.id)
 		if (!userData)
-			console.log("Not connected")
-		else{
+		console.log("Not connected")
+		else {
 			this.userService.setUser(userData.id, socket)
 		}*/
-		socket.emit('Welcome');
-	}
-
-	async handleDisconnect(socket: Socket) {
-		let client = this.sockets[socket.id]
-		if (client.type == this.clientType)
-			delete this.sockets[socket.id]
-		console.log("Client", client.socket.id, "type:", client.type, "disconnected")
-	}
-
-	@SubscribeMessage('identification')
-	handleIdentification(socket: Socket, payload: string) {
-		switch (payload) {
-			case this.clientType:
-				console.log("New player session:", socket.id)
-				this.sockets[socket.id].type = this.clientType
-				this.players[socket.id] = {
-					id: socket.id,
-					sessionId: undefined,
-					skin: "Boreas"
-					// CALL DB TO GET SKIN
-				}
-				this.matchQueue[this.matchQueue.length] = socket.id
-				this.checkMatchQueue()
-				break
-			case this.controllerType:
-				console.log("New controller:", socket.id)
-				this.sockets[socket.id].type = this.controllerType
-				break
-			default:
-				console.log("Wrong client type, disconnecting...")
-				socket.disconnect()
+		console.log("New player worker:", socket.id)
+		this.sockets[socket.id] = socket
+		this.players[socket.id] = {
+			id: socket.id,
+			workerId: undefined,
+			skin: "Boreas"
+			// CALL DB TO GET SKIN
 		}
+		this.matchQueue.push(socket.id)
+		socket.emit('matching');
+		this.checkMatchQueue()
 	}
 
-	/* -------------------------WEB EVENT LISTENERS------------------------- */
-
+	// Event handler for stopMatchmaking request
 	@SubscribeMessage('stopMatchmaking')
-	handleStopMatchmaking(socket: Socket){
-		for (let index = 0; index < this.matchQueue.length; index++){
-			if (this.matchQueue[index] == socket.id){
+	handleStopMatchmaking(socket: Socket) {
+		for (let index = 0; index < this.matchQueue.length; index++) {
+			if (this.matchQueue[index] == socket.id) {
 				this.matchQueue.splice(index, 1)
 			}
 			break
@@ -297,60 +241,26 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
 	@SubscribeMessage('playerKeyUpdate')
 	handlePlayerKeyUpdate(socket: Socket, payload: newPropsFromClient) {
-		if (this.sockets[socket.id].type == this.clientType && this.players[socket.id].sessionId) {
-			let sessionId: string = this.players[socket.id].sessionId
-			let update: playerUpdateToSession = {
-				side: (this.parties[sessionId].leftPlayerId == socket.id ? 'left' : 'right'),
+		if (this.players[socket.id].workerId) {
+			let workerId: string = this.players[socket.id].workerId
+			let update: playerUpdateToWorker = {
+				side: (this.parties[workerId].leftPlayerId == socket.id ? 'left' : 'right'),
 				keyStates: payload.keys
 			}
-			this.parties[sessionId].worker.postMessage(update)
-			let leftPlayerId: string = this.parties[sessionId].leftPlayerId
-			let rightPlayerId: string = this.parties[sessionId].rightPlayerId
+			this.parties[workerId].worker.postMessage(update)
+			let leftPlayerId: string = this.parties[workerId].leftPlayerId
+			let rightPlayerId: string = this.parties[workerId].rightPlayerId
 			let dir: newDirection = {
-				left: (leftPlayerId == socket.id ? payload.dir :  undefined),
-				right: (rightPlayerId == socket.id ? payload.dir :  undefined)
+				left: (leftPlayerId == socket.id ? payload.dir : undefined),
+				right: (rightPlayerId == socket.id ? payload.dir : undefined)
 			}
-			this.sockets[this.parties[sessionId].leftPlayerId].socket.emit('changeDirection', dir)
-			this.sockets[this.parties[sessionId].leftPlayerId].socket.emit('changeDirection', dir)
-		}	
-	}
-
-	
-	/*@SubscribeMessage('playerStart')
-	handlePlayerStart(socket: Socket) {
-		if (this.sockets[socket.id].type == this.clientType) {
+			this.sockets[this.parties[workerId].leftPlayerId].emit('changeDirection', dir)
+			this.sockets[this.parties[workerId].rightPlayerId].emit('changeDirection', dir)
 		}
 	}
 
-	@SubscribeMessage('playerStop')
-	handlePlayerStop(socket: Socket, payload: "up" | "down" | "left" | "right" | "none") {
-		if (this.sockets[socket.id].type == this.clientType) {
-			let leftPlayerId: string = this.parties[socket.id].leftPlayerId
-			let rightPlayerId: string = this.parties[socket.id].rightPlayerId
-		}
-	}*/
-
-	/* -------------------------CONTROLLER EVENT LISTENERS------------------------- */
-
-	/*// Display a connected socket to the controller
-	@SubscribeMessage('displaySocket')
-	handleDisplaySocket(socket: Socket, payload: string) {
-		if (this.sockets[socket.id].type == this.controllerType) {
-			if (this.sockets[payload])
-				socket.emit('displayLine', "Socket: " + payload + " type: " + this.sockets[payload].type)
-			else
-				socket.emit('displayLine', "Unknown socket: " + payload)
-			socket.emit('endOfDisplay')
-		}
+	async handleDisconnect(socket: Socket) {
+		console.log("Client", socket.id, "disconnected")
+		delete this.sockets[socket.id]
 	}
-
-	// Display all the connected sockets to the controller
-	@SubscribeMessage('displayAllSocket')
-	handleDisplayAllSocket(socket: Socket) {
-		if (this.sockets[socket.id].type == this.controllerType) {
-			for (let socketId in this.sockets)
-				socket.emit('displayLine', "Socket: " + socketId + " type: " + this.sockets[socketId].type)
-			socket.emit('endOfDisplay')
-		}
-	}*/
 }

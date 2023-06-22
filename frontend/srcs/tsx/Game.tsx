@@ -296,14 +296,8 @@ function Party() {
 		gameSocket?.emit('playerKeyUpdate', props)
 	}
 
-	// Send player start to the server
-	/*const sendPlayerStart = () => {
-		players[myId].sprite?.play(players[myId].skin + 'RunAnim')
-		gameSocket.emit('playerStart')
-	}player.move*/
-
 	// Send player stop to the server
-	const sendPlayerStop = () => {
+	const sendPlayerStop = (): void => {
 		gameSocket?.emit('playerStop')
 	}
 
@@ -312,53 +306,33 @@ function Party() {
 	function getDirection(): "up" | "down" | "left" | "right" | "none" | undefined {
 		if (allKeysUp())
 			return "none"
-		else if (!oldKeyStates.left && actualKeyStates.left) {
+		else if (!oldKeyStates.left && actualKeyStates.left)
 			return "left"
-		}
-		else if (!oldKeyStates.right && actualKeyStates.right) {
+		else if (!oldKeyStates.right && actualKeyStates.right)
 			return "right"
-		}
-		else if (!oldKeyStates.up && actualKeyStates.up) {
+		else if (!oldKeyStates.up && actualKeyStates.up)
 			return "up"
-		}
-		else if (!oldKeyStates.down && actualKeyStates.down) {
+		else if (!oldKeyStates.down && actualKeyStates.down)
 			return "down"
-		}
 		return undefined
 	}
 
 	// Adapts player moveState and devolity following the pressed keys
 	function checkKeyInputs(): void {
-		let player: player
-
 		if (leftPlayer && rightPlayer) {
-			if (mySide && mySide == 'left')
-				player = leftPlayer
-			else
-				player = rightPlayer
-
 			oldKeyStates = Object.assign({}, actualKeyStates)
-			actualKeyStates.up = (keys.up.isDown ? true : false)
-			actualKeyStates.down = (keys.down.isDown ? true : false)
-			actualKeyStates.left = (keys.left.isDown ? true : false)
-			actualKeyStates.right = (keys.right.isDown ? true : false)
-
+			actualKeyStates.up = keys.up.isDown
+			actualKeyStates.down = keys.down.isDown
+			actualKeyStates.left = keys.left.isDown
+			actualKeyStates.right = keys.right.isDown
 			if (actualKeyStates.up != oldKeyStates.up ||
 				actualKeyStates.down != oldKeyStates.down ||
 				actualKeyStates.left != oldKeyStates.left ||
 				actualKeyStates.right != oldKeyStates.right) {
 				sendPlayerMovement(getDirection())
 			}
-
-			if (allKeysUp()) {
+			if (allKeysUp())
 				sendPlayerStop()
-			}
-			else {
-				if (player.move == 'idle') {
-					//sendPlayerStart()
-					player.move = 'run'
-				}
-			}
 		}
 	}
 
@@ -393,7 +367,6 @@ function Party() {
 					console.log("new left")
 					console.log(leftPlayer.skin + "_" + animationQueue.left + "Anim")
 					leftPlayer.sprite?.play(leftPlayer.skin + "_" + animationQueue.left + "Anim")
-					//setLeft(getLeft() + 1)
 				}
 				else {
 					console.log("left stop")
@@ -489,36 +462,13 @@ function Party() {
 
 	// Start socket comunication with game server
 	function socketListeners(): Socket | undefined {
-		// ********** BACK TO CLIENT SPECIFIC EVENTS ********** //
-		// WORKER <x= BACK ==> CLIENT
 
-		// Changes the player's animation on movement chance
-		/*socket.on('playerStarted', (playerId: string) => {
-			players[playerId].anim = 'RunAnim'
-			animationQueue[animationQueue.length] = playerId
-			console.log("A player started moving:", playerId)
-		})
-
-		// Changes the player's animation on movement chance
-		socket.on('playerStoped', (playerId: string) => {
-			players[playerId].anim = 'IdleAnim'
-			animationQueue[animationQueue.length] = playerId
-			cnsole.log("A player stoped moving:", playerId)
-		})*/
-
-		// ********** BACK TO ALL EVENTS ********** //
-		// WORKER <== BACK ==> CLIENT
-
-		gameSocket?.on('clientSide', (side: "left" | "right") => {
-			mySide = side
-		})
-
+		// Creates player
 		gameSocket?.on('playerConstruct', (construct: playerConstruct) => {
 			if (construct.side == 'left')
 				creationQueue.left = construct
 			else
 				creationQueue.right = construct
-			console.log("A new player connected to the session")
 		})
 
 		// Remove the disconnected player from the players list
@@ -527,14 +477,12 @@ function Party() {
 			console.log("A player has disconnected")
 		});*/
 
-		// ********** WORKER TO CLIENT EVENTS ********** //
-		// WORKER ==> BACK ==> CLIENT
-
-		// Update the moved player's velocity in the players list
+		// Update the moved player's position
 		gameSocket?.on('newProps', (properties: newPropsToClient) => {
 			moveQueue = properties
 		})
 
+		// Adapts directionof the player
 		gameSocket?.on('changeDirection', (dir: newDirection) => {
 			if (dir.left != undefined)
 				animationQueue.left = dir.left

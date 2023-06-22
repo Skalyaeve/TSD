@@ -37,11 +37,11 @@ const isConnected = async () => {
 			console.log(`[SUCCESS] isConnected() -> fetch(): ${txt}`)
 			return true
 		}
-		else console.error(
+		else console.log(
 			`[ERROR] isConnected() -> fetch(): ${response.status}`
 		)
 	}
-	catch { console.error('[ERROR] isConnected() -> fetch(): failed') }
+	catch { console.log('[ERROR] isConnected() -> fetch(): failed') }
 	return false
 }
 */
@@ -57,8 +57,7 @@ const LoginBtn: React.FC = () => {
 		const servID = 'http://' + hostIp + ':3000'
 		const path = '/auth/42/login'
 		try { window.location.href = `${servID}${path}` }
-		catch { console.error('[ERROR] fetch() failed') }
-		*/
+		catch { console.log('[ERROR] Couldn\'t redirect to' + `${servID}${path}`) }
 	}
 	const btnHdl = { onMouseUp: () => !animating.current && connect() }
 
@@ -89,40 +88,41 @@ const Root: React.FC = () => {
 	const [showHeader, setShowHeader] = useState(false)
 	const [leftScore, setLeftScore] = useState(0)
 	const [rightScore, setRightScore] = useState(0)
-	/*
-		// ----EFFECTS---------------------------- //
-		const checkConnection = async () => {
-			if (await isConnected()) {
-				if (location.pathname == '/login') {
-					navigate('/')
-					const timer = setTimeout(() => setShowHeader(true), 500)
-					return () => clearTimeout(timer)
-				}
-				else setShowHeader(true)
-				if (socket == undefined) {
+
+	// ----EFFECTS---------------------------- //
+	const checkConnection = async () => {
+		if (await isConnected()) {
+			if (location.pathname == '/login') {
+				navigate('/')
+				const timer = setTimeout(() => setShowHeader(true), 500)
+				return () => clearTimeout(timer)
+			}
+			else setShowHeader(true)
+			if (socket == undefined) {
+				try {
 					socket = io('http://' + hostIp + ':3000/chat', {
 						transports: ["websocket"],
 						withCredentials: true,
 						//   autoConnect: false,
-					});
+					})
 				}
-			}
-			else {
-				if (location.pathname != '/login') {
-					try { window.location.href = '/login' }
-					catch { console.log("[ERROR] Couldn't redirect to /login") }
-					setShowHeader(false)
-				}
-				if (socket != undefined)
-					socket.disconnect()
+				catch { console.log("[ERROR] Couldn't connect to chat gateway") }
 			}
 		}
-	*/
-	useEffect(() => {
-		//checkConnection()
-		if (location.pathname === '/login') navigate('/')
-		if (!showHeader) setShowHeader(true)
-	}, [])
+		else {
+			if (location.pathname != '/login') {
+				try { window.location.href = '/login' }
+				catch { console.log("[ERROR] Couldn't redirect to /login") }
+				setShowHeader(false)
+			}
+			if (socket != undefined)
+				socket.disconnect()
+		}
+	}
+
+	useLayoutEffect(() => {
+		checkConnection()
+	}, [location.pathname])
 
 	// ----CLASSNAMES------------------------- //
 	const headerName = 'header'
