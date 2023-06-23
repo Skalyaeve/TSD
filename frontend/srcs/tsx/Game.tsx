@@ -151,6 +151,10 @@ interface newPropsToClient {
 	ballProps: objectProps						// Ball properties
 }
 
+interface gameState {
+	actualState: string
+}
+
 // Properties of a game object (sent to the client)
 interface objectProps {
 	xPos: number
@@ -176,6 +180,7 @@ function Party() {
 	const screenWidth: number = 1920
 	const screenHeight: number = 1080
 	const skinFrameNumber: number = 3
+	const animFramRate: number = 4
 
 	// Keyboard keys
 	let keys: keys
@@ -484,9 +489,7 @@ function Party() {
 	}
 
 	function createBall(scene: Phaser.Scene) {
-		ball = {
-			sprite: scene.physics.add.sprite(960, 540, 'ball')
-		}
+		ball = { sprite: scene.physics.add.sprite(960, 540, 'ball') }
 		ball.sprite?.body?.setCircle(26)
 		ball.sprite?.setBounce(1, 1)
 		ball.sprite?.setCollideWorldBounds(true, undefined, undefined, undefined)
@@ -498,25 +501,25 @@ function Party() {
 			scene.anims.create({
 				key: skinName + '_downAnim',
 				frames: scene.anims.generateFrameNumbers(skinName + '_front', { start: 0, end: skinFrameNumber - 1 }),
-				frameRate: skinFrameNumber * 2,
+				frameRate: skinFrameNumber * animFramRate,
 				repeat: -1
 			})
 			scene.anims.create({
 				key: skinName + '_upAnim',
 				frames: scene.anims.generateFrameNumbers(skinName + '_back', { start: 0, end: skinFrameNumber - 1 }),
-				frameRate: skinFrameNumber * 2,
+				frameRate: skinFrameNumber * animFramRate,
 				repeat: -1
 			})
 			scene.anims.create({
 				key: skinName + '_leftAnim',
 				frames: scene.anims.generateFrameNumbers(skinName + '_left', { start: 0, end: skinFrameNumber - 1 }),
-				frameRate: skinFrameNumber * 2,
+				frameRate: skinFrameNumber * animFramRate,
 				repeat: -1
 			})
 			scene.anims.create({
 				key: skinName + '_rightAnim',
 				frames: scene.anims.generateFrameNumbers(skinName + '_right', { start: 0, end: skinFrameNumber - 1 }),
-				frameRate: skinFrameNumber * 2,
+				frameRate: skinFrameNumber * animFramRate,
 				repeat: -1
 			})
 		}
@@ -539,6 +542,13 @@ function Party() {
 	// Send player stop to the server
 	const sendPlayerStop = (): void => {
 		gameSocket?.emit('playerStop')
+	}
+
+	const sendReady = (): void => {
+		let stateUpdate: gameState = {
+			actualState: "ready"
+		}
+		gameSocket?.emit('playerStateUpdate', stateUpdate)
 	}
 
 	/****** SCENE UPDATE ******/
@@ -672,6 +682,7 @@ function Party() {
 	function create(this: Phaser.Scene): void {
 		createBall(this)
 		createAnims(this)
+		sendReady()
 	}
 
 	// Scene update
@@ -716,7 +727,6 @@ function Party() {
 	function socketListeners(): Socket | undefined {
 
 		// Creates player
-		console.log("listener ok")
 		gameSocket?.on('playerConstruct', (construct: playerConstruct) => {
 			console.log("new construct:", construct.side)
 			if (construct.side == 'left')

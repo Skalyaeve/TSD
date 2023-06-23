@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { Worker } from 'worker_threads'
 import { Server, Socket } from 'socket.io';
 import { SubscribeMessage, WebSocketGateway, WebSocketServer, OnGatewayConnection, OnGatewayDisconnect } from '@nestjs/websockets';
+import { time } from 'console';
 /*import { UserSocketsService } from '../chat/chat.userSocketsService.js';
 import { ChatService } from '../chat/chat.service.js';*/
 
@@ -41,8 +42,11 @@ interface player {
 interface party {
 	id: string										// Party id
 	worker: Worker									// Party worker	
+	workerState: string
 	leftPlayerId: string							// Party left player ID
+	leftPlayerState: string
 	rightPlayerId: string							// Party right player ID
+	rightPlayerState: string
 }
 
 // Party login data
@@ -69,6 +73,14 @@ interface workerPlayerConstruct {
 interface playerUpdateToWorker {
 	side: 'left' | 'right'							// Player side
 	keyStates: keyStates							// Player key states
+}
+
+interface gameState {
+	actualState: string
+}
+
+interface stateUpdate {
+	newState: string
 }
 
 // New properties (sent by the worker to the back)
@@ -226,18 +238,31 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
 	/* -------------------------FUNCTIONS------------------------- */
 
+	isNewProps(payload: newPropsFromWorker | gameState): payload is newPropsFromWorker {
+		return (<newPropsFromWorker>payload).ballProps !== undefined
+	}
+
+	isGameState(incomingData: newPropsFromWorker | gameState): incomingData is gameState {
+		return (<gameState>incomingData).actualState !== undefined
+	}
+
 	// Create the loginData object to store the worker id and send it to the worker
 	createWorker(newParty: party) {
 		let workerLoginData: loginData = { workerId: newParty.id }
 		newParty.worker.postMessage(workerLoginData)
-		newParty.worker.on('message', (incomingProps: newPropsFromWorker) => {
-			let outgoingProps: newPropsToClient = {
-				leftProps: incomingProps.leftProps,
-				rightProps: incomingProps.rightProps,
-				ballProps: incomingProps.ballProps
+		newParty.worker.on('message', (payload: newPropsFromWorker | gameState) => {
+			if (this.isNewProps(payload)) {
+				let outgoingProps: newPropsToClient = {
+					leftProps: payload.leftProps,
+					rightProps: payload.rightProps,
+					ballProps: payload.ballProps
+				}
+				this.sockets[newParty.leftPlayerId].emit('newProps', outgoingProps)
+				this.sockets[newParty.rightPlayerId].emit('newProps', outgoingProps)
 			}
-			this.sockets[newParty.leftPlayerId].emit('newProps', outgoingProps)
-			this.sockets[newParty.rightPlayerId].emit('newProps', outgoingProps)
+			else if (this.isGameState(payload)) {
+				newParty.workerState = payload.actualState
+			}
 		})
 	}
 
@@ -277,19 +302,25 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		let newParty: party = {
 			id: uuidv4(),
 			worker: new Worker('./toolDist/worker.js'),
+			workerState: "building",
 			leftPlayerId: leftPlayerId,
-			rightPlayerId: rightPlayerId
+			leftPlayerState: "building",
+			rightPlayerId: rightPlayerId,
+			rightPlayerState: "building"
 		}
 		this.parties[newParty.id] = newParty
 		this.players[leftPlayerId].workerId = newParty.id
 		this.players[rightPlayerId].workerId = newParty.id
-		console.log("New party: ", newParty.id)
 		this.sockets[leftPlayerId].emit('matched')
 		this.sockets[rightPlayerId].emit('matched')
+		this.createWorker(newParty)
 		setTimeout(() => {
-			this.createWorker(newParty)
 			this.createWebConstructs(leftPlayerId, rightPlayerId)
 			this.createWorkerConstructs(leftPlayerId, rightPlayerId, newParty)
+			let newState: stateUpdate = {
+				newState: "start"
+			}
+			newParty.worker.postMessage(newState)
 		}, 1000)
 	}
 
@@ -357,6 +388,15 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			this.sockets[this.parties[workerId].leftPlayerId].emit('changeDirection', dir)
 			this.sockets[this.parties[workerId].rightPlayerId].emit('changeDirection', dir)
 		}
+	}
+
+	@SubscribeMessage('playerStateUpdate')
+	handlePlayerStateUpdate(socket: Socket, payload: gameState) {
+		let party = this.parties[this.players[socket.id].workerId]
+		if (party.leftPlayerId == socket.id)
+			party.leftPlayerState = payload.actualState
+		else if (party.rightPlayerId == socket.id)
+			party.rightPlayerState = payload.actualState
 	}
 
 	async handleDisconnect(socket: Socket) {

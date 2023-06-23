@@ -61,6 +61,14 @@ interface newProps {
 	ballProps: objectProps
 }
 
+interface gameState {
+	actualState: string
+}
+
+interface stateUpdate {
+	newState: string
+}
+
 interface sharedPlayer {
 
 }
@@ -75,6 +83,7 @@ const playerSpeed: number = 1000
 
 // Game variables
 let workerId: string | undefined = undefined
+let identifier: string | undefined = undefined
 let leftPlayer: player | undefined = undefined
 let rightPlayer: player | undefined = undefined
 let ball: ball | undefined = undefined
@@ -101,7 +110,7 @@ function createBall() {
 	ball.body.setCircle(26)
 	ball.body.setBounce(1, 1)
 	ball.body.setCollideWorldBounds(true, undefined, undefined, undefined)
-	console.log("[", workerId?.slice(0, 4), "] Added ball")
+	console.log(identifier, "Added ball")
 }
 
 // Create a new player
@@ -115,19 +124,11 @@ function createPlayer(construct: playerConstruct) {
 	if (ball) physics.add.collider(ball.body, newPlayer.body)
 	if (leftPlayer) {
 		rightPlayer = newPlayer
-		console.log("[", workerId?.slice(0, 4), "] Added right player")
+		console.log(identifier, "Added right player")
 	}
 	else {
 		leftPlayer = newPlayer
-		console.log("[", workerId?.slice(0, 4), "] Added left player")
-	}
-	if (leftPlayer && rightPlayer && ball) {
-		gameState = "on"
-		console.log("[S] Game is now running")
-	}
-	else {
-		gameState = "off"
-		console.log("[S] Game is now stopped")
+		console.log(identifier, "Added left player")
 	}
 }
 
@@ -141,45 +142,79 @@ function updatePlayer(updatedPlayer: playerUpdate) {
 	if (updatedPlayer.keyStates.down) yVel = yVel + playerSpeed
 	if (updatedPlayer.keyStates.left) xVel = xVel - playerSpeed
 	if (updatedPlayer.keyStates.right) xVel = xVel + playerSpeed
+	if (xVel && yVel) {
+		xVel = (playerSpeed / 2) * Math.SQRT2 * (xVel / playerSpeed)
+		yVel = (playerSpeed / 2) * Math.SQRT2 * (yVel / playerSpeed)
+	}
 	if (leftPlayer && rightPlayer) {
 		if (updatedPlayer.side == leftPlayer.side) leftPlayer.body.setVelocity(xVel, yVel)
 		else rightPlayer.body.setVelocity(xVel, yVel)
 	}
 }
 
+function updateState(newStateContainer: stateUpdate) {
+	switch (newStateContainer.newState){
+		case ("start"):
+			gameState = 'on'
+			console.log(identifier, "Starting game")
+			break
+		case ("stop"):
+			gameState = 'off'
+			console.log(identifier, "Stoping game")
+			break
+	}
+}
+
 /* -------------------------PORT INPUT------------------------- */
 
-function isLogin(incomingData: playerConstruct | playerUpdate | loginData): incomingData is loginData {
+function isLogin(incomingData: playerConstruct | playerUpdate | loginData | stateUpdate): incomingData is loginData {
 	return (<loginData>incomingData).workerId !== undefined
 }
 
-function isConstruct(incomingData: playerConstruct | playerUpdate | loginData): incomingData is playerConstruct {
+function isConstruct(incomingData: playerConstruct | playerUpdate | loginData | stateUpdate): incomingData is playerConstruct {
 	return (<playerConstruct>incomingData).xPos !== undefined
 }
 
-function isUpdate(incomingData: playerConstruct | playerUpdate | loginData): incomingData is playerUpdate {
+function isPlayerUpdate(incomingData: playerConstruct | playerUpdate | loginData | stateUpdate): incomingData is playerUpdate {
 	return (<playerUpdate>incomingData).keyStates !== undefined
 }
 
+function isStateUpdate(incomingData: playerConstruct | playerUpdate | loginData | stateUpdate): incomingData is stateUpdate {
+	return (<stateUpdate>incomingData).newState !== undefined
+}
+
 function portListener() {
-	parentPort?.on("message", (incomingData: playerConstruct | playerUpdate | loginData) => {
+	parentPort?.on("message", (incomingData: playerConstruct | playerUpdate | loginData | stateUpdate) => {
 		if (isLogin(incomingData)) {
-			console.log("[S] worker id recieved")
 			workerId = incomingData.workerId
+			identifier = "[" + workerId.slice(0, 4) + "] "
+			console.log(identifier, "Worker id recieved")
 		}
 		else if (isConstruct(incomingData)) {
-			console.log("[S] player recieved")
+			console.log(identifier, "Player recieved")
 			createPlayer(incomingData)
 		}
-		else if (isUpdate(incomingData)) {
-			console.log("[S] update recieved")
+		else if (isPlayerUpdate(incomingData)) {
 			updatePlayer(incomingData)
 		}
+		else if (isStateUpdate(incomingData)) {
+			console.log(identifier, "State update recieved")
+			updateState(incomingData)
+		}
 		else {
-			console.log("[S] ERROR: Wrong message type")
+			console.log(identifier, "ERROR: Wrong message type")
 		}
 	})
 }
+
+/*if (leftPlayer && rightPlayer && ball) {
+	gameState = "on"
+	console.log("[S] Game is now running")
+}
+else {
+	gameState = "off"
+	console.log("[S] Game is now stopped")
+}*/
 
 /* -------------------------PORT OUTPUT------------------------- */
 
@@ -204,9 +239,16 @@ function sendProperties() {
 			ballProps: getProperties(ball.body)
 		}
 		if (oldProps) {
-			parentPort.postMessage(newProps)
+			parentPort?.postMessage(newProps)
 		}
 	}
+}
+
+function sendReady() {
+	let gameState: gameState = {
+		actualState: "ready"
+	}
+	parentPort?.postMessage(gameState)
 }
 
 /* -------------------------MAIN FUNCTIONS------------------------- */
@@ -222,9 +264,10 @@ function update() {
 /* -------------------------MAIN CODE------------------------- */
 
 function main() {
-	createBall()
 	setTimeout(() => {
 		portListener()
+		createBall()
+		sendReady()
 		setInterval(() => {
 			if (gameState == "on")
 				update()
