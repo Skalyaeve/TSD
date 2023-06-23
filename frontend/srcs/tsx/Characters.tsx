@@ -27,8 +27,12 @@ interface CharBoxProps {
 	id: number
 	swapping: React.MutableRefObject<boolean>
 	setSelected: React.Dispatch<React.SetStateAction<number>>
+	selectedCharacter: number
+	setSelectedCharacter: React.Dispatch<React.SetStateAction<number>>
 }
-const CharBox: React.FC<CharBoxProps> = ({ id, swapping, setSelected }) => {
+const CharBox: React.FC<CharBoxProps> = ({
+	id, swapping, setSelected, selectedCharacter, setSelectedCharacter
+}) => {
 	// ----HANDLERS--------------------------- //
 	const boxHdl = {
 		onMouseUp: () => {
@@ -39,6 +43,9 @@ const CharBox: React.FC<CharBoxProps> = ({ id, swapping, setSelected }) => {
 				return () => clearTimeout(timer)
 			}
 		}
+	}
+	const selectBtnHdl = {
+		onMouseUp: () => { setSelectedCharacter(id) }
 	}
 
 	// ----ANIMATIONS------------------------- //
@@ -57,19 +64,22 @@ const CharBox: React.FC<CharBoxProps> = ({ id, swapping, setSelected }) => {
 
 	// ----CLASSNAMES------------------------- //
 	const boxName = `${NAME}-box`
-	const mainBoxName = `${boxName} ${boxName}-${characterNames(id)}`
+	const mainBoxName = `${boxName}`
+	const skinBoxName = `${NAME}-skin ${NAME}-skin-${characterNames(id)}`
 	const selectBoxName = `${NAME}-selectBox`
 	const selectBtnName = `${NAME}-select-btn`
 
 	// ----RENDER----------------------------- //
-	return <motion.div className={mainBoxName} {...boxHdl} {...boxMotion}>
+	return <motion.div className={mainBoxName} {...boxMotion}>
+		<div className={skinBoxName} {...boxHdl} />
 		<div className={selectBoxName}>
-			{id !== 1 && <>rank 0 required</>}
-			{id === 1 && <motion.button
+			{selectedCharacter !== id && <motion.button
 				className={selectBtnName}
+				{...selectBtnHdl}
 				{...selectBtnMotion}>
 				select
 			</motion.button>}
+			{selectedCharacter === id && <>selected</>}
 		</div>
 	</motion.div>
 }
@@ -78,8 +88,12 @@ const CharBox: React.FC<CharBoxProps> = ({ id, swapping, setSelected }) => {
 interface CharBoxesProps {
 	swapping: React.MutableRefObject<boolean>
 	setSelected: React.Dispatch<React.SetStateAction<number>>
+	selectedCharacter: number
+	setSelectedCharacter: React.Dispatch<React.SetStateAction<number>>
 }
-const CharBoxes: React.FC<CharBoxesProps> = memo(({ swapping, setSelected }) => {
+const CharBoxes: React.FC<CharBoxesProps> = memo(({
+	swapping, setSelected, selectedCharacter, setSelectedCharacter
+}) => {
 	// ----VALUES----------------------------- //
 	const count = 9
 
@@ -93,6 +107,8 @@ const CharBoxes: React.FC<CharBoxesProps> = memo(({ swapping, setSelected }) => 
 			id={index + 1}
 			swapping={swapping}
 			setSelected={setSelected}
+			selectedCharacter={selectedCharacter}
+			setSelectedCharacter={setSelectedCharacter}
 		/>
 	)
 	return <div className={boxName}>{render}</div>
@@ -161,9 +177,10 @@ const Spell: React.FC<SpellProps> = ({ isPassive = true }) => {
 				{isPassive && <>passive</>}
 				{!isPassive && <>active</>}
 			</div>
+			{!isPassive && <>tba</>}
 		</motion.div>
 		<AnimatePresence>
-			{tooltip && <motion.div
+			{tooltip && isPassive && <motion.div
 				className={tooltipName}
 				{...tooltipMotion}
 				style={{
@@ -184,58 +201,47 @@ interface CharacterProps {
 const Character: React.FC<CharacterProps> = ({ selected, characters }) => {
 	// ----ANIMATIONS------------------------- //
 	const boxMotion = fade({ inDuration: 0.3, outDuration: 0.3 })
-	const fromTop = yMove({ from: -150, inDuration: 0.7 })
-	const fromBottom = yMove({ from: 150, inDuration: 0.7 })
 
 	// ----CLASSNAMES------------------------- //
-	const skinName = `${NAME}-skin`
-	const skinBoxName = `${skinName}-box`
-	const spriteName = `${skinName} ${skinName}-${characterNames(selected)}`
 	const statsName = `${NAME}-stats`
 	const storyName = `${NAME}-story`
 	const spellzName = `${SPELLNAME}s`
 
 	// ----RENDER----------------------------- //
 	return <div className={NAME}>
-		<motion.div className={skinBoxName} {...fromTop}>
-			<AnimatePresence mode='wait'>
-				<motion.div
-					className={spriteName}
-					key={`${skinName}-${selected}`}
-					{...boxMotion}
-				/>
-			</AnimatePresence>
-		</motion.div>
-
-		<motion.div className={statsName} {...fromBottom}>
-			<AnimatePresence mode='wait'>
-				<motion.div key={`${statsName}-${selected}`} {...boxMotion}>
-					STATS
-				</motion.div>
-			</AnimatePresence>
-		</motion.div>
-
-		<motion.div className={storyName} {...fromTop}>
+		<div className={storyName}>
 			<AnimatePresence mode='wait'>
 				<motion.div key={`${storyName}-${selected}`} {...boxMotion}>
 					STORY
 				</motion.div>
 			</AnimatePresence>
-		</motion.div>
-
-		<motion.div className={spellzName} {...fromBottom}>
+		</div>
+		<div className={statsName}>
+			<AnimatePresence mode='wait'>
+				<motion.div key={`${statsName}-${selected}`} {...boxMotion}>
+					STATS
+				</motion.div>
+			</AnimatePresence>
+		</div>
+		<div className={spellzName}>
 			<AnimatePresence mode='wait'>
 				<Spell key={`${spellzName}-${selected}`} />
 			</AnimatePresence>
 			<AnimatePresence mode='wait'>
 				<Spell key={`${spellzName}-${selected}`} isPassive={false} />
 			</AnimatePresence>
-		</motion.div>
+		</div>
 	</div>
 }
 
 // --------CHARACTERS------------------------------------------------------ //
-const Characters: React.FC = () => {
+interface CharactersProps {
+	selectedCharacter: number
+	setSelectedCharacter: React.Dispatch<React.SetStateAction<number>>
+}
+const Characters: React.FC<CharactersProps> = ({
+	selectedCharacter, setSelectedCharacter
+}) => {
 	// ----VALUES----------------------------- //
 	let characters: Object = {}
 
@@ -243,7 +249,7 @@ const Characters: React.FC = () => {
 	const swapping = useRef(false)
 
 	// ----STATES----------------------------- //
-	const [selected, setSelected] = useState(1)
+	const [selected, setSelected] = useState(selectedCharacter)
 
 	// ----EFFECTS---------------------------- //
 	useEffect(() => {
@@ -273,7 +279,12 @@ const Characters: React.FC = () => {
 
 	// ----RENDER----------------------------- //
 	return <motion.main className={boxName} {...boxMotion}>
-		<CharBoxes swapping={swapping} setSelected={setSelected} />
+		<CharBoxes
+			swapping={swapping}
+			setSelected={setSelected}
+			selectedCharacter={selectedCharacter}
+			setSelectedCharacter={setSelectedCharacter}
+		/>
 		<Character selected={selected} characters={characters} />
 	</motion.main>
 }

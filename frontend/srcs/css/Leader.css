@@ -29,7 +29,7 @@
 
 	/* #2 Forme */
 	width: 60px;
-	height: 45px;
+	height: 40px;
 }
 
 /* ---LEADER-HEAD---------------- */
@@ -51,7 +51,7 @@
 	border-bottom-left-radius: 5px;
 
 	/* #2 Forme */
-	height: 45px;
+	height: 40px;
 }
 
 .leader-input-btn {
@@ -121,7 +121,7 @@
 	cursor: pointer;
 
 	/* #2 Forme */
-	height: 65px;
+	height: 55px;
 
 	/* #3 Position */
 	position: sticky;

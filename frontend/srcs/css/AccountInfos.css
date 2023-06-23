@@ -56,7 +56,7 @@
 
 .profile-achievements-head {
 	/* #1 Éléments */
-	background-image: url('../resources/assets/ui/backgrounds/div-black1.png');
+	background-image: url('../resources/assets/ui/backgrounds/div-black2.png');
 	border-bottom: 3px solid rgb(255, 255, 255);
 	font-size: 23px;
 	display: flex;
@@ -78,7 +78,7 @@
 
 .profile-achievement {
 	/* #1 Éléments */
-	background-image: url('../resources/assets/ui/backgrounds/div-black1.png');
+	background-image: url('../resources/assets/ui/backgrounds/div-black2.png');
 	border: 2px solid rgb(255, 255, 255);
 	border-top-right-radius: 10px;
 	border-bottom-left-radius: 10px;
@@ -110,7 +110,7 @@
 
 .profile-stats {
 	/* #1 Éléments */
-	background-image: url('../resources/assets/ui/backgrounds/div-black1.png');
+	background-image: url('../resources/assets/ui/backgrounds/div-black2.png');
 	border-bottom: 3px solid rgb(255, 255, 255);
 	border-top-right-radius: 10px;
 	display: grid;

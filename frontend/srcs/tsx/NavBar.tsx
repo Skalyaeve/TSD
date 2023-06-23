@@ -158,7 +158,7 @@ const FromCharacters: React.FC = () => (
 		<NavBarLink
 			index={0}
 			to='/'
-			ext='back'
+			ext='home'
 			isLast={true}
 			zindex={0}
 		/>
@@ -191,19 +191,6 @@ const From404: React.FC = () => (
 	</motion.nav>
 )
 
-// --------RENDER-FROM-CHAT------------------------------------------------ //
-const FromChat: React.FC = () => (
-	<motion.nav className={NAME} {...navBarMotion(BACK_LINK_HEIGHT)}>
-		<NavBarLink
-			index={0}
-			to='/'
-			ext='home'
-			isLast={true}
-			zindex={0}
-		/>
-	</motion.nav>
-)
-
 // --------NAVBAR---------------------------------------------------------- //
 const NavBar: React.FC = () => {
 	// ----ROUTER----------------------------- //
@@ -219,7 +206,6 @@ const NavBar: React.FC = () => {
 			<Route path='/characters' element={<FromCharacters />} />
 			<Route path='/leader' element={<FromLeader />} />
 			<Route path='/game' element={<GameInfos />} />
-			<Route path='/chat' element={<FromChat />} />
 			<Route path='*' element={<From404 />} />
 		</Routes>
 	</AnimatePresence>

@@ -49,6 +49,7 @@ a {
 
 button {
 	/* #1 Éléments */
+	font-size: 17px;
 	border: none;
 	cursor: pointer;
 }

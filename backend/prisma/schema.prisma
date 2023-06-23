@@ -17,7 +17,6 @@ model User {
 	avatarFilename	String	@default("default.png")
 	rankPoints	Int	@default(0)
 	twoFactorAuth	Boolean	@default(false)
-	charRef	Character	@relation(fields: [character], references: [name])
 	character	String	@default("Boreas")
 
 	requester	FriendRequest[]	@relation("requester")
@@ -128,18 +127,6 @@ model Game {
 	timeEnd		DateTime
 	winnerRef	User		@relation("winner", fields: [winner], references: [id])
 	winner		Int
-}
-
-model Character {
-	name	String	@id
-	story	String
-	hp	Int
-	attack	Int
-	defense	Int
-	speed	Int
-	rank	Int
-
-	owner	User[]
 }
 
 enum ChanType {

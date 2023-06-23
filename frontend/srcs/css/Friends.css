@@ -40,7 +40,7 @@
 	border-bottom-left-radius: 5px;
 
 	/* #2 Forme */
-	height: 45px;
+	height: 40px;
 }
 
 .profile-friends-add-input-btn {
@@ -52,7 +52,7 @@
 
 	/* #2 Forme */
 	width: 70px;
-	height: 45px;
+	height: 40px;
 
 	/* #4 Margin - Padding */
 	margin-left: 5px;
@@ -76,7 +76,7 @@
 	cursor: pointer;
 
 	/* #2 Forme */
-	height: 65px;
+	height: 55px;
 
 	/* #3 Position */
 	position: sticky;

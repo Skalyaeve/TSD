@@ -23,7 +23,6 @@ export let socket: Socket | undefined = undefined
 
 // --------IS-CONNECTED---------------------------------------------------- //
 const isConnected = async () => {
-	return true
 	if (!Cookies.get('access_token')) return false
 
 	const servID = 'http://' + hostIp + ':3000'
@@ -94,11 +93,9 @@ const Root: React.FC = () => {
 	const location = useLocation()
 	const navigate = useNavigate()
 
-	// ----REFS------------------------------- //
-	const selectedCharacter = useRef(1)
-
 	// ----STATES----------------------------- //
 	const [showHeader, setShowHeader] = useState(false)
+	const [selectedCharacter, setSelectedCharacter] = useState(1)
 
 	// ----EFFECTS---------------------------- //
 	useLayoutEffect(() => {
@@ -149,10 +146,15 @@ const Root: React.FC = () => {
 		<AnimatePresence mode='wait'>
 			<Routes location={location} key={location.pathname}>
 				<Route path='/login' element={<LoginBtn />} />
-				<Route path='/' element={<Home selectedCharacter={selectedCharacter.current} />} />
+				<Route path='/' element={<Home selectedCharacter={selectedCharacter} />} />
 				<Route path='/profile' element={<AccountInfos />} />
 				<Route path='/profile/friends' element={<Friends />} />
-				<Route path='/characters' element={<Characters />} />
+				<Route path='/characters' element={
+					<Characters
+						selectedCharacter={selectedCharacter}
+						setSelectedCharacter={setSelectedCharacter}
+					/>
+				} />
 				<Route path='/leader' element={<Leader />} />
 				<Route path='/game' element={<Party />} />
 				<Route path='*' element={<ErrorPage code={404} />} />

@@ -26,7 +26,7 @@
 
 	/* #2 Forme */
 	width: 350px;
-	height: 400px;
+	height: 350px;
 }
 
 .home-char-box-txt {
@@ -42,6 +42,7 @@
 .home-character {
 	/* #3 Position */
 	position: absolute;
+	translate: 0 -10px;
 }
 
 .home-swap-box {
