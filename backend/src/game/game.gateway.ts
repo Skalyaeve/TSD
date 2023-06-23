@@ -283,14 +283,14 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		this.parties[newParty.id] = newParty
 		this.players[leftPlayerId].workerId = newParty.id
 		this.players[rightPlayerId].workerId = newParty.id
+		console.log("New party: ", newParty.id)
+		this.sockets[leftPlayerId].emit('matched')
+		this.sockets[rightPlayerId].emit('matched')
 		setTimeout(() => {
 			this.createWorker(newParty)
 			this.createWebConstructs(leftPlayerId, rightPlayerId)
 			this.createWorkerConstructs(leftPlayerId, rightPlayerId, newParty)
-		}, 100)
-		console.log("New party: ", newParty.id)
-		this.sockets[leftPlayerId].emit('matched')
-		this.sockets[rightPlayerId].emit('matched')
+		}, 1000)
 	}
 
 	// Creates a new party if there is at least two player in the queue

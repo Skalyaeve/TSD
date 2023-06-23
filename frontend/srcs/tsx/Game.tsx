@@ -716,6 +716,7 @@ function Party() {
 	function socketListeners(): Socket | undefined {
 
 		// Creates player
+		console.log("listener ok")
 		gameSocket?.on('playerConstruct', (construct: playerConstruct) => {
 			console.log("new construct:", construct.side)
 			if (construct.side == 'left')
