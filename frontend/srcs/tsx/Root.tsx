@@ -23,6 +23,7 @@ export let socket: Socket | undefined = undefined
 
 // --------IS-CONNECTED---------------------------------------------------- //
 const isConnected = async () => {
+	return true
 	if (!Cookies.get('access_token')) return false
 
 	const servID = 'http://' + hostIp + ':3000'

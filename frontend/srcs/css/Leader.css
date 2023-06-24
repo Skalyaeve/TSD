@@ -24,7 +24,7 @@
 
 .leader-btn {
 	/* #1 Éléments */
-	background-image: url('../resources/assets/ui/backgrounds/button-black1-60x45.png');
+	background-image: url('../resources/assets/ui/backgrounds/button-black1-60x40.png');
 	border: 2px solid rgb(255, 255, 255);
 
 	/* #2 Forme */
@@ -66,7 +66,7 @@
 
 .leader-findTop-btn {
 	/* #1 Éléments */
-	background-image: url('../resources/assets/ui/backgrounds/button-black1-120x45.png');
+	background-image: url('../resources/assets/ui/backgrounds/button-black1-120x40.png');
 	border-top-left-radius: 5px;
 	border-bottom-left-radius: 5px;
 
@@ -76,7 +76,7 @@
 
 .leader-findMe-btn {
 	/* #1 Éléments */
-	background-image: url('../resources/assets/ui/backgrounds/button-black1-120x45.png');
+	background-image: url('../resources/assets/ui/backgrounds/button-black1-120x40.png');
 	border-top-right-radius: 5px;
 	border-bottom-right-radius: 5px;
 

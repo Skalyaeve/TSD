@@ -103,6 +103,7 @@
 .chat-main-input-btn {
 	/* #1 Éléments */
 	background-color: transparent;
+	font-size: 20px;
 }
 
 .chat-main-input-btn:hover {

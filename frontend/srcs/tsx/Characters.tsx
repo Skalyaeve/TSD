@@ -97,6 +97,9 @@ const CharBoxes: React.FC<CharBoxesProps> = memo(({
 	// ----VALUES----------------------------- //
 	const count = 9
 
+	// ----ANIMATIONS------------------------- //
+	const boxMotion = yMove({ from: 500, inDuration: 0.7 })
+
 	// ----CLASSNAMES------------------------- //
 	const boxName = `${NAME}s-select`
 
@@ -111,7 +114,9 @@ const CharBoxes: React.FC<CharBoxesProps> = memo(({
 			setSelectedCharacter={setSelectedCharacter}
 		/>
 	)
-	return <div className={boxName}>{render}</div>
+	return <motion.div className={boxName} {...boxMotion}>
+		{render}
+	</motion.div>
 })
 
 // --------SPELL----------------------------------------------------------- //
@@ -201,6 +206,11 @@ interface CharacterProps {
 const Character: React.FC<CharacterProps> = ({ selected, characters }) => {
 	// ----ANIMATIONS------------------------- //
 	const boxMotion = fade({ inDuration: 0.3, outDuration: 0.3 })
+	const xMoveMotion = (index: number) => xMove({
+		from: 300,
+		inDuration: 0.25 * index,
+		outDuration: 0.25 * (4 - index)
+	})
 
 	// ----CLASSNAMES------------------------- //
 	const statsName = `${NAME}-stats`
@@ -209,28 +219,28 @@ const Character: React.FC<CharacterProps> = ({ selected, characters }) => {
 
 	// ----RENDER----------------------------- //
 	return <div className={NAME}>
-		<div className={storyName}>
+		<motion.div className={storyName} {...xMoveMotion(3)}>
 			<AnimatePresence mode='wait'>
 				<motion.div key={`${storyName}-${selected}`} {...boxMotion}>
 					STORY
 				</motion.div>
 			</AnimatePresence>
-		</div>
-		<div className={statsName}>
+		</motion.div>
+		<motion.div className={statsName} {...xMoveMotion(2)}>
 			<AnimatePresence mode='wait'>
 				<motion.div key={`${statsName}-${selected}`} {...boxMotion}>
 					STATS
 				</motion.div>
 			</AnimatePresence>
-		</div>
-		<div className={spellzName}>
+		</motion.div>
+		<motion.div className={spellzName} {...xMoveMotion(1)}>
 			<AnimatePresence mode='wait'>
 				<Spell key={`${spellzName}-${selected}`} />
 			</AnimatePresence>
 			<AnimatePresence mode='wait'>
 				<Spell key={`${spellzName}-${selected}`} isPassive={false} />
 			</AnimatePresence>
-		</div>
+		</motion.div>
 	</div>
 }
 

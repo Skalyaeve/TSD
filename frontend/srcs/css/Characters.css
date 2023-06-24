@@ -73,7 +73,7 @@
 
 .character-select-btn {
 	/* #1 Éléments */
-	background-image: url('../resources/assets/ui/backgrounds/button-black1-120x45.png');
+	background-image: url('../resources/assets/ui/backgrounds/button-black1-120x40.png');
 	border: 2px solid rgb(255, 255, 255);
 	border-top-right-radius: 5px;
 	border-bottom-left-radius: 5px;
@@ -100,47 +100,47 @@
 
 .character-skin-Boreas {
 	/* #1 Éléments */
-	background-image: url('../resources/assets/ui/characters/frontview-sprite/boreas.png');
+	background-image: url('../resources/assets/ui/characters/boreas.png');
 }
 
 .character-skin-Helios {
 	/* #1 Éléments */
-	background-image: url('../resources/assets/ui/characters/frontview-sprite/helios.png');
+	background-image: url('../resources/assets/ui/characters/helios.png');
 }
 
 .character-skin-Selene {
 	/* #1 Éléments */
-	background-image: url('../resources/assets/ui/characters/frontview-sprite/selene.png');
+	background-image: url('../resources/assets/ui/characters/selene.png');
 }
 
 .character-skin-Liliana {
 	/* #1 Éléments */
-	background-image: url('../resources/assets/ui/characters/frontview-sprite/liliana.png');
+	background-image: url('../resources/assets/ui/characters/liliana.png');
 }
 
 .character-skin-Orion {
 	/* #1 Éléments */
-	background-image: url('../resources/assets/ui/characters/frontview-sprite/orion.png');
+	background-image: url('../resources/assets/ui/characters/orion.png');
 }
 
 .character-skin-Faeleen {
 	/* #1 Éléments */
-	background-image: url('../resources/assets/ui/characters/frontview-sprite/fealeen.png');
+	background-image: url('../resources/assets/ui/characters/fealeen.png');
 }
 
 .character-skin-Rylan {
 	/* #1 Éléments */
-	background-image: url('../resources/assets/ui/characters/frontview-sprite/rylan.png');
+	background-image: url('../resources/assets/ui/characters/rylan.png');
 }
 
 .character-skin-Garrick {
 	/* #1 Éléments */
-	background-image: url('../resources/assets/ui/characters/frontview-sprite/garrick.png');
+	background-image: url('../resources/assets/ui/characters/garrick.png');
 }
 
 .character-skin-Thorian {
 	/* #1 Éléments */
-	background-image: url('../resources/assets/ui/characters/frontview-sprite/thorian.png');
+	background-image: url('../resources/assets/ui/characters/thorian.png');
 }
 
 /* ---CHARACTER------------------ */
