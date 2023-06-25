@@ -4,9 +4,13 @@ import { FiRefreshCw } from "react-icons/fi";
 import { GiBootKick } from "react-icons/gi";
 import { FaBan } from "react-icons/fa";
 import { BiVolumeMute } from "react-icons/bi";
+import { GiConfirmed } from "react-icons/gi";
+import { GiCancel } from "react-icons/gi";
 import Modal from 'react-modal';
-import "../../css/Chat/ChannelCreate.css"
-import { socket } from '../Root.tsx'
+import "../../css/Chat/ChannelCreate.css";
+import { socket } from '../Root.tsx';
+
+
 
 interface User {
     nickname: string;
@@ -36,22 +40,22 @@ interface ChanMember {
     memberRef: User;
 }
 
-// interface UserInfo {
-//     id: number; 
-//     email: string; 
-//     nickname: string; 
-//     avatarFilename: string
-// }
-
 interface ChatInfoProps {
     userInfo: Contact | null;
     selectedChannel: Channel | null;
     selectedContact: Contact | null;
 }
 
-function renderButtons(member: ChanMember, isAdmin: boolean, userInfo: Contact){
+interface RenderButtonsProps {
+    member: ChanMember;
+    isAdmin:boolean;
+    userInfo: Contact
+}
 
-    // const [muteDuration, setMuteDuration] = useState<number>(0);
+function RenderButtons({member, isAdmin, userInfo} : RenderButtonsProps){
+
+    const [muteDuration, setMuteDuration] = useState<number>(0);
+    const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
     console.log("RENDERBUTTONS");
     const handleKick = () => {
@@ -65,8 +69,28 @@ function renderButtons(member: ChanMember, isAdmin: boolean, userInfo: Contact){
     // const handleMute = () => {
         // socket.emit('muteMember', {chanId: member.chanId, memberToKickId: member.member, adminId: userInfo.id, muteDuration: muteDuration});
     const handleMute = () => {
-        socket.emit('muteMember', {chanId: member.chanId, memberToKickId: member.member, adminId: userInfo.id});
+        setIsModalOpen(true);
+        // socket.emit('muteMember', {chanId: member.chanId, memberToKickId: member.member, adminId: userInfo.id});
     }
+
+    const confirmMute = () => {
+        setIsModalOpen(false);
+        socket.emit('muteMember', {chanId: member.chanId, memberToMuteId: member.member, adminId: userInfo.id, muteDuration: muteDuration});
+    }
+
+    const handleDurationChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        // update muteDuration when the input value changes
+        const value = parseInt(event.target.value, 10);
+
+    // update muteDuration only if value is greater than or equal to 0
+        if (value >= 0) {
+            setMuteDuration(value);
+        }
+        else {
+            alert("mute duration is negative");
+        }
+    }
+
     console.log("isAdmin: ", isAdmin);
     if (isAdmin) {
         return (
@@ -80,12 +104,32 @@ function renderButtons(member: ChanMember, isAdmin: boolean, userInfo: Contact){
                 <button className="member-action-btn" onClick={handleMute}>
                     <BiVolumeMute/>
                 </button>
+                <Modal 
+                    isOpen={isModalOpen}
+                    className="modal-mute-member"
+                    overlayClassName="overlay-mute-member"
+                >
+                    <div className="title-mute-duration">
+                        <h2>Enter mute duration(minutes)</h2>
+                    </div>
+                    <div className="body-mute-duration">
+                        <input 
+                            type="number"
+                            value={muteDuration}
+                            onChange={handleDurationChange}
+                        />
+                        <button className="member-action-btn" onClick={confirmMute}>
+                            <GiConfirmed/>
+                        </button>
+                        <button className="member-action-btn" onClick={() => setIsModalOpen(false)}>
+                            <GiCancel/>
+                        </button>
+                    </div>
+                </Modal>
             </div>
         )
     }
     return null;
-
-
 }
 
 function renderMemberStatus(member: ChanMember, membersStatus: Map<number, boolean>, isAdmin: boolean, userInfo: Contact) {
@@ -95,7 +139,7 @@ function renderMemberStatus(member: ChanMember, membersStatus: Map<number, boole
       <div className="member-status">
         <span className={`status-indicator ${status ? 'online' : 'offline'}`}></span>
         {member.memberRef.nickname}
-        {renderButtons(member, isAdmin, userInfo)}
+        <RenderButtons member={member} isAdmin={isAdmin} userInfo={userInfo}/>
       </div>
     );
   }

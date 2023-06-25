@@ -18,6 +18,7 @@ export async function isMember(chanId: number, memberId: number): Promise<boolea
 
 export async function isAdmin(chanId: number, memberId: number): Promise<boolean> {
   try {
+    console.log("INSIDE ISADMIN chanId: ", chanId);
     const member: ChanMember = await this.prisma.chanMember.findUnique({
       where: {
         chanId_member: {
