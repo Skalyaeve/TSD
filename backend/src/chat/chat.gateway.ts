@@ -21,6 +21,7 @@ import { channel } from 'diagnostics_channel';
 import { type } from 'os';
 import * as bcrypt from 'bcrypt';
 import { disconnect } from 'process';
+import { isMember } from './service/verifications.js';
 
 
 @WebSocketGateway({cors:
@@ -397,7 +398,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
         throw new WsException('user not in channel');
       }
       const messages = await this.chatService.findAllChanMessages(chanId);
-      console.log("channel messages: ", messages);
+      // console.log("channel messages: ", messages);
       const userData = await this.chatService.getUserFromSocket(client);
       const userRoomId = 'userID_' + userData.id.toString() + '_room';
       this.server.to(userRoomId).emit('channelMessagesFound', messages);
@@ -469,9 +470,9 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
         this.server.to(userRoomId).emit('userIsBanned');
         return;
       }
-      console.log('passed is banned');
-      console.log(userID);
-      console.log(password);
+      // console.log('passed is banned');
+      // console.log(userID);
+      // console.log(password);
       const passwordMatches = await this.chatService.psswdMatch(chanID, password);
       if (!passwordMatches) {
         throw new WsException('password does not match');
@@ -496,18 +497,40 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     }
   }
 
+  @SubscribeMessage('isMember')
+  async handleIsMember(
+      @ConnectedSocket() client: Socket,
+      @MessageBody() data: {chanId: number, memberId: number, userId: number}) : Promise<void>
+  {
+    try {
+    const {chanId, memberId, userId} = data;
+    // console.log("ISMEMBER entering");
+      const isMember = await this.chatService.isMember(chanId, memberId);
+      const ChanRoomId = 'chan_'+ chanId + '_room';
+      const memberRoomId = 'userID_'+ userId + '_room';
+      // console.log("isMember", isMember);
+      this.server.to(memberRoomId).emit('foundIsMember', isMember);
+      // client.emit('MemberisAdmin', updatedChanMember);
+    }
+    catch (error) {
+      console.log(error);
+      throw new WsException(error.message || 'Could not make member admin');
+    }
+  }
+
+
   @SubscribeMessage('isMemberAdmin')
   async handleIsMemberAdmin(
       @ConnectedSocket() client: Socket,
-      @MessageBody() data: {chanId: number, memberId: number}) : Promise<void>
+      @MessageBody() data: {chanId: number, memberId: number, userId: number}) : Promise<void>
   {
     try {
-    const {chanId, memberId} = data;
-    console.log("ISADMIN entering");
+    const {chanId, userId, memberId} = data;
+    // console.log("ISADMIN entering");
       const isAdmin = await this.chatService.isAdmin(chanId, memberId);
       const ChanRoomId = 'chan_'+ chanId + '_room';
-      const memberRoomId = 'userID_'+ memberId + '_room';
-      console.log("isAdmin", isAdmin);
+      const memberRoomId = 'userID_'+ userId + '_room';
+      // console.log("isAdmin", isAdmin);
       this.server.to(memberRoomId).emit('foundAdminStatus', isAdmin);
       // client.emit('MemberisAdmin', updatedChanMember);
     }
@@ -516,6 +539,101 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       throw new WsException(error.message || 'Could not make member admin');
     }
   }
+
+  @SubscribeMessage('isChanOwner')
+  async handleIsChanOwner(
+      @ConnectedSocket() client: Socket,
+      @MessageBody() data: {chanId: number, memberId: number, userId: number}) : Promise<void>
+  {
+    try {
+    const {chanId, userId, memberId} = data;
+    console.log("ISOWNER entering");
+      const isOwner = await this.chatService.isOwner(chanId, memberId);
+      const ChanRoomId = 'chan_'+ chanId + '_room';
+      const memberRoomId = 'userID_'+ userId + '_room';
+      console.log("isOwner", isOwner);
+      this.server.to(memberRoomId).emit('foundOwnerStatus', isOwner);
+      // client.emit('MemberisAdmin', updatedChanMember);
+    }
+    catch (error) {
+      console.log(error);
+      throw new WsException(error.message || 'Could not make member admin');
+    }
+  }
+
+    /**
+   * muteMember event, will emit to the client an event with the mutedMember
+   * @param client 
+   * @param data 
+   */
+    @SubscribeMessage('muteMember')
+    async handleMuteMember(
+      @ConnectedSocket() client: Socket,
+      @MessageBody() data: {chanId: number, memberToMuteId: number, adminId: number, muteDuration: number}) : Promise<void>
+    {
+      try {
+        const {chanId, memberToMuteId, adminId, muteDuration} = data;
+        const mutedMember = await this.chatService.muteMember(data);
+        const ChanRoomId = 'chan_'+ chanId + '_room';
+        this.server.to(ChanRoomId).emit('memberMuted');
+        // client.emit('memberIsMuted', mutedMember);
+      }
+      catch (error) {
+        console.log(error);
+        throw new WsException(error.message || 'Could not mute member');
+      }
+    }
+  
+    @SubscribeMessage('banMember')
+    async handleBanMember(
+      @ConnectedSocket() client: Socket,
+      @MessageBody() data: {chanId: number, memberToBanId: number, adminId: number}) : Promise<void>
+    {
+      try {
+        console.log("TOBAN");
+        const {chanId, memberToBanId, adminId} = data;
+        const bannedMember = await this.chatService.banMember(data);
+          const ChanRoomId = 'chan_'+ chanId + '_room';
+          //leave room 
+          const userSockets = this.userSocketsService.getUserSocketIds(memberToBanId);
+          for (const socket of userSockets) {
+            if (socket){
+              const ChanRoomId = 'chan_'+ chanId + '_room';
+              socket.leave(ChanRoomId);
+            }
+          }
+          this.server.to(ChanRoomId).emit('memberBanned');
+          // client.emit('memberIsBanned', bannedMember);
+      } 
+      catch (error) {
+        console.log(error);
+        throw new WsException(error.message || 'Could not ban Member');
+      }
+    }
+  
+    @SubscribeMessage('kickMember')
+    async handleKickMember(
+      @ConnectedSocket() client: Socket,
+      @MessageBody() data: {chanId: number, memberToKickId: number, adminId: number}) : Promise<void>
+    {
+      try {
+        const {chanId, memberToKickId, adminId} = data;
+        await this.chatService.kickMember(data);
+        const ChanRoomId = 'chan_'+ chanId + '_room';
+        const userSockets = this.userSocketsService.getUserSocketIds(memberToKickId);
+        for (const socket of userSockets) {
+          if (socket){
+            const ChanRoomId = 'chan_'+ chanId + '_room';
+            socket.leave(ChanRoomId);
+          }
+        }
+        this.server.to(ChanRoomId).emit('memberKicked');
+      } 
+      catch (error) {
+        console.log(error);
+        throw new WsException(error.message || 'Could not kick member');
+      }
+    }
 
   /**
    * makeMemberAdmin event makes a given member admin
@@ -530,10 +648,11 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       @MessageBody() data: {chanOwnerId:number, chanId: number, memberId: number}) : Promise<void>
   {
     try {
-    const {chanId, memberId, chanOwnerId} = data;
+      const {chanId, memberId, chanOwnerId} = data;
       const updatedChanMember = await this.chatService.makeChanAdmin(data);
+      const memberRoomId = 'userID_'+ chanOwnerId + '_room';
       const ChanRoomId = 'chan_'+ chanId + '_room';
-      this.server.to(ChanRoomId).emit('newAdminInRoom');
+      this.server.to(memberRoomId).emit('newAdminInRoom');
       // client.emit('MemberisAdmin', updatedChanMember);
     }
     catch (error) {
@@ -541,79 +660,34 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       throw new WsException(error.message || 'Could not make member admin');
     }
   }
+
+
+  @SubscribeMessage('removeAdminPriv')
+  async handleRemoveAdminPriv(
+      @ConnectedSocket() client: Socket,
+      @MessageBody() data: {chanOwnerId:number, chanId: number, memberId: number}) : Promise<void>
+  {
+    try {
+      console.log("ENTERING MAKE MEMBER ADMIN")
+      const {chanId, memberId, chanOwnerId} = data;
+      const updatedChanMember = await this.chatService.removeChanAdmin(data);
+      const memberRoomId = 'userID_'+ chanOwnerId + '_room';
+      const ChanRoomId = 'chan_'+ chanId + '_room';
+      console.log("updatedChanMember");
+      this.server.to(memberRoomId).emit('adminRemoved');
+      // client.emit('MemberisAdmin', updatedChanMember);
+    }
+    catch (error) {
+      console.log(error);
+      throw new WsException(error.message || 'Could not make member admin');
+    }
+  }
+
   /**
    * muteMember event, will emit to the client an event with the mutedMember
    * @param client 
    * @param data 
    */
-  @SubscribeMessage('muteMember')
-  async handleMuteMember(
-    @ConnectedSocket() client: Socket,
-    @MessageBody() data: {chanId: number, memberToMuteId: number, adminId: number, muteDuration: number}) : Promise<void>
-  {
-    try {
-      const {chanId, memberToMuteId, adminId, muteDuration} = data;
-      const mutedMember = await this.chatService.muteMember(data);
-      const ChanRoomId = 'chan_'+ chanId + '_room';
-      this.server.to(ChanRoomId).emit('memberMuted');
-      // client.emit('memberIsMuted', mutedMember);
-    }
-    catch (error) {
-      console.log(error);
-      throw new WsException(error.message || 'Could not mute member');
-    }
-  }
-
-  @SubscribeMessage('banMember')
-  async handleBanMember(
-    @ConnectedSocket() client: Socket,
-    @MessageBody() data: {chanId: number, memberToBanId: number, adminId: number}) : Promise<void>
-  {
-    try {
-      console.log("TOBAN");
-      const {chanId, memberToBanId, adminId} = data;
-      const bannedMember = await this.chatService.banMember(data);
-        const ChanRoomId = 'chan_'+ chanId + '_room';
-        //leave room 
-        const userSockets = this.userSocketsService.getUserSocketIds(memberToBanId);
-        for (const socket of userSockets) {
-          if (socket){
-            const ChanRoomId = 'chan_'+ chanId + '_room';
-            socket.leave(ChanRoomId);
-          }
-        }
-        this.server.to(ChanRoomId).emit('memberBanned');
-        // client.emit('memberIsBanned', bannedMember);
-    } 
-    catch (error) {
-      console.log(error);
-      throw new WsException(error.message || 'Could not ban Member');
-    }
-  }
-
-  @SubscribeMessage('kickMember')
-  async handleKickMember(
-    @ConnectedSocket() client: Socket,
-    @MessageBody() data: {chanId: number, memberToKickId: number, adminId: number}) : Promise<void>
-  {
-    try {
-      const {chanId, memberToKickId, adminId} = data;
-      await this.chatService.kickMember(data);
-      const ChanRoomId = 'chan_'+ chanId + '_room';
-      const userSockets = this.userSocketsService.getUserSocketIds(memberToKickId);
-      for (const socket of userSockets) {
-        if (socket){
-          const ChanRoomId = 'chan_'+ chanId + '_room';
-          socket.leave(ChanRoomId);
-        }
-      }
-      this.server.to(ChanRoomId).emit('memberKicked');
-    } 
-    catch (error) {
-      console.log(error);
-      throw new WsException(error.message || 'Could not kick member');
-    }
-  }
 
   @SubscribeMessage('leaveChannel')
   async handleLeaveChannel(

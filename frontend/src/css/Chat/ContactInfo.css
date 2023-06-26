@@ -54,17 +54,32 @@
     background-color: red;
   }
 
-  
+  .admin-action-button {
+    display: flex; /* Add this line */
+    align-items: center; /* Adjusts the buttons vertically */
+  }
 
   .member-action-btn {
-    align-items: top;
-    /* justify-content: top;
-    margin-left: auto;
-    margin-right: auto; */
+    /* align-items: top; */
     background: rgba(255, 255, 255, 0.0);
     border: none;
     border-radius: 50%;
-    padding-left: 10px;
+    align-self: center;
+    /* padding-left: 10px; */
+  }
+
+  .word-btn {
+    background: transparent;
+    border: solid white;
+    border-radius: 15%;
+    font-size: 18px;
+    align-self: center;
+    font-family: sans-serif;
+}
+
+
+  .member-action-btn, .word-btn {
+    margin: 2%;  /* adjust this value according to your needs */
 }
 
 /*

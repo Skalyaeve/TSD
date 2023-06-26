@@ -134,3 +134,37 @@ export async function makeChanAdmin(data: { chanOwnerId: number, chanId: number,
     throw error;
   }
 }
+
+
+export async function removeChanAdmin(data: { chanOwnerId: number, chanId: number, memberId: number }): Promise<ChanMember | null> {
+  try {
+    const { chanOwnerId, chanId, memberId } = data;
+
+    const isOwner = await this.isOwner(chanId, chanOwnerId);
+    if (!isOwner) {
+      throw new WsException('not channel owner');
+    }
+    else {
+      const updatedMember: ChanMember | null = await this.prisma.chanMember.update({
+        where: {
+          chanId_member: {
+            chanId,
+            member: memberId,
+          },
+        },
+        data: {
+          isAdmin: false,
+        }
+      });
+
+      if (!updatedMember) {
+        throw new Error('could not make user admin of channel');
+      }
+      return updatedMember;
+    }
+  }
+  catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
