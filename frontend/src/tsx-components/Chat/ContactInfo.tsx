@@ -6,39 +6,11 @@ import Modal from 'react-modal';
 import "../../css/Chat/ChannelCreate.css";
 import { socket } from '../Root.tsx';
 
-interface User {
-    nickname: string;
-}
-
-interface Channel {
-    id: number;
-    name: string;
-    chanOwner: number;
-    type: string; // Or your ChanType if defined
-    passwd: string | null;
-    // Add more fields as necessary
-}
-
 interface Contact {
     id: number; 
     email: string;
     nickname: string;
     avatarFilename: string
-}
-
-interface ChanMember {
-    chanId: number;
-    member: number;
-    isAdmin: boolean;
-    muteTime: string; // or Date, depending on how you want to handle it
-    memberRef: User;
-}
-
-interface RenderButtonsProps {
-    member: ChanMember;
-    userIsAdmin:boolean;
-    isOwner: boolean
-    userInfo: Contact
 }
 
 interface ContactInfoProps {
@@ -48,17 +20,47 @@ interface ContactInfoProps {
 
 export default function ContactInfo({selectedContact, userInfo}: ContactInfoProps) {
 
-    const [isBlocked, setIsBlocked] = useState<boolean>(false);    
+    const [isBlocked, setIsBlocked] = useState<boolean>(true);
+
+    useEffect(() => {
+        if(selectedContact && userInfo) {
+            socket.emit('userIsBlocked', {blockerID: userInfo.id, blockeeID:selectedContact.id});
+            socket.once('blockInfo', (data) => {
+                setIsBlocked(data);
+            })
+        }
+    }), [userInfo, selectedContact];
 
     const handleInvite = () => {
         console.log("WILL INVITE TO PLAY");
     };
 
     const handleBlock = () => {
+        if (selectedContact && userInfo && !isBlocked) {
+            socket.emit('blockUser', {blockerID: userInfo.id, blockeeID: selectedContact.id})
+            socket.once('userBlocked', () => {
+                setIsBlocked(true);
+                alert("user was blocked");
+            });
+        }
+        else {
+            alert("user could not be blocked");
+        }
 
     };
 
     const handleUnblock = () => {
+        console.log("isBlocked: ", isBlocked);
+        if (selectedContact && userInfo && isBlocked) {
+            socket.emit('unblockUser', {blockerID: userInfo.id, blockeeID: selectedContact.id})
+            socket.once('userUnblocked', () => {
+                setIsBlocked(false);
+                alert("user was unblocked");
+            });
+        }
+        else {
+            alert("user could not be unblocked");
+        }
         
     };
 
@@ -67,25 +69,25 @@ export default function ContactInfo({selectedContact, userInfo}: ContactInfoProp
     };
 
     return (
-        <div>
-            <div>
-                <button onClick={handleProfile}>
-                    View Profile
-                </button>
-            </div>
-            <div>
+        <div className="selected-contact-info">
+            <div className="block-unblock">
                 {isBlocked ? (
-                    <button onClick={handleUnblock}>
-                        <GrUserExpert/>
+                    <button className="profile-icon-btn" onClick={handleUnblock}>
+                        <GrUserExpert/> Unblock {selectedContact.nickname}
                     </button>
                 ) : (
-                    <button onClick={handleBlock}>
-                        <FaUserSlash/>
+                    <button className="profile-icon-btn" onClick={handleUnblock}>
+                        <FaUserSlash/> Block {selectedContact.nickname}
                     </button>
                 )}
             </div>
-            <div>
-                <button onClick={handleInvite}>
+            <div className="profile-view">
+                <button className="profile-word-btn" onClick={handleProfile}>
+                    View Profile
+                </button>
+            </div>
+            <div className="invite-play">
+                <button className="profile-word-btn" onClick={handleInvite}>
                         Invite to Play
                 </button>
             </div>

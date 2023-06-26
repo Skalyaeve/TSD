@@ -85,7 +85,7 @@ export default function ChatInfo({ userInfo, selectedChannel, selectedContact}: 
     }
 
     useEffect(() => {
-        if (userInfo) {
+        if (selectedChannel && userInfo) {
             socket.off('foundAdminStatus');
             socket.emit('isMemberAdmin', {chanId: selectedChannel?.id, memberId: userInfo.id, userId: userInfo.id});
             socket.on('foundAdminStatus', (data) => {
@@ -99,7 +99,7 @@ export default function ChatInfo({ userInfo, selectedChannel, selectedContact}: 
 
 
     useEffect(() => {
-        if (userInfo) {
+        if (selectedChannel && userInfo) {
             socket.emit('isMember', {chanId: selectedChannel?.id, memberId: userInfo.id, userId: userInfo.id});
             socket.on('foundIsMember', (data) => {
                 setIsMember(data);
@@ -112,7 +112,7 @@ export default function ChatInfo({ userInfo, selectedChannel, selectedContact}: 
     }, [userInfo, selectedChannel]);
 
     useEffect(() => {
-        if (userInfo) {
+        if (selectedChannel && userInfo) {
             console.log("going to emit isChanOwner");
             socket.emit('isChanOwner', {chanId: selectedChannel?.id, memberId: userInfo.id, userId: userInfo.id});
             socket.on('foundOwnerStatus', (data) => {
@@ -161,17 +161,17 @@ export default function ChatInfo({ userInfo, selectedChannel, selectedContact}: 
     }, [userInfo, selectedContact, selectedChannel]);
 
 return (
-    <div>
+    <div className="chat-info">
         {selectedChannel && <div className="members-title">
             <h1>
-                Members
+                {selectedChannel.name}'s Members
             </h1>
             <button className="Chan-refresh-btn" onClick={fetchMemberStatus}>
                 <FiRefreshCw/>
             </button>
         </div>}
-        <div>
-            {isMember && selectedChannel && userInfo && members.map(member => renderMemberStatus(member, membersStatus, userIsAdmin, isOwner, userInfo))}
+        <div className="conversation-info">
+            {isMember && !selectedContact && selectedChannel && userInfo && members.map(member => renderMemberStatus(member, membersStatus, userIsAdmin, isOwner, userInfo))}
             {selectedContact && <ContactInfo selectedContact={selectedContact} userInfo={userInfo}/>}
 
         </div>

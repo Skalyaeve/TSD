@@ -1,5 +1,6 @@
 import * as bcrypt from 'bcrypt';
-import { ChanMember, Channel, ChanBan } from "@prisma/client";
+import { ChanMember, Channel, ChanBan, Blocked } from "@prisma/client";
+
 
 export async function isMember(chanId: number, memberId: number): Promise<boolean> {
   const member: ChanMember = await this.prisma.chanMember.findUnique({

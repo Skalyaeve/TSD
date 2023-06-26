@@ -4,6 +4,8 @@
 @import url("DirectMessages.css");
 @import url("ManageChannels.css");
 @import url("ChannelCreate.css");
+@import url("SelectedContactInfo.css");
+@import url("MemberActions.css");
 
 .chat-main-grid {
     padding-top: 6px;

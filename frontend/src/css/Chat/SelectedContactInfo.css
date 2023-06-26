@@ -1,0 +1,39 @@
+.selected-contact-info{
+    display: grid;
+    grid-template-rows: 1fr 1fr 1fr;
+    height: 100%;
+}
+
+.profile-view {
+    text-align: center;
+    position: relative;
+    top: 25%;
+}
+
+.block-unblock {
+    text-align: center;
+    position: relative;
+    top: 50%;
+}
+
+.invite-play {
+    text-align: center;
+    position: relative;
+    top: 0%;
+}
+
+.profile-word-btn {
+    font-size: 18px;
+    border: solid;
+    border-radius: 10%;
+    background: transparent;
+    font-family: sans-serif;
+}
+
+.profile-icon-btn {
+    background: transparent;
+    border: solid;
+    border-radius: 10%;
+    font-size: 18px;
+    font-family: sans-serif;
+}

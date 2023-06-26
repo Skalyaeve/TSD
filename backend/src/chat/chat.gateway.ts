@@ -86,6 +86,10 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
   {
       try {
           const { senderID, recipientID, content} = data;
+          const isBlocked = await this.chatService.isBlocked(senderID, recipientID);
+          if (isBlocked) {
+        throw new WsException('Could not create message user is blocked');
+          }         
           const privateMessage = await this.chatService.createOnePrivMessage(senderID, recipientID, content);
           const senderUserChatRoom = 'userID_' + senderID.toString() + '_room';
           const recipientUserChatRoom = 'userID_' + recipientID.toString() + '_room';
@@ -123,6 +127,29 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
   }
 
 
+  @SubscribeMessage('userIsBlocked')
+  async handleUserIsBlocked(
+    @ConnectedSocket() client: Socket, 
+    @MessageBody() data: {blockerID: number; blockeeID: number}) : Promise<void>
+  {
+    try {
+      const { blockerID, blockeeID} = data;
+      const isBlocked = await this.chatService.isBlocked(blockerID, blockeeID);
+      const userRoomId = 'userID_' + blockerID.toString() + '_room';
+      if (isBlocked) {
+        this.server.to(userRoomId).emit('blockInfo', true);
+      }
+      else {
+        this.server.to(userRoomId).emit('blockInfo', false);
+      }
+    }
+    catch (error) {
+      console.log(error);
+      throw new WsException(error.message || 'Could not block user');
+    }
+  }
+
+
   //BLOCK
 
   @SubscribeMessage('blockUser')
@@ -133,7 +160,8 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     try {
       const { blockerID, blockeeID} = data;
       const blockeEntity = await this.chatService.blockUser(blockerID, blockeeID);
-      client.emit('userBlocked');
+      const userRoomId = 'userID_' + blockerID.toString() + '_room';
+      this.server.to(userRoomId).emit('userBlocked');
     }
     catch (error) {
       console.log(error);
@@ -151,7 +179,8 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     try {
       const { blockerID, blockeeID} = data;
       await this.chatService.unblockUser(blockerID, blockeeID);
-      client.emit('userUnblocked');
+      const userRoomId = 'userID_' + blockerID.toString() + '_room';
+      this.server.to(userRoomId).emit('userUnblocked');
     }
     catch (error) {
       console.log(error);

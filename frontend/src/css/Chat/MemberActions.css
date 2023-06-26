@@ -1,0 +1,86 @@
+.member-status{
+    font-size: 18px;
+}
+
+.status-indicator {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-right: 5px;
+  }
+  
+  .online {
+    background-color: green;
+  }
+  
+  .offline {
+    background-color: red;
+  }
+
+  .admin-action-button {
+    display: flex; /* Add this line */
+    align-items: center; /* Adjusts the buttons vertically */
+  }
+
+  .member-action-btn {
+    /* align-items: top; */
+    background: rgba(255, 255, 255, 0.0);
+    border: none;
+    border-radius: 50%;
+    align-self: center;
+    /* padding-left: 10px; */
+  }
+
+  .word-btn {
+    background: transparent;
+    border: solid white;
+    border-radius: 15%;
+    font-size: 18px;
+    align-self: center;
+    font-family: sans-serif;
+}
+
+
+  .member-action-btn, .word-btn {
+    margin: 2%;  /* adjust this value according to your needs */
+}
+
+/*
+*/
+
+div.modal-mute-member {
+    position: absolute;
+    top: 20%;
+    left: 35%;
+    width: 30%;  
+    height: 10%; 
+    backdrop-filter: blur(25px);
+    background: rgba(152, 6, 189, 0.108);
+    box-sizing: border-box;
+    text-align: center;
+    align-items: center;
+    font-size: 10px !important;
+    box-shadow: 5px 5px 15px black;
+    border-radius: 2%;
+
+}
+
+.overlay-mute-member {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.modal-mute-member h2 {
+    font-size: 18px;
+}
+
+.body-mute-duration input{
+    border: solid;
+    background: transparent;
+    width: 80%;
+    text-align: center;
+}
