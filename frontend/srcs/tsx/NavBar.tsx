@@ -2,7 +2,7 @@ import React from 'react'
 import { Routes, Route, useLocation, NavLink } from 'react-router-dom'
 import Cookies from 'js-cookie';
 import { AnimatePresence, motion } from 'framer-motion'
-import { heightChangeByPx, yMove, mergeMotions } from './ftMotion.tsx'
+import { heightChangeByPx, yMove, mergeMotions } from './utils/ftMotion.tsx'
 import { GameInfos } from './Matchmaker.tsx'
 
 // --------ANIMATIONS------------------------------------------------------ //

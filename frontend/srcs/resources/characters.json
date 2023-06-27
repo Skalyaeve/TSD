@@ -1,0 +1,101 @@
+{
+	"Selene": {
+		"story": "Born amidst the whispers of ancient trees, she weaves her magic through the ethereal strands of time, granting her the ability to slow its relentless march. Her disciplined nature conceals a tender heart, as she and Liliana, guardians of the forest, embrace their roles as protectors with unwavering logic.",
+		"hp": 60,
+		"attack": 10,
+		"defense": 3,
+		"speed": 4,
+		"passive": {
+			"name": "Elven legacy",
+			"effect": "If hitted last round: self +50% ATK, enemy -50% SPD"
+		}
+	},
+	"Rylan": {
+		"story": "Rylan, the skilled swordsmith, possesses immense strength, delivering powerful strikes with his masterfully crafted blades. While not as physically resilient as his brother, he compensates with agility and precision, showcasing his finesse and artistry in the heat of battle.",
+		"hp": 70,
+		"attack": 15,
+		"defense": 5,
+		"speed": 3,
+		"passive": {
+			"name": "Rogue",
+			"effect": "Ignore 50% of enemy DEF"
+		}
+	},
+	"Thorian": {
+		"story": "Thorian, the wise blacksmith master, dons a crown of purple hair, embodying the wisdom acquired through years of honing his craft. With profound knowledge passed down through generations, Thorian imparts his wisdom and guidance to Rylan and Garrick, instilling in them not only the skills of forging and combat but also the values of honor and discipline.",
+		"hp": 80,
+		"attack": 11,
+		"defense": 4,
+		"speed": 4,
+		"passive": {
+			"name": "Drain",
+			"effect": "Lifesteal: 30% of damages"
+		}
+	},
+	"Liliana": {
+		"story": "Adorned with tresses kissed by twilight, she dances with time's elusive rhythm, gifted with the power to hasten its flow. Beneath her disheveled exterior lies a soul brimming with boundless kindness, as she and Selene, the harmonious guardians of the woodland, create a haven of love and warmth.",
+		"hp": 60,
+		"attack": 10,
+		"defense": 2,
+		"speed": 5,
+		"passive": {
+			"name": "Woodland footwork",
+			"effect": "Dash when pressing twice fast"
+		}
+	},
+	"Garrick": {
+		"story": "Garrick, the resilient shieldsmith, stands as a bastion of fortitude, shielding his allies with unwavering resolve. Though not as physically imposing as his brother, his endurance and unwavering loyalty make him an indomitable defender, absorbing blows with his expertly forged shields.",
+		"hp": 70,
+		"attack": 10,
+		"defense": 9,
+		"speed": 2,
+		"passive": {
+			"name": "Berserk",
+			"effect": "+1 ATK for every 10 HP lost"
+		}
+	},
+	"Orion": {
+		"story": "In the embrace of the ancient forest, a young orphan with emerald locks found solace and family with the two elven wives. Now a young adult, he roams the woods with an insatiable curiosity, immersing himself in the melodies of nature, and seeking knowledge of the healing properties of the forest's herbs.",
+		"hp": 70,
+		"attack": 11,
+		"defense": 0,
+		"speed": 6,
+		"passive": {
+			"name": "Guardian angel",
+			"effect": "When hitted, 20% chance to avoid damages"
+		}
+	},
+	"Faeleen": {
+		"story": "In the depths of the enchanted forest, Faeleen, the mischievous trickster fairy. With her unique ability to conjure lifelike illusions, she revels in playing playful pranks and casting amusing deceptions. Unbeknownst to Orion, Faeleen secretly watches over him, using her trickery to scare away any potential harm, ensuring his safety. Hidden within the whimsical facade lies a deep affection, as her heart holds an unspoken love for the young wanderer of the woods.",
+		"hp": 60,
+		"attack": 11,
+		"defense": 1,
+		"speed": 6,
+		"passive": {
+			"name": "Lucky charm",
+			"effect": "Hits have 20% chance to deal x2 damage"
+		}
+	},
+	"Boreas": {
+		"story": "Once a humble apprentice in the art of frost magic, he donned the blue armor to protect the realm from the encroaching chaos. Driven by a hidden vendetta, his frost powers conceal a desire to extinguish the fiery nemesis he once called a friend.",
+		"hp": 80,
+		"attack": 12,
+		"defense": 4,
+		"speed": 2,
+		"passive": {
+			"name": "Winter's will",
+			"effect": "Consecutive loss buff DEF by 1 (+4 max)"
+		}
+	},
+	"Helios": {
+		"story": "Forged in the crucible of ancient flames, he emerged wearing the red armor, harnessing the power of fire to combat the growing threat of icy dominance. Unknown to his adversary, his blazing determination masks a sorrowful yearning for the lost friendship they once shared.",
+		"hp": 80,
+		"attack": 12,
+		"defense": 3,
+		"speed": 3,
+		"passive": {
+			"name": "Sun's pact",
+			"effect": "Consecutive hit buff ATT by 1 (+4 max)"
+		}
+	}
+}

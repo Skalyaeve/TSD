@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { DragDrop } from './ftDragDrop.tsx'
-import { widthChangeByPercent, bouncyHeightChangeByPercent, xMove, bouncyYMove, mergeMotions, yMove } from './ftMotion.tsx'
+import { DragDrop } from './utils/ftDragDrop.tsx'
+import { widthChangeByPercent, bouncyHeightChangeByPercent, xMove, bouncyYMove, mergeMotions, yMove } from './utils/ftMotion.tsx'
 import ChatSettings from './ChatSettings.tsx'
 
 // --------CLASSNAMES------------------------------------------------------ //
@@ -279,7 +279,7 @@ const MainContent: React.FC<MainContentProps> = ({ chatRef, extended }) => {
 			<AnimatePresence>{extended && <RoomUsers />}</AnimatePresence>
 		</div>
 		<div className={inputBoxName}>
-			<input className={inputName} placeholder='...' />
+			<textarea className={inputName} placeholder='...' />
 			<button className={btnName}>OK</button>
 		</div>
 	</motion.div>

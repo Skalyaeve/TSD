@@ -1,19 +1,21 @@
 import React, { useRef, useState, useEffect, memo } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { fade, xMove, yMove } from './ftMotion.tsx'
+import { fade, xMove, yMove } from './utils/ftMotion.tsx'
+import * as characters from '../resources/characters.json'
 
 // --------VALUES---------------------------------------------------------- //
+const data = Object.entries(characters)
 export const characterNames = (id: number) => {
 	switch (id) {
-		case 1: return 'Selene'
-		case 2: return 'Rylan'
-		case 3: return 'Thorian'
-		case 4: return 'Liliana'
-		case 5: return 'Garrick'
-		case 6: return 'Orion'
-		case 7: return 'Faeleen'
-		case 8: return 'Boreas'
-		case 9: return 'Helios'
+		case 1: return `${data[0][0]}`
+		case 2: return `${data[1][0]}`
+		case 3: return `${data[2][0]}`
+		case 4: return `${data[3][0]}`
+		case 5: return `${data[4][0]}`
+		case 6: return `${data[5][0]}`
+		case 7: return `${data[6][0]}`
+		case 8: return `${data[7][0]}`
+		case 9: return `${data[8][0]}`
 		default: return 'error'
 	}
 }
@@ -121,9 +123,10 @@ const CharBoxes: React.FC<CharBoxesProps> = memo(({
 
 // --------SPELL----------------------------------------------------------- //
 interface SpellProps {
+	selected: number
 	isPassive?: boolean
 }
-const Spell: React.FC<SpellProps> = ({ isPassive = true }) => {
+const Spell: React.FC<SpellProps> = ({ selected, isPassive = true }) => {
 	// ----REFS------------------------------- //
 	const spellNameRef = useRef<HTMLDivElement | null>(null)
 
@@ -188,11 +191,9 @@ const Spell: React.FC<SpellProps> = ({ isPassive = true }) => {
 			{tooltip && isPassive && <motion.div
 				className={tooltipName}
 				{...tooltipMotion}
-				style={{
-					top: `${tooltipPos.y - 305}px`,
-					left: `${tooltipPos.x - 260}px`
-				}}>
-				TOOLTIP
+				style={{ translate: 'calc(-100% + 172px) calc(-100% + 20px)' }}>
+				<h1>{data[selected - 1][1].passive.name}</h1>
+				<p>{data[selected - 1][1].passive.effect}</p>
 			</motion.div>}
 		</AnimatePresence>
 	</>
@@ -201,9 +202,8 @@ const Spell: React.FC<SpellProps> = ({ isPassive = true }) => {
 // --------CHARACTER------------------------------------------------------- //
 interface CharacterProps {
 	selected: number
-	characters: {}
 }
-const Character: React.FC<CharacterProps> = ({ selected, characters }) => {
+const Character: React.FC<CharacterProps> = ({ selected }) => {
 	// ----ANIMATIONS------------------------- //
 	const boxMotion = fade({ inDuration: 0.3, outDuration: 0.3 })
 	const xMoveMotion = (index: number) => xMove({
@@ -221,24 +221,33 @@ const Character: React.FC<CharacterProps> = ({ selected, characters }) => {
 	return <div className={NAME}>
 		<motion.div className={storyName} {...xMoveMotion(3)}>
 			<AnimatePresence mode='wait'>
-				<motion.div key={`${storyName}-${selected}`} {...boxMotion}>
-					STORY
+				<motion.div key={`${storyName}-${selected}`} {...boxMotion}>					{data[selected - 1][1].story}
 				</motion.div>
 			</AnimatePresence>
 		</motion.div>
 		<motion.div className={statsName} {...xMoveMotion(2)}>
 			<AnimatePresence mode='wait'>
 				<motion.div key={`${statsName}-${selected}`} {...boxMotion}>
-					STATS
+					HP: {data[selected - 1][1].hp}<br />
+					ATK: {data[selected - 1][1].attack}<br />
+					DEF: {data[selected - 1][1].defense}<br />
+					SPD: {data[selected - 1][1].speed}
 				</motion.div>
 			</AnimatePresence>
 		</motion.div>
 		<motion.div className={spellzName} {...xMoveMotion(1)}>
 			<AnimatePresence mode='wait'>
-				<Spell key={`${spellzName}-${selected}`} />
+				<Spell
+					key={`${spellzName}-${selected}`}
+					selected={selected}
+				/>
 			</AnimatePresence>
 			<AnimatePresence mode='wait'>
-				<Spell key={`${spellzName}-${selected}`} isPassive={false} />
+				<Spell
+					key={`${spellzName}-${selected}`}
+					selected={selected}
+					isPassive={false}
+				/>
 			</AnimatePresence>
 		</motion.div>
 	</div>
@@ -252,34 +261,11 @@ interface CharactersProps {
 const Characters: React.FC<CharactersProps> = ({
 	selectedCharacter, setSelectedCharacter
 }) => {
-	// ----VALUES----------------------------- //
-	let characters: Object = {}
-
 	// ----REFS------------------------------- //
 	const swapping = useRef(false)
 
 	// ----STATES----------------------------- //
 	const [selected, setSelected] = useState(selectedCharacter)
-
-	// ----EFFECTS---------------------------- //
-	useEffect(() => {
-		const fetchData = async () => {
-			try {
-				const uri = 'characters/all'
-				const response = await fetch(`http://10.12.3.19:3000/${uri}`)
-				if (response.ok) {
-					characters = await response.json()
-					const arr = Object.values(characters)
-					for (let x of arr) console.log(x.name)
-				}
-				else
-					console.error(`[ERROR] fetch('http://10.12.3.19:3000/${uri}') failed`)
-			} catch (error) {
-				console.error('[ERROR] ', error)
-			}
-		}
-		fetchData()
-	}, [])
 
 	// ----ANIMATIONS------------------------- //
 	const boxMotion = fade({ inDuration: 1 })
@@ -295,7 +281,7 @@ const Characters: React.FC<CharactersProps> = ({
 			selectedCharacter={selectedCharacter}
 			setSelectedCharacter={setSelectedCharacter}
 		/>
-		<Character selected={selected} characters={characters} />
+		<Character selected={selected} />
 	</motion.main>
 }
 export default Characters

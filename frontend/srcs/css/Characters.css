@@ -147,8 +147,9 @@
 .character {
 	/* #1 Éléments */
 	display: grid;
-	grid-template-rows: auto 300px 200px;
+	grid-template-rows: auto 200px 200px;
 	grid-gap: 5px;
+	overflow: hidden;
 }
 
 .character-story {
@@ -158,11 +159,18 @@
 	border-bottom: 3px solid rgb(255, 255, 255);
 	border-top-right-radius: 10px;
 	display: flex;
-	align-items: center;
+	align-items: flex-start;
 	justify-content: center;
+	overflow-y: auto;
 
 	/* #4 Margin - Padding */
-	padding: 5px;
+	padding: 50px;
+}
+
+.character-story * {
+	/* #1 Éléments */
+	font-size: 25px;
+	text-align: center;
 }
 
 .character-stats {
@@ -177,6 +185,12 @@
 
 	/* #4 Margin - Padding */
 	padding: 5px;
+}
+
+.character-stats * {
+	/* #1 Éléments */
+	font-size: 30px;
+	text-align: center;
 }
 
 /* ---CHARACTER-SPELLS----------- */
@@ -246,14 +260,37 @@
 	border-bottom-left-radius: 10px;
 	border-top-right-radius: 10px;
 	display: flex;
-	align-items: center;
+	flex-direction: column;
+	align-items: top;
 	justify-content: center;
+	overflow-y: hidden;
 
 	/* #2 Forme */
-	height: 300px;
-	width: 400px;
+	max-width: 400px;
+	max-height: 300px;
 
 	/* #3 Position */
 	position: fixed;
 	z-index: 1;
+
+	/* #4 Margin - Padding */
+	padding: 25px;
+}
+
+.character-spell-tooltip * {
+	/* #1 Éléments */
+	text-align: center;
+}
+
+.character-spell-tooltip h1 {
+	/* #1 Éléments */
+	font-size: 25px;
+
+	/* #4 Margin - Padding */
+	margin-bottom: 10px;
+}
+
+.character-spell-tooltip p {
+	/* #1 Éléments */
+	font-size: 22px;
 }

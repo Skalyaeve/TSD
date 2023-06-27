@@ -3,7 +3,7 @@ import { Routes, Route, useLocation, useNavigate } from 'react-router-dom'
 import { Socket, io } from 'socket.io-client'
 import Cookies from 'js-cookie'
 import { AnimatePresence, motion } from 'framer-motion'
-import { popUp, yMove } from './ftMotion.tsx'
+import { popUp, yMove } from './utils/ftMotion.tsx'
 import NavBar from './NavBar.tsx'
 import Chat from './Chat.tsx'
 import Matchmaker from './Matchmaker.tsx'
@@ -18,15 +18,32 @@ import '../css/Root.css'
 
 // --------VALUES---------------------------------------------------------- //
 const hostIp: string | undefined = process.env.HOST_IP
-
 export let socket: Socket | undefined = undefined
 
+// --------FETCH-USER-DATA------------------------------------------------- //
+export const ftFetch = async (uri: string) => {
+	const servID = `http://${hostIp}:3000`
+	try {
+		let response = await fetch(`${servID}${uri}`, {
+			method: 'GET',
+			mode: 'cors',
+			credentials: 'include'
+		})
+		if (response.ok) {
+			const answ = await response.json()
+			return answ
+		} else
+			console.error(`[ERROR] fetch('${servID}${uri}') failed`)
+	} catch (error) {
+		console.error('[ERROR] ', error)
+	}
+}
+
 // --------IS-CONNECTED---------------------------------------------------- //
-const isConnected = async () => {
-	return true
+const isConnected = async (setUserID: React.Dispatch<React.SetStateAction<number>>) => {
 	if (!Cookies.get('access_token')) return false
 
-	const servID = 'http://' + hostIp + ':3000'
+	const servID = `http://${hostIp}:3000`
 	const path = '/users/connected'
 	try {
 		const response = await fetch(`${servID}${path}`, {
@@ -35,8 +52,8 @@ const isConnected = async () => {
 			credentials: 'include'
 		})
 		if (response.ok) {
-			const txt = await response.json()
-			console.log(`[SUCCESS] isConnected() -> fetch(): ${txt}`)
+			const answ = await response.json()
+			setUserID(answ.id)
 			return true
 		}
 		else console.log(
@@ -95,6 +112,7 @@ const Root: React.FC = () => {
 	const navigate = useNavigate()
 
 	// ----STATES----------------------------- //
+	const [userID, setUserID] = useState(0)
 	const [showHeader, setShowHeader] = useState(false)
 	const [selectedCharacter, setSelectedCharacter] = useState(1)
 
@@ -105,7 +123,7 @@ const Root: React.FC = () => {
 
 	// ----HANDLERS--------------------------- //
 	const checkConnection = async () => {
-		if (await isConnected()) {
+		if (await isConnected(setUserID)) {
 			if (location.pathname == '/login') {
 				navigate('/')
 				const timer = setTimeout(() => setShowHeader(true), 500)
@@ -148,7 +166,7 @@ const Root: React.FC = () => {
 			<Routes location={location} key={location.pathname}>
 				<Route path='/login' element={<LoginBtn />} />
 				<Route path='/' element={<Home selectedCharacter={selectedCharacter} />} />
-				<Route path='/profile' element={<AccountInfos />} />
+				<Route path='/profile' element={<AccountInfos userID={userID} />} />
 				<Route path='/profile/friends' element={<Friends />} />
 				<Route path='/characters' element={
 					<Characters

@@ -18,7 +18,9 @@
 		// Permet de ne pas générer de fichiers de sortie lors de la compilation
 		"noEmit": true,
 		// Dossier de sortie de transcompilation
-		"outDir": "./dist"
+		"outDir": "./dist",
+		// Permet d'importer les fichiers json
+		"resolveJsonModule": true
 	},
 	// Spécifie les fichiers à inclure dans la compilation
 	"include": [

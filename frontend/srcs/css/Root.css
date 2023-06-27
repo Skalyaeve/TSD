@@ -54,11 +54,13 @@ button {
 	cursor: pointer;
 }
 
-input {
+input,
+textarea {
 	/* #1 Éléments */
-	font-size: 19px;
-	background-color: rgb(20, 20, 20);
+	background-image: url('../resources/assets/ui/backgrounds/div-black3.png');
 	border: none;
+	font-size: 19px;
+	resize: none;
 
 	/* #4 Margin - Padding */
 	padding: 0 10px

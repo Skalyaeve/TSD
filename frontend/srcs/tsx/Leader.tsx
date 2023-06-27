@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { motion } from 'framer-motion'
-import { fade, bouncyWidthChangeByPx, heightChangeByPx, bouncyXMove, yMove, mergeMotions } from './ftMotion.tsx'
+import { fade, bouncyWidthChangeByPx, heightChangeByPx, bouncyXMove, yMove, mergeMotions } from './utils/ftMotion.tsx'
 
 // --------CLASSNAMES------------------------------------------------------ //
 const NAME = 'leader'

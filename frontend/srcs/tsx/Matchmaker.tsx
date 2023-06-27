@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { Timer } from './ftNumbers.tsx'
-import { fade, heightChangeByPx, bouncyYMove } from './ftMotion.tsx'
+import { Timer } from './utils/ftNumbers.tsx'
+import { fade, heightChangeByPx, bouncyYMove } from './utils/ftMotion.tsx'
 import { Socket, io } from 'socket.io-client'
 
 
@@ -52,7 +52,7 @@ const Matchmaker: React.FC = () => {
 		return value === '1'
 	})
 
-	
+
 	const hostIp = process.env.HOST_IP
 
 	const startGameSockets = () => {
@@ -82,7 +82,7 @@ const Matchmaker: React.FC = () => {
 			setMatchmaking(false)
 		})
 		gameSocket?.on('gameEnded', () => {
-			
+
 		})
 	}
 
@@ -92,7 +92,7 @@ const Matchmaker: React.FC = () => {
 	}
 	// ----EFFECTS---------------------------- //
 	useEffect(() => {
-		
+
 		return () => {
 
 		}

@@ -1,6 +1,6 @@
 import React, { useState, useLayoutEffect, useEffect } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { fade, xMove, yMove } from './ftMotion.tsx'
+import { fade, xMove, yMove } from './utils/ftMotion.tsx'
 
 // --------ANIMATIONS------------------------------------------------------ //
 const mainBoxMotion = xMove({

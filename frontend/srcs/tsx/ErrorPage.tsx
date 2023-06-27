@@ -1,6 +1,6 @@
 import React from 'react'
 import { motion } from 'framer-motion'
-import { fade } from './ftMotion.tsx'
+import { fade } from './utils/ftMotion.tsx'
 
 // --------ERROS----------------------------------------------------------- //
 interface ErrorPageProps {

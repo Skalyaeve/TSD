@@ -1,7 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { popUp } from './ftMotion.tsx'
+import { popUp } from './utils/ftMotion.tsx'
 import { characterNames } from './Characters.tsx'
 
 // --------CLASSNAMES------------------------------------------------------ //
