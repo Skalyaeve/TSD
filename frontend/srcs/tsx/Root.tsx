@@ -166,7 +166,7 @@ const Root: React.FC = () => {
 			<Routes location={location} key={location.pathname}>
 				<Route path='/login' element={<LoginBtn />} />
 				<Route path='/' element={<Home selectedCharacter={selectedCharacter} />} />
-				<Route path='/profile' element={<AccountInfos userID={userID} />} />
+				<Route path='/profile/*' element={<AccountInfos userID={userID} />} />
 				<Route path='/profile/friends' element={<Friends />} />
 				<Route path='/characters' element={
 					<Characters

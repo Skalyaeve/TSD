@@ -129,11 +129,7 @@ const Matchmaker: React.FC = () => {
 			inDuration: 0.7,
 			outDuration: 0.4
 		}),
-		whileHover: {
-			scale: 1.05,
-			borderTopLeftRadius: '5px',
-			borderTopRightRadius: '5px'
-		}
+		whileHover: { scale: 1.05 }
 	}
 
 	// ----CLASSNAMES------------------------- //

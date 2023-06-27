@@ -14,13 +14,7 @@ interface HomeProps {
 const Home: React.FC<HomeProps> = ({ selectedCharacter }) => {
 	// ----ANIMATIONS------------------------- //
 	const charBoxMotion = popUp({})
-	const swapBtnMotion = {
-		whileHover: {
-			scale: 1.05,
-			borderTopLeftRadius: '5px',
-			borderBottomRightRadius: '5px'
-		}
-	}
+	const swapBtnMotion = { whileHover: { scale: 1.05 } }
 
 	// ----CLASSNAMES------------------------- //
 	const charBoxName = `${NAME}-char-box`

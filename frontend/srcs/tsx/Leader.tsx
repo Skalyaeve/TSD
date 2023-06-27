@@ -102,13 +102,7 @@ const Leader: React.FC = () => {
 	const headMotion = heightChangeByPx({ finalHeight: 200, inDuration: 0.6 })
 	const headBtnMotion = (index: number) => ({
 		...boxMove(index),
-		whileHover: {
-			scale: 1.05,
-			borderTopLeftRadius: '5px',
-			borderTopRightRadius: '5px',
-			borderBottomLeftRadius: '5px',
-			borderBottomRightRadius: '5px',
-		}
+		whileHover: { scale: 1.05 }
 	})
 	const headInputMotion = mergeMotions(
 		bouncyWidthChangeByPx({ finalWidth: 325, inDuration: 1 }),

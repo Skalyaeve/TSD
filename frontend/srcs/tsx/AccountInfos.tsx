@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
-import { motion } from 'framer-motion'
-import { fade, widthChangeByPercent, heightChangeByPercent, yMove, mergeMotions } from './utils/ftMotion.tsx'
+import { Link, useLocation } from 'react-router-dom'
+import { AnimatePresence, motion } from 'framer-motion'
+import { fade, widthChangeByPercent, heightChangeByPercent, yMove, mergeMotions, xMove } from './utils/ftMotion.tsx'
 import * as achievments from '../resources/achievments.json'
 import { ftFetch } from './Root.tsx'
 
@@ -14,11 +15,12 @@ const HISTORY_NAME = `${NAME}-history`
 
 // --------MATCH----------------------------------------------------------- //
 interface MatchProps {
+	userID: number
 	userInfos: any
 	data: any
 	index: number
 }
-const Match: React.FC<MatchProps> = ({ userInfos, data, index }) => {
+const Match: React.FC<MatchProps> = ({ userInfos, userID, data, index }) => {
 	// ----VALUES----------------------------- //
 	const enemyID = (
 		data[index][1].player1 === userInfos.id ?
@@ -56,9 +58,11 @@ const Match: React.FC<MatchProps> = ({ userInfos, data, index }) => {
 	const renderUserScore = () => <div className={userBoxName}>
 		{userInfos.nickname}
 	</div>
-	const renderEnemyScore = () => <div className={enemyBoxName}>
+	const renderEnemyScore = () => <Link
+		to={`/profile${userInfos.id === userID ? `/${enemyInfos.id}` : ''}`}
+		className={enemyBoxName}>
 		{enemyInfos.nickname}
-	</div>
+	</Link>
 	return <div className={boxName}>
 		{renderUserScore()}
 		{renderResult()}
@@ -68,18 +72,28 @@ const Match: React.FC<MatchProps> = ({ userInfos, data, index }) => {
 
 // --------HISTORY--------------------------------------------------------- //
 interface HistoryProps {
+	userID: number
 	userInfos: any
 	userHistory: any
 }
-const History: React.FC<HistoryProps> = ({ userInfos, userHistory }) => {
+const History: React.FC<HistoryProps> = ({ userID, userInfos, userHistory }) => {
 	// ----VALUES----------------------------- //
 	const data = Object.entries(userHistory)
 
 	// ----RENDER----------------------------- //
 	const render = Array.from({ length: data.length }, (_, index) =>
-		<Match key={index} data={data} userInfos={userInfos} index={index} />
+		<Match
+			key={index}
+			data={data}
+			userInfos={userInfos}
+			userID={userID}
+			index={index}
+		/>
 	)
-	return <div className={HISTORY_NAME}>{render}</div>
+	return <div className={HISTORY_NAME}>
+		{!data.length && <h1>no recent matches</h1>}
+		{render}
+	</div>
 }
 
 // --------STATS----------------------------------------------------------- //
@@ -105,7 +119,7 @@ const Stats: React.FC<StatsProps> = ({ userHistory, userInfos, winsCount }) => {
 			{data.length} MATCHES - {winsCount} WINS - {data.length - winsCount} LOSES
 		</motion.div>
 		<motion.div className={statsSecondLineName} {...txtMotion}>
-			RATIO: {winsCount / data.length * 100}% - RANK: {userInfos.rankPoints}
+			RATIO: {winsCount / data.length * 100}% - RANK POINTS: {userInfos.rankPoints}
 		</motion.div>
 	</div>
 }
@@ -143,7 +157,7 @@ const Achievements: React.FC = () => {
 			{...achievementMotion(index + 1)}>
 			<h1>{data[index][0]}</h1>
 			<p>{data[index][1]}</p>
-			{unlocked.includes(`.${index}`) ?
+			{unlocked.includes(`.${index}`) || !index ?
 				<div className={unlockedTxTName}>since 00/00/00</div>
 				: <div className={lockIconName} />
 			}
@@ -157,12 +171,42 @@ const Achievements: React.FC = () => {
 
 // --------INFOS----------------------------------------------------------- //
 interface InfosProps {
+	userID: number
 	userInfos: any
 }
-const Infos: React.FC<InfosProps> = ({ userInfos }) => {
+const Infos: React.FC<InfosProps> = ({ userID, userInfos }) => {
 	// ----VALUES----------------------------- //
 	const ppURI = '/user/profile-picture'
 	const profilePictureURI = `url('${ppURI}/${userInfos.avatarFilename}')`
+
+	// ----STATES----------------------------- //
+	const [overPic, setOverPic] = useState(false)
+	const [overName, setOverName] = useState(false)
+
+	// ----HANDLERS--------------------------- //
+	const ppHdl = {
+		onMouseEnter: () => setOverPic(true),
+		onMouseLeave: () => setOverPic(false)
+	}
+	const nicknameHdl = {
+		onMouseEnter: () => setOverName(true),
+		onMouseLeave: () => setOverName(false)
+	}
+
+	// ----ANIMATIONS------------------------- //
+	const setPictureBtnName = {
+		...mergeMotions(
+			xMove({ from: -20, inDuration: 0.3, outDuration: 0.3 }),
+			yMove({ from: -20, inDuration: 0.3, outDuration: 0.3 })
+		),
+		whileHover: { scale: 1.05 }
+	}
+	const setNameBtnName = {
+		...xMove({
+			from: -30, inDuration: 0.3, outDuration: 0.3
+		}),
+		whileHover: { scale: 1.05 }
+	}
 
 	// ----CLASSNAMES------------------------- //
 	const boxName = `${NAME}-picture`
@@ -170,8 +214,24 @@ const Infos: React.FC<InfosProps> = ({ userInfos }) => {
 
 	// ----RENDER----------------------------- //
 	return <>
-		<div className={boxName} style={{ backgroundImage: profilePictureURI }} />
-		<div className={nicknameField}>{userInfos.nickname}</div>
+		<div
+			className={boxName}
+			style={{ backgroundImage: profilePictureURI }}
+			{...ppHdl}>
+			<AnimatePresence>
+				{userInfos.id === userID && overPic &&
+					<motion.div {...setPictureBtnName} />
+				}
+			</AnimatePresence>
+		</div>
+		<div className={nicknameField} {...nicknameHdl}>
+			{userInfos.nickname}
+			<AnimatePresence>
+				{userInfos.id === userID && overName &&
+					<motion.div {...setNameBtnName} />
+				}
+			</AnimatePresence>
+		</div>
 		<textarea placeholder='anything to say ?' />
 	</>
 }
@@ -181,6 +241,13 @@ interface AccountInfosProps {
 	userID: number
 }
 const AccountInfos: React.FC<AccountInfosProps> = ({ userID }) => {
+	// ----ROUTER----------------------------- //
+	const location = useLocation()
+
+	// ----VALUES----------------------------- //
+	let id = location.pathname.split('/')[2]
+	if (!id) id = String(userID)
+
 	// ----STATES----------------------------- //
 	const [userInfos, setData] = useState<any>({})
 	const [userHistory, setUserHistory] = useState<any>({})
@@ -191,11 +258,12 @@ const AccountInfos: React.FC<AccountInfosProps> = ({ userID }) => {
 		if (!userID) return
 
 		const fetchData = async () => {
-			let data = await ftFetch(`/users/${userID}`)
+			console.log(`/users/${id}`)
+			let data = await ftFetch(`/users/${id}`)
 			setData(data)
-			data = await ftFetch('/games/own')
+			data = await ftFetch(`/games/${id}`)
 			setUserHistory(data)
-			data = await ftFetch(`/games/${userID}/victories/count`)
+			data = await ftFetch(`/games/${id}/victories/count`)
 			setWinsCount(data)
 		}
 		fetchData()
@@ -216,7 +284,7 @@ const AccountInfos: React.FC<AccountInfosProps> = ({ userID }) => {
 	// ----RENDER----------------------------- //
 	return <motion.div className={boxName} {...boxMotion}>
 		<motion.div className={INFOS_NAME} {...boxMotion}>
-			<Infos userInfos={userInfos} />
+			<Infos userID={userID} userInfos={userInfos} />
 		</motion.div>
 		<motion.div className={ACHIEVEMENTS_NAME} {...achievementsMotion}>
 			<Achievements />
@@ -227,7 +295,11 @@ const AccountInfos: React.FC<AccountInfosProps> = ({ userID }) => {
 				userHistory={userHistory}
 				winsCount={winsCount}
 			/>
-			<History userInfos={userInfos} userHistory={userHistory} />
+			<History
+				userID={userID}
+				userInfos={userInfos}
+				userHistory={userHistory}
+			/>
 		</motion.div>
 	</motion.div >
 }
