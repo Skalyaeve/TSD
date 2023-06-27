@@ -37,11 +37,7 @@ const FriendName: React.FC<FriendNameProps> = ({ id }) => {
 	// ----ANIMATIONS------------------------- //
 	const delbtnMotion = {
 		...xMove({ from: 30, inDuration: 0.3, outDuration: 0.3 }),
-		whileHover: {
-			scale: 1.05,
-			borderTopLeftRadius: '5px',
-			borderBottomRightRadius: '5px'
-		}
+		whileHover: { scale: 1.05 }
 	}
 	const txtMotion = {
 		animate: overTxt ? { textShadow: '0px 0px 4px white' } : {}
@@ -118,23 +114,11 @@ const FriendSearch: React.FC = () => {
 	const searchBtnHdl = { onMouseUp: () => setSearchin(x => !x) }
 
 	// ----ANIMATIONS------------------------- //
-	const movetMotion = xMove({ from: 30, inDuration: 0.3, outDuration: 0.3 })
 	const txtMotion = { whileHover: { textShadow: '0px 0px 4px white' } }
 	const inputMotion = widthChange({})
 	const btnMotion = {
-		...movetMotion,
-		animate: {
-			...movetMotion.animate,
-			borderBottomLeftRadius: searchin ? '0px' : '5px',
-			borderBottomRightRadius: searchin ? '5px' : '0px'
-		},
-		whileHover: {
-			scale: 1.05,
-			borderTopLeftRadius: '5px',
-			borderTopRightRadius: '5px',
-			borderBottomLeftRadius: '5px',
-			borderBottomRightRadius: '5px'
-		}
+		...xMove({ from: 30, inDuration: 0.3, outDuration: 0.3 }),
+		whileHover: { scale: 1.05 }
 	}
 
 	// ----CLASSNAMES------------------------- //
@@ -216,13 +200,7 @@ const Friends: React.FC = () => {
 	const headMotion = heightChangeByPx({ finalHeight: 200, inDuration: 0.6 })
 	const headBtnMotion = (index: number) => ({
 		...boxMove(index),
-		whileHover: {
-			scale: 1.05,
-			borderTopLeftRadius: '5px',
-			borderTopRightRadius: '5px',
-			borderBottomLeftRadius: '5px',
-			borderBottomRightRadius: '5px',
-		}
+		whileHover: { scale: 1.05 }
 	})
 	const headInputMotion = mergeMotions(
 		bouncyWidthChangeByPx({ finalWidth: 325, inDuration: 1 }),

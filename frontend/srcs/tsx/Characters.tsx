@@ -57,11 +57,7 @@ const CharBox: React.FC<CharBoxProps> = ({
 		outDuration: 0.5 - 0.01 * id
 	})
 	const selectBtnMotion = {
-		whileHover: {
-			scale: 1.05,
-			borderTopLeftRadius: '5px',
-			borderBottomRightRadius: '5px'
-		}
+		whileHover: { scale: 1.05 }
 	}
 
 	// ----CLASSNAMES------------------------- //

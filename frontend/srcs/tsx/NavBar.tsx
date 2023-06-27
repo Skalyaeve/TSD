@@ -17,14 +17,7 @@ const navBarLinkMotion = (from: number, index: number) => ({
 			finalHeight: (!index || !from ? BACK_LINK_HEIGHT : LINK_HEIGHT) + 3,
 		})
 	),
-	whileHover: {
-		scale: 1.05,
-		borderTopLeftRadius: index ? '5px' : '10px',
-		borderTopRightRadius: index ? '5px' : '10px',
-		borderBottomLeftRadius: index < 0 ? '10px' : '5px',
-		borderBottomRightRadius: index < 0 ? '10px' : '5px',
-		zIndex: 4
-	}
+	whileHover: { scale: 1.05, zIndex: 4 }
 })
 
 // --------CLASSNAMES------------------------------------------------------ //

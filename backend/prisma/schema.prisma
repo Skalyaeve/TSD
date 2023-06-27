@@ -39,7 +39,6 @@ model User {
 	player1		Game[]	@relation("player1")
 	player2		Game[]	@relation("player2")
 	winner		Game[]	@relation("winner")
-
 }
 
 model FriendRequest {
