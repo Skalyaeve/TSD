@@ -49,8 +49,6 @@ interface playerUpdate {
 interface objectProps {
 	xPos: number
 	yPos: number
-	xVel: number
-	yVel: number
 }
 
 // Properties of all updated game objects
@@ -66,11 +64,7 @@ interface gameState {
 }
 
 interface stateUpdate {
-	newState: string
-}
-
-interface sharedPlayer {
-
+	newState: 'init' | 'ready' | 'created' | 'started' | 'stopped'
 }
 
 /* -------------------------VARIABLES------------------------- */
@@ -138,10 +132,12 @@ function createPlayer(construct: playerConstruct) {
 function updatePlayer(updatedPlayer: playerUpdate) {
 	let xVel: number = 0
 	let yVel: number = 0
+	// Calculation of individual x y velocity
 	if (updatedPlayer.keyStates.up) yVel = yVel - playerSpeed
 	if (updatedPlayer.keyStates.down) yVel = yVel + playerSpeed
 	if (updatedPlayer.keyStates.left) xVel = xVel - playerSpeed
 	if (updatedPlayer.keyStates.right) xVel = xVel + playerSpeed
+	// Limitation of diagonal speed
 	if (xVel && yVel) {
 		xVel = (playerSpeed / 2) * Math.SQRT2 * (xVel / playerSpeed)
 		yVel = (playerSpeed / 2) * Math.SQRT2 * (yVel / playerSpeed)
@@ -152,13 +148,14 @@ function updatePlayer(updatedPlayer: playerUpdate) {
 	}
 }
 
+// Update the game state following the state update
 function updateState(newStateContainer: stateUpdate) {
 	switch (newStateContainer.newState){
-		case ("start"):
+		case ('started'):
 			gameState = 'on'
 			console.log(identifier, "Starting game")
 			break
-		case ("stop"):
+		case ('stopped'):
 			gameState = 'off'
 			console.log(identifier, "Stoping game")
 			break
@@ -167,32 +164,49 @@ function updateState(newStateContainer: stateUpdate) {
 
 /* -------------------------PORT INPUT------------------------- */
 
+// Check if incomming data type loginData
 function isLogin(incomingData: playerConstruct | playerUpdate | loginData | stateUpdate): incomingData is loginData {
 	return (<loginData>incomingData).workerId !== undefined
 }
 
+// Check if incomming data type is playerConstruct
 function isConstruct(incomingData: playerConstruct | playerUpdate | loginData | stateUpdate): incomingData is playerConstruct {
 	return (<playerConstruct>incomingData).xPos !== undefined
 }
 
+// Check if incomming data type is playerUpdate
 function isPlayerUpdate(incomingData: playerConstruct | playerUpdate | loginData | stateUpdate): incomingData is playerUpdate {
 	return (<playerUpdate>incomingData).keyStates !== undefined
 }
 
+// Check if incomming data type is stateUpdate
 function isStateUpdate(incomingData: playerConstruct | playerUpdate | loginData | stateUpdate): incomingData is stateUpdate {
 	return (<stateUpdate>incomingData).newState !== undefined
 }
 
+// Send the state to the backend
+function sendState(state: 'init' | 'ready' | 'created' | 'started' | 'stopped'){
+	let gameState: gameState = {
+		actualState: state
+	}
+	parentPort?.postMessage(gameState)
+	console.log(identifier, "Sending state:", gameState.actualState)
+}
+
+// Backend messages listeners
 function portListener() {
 	parentPort?.on("message", (incomingData: playerConstruct | playerUpdate | loginData | stateUpdate) => {
 		if (isLogin(incomingData)) {
 			workerId = incomingData.workerId
 			identifier = "[" + workerId.slice(0, 4) + "] "
+			sendState('ready')
 			console.log(identifier, "Worker id recieved")
 		}
 		else if (isConstruct(incomingData)) {
 			console.log(identifier, "Player recieved")
 			createPlayer(incomingData)
+			if (leftPlayer && rightPlayer)
+				sendState('created')
 		}
 		else if (isPlayerUpdate(incomingData)) {
 			updatePlayer(incomingData)
@@ -200,6 +214,7 @@ function portListener() {
 		else if (isStateUpdate(incomingData)) {
 			console.log(identifier, "State update recieved")
 			updateState(incomingData)
+			sendState(incomingData.newState)
 		}
 		else {
 			console.log(identifier, "ERROR: Wrong message type")
@@ -207,27 +222,17 @@ function portListener() {
 	})
 }
 
-/*if (leftPlayer && rightPlayer && ball) {
-	gameState = "on"
-	console.log("[S] Game is now running")
-}
-else {
-	gameState = "off"
-	console.log("[S] Game is now stopped")
-}*/
-
 /* -------------------------PORT OUTPUT------------------------- */
 
+// Returns coordinates of a body
 function getProperties(body: Body): objectProps {
 	return {
 		xPos: body.x,
-		yPos: body.y,
-		xVel: body.velocity.x,
-		yVel: body.velocity.y
+		yPos: body.y
 	}
 }
 
-// Send objects properties to
+// Send objects properties to backend
 function sendProperties() {
 	if (workerId && leftPlayer && ball && rightPlayer && parentPort) {
 		if (newProps)
@@ -242,13 +247,6 @@ function sendProperties() {
 			parentPort?.postMessage(newProps)
 		}
 	}
-}
-
-function sendReady() {
-	let gameState: gameState = {
-		actualState: "ready"
-	}
-	parentPort?.postMessage(gameState)
 }
 
 /* -------------------------MAIN FUNCTIONS------------------------- */
@@ -267,7 +265,7 @@ function main() {
 	setTimeout(() => {
 		portListener()
 		createBall()
-		sendReady()
+		sendState('init')
 		setInterval(() => {
 			if (gameState == "on")
 				update()

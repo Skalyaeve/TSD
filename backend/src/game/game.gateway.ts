@@ -135,6 +135,17 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	private parties: { [partyId: string]: party } = {}
 
 	private skins: { [key: string]: skin } = {
+		['Test']: {
+			name: 'Test',
+			leftSize: {
+				width: 25,
+				heigth: 25
+			},
+			rightSize: {
+				width: 25,
+				heigth: 25
+			},
+		},
 		['Boreas']: {
 			name: 'Boreas',
 			leftSize: {
@@ -248,8 +259,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
 	// Create the loginData object to store the worker id and send it to the worker
 	createWorker(newParty: party) {
-		let workerLoginData: loginData = { workerId: newParty.id }
-		newParty.worker.postMessage(workerLoginData)
 		newParty.worker.on('message', (payload: newPropsFromWorker | gameState) => {
 			if (this.isNewProps(payload)) {
 				let outgoingProps: newPropsToClient = {
@@ -262,6 +271,22 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			}
 			else if (this.isGameState(payload)) {
 				newParty.workerState = payload.actualState
+				console.log("New worker state:", newParty.workerState)
+				if (newParty.workerState == 'init') {
+					let workerLoginData: loginData = { workerId: newParty.id }
+					newParty.worker.postMessage(workerLoginData)
+					console.log("Sending worker id")
+
+				}
+				else if (newParty.workerState == 'ready') {
+					this.createWorkerConstructs(newParty.leftPlayerId, newParty.rightPlayerId, newParty)
+					console.log("Sending worker constructs")
+
+				}
+				else if (newParty.workerState == 'created' && newParty.leftPlayerState == 'created' && newParty.rightPlayerState == 'created') {
+					newParty.worker.postMessage({ newState: "started" })
+					console.log("Sending start signal2")
+				}
 			}
 		})
 	}
@@ -314,14 +339,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		this.sockets[leftPlayerId].emit('matched')
 		this.sockets[rightPlayerId].emit('matched')
 		this.createWorker(newParty)
-		setTimeout(() => {
-			this.createWebConstructs(leftPlayerId, rightPlayerId)
-			this.createWorkerConstructs(leftPlayerId, rightPlayerId, newParty)
-			let newState: stateUpdate = {
-				newState: "start"
-			}
-			newParty.worker.postMessage(newState)
-		}, 1000)
 	}
 
 	// Creates a new party if there is at least two player in the queue
@@ -345,12 +362,12 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		else {
 			this.userService.setUser(userData.id, socket)
 		}*/
-		console.log("New player worker:", socket.id)
+		console.log("New player connecting:", socket.id)
 		this.sockets[socket.id] = socket
 		this.players[socket.id] = {
 			id: socket.id,
 			workerId: undefined,
-			skin: "Rylan"
+			skin: "Boreas"
 			// CALL DB TO GET SKIN
 		}
 		this.matchQueue.push(socket.id)
@@ -393,10 +410,22 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	@SubscribeMessage('playerStateUpdate')
 	handlePlayerStateUpdate(socket: Socket, payload: gameState) {
 		let party = this.parties[this.players[socket.id].workerId]
-		if (party.leftPlayerId == socket.id)
+		if (party.leftPlayerId == socket.id) {
 			party.leftPlayerState = payload.actualState
-		else if (party.rightPlayerId == socket.id)
+			console.log("New leftPlayer state:", party.leftPlayerState)
+		}
+		else if (party.rightPlayerId == socket.id) {
 			party.rightPlayerState = payload.actualState
+			console.log("New rightPlayer state:", party.rightPlayerState)
+		}
+		if (party.rightPlayerState == 'ready' && party.leftPlayerState == 'ready') {
+			this.createWebConstructs(party.leftPlayerId, party.rightPlayerId)
+			console.log("Sending web constructs")
+		}
+		else if (party.workerState == 'created' && party.leftPlayerState == 'created' && party.rightPlayerState == 'created') {
+			party.worker.postMessage({ newState: "started" })
+			console.log("Sending start signal")
+		}
 	}
 
 	async handleDisconnect(socket: Socket) {
