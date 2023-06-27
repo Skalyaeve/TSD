@@ -1,0 +1,92 @@
+{
+	"Selene": {
+		"hp": 60,
+		"attack": 10,
+		"defense": 3,
+		"speed": 4,
+		"passive": {
+			"name": "Elven legacy",
+			"effect": "If hitted last round: self +50% ATK, enemy -50% SPD"
+		}
+	},
+	"Rylan": {
+		"hp": 70,
+		"attack": 15,
+		"defense": 5,
+		"speed": 3,
+		"passive": {
+			"name": "Rogue",
+			"effect": "Ignore 50% of enemy DEF"
+		}
+	},
+	"Thorian": {
+		"hp": 80,
+		"attack": 11,
+		"defense": 4,
+		"speed": 4,
+		"passive": {
+			"name": "Drain",
+			"effect": "Lifesteal: 30% of damages"
+		}
+	},
+	"Liliana": {
+		"hp": 60,
+		"attack": 10,
+		"defense": 2,
+		"speed": 5,
+		"passive": {
+			"name": "Woodland footwork",
+			"effect": "Dash when pressing twice fast"
+		}
+	},
+	"Garrick": {
+		"hp": 70,
+		"attack": 10,
+		"defense": 9,
+		"speed": 2,
+		"passive": {
+			"name": "Berserk",
+			"effect": "+1 ATK for every 10 HP lost"
+		}
+	},
+	"Orion": {
+		"hp": 70,
+		"attack": 11,
+		"defense": 0,
+		"speed": 6,
+		"passive": {
+			"name": "Guardian angel",
+			"effect": "When hitted, 20% chance to avoid damages"
+		}
+	},
+	"Faeleen": {
+		"hp": 60,
+		"attack": 11,
+		"defense": 1,
+		"speed": 6,
+		"passive": {
+			"name": "Lucky charm",
+			"effect": "Hits have 20% chance to deal x2 damage"
+		}
+	},
+	"Boreas": {
+		"hp": 80,
+		"attack": 12,
+		"defense": 4,
+		"speed": 2,
+		"passive": {
+			"name": "Winter's will",
+			"effect": "Consecutive loss buff DEF by 1 (+4 max)"
+		}
+	},
+	"Helios": {
+		"hp": 80,
+		"attack": 12,
+		"defense": 3,
+		"speed": 3,
+		"passive": {
+			"name": "Sun's pact",
+			"effect": "Consecutive hit buff ATT by 1 (+4 max)"
+		}
+	}
+}

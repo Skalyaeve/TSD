@@ -7,6 +7,9 @@ import { Socket } from 'socket.io-client'
 
 /* -------------------------ASSETS IMPORTS------------------------- */
 
+// Test sheet
+import player_test_Sheet from '../resources/assets/game/blank.png'
+
 // Spritesheets
 import ball__Sheet from '../resources/assets/game/basicBall.png'
 
@@ -237,6 +240,30 @@ function Party() {
 
 	// Initialise all skins of the scene
 	function skinsInitialisation(scene: Phaser.Scene) {
+		skins['Test'] = {
+			name: 'Test',
+			frontSheet: player_test_Sheet,
+			frontSize: {
+				width: 25,
+				heigth: 25
+			},
+			backSheet: player_test_Sheet,
+			backSize: {
+				width: 25,
+				heigth: 25
+			},
+			leftSheet: player_test_Sheet,
+			leftSize: {
+				width: 25,
+				heigth: 25
+			},
+			rightSheet: player_test_Sheet,
+			rightSize: {
+				width: 25,
+				heigth: 25
+			},
+			scaleFactor: 5
+		}
 		skins['Boreas'] = {
 			name: 'Boreas',
 			frontSheet: Boreas_front_Sheet,
@@ -486,6 +513,8 @@ function Party() {
 			leftPlayer = newPlayer
 		else
 			rightPlayer = newPlayer
+		if (leftPlayer && rightPlayer)
+			sendState('created')
 	}
 
 	function createBall(scene: Phaser.Scene) {
@@ -544,9 +573,9 @@ function Party() {
 		gameSocket?.emit('playerStop')
 	}
 
-	const sendReady = (): void => {
+	const sendState = (state: string): void => {
 		let stateUpdate: gameState = {
-			actualState: "ready"
+			actualState: state
 		}
 		gameSocket?.emit('playerStateUpdate', stateUpdate)
 	}
@@ -664,7 +693,9 @@ function Party() {
 			yOffset = sheetSize.heigth / 2 * skins[leftPlayer.skin].scaleFactor
 			rightPlayer.sprite?.setPosition(moveQueue.rightProps.xPos + xOffset, moveQueue.rightProps.yPos + yOffset)
 
-			ball?.sprite?.setPosition(moveQueue.ballProps.xPos, moveQueue.ballProps.yPos)
+			xOffset = 54 / 2
+			yOffset = 54 / 2
+			ball?.sprite?.setPosition(moveQueue.ballProps.xPos + xOffset, moveQueue.ballProps.yPos + yOffset)
 			moveQueue = undefined
 		}
 	}
@@ -682,7 +713,7 @@ function Party() {
 	function create(this: Phaser.Scene): void {
 		createBall(this)
 		createAnims(this)
-		sendReady()
+		sendState('ready')
 	}
 
 	// Scene update
