@@ -1,7 +1,9 @@
 if [ -e '/proc/sys/fs/binfmt_misc/WSLInterlop' ]; then
-	hostIp=$(ip addr | grep 'inet 10.' | cut -d' ' -f6 | cut -d'/' -f1)
-else
 	hostIp=$(ip addr | grep 'inet.*eth0' | cut -d' ' -f6 | cut -d'/' -f1)
+	echo "On WSL"
+else
+	hostIp=$(ip addr | grep 'inet 10.' | cut -d' ' -f6 | cut -d'/' -f1)
+	echo "Not on WSL"
 fi
 cat ./.env | grep -v 'HOST_IP' > ./.ipconfigtmp1;
 echo "HOST_IP=$hostIp" >> ./.ipconfigtmp1;

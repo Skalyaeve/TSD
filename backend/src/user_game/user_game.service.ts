@@ -122,7 +122,7 @@ export class UserGameService {
     async countByWinner(id: number): Promise<number> {
         const gamesCount = await this.prisma.game.count({
             where: {
-                winner: id,
+                winner: Number(id),
             },
         });
         return gamesCount;
