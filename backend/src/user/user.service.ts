@@ -94,14 +94,23 @@ export class UserService {
     return user;
   }
 
+<<<<<<< HEAD
   async update2FASecret(id: number, status: boolean, secret: string): Promise<User> {
+=======
+  async update2FAStatus(id: number, status: boolean, secret: string): Promise<User> {
+>>>>>>> 6705efaab6c83730cf0ebe24649e43e4ccd4a700
     const user: User = await this.prisma.user.update({
       where: {
         id,
       },
       data: {
+<<<<<<< HEAD
         twoFactorAuth: status,
         twoFactorSecret: secret,
+=======
+        twoFactorAuthStatus: status,
+        twoFactorAuthSecret: secret,
+>>>>>>> 6705efaab6c83730cf0ebe24649e43e4ccd4a700
       },
     });
     return user;

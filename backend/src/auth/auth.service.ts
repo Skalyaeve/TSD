@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UserService } from '../user/user.service.js';
-import { ConfigService } from '@nestjs/config';
+import { PayloadDto } from './dto/payload.dto.js';
 
 
 @Injectable()
@@ -11,14 +11,17 @@ export class AuthService {
     private readonly userService: UserService
   ) {}
 
-  async login(user: any): Promise<any> {
-
-      const payload = {
+  async login(user: any, is2FAAuthenticated: boolean): Promise<any> {
+      const payload: PayloadDto = {
         id: user.id,
+<<<<<<< HEAD
         twoFactorAuthEnabled: user.twoFactorAuth,
         isTwoFactorAuthenticated: false,
+=======
+        is2FAEnabled: user.twoFactorAuthStatus,
+        is2FAAuthenticated,
+>>>>>>> 6705efaab6c83730cf0ebe24649e43e4ccd4a700
       };
-
       return this.jwtService.sign(payload);
   }
 

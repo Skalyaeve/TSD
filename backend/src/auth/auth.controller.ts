@@ -1,4 +1,5 @@
-import { Controller, Get, UseGuards, Req, Post, Body, Res, UseFilters, HttpException, BadRequestException } from '@nestjs/common';
+import { Controller, Get, UseGuards, Req, Post, Body, Res, UseFilters, UnauthorizedException, BadRequestException } from '@nestjs/common';
+
 import { AuthService } from './auth.service.js';
 import { Request, Response } from 'express';
 import { GoogleAuthGuard } from './guards/GoogleGuard.js';
@@ -9,6 +10,7 @@ import { JwtGuard } from './guards/JwtGuard.js';
 import { User } from '@prisma/client';
 import { authenticator } from 'otplib';
 import { toFileStream } from 'qrcode';
+import { JwtTwoFactorGuard } from './guards/JwtTwoFactorGuard.js';
 
 @Controller('auth')
 export class AuthController {
@@ -24,8 +26,8 @@ export class AuthController {
     @Get('42/callback')
     @UseGuards(FortyTwoAuthGuard)
     @UseFilters(CallbackExceptionFilter)
-    async handle42Redirect(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
-        const access_token = await this.authService.login(req.user);
+    async handle42Redirect(@Req() req: any, @Res({ passthrough: true }) res: Response) {
+        const access_token = await this.authService.login(req.user, false);
         res.cookie('access_token', access_token, {
             maxAge: 60 * 60 * 24 * 7,
         });
@@ -38,8 +40,8 @@ export class AuthController {
 
     @Get('google/redirect')
     @UseGuards(GoogleAuthGuard)
-    async handleRedirect(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
-        const access_token = await this.authService.login(req.user);
+    async handleRedirect(@Req() req: any, @Res({ passthrough: true }) res: Response) {
+        const access_token = await this.authService.login(req.user, false);
         res.cookie('access_token', access_token, {
             httpOnly: true,
             maxAge: 60 * 60 * 24 * 7,
@@ -59,33 +61,52 @@ export class AuthController {
         return (req.user);
     }
 
-    @Post('2FA/activate')
+    @Post('2FA/on')
     @UseGuards(JwtGuard)
     async activate2FA(@Req() req: any): Promise<User> {
-        let user: User = await this.userService.findOneById(req.user.id);
-        if (!user.twoFactorAuth) {
-            const secret = authenticator.generateSecret();
-            user = await this.userService.update2FASecret(req.user.id, true, secret);
-        }
+        const secret: string = authenticator.generateSecret();
+        const user: User = await this.userService.update2FAStatus(req.user.id, true, secret);
         return user;
     }
 
-    @Post('2FA/deactivate')
+    @Post('2FA/off')
     @UseGuards(JwtGuard)
     async deactivate2FA(@Req() req: any): Promise<User> {
-        const user: User = await this.userService.update2FASecret(req.user.id, false, null);
+        const user: User = await this.userService.update2FAStatus(req.user.id, false, null);
         return user;
     }
 
-    @Get('2FA/login')
+    @Get('2FA/qrcode')
     @UseGuards(JwtGuard)
-    async twoFactorAuthLogin(@Req() req: any, @Res() res: Response): Promise<User> {
-        const user: User = await this.userService.findOneById(req.user.id);
-        if (!user.twoFactorAuth) {
-            throw new BadRequestException('user has not enabled two factor authentication');
+    async generateQRCode(@Req() req: any, @Res() res: any): Promise<any> {
+        const user: User = await this.userService.findOneByIdOrThrow(req.user.id);
+        if (!user.twoFactorAuthStatus) {
+            throw new BadRequestException('user has not activated 2FA');
         }
-        const otpauth = authenticator.keyuri(user.email, 'transcendance', user.twoFactorSecret);
-        return toFileStream(res, otpauth);
+        const otpauthURL: string = authenticator.keyuri(user.email, 'transcendance', user.twoFactorAuthSecret);
+        return toFileStream(res, otpauthURL);
+    }
+
+    @Get('2FA/verify')
+    @UseGuards(JwtTwoFactorGuard)
+    async verify2FACode(@Req() req: any, @Res({ passthrough: true }) res: Response, @Body('code') code: string): Promise<any> {
+        if (!req.user.is2FAEnabled || req.user.is2FAAuthenticated) {
+            return;
+        }
+        const user: User = await this.userService.findOneByIdOrThrow(req.user.id);
+        const isValid: boolean = authenticator.verify({
+            token: code,
+            secret: user.twoFactorAuthSecret,
+        });
+        if (!isValid) {
+            throw new UnauthorizedException('wrong authenticator code');
+        }
+        const access_token = await this.authService.login(user, true);
+        res.cookie('access_token', access_token, {
+            httpOnly: true,
+            maxAge: 60 * 60 * 24 * 7,
+            sameSite: 'lax',
+        });
     }
 
     // DEBUGGING
@@ -95,7 +116,8 @@ export class AuthController {
         console.log(userInfo);
         const user = await this.userService.findOrCreateOne(userInfo.email);
 
-        const access_token = await this.authService.login(user); res.cookie('access_token', access_token, {
+        const access_token = await this.authService.login(user, false);
+        res.cookie('access_token', access_token, {
             httpOnly: true,
             maxAge: 60 * 60 * 24 * 7,
         });
