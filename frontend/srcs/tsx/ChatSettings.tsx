@@ -3,20 +3,8 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { fade, xMove, yMove } from './utils/ftMotion.tsx'
 
 // --------ANIMATIONS------------------------------------------------------ //
-const mainBoxMotion = xMove({
-	from: 50,
-	inDuration: 0.3,
-	outDuration: 0.15
-})
-const btnMotion = {
-	whileHover: {
-		scale: 1.05,
-		borderTopLeftRadius: '5px',
-		borderTopRightRadius: '5px',
-		borderBottomLeftRadius: '5px',
-		borderBottomRightRadius: '5px'
-	}
-}
+const mainBoxMotion = xMove({ from: 50, inDuration: 0.3, outDuration: 0.15 })
+const btnMotion = { whileHover: { scale: 1.05 } }
 
 // --------CLASSNAMES------------------------------------------------------ //
 const NAME = 'chat'

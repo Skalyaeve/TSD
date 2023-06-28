@@ -339,13 +339,7 @@ const MainBtn: React.FC<MainBtnProps> = ({
 	}
 
 	// ----ANIMATIONS------------------------- //
-	const boxMotion = {
-		whileHover: {
-			scale: extended ? 1.01 : 1.05,
-			borderBottomLeftRadius: '5px',
-			borderBottomRightRadius: '5px',
-		}
-	}
+	const boxMotion = { whileHover: { scale: extended ? 1.01 : 1.05 } }
 	const extendBtnMotion = {
 		...mergeMotions(
 			xMove({ from: -10, inDuration: 0.3, outDuration: 0.3 }),

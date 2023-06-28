@@ -17,10 +17,10 @@ export class UserGameService {
             where: {
                 OR: [
                     {
-                        player1: id,
+                        player1: Number(id),
                     },
                     {
-                        player2: id,
+                        player2: Number(id),
                     },
                 ],
             },
@@ -122,7 +122,7 @@ export class UserGameService {
     async countByWinner(id: number): Promise<number> {
         const gamesCount = await this.prisma.game.count({
             where: {
-                winner: id,
+                winner: Number(id),
             },
         });
         return gamesCount;

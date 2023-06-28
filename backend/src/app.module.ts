@@ -21,7 +21,7 @@ import { ChannelModule } from './channel/channel.module.js';
     ChatModule,
     ConfigModule,
     GameModule,
-    ChannelModule,
+    ChannelModule
   ]
 })
 export class AppModule { }
