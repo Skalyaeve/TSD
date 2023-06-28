@@ -217,16 +217,6 @@
 	width: 40px;
 }
 
-.chat-roomUsr-btn-dual {
-	/* #1 Éléments */
-	background-image: url('../resources/assets/ui/icons/dual.png');
-}
-
-.chat-roomUsr-btn-dual:hover {
-	/* #1 Éléments */
-	background-image: url('../resources/assets/ui/icons/dual-hover.png');
-}
-
 .chat-roomUsr-btn-msg {
 	/* #1 Éléments */
 	background-image: url('../resources/assets/ui/icons/msg.png');
@@ -234,7 +224,7 @@
 
 .chat-roomUsr-btn-msg:hover {
 	/* #1 Éléments */
-	background-image: url('../resources/assets/ui/icons/msg-hover.png');
+	background-image: url('../resources/assets/ui/icons/msgHover.png');
 }
 
 .chat-roomUsr-btn-mute {
@@ -244,7 +234,7 @@
 
 .chat-roomUsr-btn-mute:hover {
 	/* #1 Éléments */
-	background-image: url('../resources/assets/ui/icons/mute-hover.png');
+	background-image: url('../resources/assets/ui/icons/muteHover.png');
 }
 
 /* ---ROOM-BOXES----------------- */
@@ -291,7 +281,6 @@
 .chat-setRoom-btn {
 	/* #1 Éléments */
 	background-color: transparent;
-	background-image: url('../resources/assets/ui/icons/gear.png');
 
 	/* #2 Forme */
 	width: 18px;
@@ -334,7 +323,7 @@
 
 .chat-newRoom-btn-txt:hover {
 	/* #1 Éléments */
-	background-image: url('../resources/assets/ui/icons/+-hover.png');
+	background-image: url('../resources/assets/ui/icons/+Hover.png');
 }
 
 .chat-newRoom-btn-txt--active {
@@ -344,5 +333,5 @@
 
 .chat-newRoom-btn-txt--active:hover {
 	/* #1 Éléments */
-	background-image: url('../resources/assets/ui/icons/--hover.png');
+	background-image: url('../resources/assets/ui/icons/-Hover.png');
 }

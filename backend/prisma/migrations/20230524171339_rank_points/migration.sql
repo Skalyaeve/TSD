@@ -1,2 +1,0 @@
--- AlterTable
-ALTER TABLE "User" ADD COLUMN     "rankPoints" INTEGER NOT NULL DEFAULT 0;

@@ -243,7 +243,7 @@
 
 .chat-roomSettings-usr-btn-add:hover {
 	/* #1 Éléments */
-	background-image: url('../resources/assets/ui/icons/+-hover.png');
+	background-image: url('../resources/assets/ui/icons/+Hover.png');
 }
 
 .chat-roomSettings-usr-btn-remove {
@@ -253,7 +253,7 @@
 
 .chat-roomSettings-usr-btn-remove:hover {
 	/* #1 Éléments */
-	background-image: url('../resources/assets/ui/icons/--hover.png');
+	background-image: url('../resources/assets/ui/icons/-Hover.png');
 }
 
 .chat-roomSettings-usr-btn-ban {
@@ -263,7 +263,7 @@
 
 .chat-roomSettings-usr-btn-ban:hover {
 	/* #1 Éléments */
-	background-image: url('../resources/assets/ui/icons/x-hover.png');
+	background-image: url('../resources/assets/ui/icons/xHover.png');
 }
 
 .chat-roomSettings-usr-btn-upgrade {
@@ -273,7 +273,7 @@
 
 .chat-roomSettings-usr-btn-upgrade:hover {
 	/* #1 Éléments */
-	background-image: url('../resources/assets/ui/icons/up-hover.png');
+	background-image: url('../resources/assets/ui/icons/upHover.png');
 }
 
 .chat-roomSettings-usr-btn-mute {
@@ -283,5 +283,5 @@
 
 .chat-roomSettings-usr-btn-mute:hover {
 	/* #1 Éléments */
-	background-image: url('../resources/assets/ui/icons/mute-hover.png');
+	background-image: url('../resources/assets/ui/icons/muteHover.png');
 }
