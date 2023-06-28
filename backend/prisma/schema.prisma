@@ -17,6 +17,7 @@ model User {
 	avatarFilename	String	@default("default.png")
 	rankPoints	Int	@default(0)
 	twoFactorAuth	Boolean	@default(false)
+	twoFactorSecret	String?
 
 	requester	FriendRequest[]	@relation("requester")
 	requestee	FriendRequest[]	@relation("requestee")

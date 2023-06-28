@@ -15,6 +15,8 @@ export class AuthService {
 
       const payload = {
         id: user.id,
+        twoFactorAuthEnabled: user.twoFactorAuth,
+        isTwoFactorAuthenticated: false,
       };
 
       return this.jwtService.sign(payload);

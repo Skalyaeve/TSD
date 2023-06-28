@@ -94,6 +94,19 @@ export class UserService {
     return user;
   }
 
+  async update2FASecret(id: number, status: boolean, secret: string): Promise<User> {
+    const user: User = await this.prisma.user.update({
+      where: {
+        id,
+      },
+      data: {
+        twoFactorAuth: status,
+        twoFactorSecret: secret,
+      },
+    });
+    return user;
+  }
+
   generateFunnyNickname(): string {
     const adjectives: string[] = ['happy', 'silly', 'goofy', 'wacky', 'zany', 'quirky', 'bouncy', 'spunky', 'jolly', 'nutty'];
     const nouns: string[] = ['banana', 'muffin', 'pickle', 'noodle', 'butterfly', 'cupcake', 'dinosaur', 'penguin', 'unicorn', 'octopus'];
