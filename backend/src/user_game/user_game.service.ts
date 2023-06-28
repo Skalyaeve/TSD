@@ -55,7 +55,7 @@ export class UserGameService {
     async findAllByWinner(id: number): Promise<Game[]> {
         const games = await this.prisma.game.findMany({
             where: {
-                winner: id,
+                winner: Number(id),
             },
             orderBy: {
                 timeStart: "asc",
