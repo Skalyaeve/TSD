@@ -91,11 +91,9 @@ const Matchmaker: React.FC = () => {
 		gameSocket?.emit('stopMatchmaking')
 	}
 	// ----EFFECTS---------------------------- //
+
 	useEffect(() => {
-
-		return () => {
-
-		}
+		console.log("ARRIVING")
 	}, [])
 
 	useEffect(() => {
@@ -109,13 +107,14 @@ const Matchmaker: React.FC = () => {
 	// ----HANDLERS--------------------------- //
 	function toggleMatchmaker() {
 		console.log("test")
+		setInGame((localStorage.getItem('inGame') === '1' ? true : false))
 		if (!matchmaking && !inGame)
 			startGameSockets()
 		else if (matchmaking && !inGame)
 			stopMatchmaking()
 		else if (inGame) {
-			setInGame(false)
 			localStorage.setItem('inGame', '0')
+			setInGame(false)
 			navigate('/')
 		}
 	}

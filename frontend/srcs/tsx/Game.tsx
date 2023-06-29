@@ -66,6 +66,7 @@ import Thorian_front_Sheet from '../resources/assets/game/character/Thorian/fron
 import Thorian_back_Sheet from '../resources/assets/game/character/Thorian/back.png'
 import Thorian_left_Sheet from '../resources/assets/game/character/Thorian/left.png'
 import Thorian_right_Sheet from '../resources/assets/game/character/Thorian/right.png'
+import { useNavigate } from 'react-router-dom'
 
 
 /* -------------------------TYPES------------------------- */
@@ -177,6 +178,7 @@ function Party() {
 
 	// React variables
 	const gameRef = useRef<HTMLDivElement>(null)
+	const navigate = useNavigate()
 	let game: Phaser.Game
 
 	// Canvas constants
@@ -787,6 +789,13 @@ function Party() {
 				animationQueue.right = dir.right
 			else
 				animationQueue.right = undefined
+		})
+
+		gameSocket?.on('gameStopped', (winner: boolean) => {
+			localStorage.setItem('inGame', '0')
+			navigate('/')
+			console.log("Game ended")
+			console.log(winner ? 'You won :)' : 'You lost :(')
 		})
 
 		return gameSocket
