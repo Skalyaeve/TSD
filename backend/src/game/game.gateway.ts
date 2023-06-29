@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { Worker } from 'worker_threads'
 import { Server, Socket } from 'socket.io';
 import { SubscribeMessage, WebSocketGateway, WebSocketServer, OnGatewayConnection, OnGatewayDisconnect } from '@nestjs/websockets';
-import { time } from 'console';
+import { log, time } from 'console';
 /*import { UserSocketsService } from '../chat/chat.userSocketsService.js';
 import { ChatService } from '../chat/chat.service.js';*/
 
@@ -266,8 +266,10 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 					rightProps: payload.rightProps,
 					ballProps: payload.ballProps
 				}
-				this.sockets[newParty.leftPlayerId].emit('newProps', outgoingProps)
-				this.sockets[newParty.rightPlayerId].emit('newProps', outgoingProps)
+				if (this.players[newParty.leftPlayerId].workerId)
+					this.sockets[newParty.leftPlayerId].emit('newProps', outgoingProps)
+				if (this.players[newParty.rightPlayerId].workerId)
+					this.sockets[newParty.rightPlayerId].emit('newProps', outgoingProps)
 			}
 			else if (this.isGameState(payload)) {
 				newParty.workerState = payload.actualState
@@ -295,10 +297,14 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	createWebConstructs(leftPlayerId: string, rightPlayerId: string) {
 		let leftClientConstruct: clientPlayerConstruct = { side: "left", skin: this.players[leftPlayerId].skin }
 		let rightClientConstruct: clientPlayerConstruct = { side: "right", skin: this.players[rightPlayerId].skin }
-		this.sockets[leftPlayerId].emit('playerConstruct', leftClientConstruct)
-		this.sockets[leftPlayerId].emit('playerConstruct', rightClientConstruct)
-		this.sockets[rightPlayerId].emit('playerConstruct', leftClientConstruct)
-		this.sockets[rightPlayerId].emit('playerConstruct', rightClientConstruct)
+		if (this.players[leftPlayerId].workerId) {
+			this.sockets[leftPlayerId].emit('playerConstruct', leftClientConstruct)
+			this.sockets[leftPlayerId].emit('playerConstruct', rightClientConstruct)
+		}
+		if (this.players[leftPlayerId].workerId) {
+			this.sockets[rightPlayerId].emit('playerConstruct', leftClientConstruct)
+			this.sockets[rightPlayerId].emit('playerConstruct', rightClientConstruct)
+		}
 	}
 
 	// Create a new sesion player construct
@@ -336,8 +342,10 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		this.parties[newParty.id] = newParty
 		this.players[leftPlayerId].workerId = newParty.id
 		this.players[rightPlayerId].workerId = newParty.id
-		this.sockets[leftPlayerId].emit('matched')
-		this.sockets[rightPlayerId].emit('matched')
+		if (this.players[leftPlayerId].workerId)
+			this.sockets[leftPlayerId].emit('matched')
+		if (this.players[rightPlayerId].workerId)
+			this.sockets[rightPlayerId].emit('matched')
 		this.createWorker(newParty)
 	}
 
@@ -402,34 +410,66 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 				left: (leftPlayerId == socket.id ? payload.dir : undefined),
 				right: (rightPlayerId == socket.id ? payload.dir : undefined)
 			}
-			this.sockets[this.parties[workerId].leftPlayerId].emit('changeDirection', dir)
-			this.sockets[this.parties[workerId].rightPlayerId].emit('changeDirection', dir)
+			if (this.players[leftPlayerId].workerId)
+				this.sockets[this.parties[workerId].leftPlayerId].emit('changeDirection', dir)
+			if (this.players[rightPlayerId].workerId)
+				this.sockets[this.parties[workerId].rightPlayerId].emit('changeDirection', dir)
+
 		}
 	}
 
 	@SubscribeMessage('playerStateUpdate')
 	handlePlayerStateUpdate(socket: Socket, payload: gameState) {
-		let party = this.parties[this.players[socket.id].workerId]
-		if (party.leftPlayerId == socket.id) {
-			party.leftPlayerState = payload.actualState
-			console.log("New leftPlayer state:", party.leftPlayerState)
-		}
-		else if (party.rightPlayerId == socket.id) {
-			party.rightPlayerState = payload.actualState
-			console.log("New rightPlayer state:", party.rightPlayerState)
-		}
-		if (party.rightPlayerState == 'ready' && party.leftPlayerState == 'ready') {
-			this.createWebConstructs(party.leftPlayerId, party.rightPlayerId)
-			console.log("Sending web constructs")
-		}
-		else if (party.workerState == 'created' && party.leftPlayerState == 'created' && party.rightPlayerState == 'created') {
-			party.worker.postMessage({ newState: "started" })
-			console.log("Sending start signal")
+		if (this.players[socket.id].workerId) {
+			let party = this.parties[this.players[socket.id].workerId]
+			if (party.leftPlayerId == socket.id) {
+				party.leftPlayerState = payload.actualState
+				console.log("New leftPlayer state:", party.leftPlayerState)
+			}
+			else if (party.rightPlayerId == socket.id) {
+				party.rightPlayerState = payload.actualState
+				console.log("New rightPlayer state:", party.rightPlayerState)
+			}
+			if (party.rightPlayerState == 'ready' && party.leftPlayerState == 'ready') {
+				this.createWebConstructs(party.leftPlayerId, party.rightPlayerId)
+				console.log("Sending web constructs")
+			}
+			else if (party.workerState == 'created' && party.leftPlayerState == 'created' && party.rightPlayerState == 'created') {
+				party.worker.postMessage({ newState: "started" })
+				console.log("Sending start signal")
+			}
 		}
 	}
 
 	async handleDisconnect(socket: Socket) {
 		console.log("Client", socket.id, "disconnected")
+		let disconnectedPlayer: player = this.players[socket.id]
+		if (disconnectedPlayer.workerId) {
+			console.log('stopping game')
+			let ongoingParty: party = this.parties[disconnectedPlayer.workerId]
+			ongoingParty.worker.terminate().then(() => {
+				console.log("worker terminated")
+				this.players[ongoingParty.leftPlayerId].workerId = undefined
+				this.players[ongoingParty.rightPlayerId].workerId = undefined
+				if (disconnectedPlayer.id == ongoingParty.leftPlayerId) {
+					console.log("Left player left the game")
+					this.sockets[ongoingParty.rightPlayerId].emit('gameStopped', true)
+				}
+				else {
+					console.log("Right player left the game")
+					this.sockets[ongoingParty.leftPlayerId].emit('gameStopped', true)
+				}
+				console.log("deleting all data")
+				delete this.parties[ongoingParty.id]
+				delete this.players[disconnectedPlayer.id]
+				if (disconnectedPlayer.id == ongoingParty.leftPlayerId) {
+					this.sockets[ongoingParty.rightPlayerId].disconnect()
+				}
+				else {
+					this.sockets[ongoingParty.leftPlayerId].disconnect()
+				}
+			})
+		}
 		delete this.sockets[socket.id]
 	}
 }
