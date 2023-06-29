@@ -104,7 +104,6 @@ function createBall() {
 	ball.body.setCircle(26)
 	ball.body.setBounce(1, 1)
 	ball.body.setCollideWorldBounds(true, undefined, undefined, undefined)
-	console.log(identifier, "Added ball")
 }
 
 // Create a new player
@@ -115,15 +114,12 @@ function createPlayer(construct: playerConstruct) {
 	}
 	newPlayer.body.setCollideWorldBounds(true, undefined, undefined, undefined)
 	newPlayer.body.setImmovable(true)
-	if (ball) physics.add.collider(ball.body, newPlayer.body)
-	if (leftPlayer) {
+	if (ball)
+		physics.add.collider(ball.body, newPlayer.body)
+	if (leftPlayer)
 		rightPlayer = newPlayer
-		console.log(identifier, "Added right player")
-	}
-	else {
+	else
 		leftPlayer = newPlayer
-		console.log(identifier, "Added left player")
-	}
 }
 
 /* -------------------------UPDATE FUNCTIONS------------------------- */
@@ -190,7 +186,6 @@ function sendState(state: 'init' | 'ready' | 'created' | 'started' | 'stopped'){
 		actualState: state
 	}
 	parentPort?.postMessage(gameState)
-	console.log(identifier, "Sending state:", gameState.actualState)
 }
 
 // Backend messages listeners
@@ -200,10 +195,8 @@ function portListener() {
 			workerId = incomingData.workerId
 			identifier = "[" + workerId.slice(0, 4) + "] "
 			sendState('ready')
-			console.log(identifier, "Worker id recieved")
 		}
 		else if (isConstruct(incomingData)) {
-			console.log(identifier, "Player recieved")
 			createPlayer(incomingData)
 			if (leftPlayer && rightPlayer)
 				sendState('created')
@@ -212,7 +205,6 @@ function portListener() {
 			updatePlayer(incomingData)
 		}
 		else if (isStateUpdate(incomingData)) {
-			console.log(identifier, "State update recieved")
 			updateState(incomingData)
 			sendState(incomingData.newState)
 		}
@@ -244,7 +236,7 @@ function sendProperties() {
 			ballProps: getProperties(ball.body)
 		}
 		if (oldProps) {
-			parentPort?.postMessage(newProps)
+			parentPort.postMessage(newProps)
 		}
 	}
 }

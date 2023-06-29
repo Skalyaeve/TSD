@@ -249,10 +249,12 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
 	/* -------------------------FUNCTIONS------------------------- */
 
+	// Type checker for new props
 	isNewProps(payload: newPropsFromWorker | gameState): payload is newPropsFromWorker {
 		return (<newPropsFromWorker>payload).ballProps !== undefined
 	}
 
+	// Type checker for game state
 	isGameState(incomingData: newPropsFromWorker | gameState): incomingData is gameState {
 		return (<gameState>incomingData).actualState !== undefined
 	}
@@ -273,21 +275,15 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			}
 			else if (this.isGameState(payload)) {
 				newParty.workerState = payload.actualState
-				console.log("New worker state:", newParty.workerState)
 				if (newParty.workerState == 'init') {
 					let workerLoginData: loginData = { workerId: newParty.id }
 					newParty.worker.postMessage(workerLoginData)
-					console.log("Sending worker id")
-
 				}
 				else if (newParty.workerState == 'ready') {
 					this.createWorkerConstructs(newParty.leftPlayerId, newParty.rightPlayerId, newParty)
-					console.log("Sending worker constructs")
-
 				}
 				else if (newParty.workerState == 'created' && newParty.leftPlayerState == 'created' && newParty.rightPlayerState == 'created') {
 					newParty.worker.postMessage({ newState: "started" })
-					console.log("Sending start signal2")
 				}
 			}
 		})
@@ -352,7 +348,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	// Creates a new party if there is at least two player in the queue
 	checkMatchQueue() {
 		if (this.matchQueue.length >= 2) {
-			console.log("More than 2 players in matchmaking queue starting a new worker")
+			console.log("NEW MATCH")
 			let firstPlayer = this.matchQueue.pop()
 			let secondPlayer = this.matchQueue.pop()
 			this.createParty(firstPlayer, secondPlayer)
@@ -389,12 +385,13 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		for (let index = 0; index < this.matchQueue.length; index++) {
 			if (this.matchQueue[index] == socket.id) {
 				this.matchQueue.splice(index, 1)
+				break
 			}
-			break
 		}
 		socket.emit('unmatched')
 	}
 
+	// Event handler for player key update
 	@SubscribeMessage('playerKeyUpdate')
 	handlePlayerKeyUpdate(socket: Socket, payload: newPropsFromClient) {
 		if (this.players[socket.id].workerId) {
@@ -418,56 +415,56 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		}
 	}
 
+	// Event handler for player state update
 	@SubscribeMessage('playerStateUpdate')
 	handlePlayerStateUpdate(socket: Socket, payload: gameState) {
 		if (this.players[socket.id].workerId) {
 			let party = this.parties[this.players[socket.id].workerId]
 			if (party.leftPlayerId == socket.id) {
 				party.leftPlayerState = payload.actualState
-				console.log("New leftPlayer state:", party.leftPlayerState)
 			}
 			else if (party.rightPlayerId == socket.id) {
 				party.rightPlayerState = payload.actualState
-				console.log("New rightPlayer state:", party.rightPlayerState)
 			}
 			if (party.rightPlayerState == 'ready' && party.leftPlayerState == 'ready') {
 				this.createWebConstructs(party.leftPlayerId, party.rightPlayerId)
-				console.log("Sending web constructs")
 			}
 			else if (party.workerState == 'created' && party.leftPlayerState == 'created' && party.rightPlayerState == 'created') {
 				party.worker.postMessage({ newState: "started" })
-				console.log("Sending start signal")
 			}
 		}
 	}
 
+	// Event handler for player leaving a game
+	@SubscribeMessage('leavingGame')
+	handleLeavingGame(socket: Socket) {
+		socket.emit('gameStopped', false)
+		socket.disconnect()
+	}
+
+	// Event handler for player disconnection
 	async handleDisconnect(socket: Socket) {
-		console.log("Client", socket.id, "disconnected")
 		let disconnectedPlayer: player = this.players[socket.id]
 		if (disconnectedPlayer.workerId) {
-			console.log('stopping game')
 			let ongoingParty: party = this.parties[disconnectedPlayer.workerId]
 			ongoingParty.worker.terminate().then(() => {
-				console.log("worker terminated")
+				console.log("worker [" + ongoingParty.id.slice(0, 4) + "] terminated")
 				this.players[ongoingParty.leftPlayerId].workerId = undefined
 				this.players[ongoingParty.rightPlayerId].workerId = undefined
 				if (disconnectedPlayer.id == ongoingParty.leftPlayerId) {
-					console.log("Left player left the game")
+					console.log("Left player left the game:", disconnectedPlayer.id)
 					this.sockets[ongoingParty.rightPlayerId].emit('gameStopped', true)
 				}
 				else {
-					console.log("Right player left the game")
+					console.log("Right player left the game:", disconnectedPlayer.id)
 					this.sockets[ongoingParty.leftPlayerId].emit('gameStopped', true)
 				}
-				console.log("deleting all data")
 				delete this.parties[ongoingParty.id]
 				delete this.players[disconnectedPlayer.id]
-				if (disconnectedPlayer.id == ongoingParty.leftPlayerId) {
+				if (disconnectedPlayer.id == ongoingParty.leftPlayerId)
 					this.sockets[ongoingParty.rightPlayerId].disconnect()
-				}
-				else {
+				else
 					this.sockets[ongoingParty.leftPlayerId].disconnect()
-				}
 			})
 		}
 		delete this.sockets[socket.id]

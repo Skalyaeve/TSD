@@ -4,6 +4,7 @@ import React, { useEffect, useRef } from 'react'
 import Phaser from 'phaser'
 import { gameSocket } from './Matchmaker.tsx'
 import { Socket } from 'socket.io-client'
+import { inGame, setInGame } from './Root.tsx'  
 
 /* -------------------------ASSETS IMPORTS------------------------- */
 
@@ -757,29 +758,19 @@ function Party() {
 	}
 
 	// Start socket comunication with game server
-	function socketListeners(): Socket | undefined {
-
+	function socketListeners() {
 		// Creates player
 		gameSocket?.on('playerConstruct', (construct: playerConstruct) => {
-			console.log("new construct:", construct.side)
 			if (construct.side == 'left')
 				creationQueue.left = construct
 			else
 				creationQueue.right = construct
 		})
-
-		// Remove the disconnected player from the players list
-		/*socket.on('playerDisconnected', (playerId: string) => {
-			deletionQueue[deletionQueue.length] = playerId
-			console.log("A player has disconnected")
-		});*/
-
 		// Update the moved player's position
 		gameSocket?.on('newProps', (properties: newPropsToClient) => {
 			moveQueue = properties
 		})
-
-		// Adapts directionof the player
+		// Adapts direction of the player
 		gameSocket?.on('changeDirection', (dir: newDirection) => {
 			if (dir.left != undefined)
 				animationQueue.left = dir.left
@@ -790,15 +781,12 @@ function Party() {
 			else
 				animationQueue.right = undefined
 		})
-
+		// Get the user back on the main page after end of a game
 		gameSocket?.on('gameStopped', (winner: boolean) => {
-			localStorage.setItem('inGame', '0')
+			setInGame(false)
 			navigate('/')
-			console.log("Game ended")
 			console.log(winner ? 'You won :)' : 'You lost :(')
 		})
-
-		return gameSocket
 	}
 
 	// Construction of the whole page
@@ -811,6 +799,7 @@ function Party() {
 				keys.down.destroy()
 				keys.left.destroy()
 				keys.down.destroy()
+				ball?.sprite?.destroy()
 				leftPlayer?.sprite?.destroy()
 				rightPlayer?.sprite?.destroy()
 				game.destroy(true, false)

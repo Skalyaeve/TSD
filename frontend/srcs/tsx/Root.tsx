@@ -19,6 +19,11 @@ import '../css/Root.css'
 // --------VALUES---------------------------------------------------------- //
 const hostIp: string | undefined = process.env.HOST_IP
 export let socket: Socket | undefined = undefined
+export let inGame: boolean = false
+export const setInGame = (value: boolean) => {
+	inGame = value
+	console.log("[SETTER] inGame now:", inGame)
+}
 
 // --------FETCH-USER-DATA------------------------------------------------- //
 export const ftFetch = async (uri: string) => {
@@ -136,7 +141,6 @@ const Root: React.FC = () => {
 					socket = io('http://' + hostIp + ':3000/chat', {
 						transports: ['websocket'],
 						withCredentials: true,
-						//   autoConnect: false,
 					})
 				} catch { console.log('[ERROR] Couldn\'t connect to chat gateway') }
 			}

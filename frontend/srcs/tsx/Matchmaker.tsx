@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { Timer } from './utils/ftNumbers.tsx'
 import { fade, heightChangeByPx, bouncyYMove } from './utils/ftMotion.tsx'
 import { Socket, io } from 'socket.io-client'
-
+import { inGame, setInGame } from './Root.tsx'
 
 // --------GAME-INFOS------------------------------------------------------ //
 export const GameInfos: React.FC = () => {
@@ -47,12 +47,6 @@ const Matchmaker: React.FC = () => {
 
 	// ----STATES----------------------------- //
 	const [matchmaking, setMatchmaking] = useState(false)
-	const [inGame, setInGame] = useState(() => {
-		const value = localStorage.getItem('inGame')
-		return value === '1'
-	})
-
-
 	const hostIp = process.env.HOST_IP
 
 	const startGameSockets = () => {
@@ -60,19 +54,16 @@ const Matchmaker: React.FC = () => {
 			gameSocket = io('http://' + hostIp + ':3000/game', {
 				transports: ["websocket"],
 				withCredentials: true,
-				//   autoConnect: false,
 			})
 		}
 		catch { console.log("[ERROR] Couldn't connect to chat gateway") }
 		gameSocket?.on('matching', () => {
 			setMatchmaking(true)
-			console.log("Ongoing matchmaging")
+			console.log("Matching")
 		})
 		gameSocket?.on('matched', () => {
-			console.log('Opponent found, starting game')
 			setMatchmaking(false)
 			setInGame(true)
-			localStorage.setItem('inGame', '1')
 			navigate('/game')
 		})
 		gameSocket?.on('unmatched', () => {
@@ -81,41 +72,21 @@ const Matchmaker: React.FC = () => {
 			gameSocket = undefined
 			setMatchmaking(false)
 		})
-		gameSocket?.on('gameEnded', () => {
-
-		})
 	}
 
 	const stopMatchmaking = () => {
-		console.log("Stoping matchmaking")
 		gameSocket?.emit('stopMatchmaking')
 	}
 	// ----EFFECTS---------------------------- //
 
-	useEffect(() => {
-		console.log("ARRIVING")
-	}, [])
-
-	useEffect(() => {
-		console.log("matchmaking:", matchmaking)
-	}, [matchmaking])
-
-	useEffect(() => {
-		console.log("inGame:", inGame)
-	}, [inGame])
-
 	// ----HANDLERS--------------------------- //
 	function toggleMatchmaker() {
-		console.log("test")
-		setInGame((localStorage.getItem('inGame') === '1' ? true : false))
 		if (!matchmaking && !inGame)
 			startGameSockets()
 		else if (matchmaking && !inGame)
 			stopMatchmaking()
 		else if (inGame) {
-			localStorage.setItem('inGame', '0')
-			setInGame(false)
-			navigate('/')
+			gameSocket?.emit('leavingGame')
 		}
 	}
 	const matchmakerBtnHdl = { onMouseUp: toggleMatchmaker }
