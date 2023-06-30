@@ -4,6 +4,7 @@ import Phaser from 'phaser'
 import { parentPort } from 'worker_threads'
 import { ArcadePhysics } from 'arcade-physics'
 import { Body } from 'arcade-physics/lib/physics/arcade/Body.js'
+import { Collider } from 'arcade-physics/lib/physics/arcade/Collider.js'
 
 /* -------------------------TYPES------------------------- */
 
@@ -11,6 +12,8 @@ import { Body } from 'arcade-physics/lib/physics/arcade/Body.js'
 interface player {
 	side: 'left' | 'right'						// Player side
 	body: Body									// Player body
+	construct: playerConstruct					// Player construct
+	ballCollider: Collider | undefined			// Player and ball collider
 }
 
 // Ball interface
@@ -26,8 +29,9 @@ interface keyStates {
 	right: boolean								// Player RIGHT key state
 }
 
+// Worker identification data
 interface loginData {
-	workerId: string
+	workerId: string							// workerId
 }
 
 // Players construction interface (sent by the main process)
@@ -59,10 +63,12 @@ interface newProps {
 	ballProps: objectProps
 }
 
+// Game state of a worker
 interface gameState {
 	actualState: string
 }
 
+// Update to the gamestate of a worker
 interface stateUpdate {
 	newState: 'init' | 'ready' | 'created' | 'started' | 'stopped'
 }
@@ -74,6 +80,7 @@ const screenWidth: number = 1920
 const screenHeight: number = 1080
 const targetFPS: number = 60
 const playerSpeed: number = 1000
+const ballRay: number = 26
 
 // Game variables
 let workerId: string | undefined = undefined
@@ -100,26 +107,53 @@ const physics: ArcadePhysics = new ArcadePhysics({
 
 // Create the ball
 function createBall() {
-	ball = { body: physics.add.body(screenWidth / 2, screenHeight / 2) }
-	ball.body.setCircle(26)
+	ball = { body: physics.add.body(screenWidth / 2 - ballRay, screenHeight / 2 - ballRay) }
+	ball.body.setCircle(ballRay)
 	ball.body.setBounce(1, 1)
-	ball.body.setCollideWorldBounds(true, undefined, undefined, undefined)
+	ball.body.setCollideWorldBounds(true, undefined, undefined, true)
+	physics.world.on('worldbounds', (body: Body, up: boolean, down: boolean, left: boolean, right: boolean) => {
+		if (body.isCircle && (left || right)) {
+			console.log(identifier, "Collition on side:", (left ? 'left' : 'right'))
+			newRound()
+		}
+	})
 }
 
 // Create a new player
 function createPlayer(construct: playerConstruct) {
 	let newPlayer: player = {
 		side: construct.side,
-		body: physics.add.body(construct.xPos, construct.yPos, construct.width * 5, construct.height * 5)
+		body: physics.add.body(construct.xPos, construct.yPos, construct.width, construct.height),
+		construct: construct,
+		ballCollider: undefined
 	}
 	newPlayer.body.setCollideWorldBounds(true, undefined, undefined, undefined)
 	newPlayer.body.setImmovable(true)
 	if (ball)
-		physics.add.collider(ball.body, newPlayer.body)
+		newPlayer.ballCollider = physics.add.collider(ball.body, newPlayer.body)
 	if (leftPlayer)
 		rightPlayer = newPlayer
 	else
 		leftPlayer = newPlayer
+}
+
+function resetPlayer(player: player) {
+	player.ballCollider?.destroy()
+	player.ballCollider = undefined
+	player.body.destroy()
+	player.body = physics.add.body(player.construct.xPos, player.construct.yPos, player.construct.width, player.construct.height)
+	player.body.setCollideWorldBounds(true, undefined, undefined, undefined)
+	player.body.setImmovable(true)
+	if (ball)
+		player.ballCollider = physics.add.collider(ball.body, player.body)
+}
+
+function resetBall() {
+	if (ball) {
+		physics.world.removeAllListeners()
+		ball?.body.destroy()
+		createBall()
+	}
 }
 
 /* -------------------------UPDATE FUNCTIONS------------------------- */
@@ -146,7 +180,7 @@ function updatePlayer(updatedPlayer: playerUpdate) {
 
 // Update the game state following the state update
 function updateState(newStateContainer: stateUpdate) {
-	switch (newStateContainer.newState){
+	switch (newStateContainer.newState) {
 		case ('started'):
 			gameState = 'on'
 			console.log(identifier, "Starting game")
@@ -156,6 +190,18 @@ function updateState(newStateContainer: stateUpdate) {
 			console.log(identifier, "Stoping game")
 			break
 	}
+}
+
+function newRound() {
+	gameState = 'off'
+	if (leftPlayer && rightPlayer) {
+		resetBall()
+		resetPlayer(leftPlayer)
+		resetPlayer(rightPlayer)
+	}
+	setTimeout(() => {
+		gameState = 'on'
+	}, 1000)
 }
 
 /* -------------------------PORT INPUT------------------------- */
@@ -181,7 +227,7 @@ function isStateUpdate(incomingData: playerConstruct | playerUpdate | loginData 
 }
 
 // Send the state to the backend
-function sendState(state: 'init' | 'ready' | 'created' | 'started' | 'stopped'){
+function sendState(state: 'init' | 'ready' | 'created' | 'started' | 'stopped') {
 	let gameState: gameState = {
 		actualState: state
 	}

@@ -7,6 +7,17 @@ import { Socket, io } from 'socket.io-client'
 import { inGame, setInGame } from './Root.tsx'
 
 // --------GAME-INFOS------------------------------------------------------ //
+interface lifeUpdate {
+	left: number | 'init',
+	right: number | 'init'
+}
+
+// --------GAME-INFOS------------------------------------------------------ //
+let playerLife: lifeUpdate = {
+	left: 'init',
+	right: 'init'
+}
+
 export const GameInfos: React.FC = () => {
 	// ----ANIMATIONS------------------------- //
 	const boxMotion = heightChangeByPx({
@@ -27,10 +38,10 @@ export const GameInfos: React.FC = () => {
 		<motion.div className={playerPPName} {...childMotion} />
 		<motion.div className={playerPPName} {...childMotion} />
 		<motion.div className={scoreName} {...childMotion}>
-			0
+			{playerLife.left}
 		</motion.div>
 		<motion.div className={scoreName} {...childMotion}>
-			0
+			{playerLife.right}
 		</motion.div>
 		<motion.div className={timerName} {...childMotion}>
 			<Timer />
@@ -40,6 +51,9 @@ export const GameInfos: React.FC = () => {
 
 // --------MATCHMAKER------------------------------------------------------ //
 export let gameSocket: Socket | undefined = undefined
+export const setGameSocket = (value: Socket | undefined) => {
+	gameSocket = value
+}
 
 const Matchmaker: React.FC = () => {
 	// ----ROUTER----------------------------- //
@@ -72,6 +86,10 @@ const Matchmaker: React.FC = () => {
 			gameSocket = undefined
 			setMatchmaking(false)
 		})
+		gameSocket?.on('lifeUpdate', (update: lifeUpdate) => {
+			playerLife.left = update.left
+			playerLife.right = update.right
+		})
 	}
 
 	const stopMatchmaking = () => {
@@ -80,13 +98,20 @@ const Matchmaker: React.FC = () => {
 	// ----EFFECTS---------------------------- //
 
 	// ----HANDLERS--------------------------- //
+
 	function toggleMatchmaker() {
 		if (!matchmaking && !inGame)
 			startGameSockets()
 		else if (matchmaking && !inGame)
 			stopMatchmaking()
 		else if (inGame) {
-			gameSocket?.emit('leavingGame')
+			gameSocket?.disconnect()
+			setGameSocket(undefined)
+			setInGame(false)
+			navigate('/')
+			setTimeout(() => {
+				window.alert('You lost :(')
+			}, 100)
 		}
 	}
 	const matchmakerBtnHdl = { onMouseUp: toggleMatchmaker }

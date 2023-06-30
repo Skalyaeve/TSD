@@ -23,11 +23,11 @@ interface skin {
 	name: string									// Skin name
 	leftSize: {
 		width: number
-		heigth: number
+		height: number
 	}
 	rightSize: {
 		width: number
-		heigth: number
+		height: number
 	}
 }
 
@@ -79,10 +79,6 @@ interface gameState {
 	actualState: string
 }
 
-interface stateUpdate {
-	newState: string
-}
-
 // New properties (sent by the worker to the back)
 interface newPropsFromWorker {
 	workerId: string								// Worker ID
@@ -119,130 +115,132 @@ interface objectProps {
 
 @WebSocketGateway({ cors: { origin: '*', methods: ['GET', 'POST'] }, namespace: 'game' })
 export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
-
 	@WebSocketServer()
 	server: Server;
 
 	/*private readonly userService: UserSocketsService = new UserSocketsService
 	private readonly chatService: ChatService*/
-
+	private readonly screenHeight: number = 1080
+	private readonly screenWidth: number = 1920
+	private readonly playerScaleFactor = 5
+	// Matchmaking queue
 	private matchQueue: string[] = []
-
+	// List of connected sockets (matchmaking + in game) (indexed by socket id)
 	private sockets: { [id: string]: Socket } = {}
-
+	// List of all connected players sockets (indexed by socket id)
 	private players: { [id: string]: player } = {}
-
+	// List of all ongoing parties (indexed by worker id)
 	private parties: { [partyId: string]: party } = {}
-
+	// List of all skins and their respective sizes (indexed by name) (WILL BE DELETED)
 	private skins: { [key: string]: skin } = {
 		['Test']: {
 			name: 'Test',
 			leftSize: {
 				width: 25,
-				heigth: 25
+				height: 25
 			},
 			rightSize: {
 				width: 25,
-				heigth: 25
+				height: 25
 			},
 		},
 		['Boreas']: {
 			name: 'Boreas',
 			leftSize: {
 				width: 15, // A CORRIGER
-				heigth: 19
+				height: 19
 			},
 			rightSize: {
 				width: 15, // A CORRIGER
-				heigth: 19
+				height: 19
 			},
 		},
 		['Fealeen']: {
 			name: 'Fealeen',
 			leftSize: {
 				width: 15, // A CORRIGER
-				heigth: 18
+				height: 18
 			},
 			rightSize: {
 				width: 15, // A CORRIGER
-				heigth: 18
+				height: 18
 			},
 		},
 		['Garrick']: {
 			name: 'Garrick',
 			leftSize: {
 				width: 15, // A CORRIGER
-				heigth: 19
+				height: 19
 			},
 			rightSize: {
 				width: 15, // A CORRIGER
-				heigth: 19
+				height: 19
 			},
 		},
 		['Helios']: {
 			name: 'Helios',
 			leftSize: {
 				width: 15, // A CORRIGER
-				heigth: 19
+				height: 19
 			},
 			rightSize: {
 				width: 15, // A CORRIGER
-				heigth: 19
+				height: 19
 			},
 		},
 		['Liliana']: {
 			name: 'Liliana',
 			leftSize: {
 				width: 15, // A CORRIGER
-				heigth: 18
+				height: 18
 			},
 			rightSize: {
 				width: 15, // A CORRIGER
-				heigth: 18
+				height: 18
 			},
 		},
 		['Orion']: {
 			name: 'Orion',
 			leftSize: {
 				width: 15,
-				heigth: 18
+				height: 18
 			},
 			rightSize: {
 				width: 15,
-				heigth: 18
+				height: 18
 			},
 		},
 		['Rylan']: {
 			name: 'Rylan',
 			leftSize: {
 				width: 15,
-				heigth: 18
+				height: 18
 			},
 			rightSize: {
 				width: 15,
-				heigth: 18
+				height: 18
 			},
 		},
 		['Selene']: {
 			name: 'Selene',
 			leftSize: {
 				width: 15, // A CORRIGER
-				heigth: 18
+				height: 18
 			},
 			rightSize: {
 				width: 15, // A CORRIGER
-				heigth: 18
+				height: 18
 			},
 		},
 		['Thorian']: {
 			name: 'Thorian',
 			leftSize: {
 				width: 15, // A CORRIGER
-				heigth: 18
+				height: 18
 			},
 			rightSize: {
 				width: 15, // A CORRIGER
-				heigth: 18
+				height: 18
 			},
 		},
 	}
@@ -307,8 +305,8 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	newWorkerConstruct(side: "left" | "right", width: number, height: number): workerPlayerConstruct {
 		return {
 			side: side,
-			xPos: (side == 'left' ? 250 : 1670),
-			yPos: 540,
+			xPos: (side == 'left' ? 250 - width / 2 : this.screenWidth - 250 - width / 2),
+			yPos: (this.screenHeight / 2 - height / 2),
 			width: width,
 			height: height,
 		}
@@ -318,8 +316,8 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	createWorkerConstructs(leftPlayerId: string, rightPlayerId: string, newParty: party) {
 		let leftSkin = this.skins[this.players[leftPlayerId].skin]
 		let rightSkin = this.skins[this.players[rightPlayerId].skin]
-		let leftWorkerConstruct = this.newWorkerConstruct('left', leftSkin.rightSize.width, leftSkin.rightSize.heigth)
-		let rightWorkerConstruct = this.newWorkerConstruct('right', rightSkin.rightSize.width, rightSkin.rightSize.heigth)
+		let leftWorkerConstruct = this.newWorkerConstruct('left', leftSkin.rightSize.width * this.playerScaleFactor, leftSkin.rightSize.height * this.playerScaleFactor)
+		let rightWorkerConstruct = this.newWorkerConstruct('right', rightSkin.rightSize.width * this.playerScaleFactor, rightSkin.rightSize.height * this.playerScaleFactor)
 		newParty.worker.postMessage(leftWorkerConstruct)
 		newParty.worker.postMessage(rightWorkerConstruct)
 	}
@@ -371,7 +369,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		this.players[socket.id] = {
 			id: socket.id,
 			workerId: undefined,
-			skin: "Boreas"
+			skin: "Test"
 			// CALL DB TO GET SKIN
 		}
 		this.matchQueue.push(socket.id)
@@ -435,13 +433,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		}
 	}
 
-	// Event handler for player leaving a game
-	@SubscribeMessage('leavingGame')
-	handleLeavingGame(socket: Socket) {
-		socket.emit('gameStopped', false)
-		socket.disconnect()
-	}
-
 	// Event handler for player disconnection
 	async handleDisconnect(socket: Socket) {
 		let disconnectedPlayer: player = this.players[socket.id]
@@ -451,22 +442,12 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 				console.log("worker [" + ongoingParty.id.slice(0, 4) + "] terminated")
 				this.players[ongoingParty.leftPlayerId].workerId = undefined
 				this.players[ongoingParty.rightPlayerId].workerId = undefined
-				if (disconnectedPlayer.id == ongoingParty.leftPlayerId) {
-					console.log("Left player left the game:", disconnectedPlayer.id)
-					this.sockets[ongoingParty.rightPlayerId].emit('gameStopped', true)
-				}
-				else {
-					console.log("Right player left the game:", disconnectedPlayer.id)
-					this.sockets[ongoingParty.leftPlayerId].emit('gameStopped', true)
-				}
+				let remainingPlayerId = (disconnectedPlayer.id == ongoingParty.leftPlayerId ? ongoingParty.rightPlayerId : ongoingParty.leftPlayerId)
+				this.sockets[remainingPlayerId].emit('gameStopped', true)
 				delete this.parties[ongoingParty.id]
 				delete this.players[disconnectedPlayer.id]
-				if (disconnectedPlayer.id == ongoingParty.leftPlayerId)
-					this.sockets[ongoingParty.rightPlayerId].disconnect()
-				else
-					this.sockets[ongoingParty.leftPlayerId].disconnect()
 			})
 		}
-		delete this.sockets[socket.id]
+		delete this.sockets[disconnectedPlayer.id]
 	}
 }
