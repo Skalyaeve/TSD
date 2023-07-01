@@ -8,9 +8,16 @@ import { Collider } from 'arcade-physics/lib/physics/arcade/Collider.js'
 
 /* -------------------------TYPES------------------------- */
 
+type Size = { width: number, height: number }
+type Coordinates = { x: number, y: number }
+type Side = 'left' | 'right'
+type GameState = 'init' | 'ready' | 'created' | 'started' | 'stopped'
+type ParentPortMessage = playerConstruct | playerUpdate | loginData | stateUpdate
+type GameEvent = 'goal' | 'blocked' | '3' | '2' | '1' | 'fight' | 'stop'
+
 // Player interface
 interface player {
-	side: 'left' | 'right'						// Player side
+	side: Side									// Player side
 	body: Body									// Player body
 	construct: playerConstruct					// Player construct
 	ballCollider: Collider | undefined			// Player and ball collider
@@ -36,31 +43,23 @@ interface loginData {
 
 // Players construction interface (sent by the main process)
 interface playerConstruct {
-	side: 'left' | 'right'						// Player side
-	xPos: number								// Player initial X position
-	yPos: number								// Player initial Y position
-	width: number								// Player width
-	height: number								// Player height
+	side: Side									// Player side
+	coords: Coordinates							// Player coordinates
+	size: Size									// Player size
 }
 
 // Player update event interface (sent by the main process)
 interface playerUpdate {
-	side: 'left' | 'right'						// Player side
+	side: Side									// Player side
 	keyStates: keyStates						// Player key states
-}
-
-// Properties of a game object (sent to the main process)
-interface objectProps {
-	xPos: number
-	yPos: number
 }
 
 // Properties of all updated game objects
 interface newProps {
 	workerId: string
-	leftProps: objectProps
-	rightProps: objectProps
-	ballProps: objectProps
+	leftProps: Coordinates
+	rightProps: Coordinates
+	ballProps: Coordinates
 }
 
 // Game state of a worker
@@ -70,7 +69,7 @@ interface gameState {
 
 // Update to the gamestate of a worker
 interface stateUpdate {
-	newState: 'init' | 'ready' | 'created' | 'started' | 'stopped'
+	newState: GameState
 }
 
 /* -------------------------VARIABLES------------------------- */
@@ -89,9 +88,7 @@ let leftPlayer: player | undefined = undefined
 let rightPlayer: player | undefined = undefined
 let ball: ball | undefined = undefined
 let tick: number = 0
-let gameState: "on" | "off" = "off"
-let oldProps: newProps | undefined = undefined
-let newProps: newProps | undefined = undefined
+let generalGameState: 'on' | 'off' = 'off'
 
 // Physics initialisation
 const physics: ArcadePhysics = new ArcadePhysics({
@@ -113,8 +110,8 @@ function createBall() {
 	ball.body.setCollideWorldBounds(true, undefined, undefined, true)
 	physics.world.on('worldbounds', (body: Body, up: boolean, down: boolean, left: boolean, right: boolean) => {
 		if (body.isCircle && (left || right)) {
-			console.log(identifier, "Collition on side:", (left ? 'left' : 'right'))
-			newRound()
+			console.log(identifier, 'Collition on side:', (left ? 'left' : 'right'))
+			goalTransition()
 		}
 	})
 }
@@ -123,7 +120,7 @@ function createBall() {
 function createPlayer(construct: playerConstruct) {
 	let newPlayer: player = {
 		side: construct.side,
-		body: physics.add.body(construct.xPos, construct.yPos, construct.width, construct.height),
+		body: physics.add.body(construct.coords.x, construct.coords.y, construct.size.width, construct.size.height),
 		construct: construct,
 		ballCollider: undefined
 	}
@@ -137,17 +134,19 @@ function createPlayer(construct: playerConstruct) {
 		leftPlayer = newPlayer
 }
 
+// Resets a player to it's starting position
 function resetPlayer(player: player) {
 	player.ballCollider?.destroy()
 	player.ballCollider = undefined
 	player.body.destroy()
-	player.body = physics.add.body(player.construct.xPos, player.construct.yPos, player.construct.width, player.construct.height)
+	player.body = physics.add.body(player.construct.coords.x, player.construct.coords.y, player.construct.size.width, player.construct.size.height)
 	player.body.setCollideWorldBounds(true, undefined, undefined, undefined)
 	player.body.setImmovable(true)
 	if (ball)
 		player.ballCollider = physics.add.collider(ball.body, player.body)
 }
 
+// Resets the ball to it's starting position
 function resetBall() {
 	if (ball) {
 		physics.world.removeAllListeners()
@@ -178,68 +177,101 @@ function updatePlayer(updatedPlayer: playerUpdate) {
 	}
 }
 
+// Setter for the general state of the game
+function setGeneralGameState(value: 'on' | 'off') {
+	console.log(identifier, "Game state is now:", value)
+	generalGameState = value
+}
+
 // Update the game state following the state update
 function updateState(newStateContainer: stateUpdate) {
 	switch (newStateContainer.newState) {
 		case ('started'):
-			gameState = 'on'
-			console.log(identifier, "Starting game")
+			if (tick == 0)
+				playCountdown()
+			setGeneralGameState('on')
 			break
 		case ('stopped'):
-			gameState = 'off'
-			console.log(identifier, "Stoping game")
+			setGeneralGameState('off')
 			break
 	}
 }
 
-function newRound() {
-	gameState = 'off'
+// Displays goal animation
+function displayAnim(anim: GameEvent) {
+	parentPort?.postMessage(anim)
+}
+
+// Reset all entities to their respective start position
+function resetEntities() {
 	if (leftPlayer && rightPlayer) {
 		resetBall()
 		resetPlayer(leftPlayer)
 		resetPlayer(rightPlayer)
+		update()
 	}
-	setTimeout(() => {
-		gameState = 'on'
-	}, 1000)
+}
+
+function animate(event: GameEvent, timeout: number): Promise<void> {
+	return new Promise<void>((resolve) => {
+		displayAnim(event)
+		setTimeout(() => {
+			displayAnim('stop')
+			setTimeout(() => {
+				resolve()
+			}, 10)
+		}, timeout)
+	});
+}
+
+
+// Triggered on goal, starts a new round 
+async function goalTransition() {
+	setGeneralGameState('off')
+	if (Math.floor(Math.random() * 2))
+		await animate('goal', 3000)
+	else
+		await animate('blocked', 3000)
+	resetEntities()
+	await playCountdown()
+	setGeneralGameState('on')
+}
+
+async function playCountdown() {
+	await animate('3', 800)
+	await animate('2', 800)
+	await animate('1', 800)
+	await animate('fight', 300)
 }
 
 /* -------------------------PORT INPUT------------------------- */
 
 // Check if incomming data type loginData
-function isLogin(incomingData: playerConstruct | playerUpdate | loginData | stateUpdate): incomingData is loginData {
+function isLogin(incomingData: ParentPortMessage): incomingData is loginData {
 	return (<loginData>incomingData).workerId !== undefined
 }
 
 // Check if incomming data type is playerConstruct
-function isConstruct(incomingData: playerConstruct | playerUpdate | loginData | stateUpdate): incomingData is playerConstruct {
-	return (<playerConstruct>incomingData).xPos !== undefined
+function isConstruct(incomingData: ParentPortMessage): incomingData is playerConstruct {
+	return (<playerConstruct>incomingData).coords !== undefined
 }
 
 // Check if incomming data type is playerUpdate
-function isPlayerUpdate(incomingData: playerConstruct | playerUpdate | loginData | stateUpdate): incomingData is playerUpdate {
+function isPlayerUpdate(incomingData: ParentPortMessage): incomingData is playerUpdate {
 	return (<playerUpdate>incomingData).keyStates !== undefined
 }
 
 // Check if incomming data type is stateUpdate
-function isStateUpdate(incomingData: playerConstruct | playerUpdate | loginData | stateUpdate): incomingData is stateUpdate {
+function isStateUpdate(incomingData: ParentPortMessage): incomingData is stateUpdate {
 	return (<stateUpdate>incomingData).newState !== undefined
-}
-
-// Send the state to the backend
-function sendState(state: 'init' | 'ready' | 'created' | 'started' | 'stopped') {
-	let gameState: gameState = {
-		actualState: state
-	}
-	parentPort?.postMessage(gameState)
 }
 
 // Backend messages listeners
 function portListener() {
-	parentPort?.on("message", (incomingData: playerConstruct | playerUpdate | loginData | stateUpdate) => {
+	parentPort?.on('message', (incomingData: ParentPortMessage) => {
 		if (isLogin(incomingData)) {
 			workerId = incomingData.workerId
-			identifier = "[" + workerId.slice(0, 4) + "] "
+			identifier = '[' + workerId.slice(0, 4) + '] '
 			sendState('ready')
 		}
 		else if (isConstruct(incomingData)) {
@@ -255,7 +287,7 @@ function portListener() {
 			sendState(incomingData.newState)
 		}
 		else {
-			console.log(identifier, "ERROR: Wrong message type")
+			console.log(identifier, 'ERROR: Wrong message type')
 		}
 	})
 }
@@ -263,28 +295,29 @@ function portListener() {
 /* -------------------------PORT OUTPUT------------------------- */
 
 // Returns coordinates of a body
-function getProperties(body: Body): objectProps {
+function getProperties(body: Body): Coordinates {
 	return {
-		xPos: body.x,
-		yPos: body.y
+		x: body.x,
+		y: body.y
 	}
 }
 
 // Send objects properties to backend
 function sendProperties() {
 	if (workerId && leftPlayer && ball && rightPlayer && parentPort) {
-		if (newProps)
-			oldProps = Object.assign({}, newProps)
-		newProps = {
+		let newProps: newProps = {
 			workerId: workerId,
 			leftProps: getProperties(leftPlayer.body),
 			rightProps: getProperties(rightPlayer.body),
 			ballProps: getProperties(ball.body)
 		}
-		if (oldProps) {
-			parentPort.postMessage(newProps)
-		}
+		parentPort.postMessage(newProps)
 	}
+}
+
+// Send the state to the backend
+function sendState(state: GameState) {
+	parentPort?.postMessage(state)
 }
 
 /* -------------------------MAIN FUNCTIONS------------------------- */
@@ -297,18 +330,15 @@ function update() {
 	sendProperties()
 }
 
-/* -------------------------MAIN CODE------------------------- */
-
 function main() {
-	setTimeout(() => {
-		portListener()
-		createBall()
-		sendState('init')
-		setInterval(() => {
-			if (gameState == "on")
-				update()
-		}, 1000 / targetFPS)
-	}, 100)
+	portListener()
+	createBall()
+	sendState('init')
+	setInterval(() => {
+		if (generalGameState === 'on') {
+			update()
+		}
+	}, 1000 / targetFPS)
 }
 
 main()
