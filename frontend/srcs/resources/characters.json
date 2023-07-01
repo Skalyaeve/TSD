@@ -1,83 +1,6 @@
 {
-	"Selene": {
-		"story": "Born amidst the whispers of ancient trees, she weaves her magic through the ethereal strands of time, granting her the ability to slow its relentless march. Her disciplined nature conceals a tender heart, as she and Liliana, guardians of the forest, embrace their roles as protectors with unwavering logic.",
-		"hp": 60,
-		"attack": 10,
-		"defense": 3,
-		"speed": 4,
-		"passive": {
-			"name": "Elven legacy",
-			"effect": "If hitted last round: self +50% ATK, enemy -50% SPD"
-		}
-	},
-	"Rylan": {
-		"story": "Rylan, the skilled swordsmith, possesses immense strength, delivering powerful strikes with his masterfully crafted blades. While not as physically resilient as his brother, he compensates with agility and precision, showcasing his finesse and artistry in the heat of battle.",
-		"hp": 70,
-		"attack": 15,
-		"defense": 5,
-		"speed": 3,
-		"passive": {
-			"name": "Rogue",
-			"effect": "Ignore 50% of enemy DEF"
-		}
-	},
-	"Thorian": {
-		"story": "Thorian, the wise blacksmith master, dons a crown of purple hair, embodying the wisdom acquired through years of honing his craft. With profound knowledge passed down through generations, Thorian imparts his wisdom and guidance to Rylan and Garrick, instilling in them not only the skills of forging and combat but also the values of honor and discipline.",
-		"hp": 80,
-		"attack": 11,
-		"defense": 4,
-		"speed": 4,
-		"passive": {
-			"name": "Drain",
-			"effect": "Lifesteal: 30% of damages"
-		}
-	},
-	"Liliana": {
-		"story": "Adorned with tresses kissed by twilight, she dances with time's elusive rhythm, gifted with the power to hasten its flow. Beneath her disheveled exterior lies a soul brimming with boundless kindness, as she and Selene, the harmonious guardians of the woodland, create a haven of love and warmth.",
-		"hp": 60,
-		"attack": 10,
-		"defense": 2,
-		"speed": 5,
-		"passive": {
-			"name": "Woodland footwork",
-			"effect": "Dash when pressing twice fast"
-		}
-	},
-	"Garrick": {
-		"story": "Garrick, the resilient shieldsmith, stands as a bastion of fortitude, shielding his allies with unwavering resolve. Though not as physically imposing as his brother, his endurance and unwavering loyalty make him an indomitable defender, absorbing blows with his expertly forged shields.",
-		"hp": 70,
-		"attack": 10,
-		"defense": 9,
-		"speed": 2,
-		"passive": {
-			"name": "Berserk",
-			"effect": "+1 ATK for every 10 HP lost"
-		}
-	},
-	"Orion": {
-		"story": "In the embrace of the ancient forest, a young orphan with emerald locks found solace and family with the two elven wives. Now a young adult, he roams the woods with an insatiable curiosity, immersing himself in the melodies of nature, and seeking knowledge of the healing properties of the forest's herbs.",
-		"hp": 70,
-		"attack": 11,
-		"defense": 0,
-		"speed": 6,
-		"passive": {
-			"name": "Guardian angel",
-			"effect": "When hitted, 20% chance to avoid damages"
-		}
-	},
-	"Faeleen": {
-		"story": "In the depths of the enchanted forest, Faeleen, the mischievous trickster fairy. With her unique ability to conjure lifelike illusions, she revels in playing playful pranks and casting amusing deceptions. Unbeknownst to Orion, Faeleen secretly watches over him, using her trickery to scare away any potential harm, ensuring his safety. Hidden within the whimsical facade lies a deep affection, as her heart holds an unspoken love for the young wanderer of the woods.",
-		"hp": 60,
-		"attack": 11,
-		"defense": 1,
-		"speed": 6,
-		"passive": {
-			"name": "Lucky charm",
-			"effect": "Hits have 20% chance to deal x2 damage"
-		}
-	},
 	"Boreas": {
-		"story": "Once a humble apprentice in the art of frost magic, he donned the blue armor to protect the realm from the encroaching chaos. Driven by a hidden vendetta, his frost powers conceal a desire to extinguish the fiery nemesis he once called a friend.",
+		"story": "Boreas was indeed a promising apprentice in the realm of frost magic. However, his journey took an unexpected turn when chaos threatened to consume the land he held dear. As he donned the iconic blue armor, Boreas dedicated himself to defending the realm with a fierce determination.\nBeneath his calm exterior, a smoldering vendetta burns within Boreas. Once, he and his closest friend were inseparable, bound by their shared passion for magic. But their paths diverged when his friend succumbed to the allure of fiery powers, becoming a force of destruction rather than creation.\nThough Boreas wields the chilling might of ice, his powers serve as a mask for his true objective. Deep within his heart, he yearns to confront his former friend, to quench the flames that now consume their bond. Boreas knows that in order to bring balance back to the realm, he must confront the fiery nemesis he once cherished, and only then can true harmony be restored.",
 		"hp": 80,
 		"attack": 12,
 		"defense": 4,
@@ -88,14 +11,93 @@
 		}
 	},
 	"Helios": {
-		"story": "Forged in the crucible of ancient flames, he emerged wearing the red armor, harnessing the power of fire to combat the growing threat of icy dominance. Unknown to his adversary, his blazing determination masks a sorrowful yearning for the lost friendship they once shared.",
+		"story": "Helios rose from the fiery depths where ancient flames danced. As he adorned the vibrant red armor, his mastery over the element of fire became his greatest weapon against the encroaching icy forces. Little did his opponent know, beneath Helios' unwavering determination, a profound ache dwelled within his heart—a yearning for the friendship that was lost.\nOnce, Helios and his now-adversary shared a deep bond, a friendship forged through shared aspirations and mutual respect. But as the tides of destiny turned, their paths diverged, leading them down contrasting paths. Helios chose to embrace the burning powers of fire, while his former friend succumbed to the allure of icy dominion.\nBehind Helios' fiery facade lies a soul burdened by sorrow, yearning for the days when their camaraderie was unshakable. Even as he battles against his former friend, his heart secretly longs for reconciliation and the restoration of their lost connection. His unwavering determination to combat the icy dominance is fueled not only by a sense of duty but also by a hope that they might rekindle the bond they once shared.\nIn the clash of fire and ice, Helios fights not only for the realm's survival but also for the chance to heal the wounds that divide them. Only by bringing balance to the elemental forces and overcoming the challenges ahead can Helios hope to fulfill his dual purpose: to protect the world from icy peril and to mend the shattered fragments of their friendship.",
 		"hp": 80,
 		"attack": 12,
 		"defense": 3,
 		"speed": 3,
 		"passive": {
 			"name": "Sun's pact",
-			"effect": "Consecutive hit buff ATT by 1 (+4 max)"
+			"effect": "Consecutive win buff ATT by 1 (+4 max)"
+		}
+	},
+	"Selene": {
+		"story": "Selene draws her first breath in the embrace of ancient trees, their whispers guiding her path. Through her mystical prowess, she deftly weaves the delicate strands of time, bestowing upon herself the power to slow its relentless march. Behind her composed and disciplined demeanor lies a tender heart, driven by compassion and a deep sense of duty.\nSelene, alongside her beloved wife, Liliana, assumes the roles of guardians, entrusted with the sacred task of protecting the forest and all its inhabitants. Guided by unwavering logic, they harmoniously blend their individual strengths, their devotion to each other and their shared purpose binding them together.\nIn a testament to their love, they have embraced the joys of parenthood, taking care of Orion since birth, a lonely newborn they found resting under a tree. With nurturing care and wisdom, they instill in their child a reverence for nature, time, and the delicate balance that exists within the world they call home.\nSelene's time-altering abilities allow her to observe the intricate details of life, to perceive the subtle nuances often overlooked by others. Her slowed perception grants her a unique advantage, enabling her to assess situations with measured precision and make decisions that safeguard the fragile equilibrium of the forest.",
+		"hp": 60,
+		"attack": 10,
+		"defense": 3,
+		"speed": 4,
+		"passive": {
+			"name": "Elven legacy",
+			"effect": "If she lost last round, slow enemy by 50%"
+		}
+	},
+	"Liliana": {
+		"story": "Liliana stands as a mesmerizing figure adorned with tresses that bear the hues of twilight itself. With a captivating elegance, she gracefully sways to the elusive rhythm of time, embodying the essence of her ancient lineage as a dryad. Yet, her connection with her beloved elven wife, Selene, has wrought a transformation upon her, tinting her once moss-green hair into a mesmerizing twilight blue.\nBeneath her seemingly disheveled exterior lies a soul overflowing with boundless kindness and compassion. Liliana's heart brims with an innate understanding of the interconnectedness of all living beings. As the harmonious guardians of the woodland, she and Selene weave their love and magic into a sanctuary of solace and affection, where all creatures find respite and warmth.\nIn their shared bond, Liliana assumed the role of caring for Orion, their beloved adopted child. It was her gentle insistence that led them to welcome the young one into their lives, embracing the responsibilities of nurturing and protecting him within the enchanting embrace of the forest they call home.\nLiliana's powers as a dryad extend far beyond the mere manipulation of nature. She possesses an innate ability to channel and control the primal forces that govern the woodland. With a touch that both heals and guides, she delicately shapes the growth of the flora, ensuring harmony and balance within the ecosystem. Her connection to the natural world is profound, allowing her to draw strength from the ancient trees and commune with the spirits that dwell within.",
+		"hp": 60,
+		"attack": 10,
+		"defense": 2,
+		"speed": 5,
+		"passive": {
+			"name": "Woodland spirit",
+			"effect": "The forest is protecting her"
+		}
+	},
+	"Orion": {
+		"story": "Orion, a young orphan with emerald locks, discovered solace and a loving family within the embrace of the ancient forest. Selene and Liliana, the elven couple who opened their hearts, became his steadfast guardians and mentors. As he blossomed into a young adult, his spirit thrived on the boundless curiosity that the forest inspired.\nWith an insatiable thirst for knowledge, Orion roams the woods, his every step guided by a profound connection to the natural world. He finds solace and inspiration in the enchanting melodies of nature, allowing them to weave through his very being. Every rustle of leaves, every songbird's trill, and every whispering breeze speaks to his soul, fueling his insatiable desire to understand and harmonize with the mysteries of the woodland.\nOrion's inquisitive nature extends beyond the symphony of nature's melodies. He seeks to unlock the ancient wisdom held within the forest's herbs and plants. With gentle hands and an attentive heart, he learns the secrets of the healing properties they possess. Through careful study and observation, he aims to harness the restorative powers of the woodland's flora, carrying the responsibility of caretaking and preserving the precious balance of nature.\nIn his relentless pursuit of knowledge, Orion becomes an embodiment of the forest's resilience and infinite wisdom. His quest is not only to expand his own understanding but also to contribute to the well-being and harmony of the natural world. With each step he takes, he leaves an imprint of gratitude for the love and guidance bestowed upon him by Selene and Liliana, forever grateful for the family he found amidst the ancient trees.",
+		"hp": 70,
+		"attack": 11,
+		"defense": 0,
+		"speed": 6,
+		"passive": {
+			"name": "Guardian angel ???",
+			"effect": "Any hit has 20% chance to be blocked by Faeleen"
+		}
+	},
+	"Faeleen": {
+		"story": "Faeleen dwells within the depths of the enchanted forest, her presence a whimsical spark in the realm. With a mischievous twinkle in her eyes and a mischievous grin, she takes delight in conjuring lifelike illusions and playing playful pranks on unsuspecting wanderers. Her magic knows no bounds when it comes to amusing deceptions and light-hearted mischief.\nHowever, there is more to Faeleen than meets the eye. In the shadows, she silently watches over Orion, the young wanderer of the woods, with a sense of protectiveness and affection. Using her trickery, she skillfully wards off any potential harm that may befall him, ensuring his safety without his knowledge.\nShe finds joy in weaving her illusions and tricks, not merely for the sake of amusement, but as a means of safeguarding the young wanderer. It is her way of shielding him from the perils that may lurk within the enchanted forest, always keeping a watchful eye from the shadows.\nAs the trickster fairy, Faeleen adds an element of playful enchantment to the world around her. Her mischievous nature serves as a source of lightheartedness, injecting moments of laughter and wonder into the lives of those who encounter her. And yet, deep within her mischievous soul, she harbors an unspoken to Orion, intertwining their destinies and offering her magical protection in the most unexpected ways.",
+		"hp": 60,
+		"attack": 11,
+		"defense": 1,
+		"speed": 6,
+		"passive": {
+			"name": "Lucky charm",
+			"effect": "20% chance to crit and deal 200% DMG"
+		}
+	},
+	"Rylan": {
+		"story": "Rylan wields his martial prowess with a profound understanding of the art of combat. While his physical resilience may not match that of his brother, he more than makes up for it with his remarkable agility and precision. In the heat of battle, Rylan's every movement becomes a testament to his finesse and artistry.\nWhile Rylan possesses an innate gift for combat, he understands the value of guidance and continuous growth. Alongside his brother, Garrick, he embarked on a search for a mentor who could further refine their skills. Their journey led them deep into the heart of the forest, where they discovered Thorian, a seasoned warrior and revered teacher.\nUnder Thorian's tutelage, Rylan's abilities were further honed, his finesse and artistry in battle reaching new heights. The seasoned mentor imparted not only technical expertise but also invaluable wisdom and a deeper understanding of the true nature of combat. Rylan embraced Thorian's teachings with unwavering dedication, striving to embody the essence of a warrior who wields both strength and precision.\nIn the ongoing journey of self-improvement, Rylan's path intertwines with his brother's, their bond as inseparable as their fighting styles are distinct. Together, they become a formidable duo, complementing each other's strengths and compensating for weaknesses. As they navigate the trials that lie ahead, Rylan's artistry in combat and unyielding determination will continue to shine, carving their names into the annals of legendary warriors.
+",
+		"hp": 70,
+		"attack": 15,
+		"defense": 5,
+		"speed": 3,
+		"passive": {
+			"name": "Rogue",
+			"effect": "Ignore 50% DEF"
+		}
+	},
+	"Garrick": {
+		"story": "Garrick epitomizes unwavering fortitude, serving as a steadfast guardian for his comrades. While he may not possess the same physical stature as his brother, his resilience and unyielding loyalty make him an indomitable force on the battlefield. With expert craftsmanship, he forges shields of unparalleled quality, their strength matched only by his unwavering dedication to protect his allies.\nIn the midst of combat, Garrick stands as an immovable bulwark, absorbing the onslaught of enemy attacks with calculated precision. He may seem very calm but when in difficulty, Garrick's almost demonic personality comes out, at that moment, nothing can resist him anymore..\nBeyond his formidable shieldsmith skills, Garrick possesses a compassionate spirit, caring deeply for those around him. He is a pillar of support, offering words of encouragement and providing unwavering assistance to those in need. His unwavering loyalty and dedication create a bond of trust and camaraderie that strengthens the resolve of his allies in the face of adversity.\nGarrick's journey alongside his brother, Rylan, in search of a mentor led them to Thorian, the wise warrior. Under Thorian's tutelage, Garrick further refined his shieldsmithing skills, unlocking new depths of craftsmanship and reinforcing his unyielding determination. Now, armed with his expertly forged shields and fortified by unbreakable loyalty, Garrick stands as an unassailable shield in the defense of his allies and the preservation of their shared ideals.
+",
+		"hp": 70,
+		"attack": 10,
+		"defense": 9,
+		"speed": 2,
+		"passive": {
+			"name": "Berserk",
+			"effect": "+1 ATT for every 10 missing HP"
+		}
+	},
+	"Thorian": {
+		"story": "Thorian stands as a beacon of wisdom in the realm. Adorned with a crown of regal purple hair, he embodies the culmination of years spent honing his craft and mastering the intricacies of both forging and combat.\nThrough generations of inherited knowledge, Thorian has become a wellspring of wisdom, and his guidance serves as a compass for Rylan and Garrick. Beyond imparting the skills of blacksmithing and combat, he instills in them the virtues of honor and discipline. Thorian understands that true strength lies not only in physical prowess but also in the integrity of character.\nHis ability serves as a reminder of the delicate balance between life and death, and Thorian uses it judiciously, employing it only when necessary and in defense of the greater good.\nAs a blacksmith, Thorian's creations are masterpieces of craftsmanship. He forges weapons and armor of unparalleled quality, imbuing them with his deep understanding of metallurgy and enchantments. Each piece he creates is a testament to his meticulous attention to detail and unwavering dedication to his craft. Thorian's weapons not only possess exceptional durability but also bear enchantments that enhance the wielder's abilities, granting them an edge in battle.\nThorian's role as a mentor goes beyond teaching skills and techniques. He imparts valuable life lessons and cultivates the virtues of integrity, resilience, and perseverance in his pupils. He guides Rylan and Garrick on their journey, nurturing their potential and helping them unlock the full extent of their abilities.",
+		"hp": 80,
+		"attack": 11,
+		"defense": 4,
+		"speed": 4,
+		"passive": {
+			"name": "Drain",
+			"effect": "Lifesteal 30% DMG"
 		}
 	}
 }
