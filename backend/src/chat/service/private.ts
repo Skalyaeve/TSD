@@ -141,8 +141,38 @@ export async function isBlocked(senderId: number, recipientID: number) : Promise
       where: {
         AND: [
           {
-            blocker: recipientID,
-            blockee: senderId,
+            blocker: senderId,
+            blockee: recipientID,
+          }
+        ]
+      }
+    })
+    if (existingBlock) {
+      return true;
+    }
+    return false
+  }
+  catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
+export async function hasBlocked(blockerId: number, blockeeId: number) : Promise<boolean>{
+  try {
+    if (blockerId == blockeeId) {
+      throw new Error('cannot block itseld');
+    }
+    const blockee = await this.userService.findOneById(blockeeId);
+    if (!blockee) {
+      throw new Error('blockee user does not exist');
+    }
+    const existingBlock = await this.prisma.blocked.findFirst({
+      where: {
+        AND: [
+          {
+            blocker: blockerId,
+            blockee: blockeeId,
           }
         ]
       }

@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect, useRef, useState} from "react";
 
 interface Channel {
     id: number;
@@ -25,6 +25,17 @@ interface MessagesProps {
     selectedChannel: Channel | null;
 }
 export default function Messages({messages, userInfo, selectedContact, selectedChannel} : MessagesProps) {
+    // const endOfMessagesRef = useRef<HTMLDivElement>(null);
+    // const [firstRender, setFirstRender] = useState(true);
+
+    // const scrollToBottom = () => {
+    //     endOfMessagesRef.current?.scrollIntoView({ behavior: "smooth" });
+    // }
+
+    // useEffect(() => {
+    //     scrollToBottom();
+    // }, [messages]);
+
     return (
         <div>
             {messages.map((message, index) => {
@@ -46,11 +57,14 @@ export default function Messages({messages, userInfo, selectedContact, selectedC
                 const messageClass = isCurrentUSer === true ? "sent" : "received";
                 return (
                     <div key={index} className={`message ${messageClass}`}>
-                        <strong className="message_user">{senderName}:</strong>
-                        <p>{messageContent}</p>
+                        <strong className="message-user">{senderName}:</strong>
+                        <div className="message-text">
+                            {messageContent}
+                        </div>
                     </div>
                 );
             })}
+            {/* <div ref={endOfMessagesRef}/> */}
         </div>
     );
 }

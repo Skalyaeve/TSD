@@ -20,7 +20,14 @@ import {
   findAllChannelsByUserId,
   findAllChannelsNonMember} from './finders.js';
 import { isAdmin, isMember, isOwner, psswdMatch, isBanned, isMuted } from './verifications.js'
-import { getPrivateConversation, createOnePrivMessage, blockUser, unblockUser, isBlocked} from './private.js'
+import { 
+  getPrivateConversation,
+  createOnePrivMessage,
+  blockUser,
+  unblockUser,
+  isBlocked,
+  hasBlocked
+} from './private.js'
 
 @Injectable()
 export class ChatService {
@@ -82,5 +89,5 @@ export class ChatService {
   blockUser = blockUser
   unblockUser = unblockUser
   isBlocked = isBlocked;
-
+  hasBlocked = hasBlocked;
 }

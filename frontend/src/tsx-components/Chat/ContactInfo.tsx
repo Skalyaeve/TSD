@@ -20,16 +20,21 @@ interface ContactInfoProps {
 
 export default function ContactInfo({selectedContact, userInfo}: ContactInfoProps) {
 
-    const [isBlocked, setIsBlocked] = useState<boolean>(true);
+    const [isBlocked, setIsBlocked] = useState<boolean>(false);
 
     useEffect(() => {
-        if(selectedContact && userInfo) {
-            socket.emit('userIsBlocked', {blockerID: userInfo.id, blockeeID:selectedContact.id});
-            socket.once('blockInfo', (data) => {
-                setIsBlocked(data);
-            })
+        if(selectedContact && userInfo && selectedContact.id != userInfo.id) {
+            console.log("ENTERED IS BLOCKED IF");
+            function fetchData() {
+                socket.emit('userIsBlocked', {blockerID: userInfo?.id, blockeeID:selectedContact.id});
+                socket.once('blockInfo', (data) => {
+                    setIsBlocked(data);
+                });
+            }
+            fetchData();
         }
-    }), [userInfo, selectedContact];
+        console.log("isBlocked: ",isBlocked);
+    }, [selectedContact]);
 
     const handleInvite = () => {
         console.log("WILL INVITE TO PLAY");
@@ -38,7 +43,7 @@ export default function ContactInfo({selectedContact, userInfo}: ContactInfoProp
     const handleBlock = () => {
         if (selectedContact && userInfo && !isBlocked) {
             socket.emit('blockUser', {blockerID: userInfo.id, blockeeID: selectedContact.id})
-            socket.once('userBlocked', () => {
+            socket.on('userBlocked', () => {
                 setIsBlocked(true);
                 alert("user was blocked");
             });
@@ -53,7 +58,7 @@ export default function ContactInfo({selectedContact, userInfo}: ContactInfoProp
         console.log("isBlocked: ", isBlocked);
         if (selectedContact && userInfo && isBlocked) {
             socket.emit('unblockUser', {blockerID: userInfo.id, blockeeID: selectedContact.id})
-            socket.once('userUnblocked', () => {
+            socket.on('userUnblocked', () => {
                 setIsBlocked(false);
                 alert("user was unblocked");
             });
@@ -76,7 +81,7 @@ export default function ContactInfo({selectedContact, userInfo}: ContactInfoProp
                         <GrUserExpert/> Unblock {selectedContact.nickname}
                     </button>
                 ) : (
-                    <button className="profile-icon-btn" onClick={handleUnblock}>
+                    <button className="profile-icon-btn" onClick={handleBlock}>
                         <FaUserSlash/> Block {selectedContact.nickname}
                     </button>
                 )}

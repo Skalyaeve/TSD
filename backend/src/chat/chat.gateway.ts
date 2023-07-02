@@ -86,10 +86,15 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
   {
       try {
           const { senderID, recipientID, content} = data;
-          const isBlocked = await this.chatService.isBlocked(senderID, recipientID);
+          const isBlocked = await this.chatService.isBlocked(recipientID, senderID);
+          const hasBlocked = await this.chatService.hasBlocked(senderID, recipientID);
           if (isBlocked) {
-        throw new WsException('Could not create message user is blocked');
-          }         
+            throw new WsException('Could not create message user is blocked');
+          }
+          if (hasBlocked) {
+            throw new WsException('Could not create you blocked this user');
+          }
+          console.log("CREATING MESSAGE BECAUSE USER IS NOT BLOCKED");
           const privateMessage = await this.chatService.createOnePrivMessage(senderID, recipientID, content);
           const senderUserChatRoom = 'userID_' + senderID.toString() + '_room';
           const recipientUserChatRoom = 'userID_' + recipientID.toString() + '_room';
@@ -108,13 +113,17 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
   {
     try {
       const { senderID, recipientID, content} = data;
-      const isBlocked = await this.chatService.isBlocked(senderID, recipientID);
-      if (!isBlocked)
+      const isBlocked = await this.chatService.isBlocked(recipientID, senderID);
+      const hasBlocked = await this.chatService.hasBlocked(senderID, recipientID);
+      console.log("isBlocked: ", isBlocked);
+      if (isBlocked || hasBlocked)
       {
+        console.log("IT IS BLOCKED");
         const senderUserChatRoom = 'userID_' + senderID.toString() + '_room';
         this.server.to(senderUserChatRoom).emit('privateMessageSent', data);
       }
-      else {
+      else if (!isBlocked && !hasBlocked){
+        console.log("IT IS NOT BLOCKED");
         const senderUserChatRoom = 'userID_' + senderID.toString() + '_room';
         const recipientUserChatRoom = 'userID_' + recipientID.toString() + '_room';
         this.server.to(senderUserChatRoom).to(recipientUserChatRoom).emit('privateMessageSent', data);
@@ -137,15 +146,17 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       const isBlocked = await this.chatService.isBlocked(blockerID, blockeeID);
       const userRoomId = 'userID_' + blockerID.toString() + '_room';
       if (isBlocked) {
+        // console.log("USER IS BLOCKED:", isBlocked);
         this.server.to(userRoomId).emit('blockInfo', true);
       }
       else {
+        // console.log("USER IS NOT BLOCKED:", isBlocked);
         this.server.to(userRoomId).emit('blockInfo', false);
       }
     }
     catch (error) {
       console.log(error);
-      throw new WsException(error.message || 'Could not block user');
+      throw new WsException(error.message || 'could not find out if user is blocked');
     }
   }
 
@@ -604,6 +615,8 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
         const {chanId, memberToMuteId, adminId, muteDuration} = data;
         const mutedMember = await this.chatService.muteMember(data);
         const ChanRoomId = 'chan_'+ chanId + '_room';
+        const mutedMemberRoomId = 'userID_' + memberToMuteId.toString() + '_room';
+        this.server.to(mutedMemberRoomId).emit('youHaveBeenMuted');
         this.server.to(ChanRoomId).emit('memberMuted');
         // client.emit('memberIsMuted', mutedMember);
       }
@@ -631,7 +644,9 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
               socket.leave(ChanRoomId);
             }
           }
-          this.server.to(ChanRoomId).emit('memberBanned');
+        const bannedMemberRoomId = 'userID_' + memberToBanId.toString() + '_room';
+        this.server.to(ChanRoomId).emit('memberBanned');
+        this.server.to(bannedMemberRoomId).emit('youWereBanned');
           // client.emit('memberIsBanned', bannedMember);
       } 
       catch (error) {
@@ -656,6 +671,9 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
             socket.leave(ChanRoomId);
           }
         }
+        const kickedMemberRoomId = 'userID_' + memberToKickId.toString() + '_room';
+        this.server.to(kickedMemberRoomId).emit('youHaveBeenKicked');
+
         this.server.to(ChanRoomId).emit('memberKicked');
       } 
       catch (error) {

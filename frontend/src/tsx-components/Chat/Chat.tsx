@@ -52,7 +52,6 @@ function Chat({}) {
         content: string;
         type: string;
         };
-    
 
     // const [allMessages, setAllMessages] = useState<{user: string; message: string; type: string}[]>([]);
     
