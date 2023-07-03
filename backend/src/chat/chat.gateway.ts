@@ -616,7 +616,9 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
         const mutedMember = await this.chatService.muteMember(data);
         const ChanRoomId = 'chan_'+ chanId + '_room';
         const mutedMemberRoomId = 'userID_' + memberToMuteId.toString() + '_room';
-        this.server.to(mutedMemberRoomId).emit('youHaveBeenMuted');
+        const channel = await this.chatService.findChannelbyId(chanId);
+        const chan_name = channel.name;
+        this.server.to(mutedMemberRoomId).emit('youHaveBeenMuted', chan_name);
         this.server.to(ChanRoomId).emit('memberMuted');
         // client.emit('memberIsMuted', mutedMember);
       }
@@ -645,8 +647,10 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
             }
           }
         const bannedMemberRoomId = 'userID_' + memberToBanId.toString() + '_room';
+        const channel = await this.chatService.findChannelbyId(chanId);
+        const chan_name = channel.name;
         this.server.to(ChanRoomId).emit('memberBanned');
-        this.server.to(bannedMemberRoomId).emit('youWereBanned');
+        this.server.to(bannedMemberRoomId).emit('youWereBanned', chan_name);
           // client.emit('memberIsBanned', bannedMember);
       } 
       catch (error) {
@@ -696,11 +700,15 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       @MessageBody() data: {chanOwnerId:number, chanId: number, memberId: number}) : Promise<void>
   {
     try {
+      console.log("ENTERING MAKE MEMBER ADMIN");
       const {chanId, memberId, chanOwnerId} = data;
-      const updatedChanMember = await this.chatService.makeChanAdmin(data);
-      const memberRoomId = 'userID_'+ chanOwnerId + '_room';
+      await this.chatService.makeChanAdmin(data);
+      const memberRoomId = 'userID_'+ memberId + '_room';
       const ChanRoomId = 'chan_'+ chanId + '_room';
-      this.server.to(memberRoomId).emit('newAdminInRoom');
+      const channel = await this.chatService.findChannelbyId(chanId);
+      const chan_name = channel.name;
+      this.server.to(ChanRoomId).emit('newAdminInRoom');
+      this.server.to(memberRoomId).emit('youWereMadeAdmin', chan_name);
       // client.emit('MemberisAdmin', updatedChanMember);
     }
     catch (error) {
@@ -716,13 +724,16 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       @MessageBody() data: {chanOwnerId:number, chanId: number, memberId: number}) : Promise<void>
   {
     try {
-      console.log("ENTERING MAKE MEMBER ADMIN")
+      console.log("ENTERING REMOVE MEMBER ADMIN");
       const {chanId, memberId, chanOwnerId} = data;
       const updatedChanMember = await this.chatService.removeChanAdmin(data);
-      const memberRoomId = 'userID_'+ chanOwnerId + '_room';
+      const memberRoomId = 'userID_'+ memberId + '_room';
       const ChanRoomId = 'chan_'+ chanId + '_room';
       console.log("updatedChanMember");
-      this.server.to(memberRoomId).emit('adminRemoved');
+      const channel = await this.chatService.findChannelbyId(chanId);
+      const chan_name = channel.name;
+      this.server.to(ChanRoomId).emit('newAdminInRoom');
+      this.server.to(memberRoomId).emit('youWereRemovedAsAdmin', chan_name);
       // client.emit('MemberisAdmin', updatedChanMember);
     }
     catch (error) {

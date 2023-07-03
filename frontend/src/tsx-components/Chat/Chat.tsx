@@ -322,17 +322,71 @@ function Chat({}) {
 
     useEffect(() => {
         socket.on('youHaveBeenKicked', (channelName) => {
-            toast.error('You have been kicked from the channel ${channelName}', {
+            toast.error(`You have been kicked from the channel '${channelName}', you can contact the channel admin to ask why and refresh your channels to see the change`, {
                 position: "top-right",
+                autoClose: 50000,
                 hideProgressBar: false,
                 closeOnClick: true,
+                pauseOnHover: true,
                 draggable: true,
                 progress: undefined,
+                className: 'custom-toast',
             });
         });
-
+        socket.on('youHaveBeenMuted', (channelName) => {
+            toast.error(`You have been muted in the channel '${channelName}', you can contact the channel admin to ask why and refresh your channels to see the change`, {
+                position: "top-right",
+                autoClose: 50000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                className: 'custom-toast',
+            });
+        });
+        socket.on('youWereBanned', (channelName) => {
+            toast.error(`You have been banned from the channel '${channelName}', contact the channel admin to ask why and refresh your channels to see the change`, {
+                position: "top-right",
+                autoClose: 50000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                className: 'custom-toast',
+            });
+        });
+        socket.on('youWereMadeAdmin', (channelName) => {
+            toast.error(`You have been granted admin privileges of the channel '${channelName}', congrats! Now you can ban, mute and kick members`, {
+                position: "top-right",
+                autoClose: 50000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                className: 'custom-toast',
+            });
+        });
+        socket.on('youWereRemovedAsAdmin', (channelName) => {
+            toast.error(`You have lost admin privileges of the channel '${channelName}', contact the channel owner to ask why`, {
+                position: "top-right",
+                autoClose: 50000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                className: 'custom-toast',
+            });
+        });
         return () => {
             socket.off('youHaveBeenKicked');
+            socket.off('youHaveBeenMuted');
+            socket.off('youWereBanned');
+            socket.off('youWereMadeAdmin');
+            socket.off('youWereRemovedAsAdmin');
         }
     }, []);
 
@@ -357,7 +411,7 @@ function Chat({}) {
             <div className={`contact-info ${isOpen?"open":"close"}`}>
                 <HeaderContactInfo chatName={selectedContact?.nickname || selectedChannel?.name ||'No conversation selected' }/>
                 <div className='body-contact'>
-                    <ChatInfo userInfo={userInfo} selectedChannel={selectedChannel} selectedContact={selectedContact}/>
+                    {(selectedContact || selectedChannel) && <ChatInfo userInfo={userInfo} selectedChannel={selectedChannel} selectedContact={selectedContact}/>}
                 </div>
             </div>
         </div>

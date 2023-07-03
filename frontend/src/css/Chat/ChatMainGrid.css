@@ -22,3 +22,14 @@
     grid-template-columns: 1.1fr 4fr 0fr;
 }
 
+.custom-toast {
+    backdrop-filter: blur(25px);
+    background-color: rgba(46, 19, 216, 0.6) !important;
+    font-family: sans-serif !important;
+    font-size: 18px !important;
+}
+
+.custom-toast .Toastify__toast-body > div {
+    font-family: sans-serif !important;
+    font-size: 18px !important;
+}

@@ -74,7 +74,6 @@ export default function RenderButtons({member, userIsAdmin, isOwner, userInfo} :
         else {
             alert('Member is already admin');
         }
-
     }
 
     const handleRemoveAdmin = () => {
@@ -131,7 +130,6 @@ export default function RenderButtons({member, userIsAdmin, isOwner, userInfo} :
             alert("mute duration is negative");
         }
     }
-
 
 
     console.log("isAdmin: ", userIsAdmin);
