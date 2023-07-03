@@ -18,7 +18,9 @@ import HeaderContactInfo from './HeaderContactInfo.tsx'
 import ChatChannels from './ChatChannels.tsx'
 import DmHandler from './DmHandler.tsx'
 import ChatInfo from './ChatInfo.tsx'
-import axios from 'axios'
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { createPortal } from 'react-dom';
 
 function Chat({}) {
 
@@ -294,7 +296,7 @@ function Chat({}) {
         };
     }, [userInfo]);
 
-    //retrieving not joine channels
+    //retrieving not joined channels
     useEffect(() => {
         if (!userInfo) {
         console.log("user is not set");
@@ -315,8 +317,29 @@ function Chat({}) {
         };
     }, [userInfo]);
 
+
+    //listen for notification events
+
+    useEffect(() => {
+        socket.on('youHaveBeenKicked', (channelName) => {
+            toast.error('You have been kicked from the channel ${channelName}', {
+                position: "top-right",
+                hideProgressBar: false,
+                closeOnClick: true,
+                draggable: true,
+                progress: undefined,
+            });
+        });
+
+        return () => {
+            socket.off('youHaveBeenKicked');
+        }
+    }, []);
+
+
     return (
         <div className={`chat-main-grid ${isOpen?"open":"close"}`}>
+            {createPortal(<ToastContainer/>, document.body)}
             <div className="manage-rooms">
                 <DmHandler allUsers={allUsers} setAllUsers={setAllUsers} setSelectedContact={setSelectedContact} setSelectedChannel={setSelectedChannel}/>
                 <ChatChannels userInfo={userInfo} allChannelsbyUser={allChannelsbyUser} allChannelsNotJoined={allChannelsNotJoined} setAllChannelsNotJoined={setAllChannelsNotJoined} setAllChannelsbyUser={setAllChannelsbyUser }setSelectedChannel={setSelectedChannel} setSelectedContact={setSelectedContact}/>

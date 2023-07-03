@@ -13,9 +13,8 @@ interface Channel {
     id: number;
     name: string;
     chanOwner: number;
-    type: string; // Or your ChanType if defined
+    type: string;
     passwd: string | null;
-    // Add more fields as necessary
 }
 
 interface ChatChannelsProps {

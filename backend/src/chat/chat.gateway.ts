@@ -672,8 +672,9 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
           }
         }
         const kickedMemberRoomId = 'userID_' + memberToKickId.toString() + '_room';
-        this.server.to(kickedMemberRoomId).emit('youHaveBeenKicked');
-
+        const channel = await this.chatService.findChannelbyId(chanId);
+        const chan_name = channel.name;
+        this.server.to(kickedMemberRoomId).emit('youHaveBeenKicked', chan_name);
         this.server.to(ChanRoomId).emit('memberKicked');
       } 
       catch (error) {

@@ -70,17 +70,39 @@ export default function ChatInfo({ userInfo, selectedChannel, selectedContact}: 
     const [contactStatus, setContactStatus] = useState<boolean>(false);
     const [membersStatus, setMembersStatus] = useState<Map<number, boolean>>(new Map());
 
-    const fetchMemberStatus = () => {
-        if (selectedChannel && !selectedContact) {
-            members.forEach((member: ChanMember) => {
-                socket.emit('getUserStatus', {userId: userInfo?.id, memberId: member.member})
+    const fetchMembersData = () => {
+        if (selectedChannel && userInfo && !selectedContact) {
+            socket.emit('GetChannelMembers', {chanId: selectedChannel.id, userId: userInfo?.id});
+            socket.on('MembersofChannelFound', (members) => {
+                setMembers(members);
+
+                members.forEach((member: ChanMember) => {
+                    socket.emit('getUserStatus', { userId: userInfo?.id, memberId: member.member })
+                })
             });
             socket.on('foundUserStatus', (data) => {
                 setMembersStatus((prevStatus) => new Map(prevStatus).set(data.memberId, data.status));
             });
+            socket.emit('isMemberAdmin', {chanId: selectedChannel?.id, memberId: userInfo.id, userId: userInfo.id});
+            socket.on('foundAdminStatus', (data) => {
+                setUserIsAdmin(data);
+            });
+            socket.emit('isChanOwner', {chanId: selectedChannel?.id, memberId: userInfo.id, userId: userInfo.id});
+            socket.on('foundOwnerStatus', (data) => {
+                setIsOwner(data);
+            });
+            socket.emit('isMember', {chanId: selectedChannel?.id, memberId: userInfo.id, userId: userInfo.id});
+            socket.on('foundIsMember', (data) => {
+                setIsMember(data);
+            });
         }
         return () => {
+            socket.off('MembersofChannelFound');
             socket.off('foundUserStatus');
+            socket.off('foundAdminStatus');
+            socket.off('foundOwnerStatus');
+            socket.off('foundIsMember');
+
         };
     }
 
@@ -90,7 +112,7 @@ export default function ChatInfo({ userInfo, selectedChannel, selectedContact}: 
             socket.emit('isMemberAdmin', {chanId: selectedChannel?.id, memberId: userInfo.id, userId: userInfo.id});
             socket.on('foundAdminStatus', (data) => {
                 setUserIsAdmin(data);
-            })
+            });
         }
         return () => {
             socket.off('foundAdminStatus');
@@ -103,7 +125,7 @@ export default function ChatInfo({ userInfo, selectedChannel, selectedContact}: 
             socket.emit('isMember', {chanId: selectedChannel?.id, memberId: userInfo.id, userId: userInfo.id});
             socket.on('foundIsMember', (data) => {
                 setIsMember(data);
-            })
+            });
         }
         return () => {
             socket.off('foundIsMember');
@@ -166,7 +188,7 @@ return (
             <h1>
                 {selectedChannel.name}'s Members
             </h1>
-            <button className="Chan-refresh-btn" onClick={fetchMemberStatus}>
+            <button className="Chan-refresh-btn" onClick={fetchMembersData}>
                 <FiRefreshCw/>
             </button>
         </div>}

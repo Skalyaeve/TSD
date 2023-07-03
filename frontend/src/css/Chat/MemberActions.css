@@ -35,7 +35,8 @@
   .word-btn {
     background: transparent;
     border: solid white;
-    border-radius: 15%;
+    border-radius: 15px;
+    padding: 5px;
     font-size: 18px;
     align-self: center;
     font-family: sans-serif;
