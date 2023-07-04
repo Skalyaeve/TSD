@@ -533,6 +533,8 @@ function Party() {
 
 	// Create the ball in the scene
 	function createText(scene: Phaser.Scene, event: GameEvent) {
+		if (text != undefined)
+			destroyText()
 		text = { sprite: scene.physics.add.sprite(screenWidth / 2, screenHeight / 2, event) }
 	}
 

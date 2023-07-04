@@ -184,11 +184,11 @@ function setGeneralGameState(value: 'on' | 'off') {
 }
 
 // Update the game state following the state update
-function updateState(newStateContainer: stateUpdate) {
+async function updateState(newStateContainer: stateUpdate) {
 	switch (newStateContainer.newState) {
 		case ('started'):
 			if (tick == 0)
-				playCountdown()
+				await playCountdown()
 			setGeneralGameState('on')
 			break
 		case ('stopped'):
@@ -212,36 +212,37 @@ function resetEntities() {
 	}
 }
 
-function animate(event: GameEvent, timeout: number): Promise<void> {
+// Displays a piece of text on the screen
+function displayText(event: GameEvent, timeout: number): Promise<void> {
 	return new Promise<void>((resolve) => {
 		displayAnim(event)
 		setTimeout(() => {
 			displayAnim('stop')
 			setTimeout(() => {
 				resolve()
-			}, 10)
-		}, timeout)
+			}, 100)
+		}, (timeout > 100 ? timeout - 100 : 100))
 	});
 }
 
+// Displays the combat countdown on the screen
+async function playCountdown() {
+	await displayText('3', 1000)
+	await displayText('2', 1000)
+	await displayText('1', 1000)
+	await displayText('fight', 500)
+}
 
 // Triggered on goal, starts a new round 
 async function goalTransition() {
 	setGeneralGameState('off')
 	if (Math.floor(Math.random() * 2))
-		await animate('goal', 3000)
+		await displayText('goal', 3000)
 	else
-		await animate('blocked', 3000)
+		await displayText('blocked', 3000)
 	resetEntities()
 	await playCountdown()
 	setGeneralGameState('on')
-}
-
-async function playCountdown() {
-	await animate('3', 800)
-	await animate('2', 800)
-	await animate('1', 800)
-	await animate('fight', 300)
 }
 
 /* -------------------------PORT INPUT------------------------- */

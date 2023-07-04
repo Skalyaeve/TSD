@@ -97,5 +97,16 @@
 			"name": "Drain",
 			"effect": "Lifesteal 30% DMG"
 		}
+	},
+	"Test": {
+		"story": "Dis Mr.Test.\nMr.Test is for testin.\nMr.Test nice.",
+		"hp": 100,
+		"attack": 10,
+		"defense": 5,
+		"speed": 5,
+		"passive": {
+			"name": "Hello World",
+			"effect": "This perk has no effect"
+		}
 	}
 }
