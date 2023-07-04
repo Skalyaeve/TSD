@@ -1,0 +1,55 @@
+    const [allChannelMessages, setAllChannelMessages] = useState<ChanMessage[]>([]);
+
+    // const channelMessageCreatedListener = useCallback((message: {
+    //     sender: number,
+    //     senderNick: string,
+    //     chanId: number,
+    //     content: string,
+    // }) => {
+    //     if (message.sender && message.senderNick && message.content && (selectedChannel?.id == message.chanId)) {
+    //         console.log("selectedChannelId: ", selectedChannel.id);
+    //         console.log("message.chanId: ", message.chanId);
+    //         console.log("CHANNEL MESSAGE CREATED LISTENER");
+    //         const { sender, content, ...msg } = message;
+    //         const formatted = { 
+    //             ...msg, 
+    //             sender, 
+    //             content: content, 
+    //             type: sender === userInfo?.id ? 'sent' : 'received' // Determine the type based on sender
+    //         };
+    //         console.log('channelMessageCreatedListener', { formatted })
+    //         setAllChannelMessages((allChannelMessages) => {
+    //             if (!allChannelMessages.find(m => m.content === message.content && 
+    //                 m.sender === message.sender && 
+    //                 m.chanId === message.chanId)) {
+    //                 return [...allChannelMessages, formatted]
+    //             } else {
+    //                 return allChannelMessages
+    //             }
+    //         });
+    //     }
+    // }, [userInfo, selectedChannel]);
+
+
+    // useEffect(() => {
+    //     const channelMessageListener = (messages: ChannelMessage[]) => {
+    //         setAllChannelMessages(messages);
+    //     }
+    //     socket.on("channelMessagesFound", channelMessageListener);
+    //     socket.on("SentChanMessage", channelMessageCreatedListener);
+
+    //     return () => {
+    //         socket.off("channelMessagesFound", channelMessageListener);
+    //         socket.off("channelMessageCreated", channelMessageCreatedListener);
+    //     };
+    // }, [channelMessageCreatedListener]);
+
+        // useEffect(() => {
+    //     if (userInfo && selectedChannel &&
+    //         !allChannelsNotJoined.some(notJoinedChannel => notJoinedChannel.id === selectedChannel.id)) {
+    //         socket.emit('GetChannelMessages', {chanId: selectedChannel.id, userId: userInfo.id});
+    //     }
+    //     else{
+    //         setAllChannelMessages([]);
+    //     }
+    // }, [userInfo, selectedChannel]);

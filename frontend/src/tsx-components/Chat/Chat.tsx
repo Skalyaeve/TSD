@@ -80,7 +80,7 @@ function Chat({}) {
     const [allChannelsNotJoined, setAllChannelsNotJoined] = useState<Channel[]>([]);
     const [selectedChannel, setSelectedChannel] = useState<Channel | null >(null);
     const [userChannelsMember, setUserChannelsMember] = useState<ChanMember[]>([]);
-    const [allChannelMessages, setAllChannelMessages] = useState<ChanMessage[]>([]);
+    const [channelMessages, setChannelMessages] = useState<{ [key: number]: ChanMessage[] }>({});
     const [chanMembers, setChanMembers] = useState<ChanMember[]>([]);
 
     /**
@@ -149,7 +149,14 @@ function Chat({}) {
                 type: "sent",
             };
             console.log('sendMessage', { message });
-            setAllChannelMessages((allChannelMessages) => [...allChannelMessages, message]);
+            setChannelMessages((currentMessages) => {
+                const channelMessages = currentMessages[selectedChannel.id] || [];
+                return {
+                    ...currentMessages,
+                    [selectedChannel.id]: [...channelMessages, message],
+                };
+            });
+            // setAllChannelMessages((allChannelMessages) => [...allChannelMessages, message]);
             console.log('going to send channel message');
             socket.emit('sendChanMessage', { senderId: userInfo.id, senderNick: userInfo.nickname, chanId: selectedChannel.id, content: value });
         }
@@ -218,7 +225,9 @@ function Chat({}) {
         if (chatMessages) {
           chatMessages.scrollTop = chatMessages.scrollHeight;
         }
-      }, [allMessages, allChannelMessages]);
+      }, [allMessages, channelMessages]);
+
+    //   }, [allMessages, allChannelMessages]);
 
     /**
      * Channel
@@ -230,8 +239,10 @@ function Chat({}) {
         chanId: number,
         content: string,
     }) => {
-        if (message.sender && message.senderNick && message.content) {
-            console.log("entering here");
+        if (message.sender && message.senderNick && message.content && (selectedChannel?.id === message.chanId)) {
+            console.log("selectedChannelId: ", selectedChannel.id);
+            console.log("message.chanId: ", message.chanId);
+            console.log("CHANNEL MESSAGE CREATED LISTENER");
             const { sender, content, ...msg } = message;
             const formatted = { 
                 ...msg, 
@@ -239,41 +250,56 @@ function Chat({}) {
                 content: content, 
                 type: sender === userInfo?.id ? 'sent' : 'received' // Determine the type based on sender
             };
-            console.log('channelMessageCreatedListener', { formatted })
-            setAllChannelMessages((allChannelMessages) => {
-                if (!allChannelMessages.find(m => m.content === message.content && 
-                    m.sender === message.sender && 
-                    m.chanId === message.chanId)) {
-                    return [...allChannelMessages, formatted]
+            console.log('channelMessageCreatedListener', { formatted });
+            setChannelMessages((currentMessages) => {
+                const channelMessages = currentMessages[selectedChannel.id] || [];
+                const isDuplicate = channelMessages.find(m => m.content === formatted.content && m.sender === formatted.sender && m.chanId === formatted.chanId);
+                if (!isDuplicate) {
+                    return {
+                        ...currentMessages,
+                        [selectedChannel.id]: [...channelMessages, formatted],
+                    };
                 } else {
-                    return allChannelMessages
+                    return currentMessages;
                 }
             });
         }
-    }, [userInfo]);
+    }, [userInfo, selectedChannel]);
+
 
     useEffect(() => {
-        const channelMessageListener = (messages: ChannelMessage[]) => {
-            setAllChannelMessages(messages);
-        }
+        const channelMessageListener = ({messages, chanId}: { messages: ChannelMessage[], chanId: number }) => {
+            console.log("HERE");
+            console.log("messages: ", messages);
+            setChannelMessages((currentMessages) => {
+                return { ...currentMessages, [chanId]: messages };
+            });
+        };
         socket.on("channelMessagesFound", channelMessageListener);
         socket.on("SentChanMessage", channelMessageCreatedListener);
-
+    
         return () => {
             socket.off("channelMessagesFound", channelMessageListener);
             socket.off("channelMessageCreated", channelMessageCreatedListener);
         };
     }, [channelMessageCreatedListener]);
 
+
     useEffect(() => {
         if (userInfo && selectedChannel &&
             !allChannelsNotJoined.some(notJoinedChannel => notJoinedChannel.id === selectedChannel.id)) {
+            console.log("getting channel messages first if");
             socket.emit('GetChannelMessages', {chanId: selectedChannel.id, userId: userInfo.id});
         }
-        else{
-            setAllChannelMessages([]);
+        else if (selectedChannel){
+            console.log("getting channel messages second if");
+            setChannelMessages((currentMessages) => {
+                return {...currentMessages, [selectedChannel?.id]: [] };
+            });
         }
     }, [userInfo, selectedChannel]);
+    
+
     
     //retrieving joined channels
     useEffect(() => {
@@ -358,7 +384,7 @@ function Chat({}) {
             });
         });
         socket.on('youWereMadeAdmin', (channelName) => {
-            toast.error(`You have been granted admin privileges of the channel '${channelName}', congrats! Now you can ban, mute and kick members`, {
+            toast.success(`You have been granted admin privileges of the channel '${channelName}', congrats! Now you can ban, mute and kick members`, {
                 position: "top-right",
                 autoClose: 50000,
                 hideProgressBar: false,
@@ -402,7 +428,8 @@ function Chat({}) {
                 <ChatHeader chatName={selectedContact?.nickname || selectedChannel?.name ||'No conversation selected' } setIsOpen={setIsOpen}/>
                 <div className='chat-messages' id="chat-messages">
                     {selectedContact && <Messages key={selectedContact} messages={allMessages || []} userInfo={userInfo} selectedContact={selectedContact}/>}
-                    {selectedChannel && <Messages key={selectedChannel} messages={allChannelMessages || []} userInfo={userInfo} selectedChannel={selectedChannel}/>}
+                    {/* {selectedChannel && <Messages key={selectedChannel} messages={allChannelMessages || []} userInfo={userInfo} selectedChannel={selectedChannel}/>} */}
+                    {selectedChannel && <Messages key={selectedChannel} messages={channelMessages[selectedChannel.id] || []} userInfo={userInfo} selectedChannel={selectedChannel}/>}
                 </div>
                 <div className='chat-input-text'>
                     <MessageInput sendMessage={SendMessage} userInfo={userInfo} selectedContact={selectedContact} selectedChannel={selectedChannel}/>

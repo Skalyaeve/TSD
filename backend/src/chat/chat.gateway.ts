@@ -411,6 +411,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       const chanMessage = await this.chatService.createOneChanMessage(senderId, senderNick, chanId, content);
       const ChanRoomId = 'chan_'+ chanId + '_room';
       // client.to(ChanRoomId).emit('SentChanMessage', chanMessage);
+      console.log('chanMessage: ', chanMessage);
 
       this.server.to(ChanRoomId).emit('SentChanMessage', chanMessage);
       // Remember that client.to(room) targets all sockets in a room, but not the sender. If you also want to include the sender, you could use:
@@ -441,7 +442,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       // console.log("channel messages: ", messages);
       const userData = await this.chatService.getUserFromSocket(client);
       const userRoomId = 'userID_' + userData.id.toString() + '_room';
-      this.server.to(userRoomId).emit('channelMessagesFound', messages);
+      this.server.to(userRoomId).emit('channelMessagesFound', {messages: messages, chanId: chanId});;
     }
     catch (error){
       console.log(error);
@@ -477,7 +478,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
         this.server.to(userRoomId).emit('userIsBanned');
         throw new WsException('Chan member is banned');
       }
-      const chanMember = await this.chatService.createOneChanMember(chanID, userID);
+      await this.chatService.createOneChanMember(chanID, userID);
       const userSockets = this.userSocketsService.getUserSocketIds(userID);
       for (const socket of userSockets) {
         if (socket){
@@ -486,7 +487,13 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
         }
       }
       const userRoomId = 'userID_' + userID.toString() + '_room';
-      this.server.to(userRoomId).emit('joinnedRoom', chanID);
+      const channel = await this.chatService.findChannelbyId(chanID);
+      this.server.to(userRoomId).emit('joinnedRoom', channel.name);
+      const user = await this.userService.findOneById(userID);
+      const ChanRoomId = 'chan_'+ chanID + '_room';
+      const content = 'I just joined the channel';
+      const joinMessage = await this.chatService.createOneChanMessage(userID, user.nickname, chanID, content);
+      this.server.to(ChanRoomId).emit('SentChanMessage', joinMessage);
       // client.emit('userJoinedChannel', chanMember);
       // In the above code, this.server.to(userRoomId).emit('joinRoom', String(chanID)); will emit a 'joinRoom' event to all sockets in the user-specific room. You will then need to handle this 'joinRoom' event on the client-side, where each socket will join the channel room upon receiving the 'joinRoom' event.
     }
@@ -510,9 +517,6 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
         this.server.to(userRoomId).emit('userIsBanned');
         return;
       }
-      // console.log('passed is banned');
-      // console.log(userID);
-      // console.log(password);
       const passwordMatches = await this.chatService.psswdMatch(chanID, password);
       if (!passwordMatches) {
         throw new WsException('password does not match');
@@ -527,9 +531,13 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
         }
       }
       const userRoomId = 'userID_' + userID.toString() + '_room';
-      this.server.to(userRoomId).emit('joinRoom', chanID);
-      // client.emit('userJoinedChannel', chanMember);
-      // In the above code, this.server.to(userRoomId).emit('joinRoom', String(chanID)); will emit a 'joinRoom' event to all sockets in the user-specific room. You will then need to handle this 'joinRoom' event on the client-side, where each socket will join the channel room upon receiving the 'joinRoom' event.
+      const channel = await this.chatService.findChannelbyId(chanID);
+      this.server.to(userRoomId).emit('joinnedProtectedChannel', channel.name);
+      const user = await this.userService.findOneById(userID);
+      const ChanRoomId = 'chan_'+ chanID + '_room';
+      const content = 'I just joined the channel';
+      const joinMessage = await this.chatService.createOneChanMessage(userID, user.nickname, chanID, content);
+      this.server.to(ChanRoomId).emit('SentChanMessage', joinMessage);
     }
     catch (error){
       console.log(error);
@@ -754,17 +762,37 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     @MessageBody() data: {chanId: number, userId: number}) : Promise<void>
   {
     try {
+      console.log("leaving channel");
       const {chanId, userId} = data;
+      const content = 'I just left the channel';
+      const user = await this.userService.findOneById(userId);
+      const joinMessage = await this.chatService.createOneChanMessage(userId, user.nickname, chanId, content);
       await this.chatService.leaveChannel(chanId, userId);
       const ChanRoomId = 'chan_'+ chanId + '_room';
       const userSockets = this.userSocketsService.getUserSocketIds(userId);
-      // userSockets.forEach(SocketID =>{
-      //   const socket = this.server.sockets.sockets.get(socket);
-      //   if (socket) {
-      //     socket.leave(ChanRoomId);
-      //   }
-      // })
-      this.server.to(ChanRoomId).emit('user left channel');
+      for (const socket of userSockets) {
+        if (socket){
+          const ChanRoomId = 'chan_'+ chanId + '_room';
+          socket.leave(ChanRoomId);
+        }
+      }
+      const userRoom = 'userID_' + userId.toString() + '_room';
+      const channel = await this.chatService.findChannelbyId(chanId);
+      const response = {
+        chan_name: channel.name,
+        user_nickname: user.nickname
+      };
+      console.log("going to emit the reply events leaving channel");
+      const systemMessage = {
+        sender: -1, // system senderId
+        senderNick: "System", // system nickname
+        chanId: chanId,
+        timeSent: new Date(), // current date and time
+        content: `${user.nickname} has left the channel.`
+      };
+      this.server.to(ChanRoomId).emit('SentChanMessage', joinMessage);
+      this.server.to(ChanRoomId).emit('userLeftChannel', response);
+      this.server.to(userRoom).emit('youLeftChannel', response);
     }
     catch (error) {
       console.log(error);

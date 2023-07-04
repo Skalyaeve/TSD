@@ -3,7 +3,9 @@ import { BsSearchHeart } from "react-icons/bs";
 import { BsPlusCircle } from "react-icons/bs";
 import { AiOutlinePlusCircle } from "react-icons/ai";
 import { FiRefreshCw } from "react-icons/fi";
-
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { createPortal } from 'react-dom';
 import Modal from 'react-modal';
 import "../../css/Chat/ChannelCreate.css"
 import { socket } from '../Root.tsx'
@@ -95,6 +97,17 @@ export default function ChatChannels({
             members.forEach((member) => {
                 socket.emit('joinChannel', { chanID: channelId, userID: member.id });
             });
+            toast.success(`You created the channel '${confirmedChannelName}'! :D`, {
+                position: "top-right",
+                autoClose: 50000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                className: 'custom-toast',
+            })
+
         });
         setConfirmedChannelName("");
         setSelectedUsers([]);
@@ -162,6 +175,18 @@ export default function ChatChannels({
         if (channel.type === 'PUBLIC'){
             if(userInfo){
                 socket.emit("joinChannel", {chanID: channel.id, userID: userInfo.id});
+                socket.on('joinnedRoom', (channelName) => {
+                    toast.success(`'You have joined the channel '${channelName}'`, {
+                        position: "top-right",
+                        autoClose: 50000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        className: 'custom-toast',
+                    });
+                })
             }
         }
         else if (channel.type == "PROTECTED") {
@@ -182,6 +207,18 @@ export default function ChatChannels({
                 userID: userInfo.id,
                 password: passwordInput
             });
+            socket.on('joinnedProtectedChannel', (channelName) => {
+                toast.success(`'You have joined the channel '${channelName}'`, {
+                    position: "top-right",
+                    autoClose: 50000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    className: 'custom-toast',
+                });
+            })
         }
         setIsPasswordPromptOpen(false);
         setPasswordInput("");

@@ -3,7 +3,7 @@
 .chat-main-grid .contact-info {
     display: grid;
     grid-template-rows: 2.5fr 6fr;
-    border: 1px solid rgb(121, 199, 245);
+    border: 1px solid rgba(8, 7, 7, 0.176);
     border-radius: 5px;
     height: 100%;
 }
@@ -22,7 +22,7 @@
 
 .chat-main-grid .contact-info .body-contact
 {
-    border: 1px solid rgb(245, 175, 121);
+    border: 1px solid rgba(8, 7, 7, 0.176);
     font-size: 18px;
     backdrop-filter: blur(25px);
     background-color: rgba(93, 13, 113, 0.1);
@@ -31,15 +31,17 @@
 
 .chat-info {
     display: grid;
-    grid-template-rows: 1fr 3fr 1fr 1fr;
+    grid-template-rows: 0.4fr 0.3fr 0.3fr 3fr;
     /* grid-template-rows: repeat(auto-fill, minmax(50px, 5fr)); */
     height: 100%;
 }
 
 
 .chat-info .members-title{
+    display: grid;
+    align-content: center;
     text-align: center;
-    background-color: rgba(47, 13, 48, 0.38);
+    background-color: rgba(47, 13, 48, 0.2);
 }
 
 .members-title h1 {
@@ -49,9 +51,9 @@
 
 .chat-info .conversation-info{
     display: grid;
-    grid-template-rows: repeat(auto-fill, minmax(50px, 1fr));
+    grid-template-rows: repeat(auto-fill, minmax(60px, 1fr));
     align-items: center;
-    background-color: rgba(0, 0, 0, 0.2);
+    background-color: rgba(0, 0, 0, 0.1);
     /* text-align: center; */
     margin-left: auto;
     margin-right: auto;
@@ -60,13 +62,20 @@
 }
 
 .chat-info .add-members-channel{
-    background-color: rgba(196, 18, 202, 0.2);
+    display: grid;
+    align-content: center;
+    background-color: rgba(196, 18, 202, 0.0);
     text-align: center;
     height: 100%;
+    font-family: monospace;
 }
 
 .chat-info .leave-channel{
-    background-color: rgba(0, 0, 0, 0.2);
+    display: grid;
+    align-content: center;
+    background-color: rgba(0, 0, 0, 0.0);
     text-align: center;
     height: 100%;
+    font-family: monospace;
+
 }
