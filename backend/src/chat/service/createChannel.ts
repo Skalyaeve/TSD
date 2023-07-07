@@ -58,6 +58,22 @@ export async function createOneChanMember(chanId: number, memberId: number): Pro
   }
 }
 
+export async function addUserToChannel(userId: number, chanID: number): Promise<{userId: number, joinMessage: string}> {
+  let isBanned = await this.isBanned(chanID, userId);
+  if (isBanned) {
+    throw new Error('Chan member is banned');
+  }
+
+  await this.createOneChanMember(chanID, userId);
+
+  const user = await this.userService.findOneById(userId);
+  const content = 'I just joined the channel';
+  const joinMessage = await this.createOneChanMessage(userId, user.nickname, chanID, content);
+
+  return {userId,joinMessage};
+}
+
+
 export async function createOneChanMessage(senderId: number, senderNick: string, chanId: number, content: string): Promise<ChanMessage> {
 
   try {

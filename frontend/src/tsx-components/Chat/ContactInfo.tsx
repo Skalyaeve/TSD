@@ -5,6 +5,9 @@ import { FaUserSlash } from "react-icons/fa";
 import Modal from 'react-modal';
 import "../../css/Chat/ChannelCreate.css";
 import { socket } from '../Root.tsx';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { createPortal } from 'react-dom';
 
 interface Contact {
     id: number; 
@@ -45,11 +48,31 @@ export default function ContactInfo({selectedContact, userInfo}: ContactInfoProp
             socket.emit('blockUser', {blockerID: userInfo.id, blockeeID: selectedContact.id})
             socket.on('userBlocked', () => {
                 setIsBlocked(true);
-                alert("user was blocked");
+                toast.info(`${selectedContact.nickname} was blocked`, {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    className: 'custom-toast',
+                });
+                // alert("user was blocked");
             });
         }
         else {
-            alert("user could not be blocked");
+            toast.error(`${selectedContact.nickname} could not be blocked`, {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                className: 'custom-toast',
+            });
+            // alert("user could not be blocked");
         }
 
     };
@@ -60,11 +83,30 @@ export default function ContactInfo({selectedContact, userInfo}: ContactInfoProp
             socket.emit('unblockUser', {blockerID: userInfo.id, blockeeID: selectedContact.id})
             socket.on('userUnblocked', () => {
                 setIsBlocked(false);
-                alert("user was unblocked");
+                toast.success(`${selectedContact.nickname} was unblocked :)`, {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    className: 'custom-toast',
+                });
             });
         }
         else {
-            alert("user could not be unblocked");
+            toast.error(`${selectedContact.nickname} could not be unblocked`, {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                className: 'custom-toast',
+            });
+            // alert("user could not be unblocked");
         }
         
     };

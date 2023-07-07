@@ -10,6 +10,9 @@ import { FaRegUser } from "react-icons/fa";
 import Modal from 'react-modal';
 import "../../css/Chat/ChannelCreate.css";
 import { socket } from '../Root.tsx';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { createPortal } from 'react-dom';
 
 interface User {
     nickname: string;
@@ -68,11 +71,31 @@ export default function RenderButtons({member, userIsAdmin, isOwner, userInfo} :
             socket.emit('makeMemberAdmin', {chanOwnerId: userInfo.id, chanId: member.chanId, memberId: member.member});
             socket.once('newAdminInRoom', () => {
                 setMemberIsChanAdmin(true);
-                alert('Member has been made admin');
+                toast.success(`Member has been made admin`, {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    className: 'custom-toast',
+                });
+                // alert('Member has been made admin');
             });
         }
         else {
-            alert('Member is already admin');
+            toast.error(`Member is already admin`, {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                className: 'custom-toast',
+            });
+            // alert('Member is already admin');
         }
     }
 
@@ -82,11 +105,31 @@ export default function RenderButtons({member, userIsAdmin, isOwner, userInfo} :
             socket.emit('removeAdminPriv', {chanOwnerId: userInfo.id, chanId: member.chanId, memberId: member.member});
             socket.once('adminRemoved', () => {
                 setMemberIsChanAdmin(false);
-                alert('Member lost admin privileges');
+                toast.info(`Member lost admin privileges`, {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    className: 'custom-toast',
+                });
+                // alert('Member lost admin privileges');
             });
         }
         else {
-            alert('Member doesn not have admin privileges');
+            toast.error(`Member doesn't have admin privileges`, {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                className: 'custom-toast',
+            });
+            // alert('Member doesn not have admin privileges');
         }
 
     }
@@ -95,14 +138,34 @@ export default function RenderButtons({member, userIsAdmin, isOwner, userInfo} :
         socket.emit('kickMember', {chanId: member.chanId, memberToKickId: member.member, adminId: userInfo.id});
         socket.once('memberKicked', () => {
             setIsKicked(true);
-            alert('Member has been kicked');
+            toast.info(`Member has been kicked`, {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                className: 'custom-toast',
+            });
+            // alert('Member has been kicked');
         });
     }
 
     const handleBan = () => {
         socket.emit('banMember', {chanId: member.chanId, memberToBanId: member.member, adminId: userInfo.id});
         socket.once('memberBanned', () => {
-            alert('Member has been banned');
+            toast.info(`Member has been banned`, {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                className: 'custom-toast',
+            });
+            // alert('Member has been banned');
         });
 
     }
@@ -115,7 +178,17 @@ export default function RenderButtons({member, userIsAdmin, isOwner, userInfo} :
         setIsModalOpen(false);
         socket.emit('muteMember', {chanId: member.chanId, memberToMuteId: member.member, adminId: userInfo.id, muteDuration: muteDuration});
         socket.once('memberMuted', () => {
-            alert('Member has been muted');
+            toast.info(`Member has been muted for ${muteDuration} minutes`, {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                className: 'custom-toast',
+            });
+            // alert('Member has been muted');
         });
 
     }
@@ -127,7 +200,17 @@ export default function RenderButtons({member, userIsAdmin, isOwner, userInfo} :
             setMuteDuration(value);
         }
         else {
-            alert("mute duration is negative");
+            toast.error(`Mute duration is not valid, only positive values`, {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                className: 'custom-toast',
+            });
+            // alert("mute duration is negative");
         }
     }
 

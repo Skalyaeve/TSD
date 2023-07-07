@@ -157,6 +157,14 @@ export default function ChatInfo({ userInfo, selectedChannel, selectedContact}: 
     }
 
     const handleAddMembers = () => {
+        //i need to open a modal 
+        //then i need to get all users
+        //filter the users that are not members
+        //display those users
+        //select users to make members
+        //then i need to trigger the socket event to add all these users
+        //on my chat have a listener for the event youHaveBeenAddedToChannel
+        //on success display notification members were added to channel
         console.log("WILL ADD MEMBERS");
     }
 
@@ -182,8 +190,17 @@ export default function ChatInfo({ userInfo, selectedChannel, selectedContact}: 
                 </button>
             </div>}
             <div className="conversation-info">
-                {channelState.isMember && !selectedContact && selectedChannel && userInfo && channelState.members.map(member => renderMemberStatus(member, channelState.membersStatus, channelState.userIsAdmin, channelState.isOwner, userInfo))}
-                {selectedContact && <ContactInfo selectedContact={selectedContact} userInfo={userInfo}/>}
+                {channelState.isMember && !selectedContact && selectedChannel && userInfo && channelState.members.map(member => 
+                    <div className="grow-child">
+                        {renderMemberStatus(member, channelState.membersStatus, channelState.userIsAdmin, channelState.isOwner, userInfo)}
+                    </div>
+                )
+            }
+            {selectedContact && 
+                <div>
+                    <ContactInfo selectedContact={selectedContact} userInfo={userInfo}/>
+                </div>
+            }
             </div>
         </div>
     );

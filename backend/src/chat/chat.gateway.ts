@@ -545,6 +545,50 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     }
   }
 
+  @SubscribeMessage('addUsersToChannel')
+  async handleAddUsersToChannel(
+      @ConnectedSocket() client: Socket,
+      @MessageBody() data: {adminId: number, chanID: number, userIds: number[]}) : Promise<void>
+  {
+    try {
+      const {chanID, adminId, userIds} = data;
+      const isAdmin = await this.chatService.isAdmin(chanID, adminId);
+      if (!isAdmin) {
+        throw new WsException('Cannot add users to channel, not admin');
+      }
+      const channel = await this.chatService.findChannelbyId(chanID);
+      const userDetails = await Promise.all(userIds.map(userId => this.userService.findOneById(userId)));
+      for (let i = 0; i < userIds.length; i++) {
+        let userId = userIds[i];
+        let user = userDetails[i];
+        let isBanned = await this.chatService.isBanned(chanID, userId);
+        if (isBanned) {
+          const userRoomId = 'userID_' + adminId.toString() + '_room';
+          this.server.to(userRoomId).emit('joinErrorUserIsBanned');
+          continue;
+        }        
+        await this.chatService.createOneChanMember(chanID, userId);
+        const userSockets = this.userSocketsService.getUserSocketIds(userId);
+        for (const socket of userSockets) {
+          if (socket){
+            const ChanRoomId = 'chan_'+ chanID + '_room';
+            socket.join(ChanRoomId);
+          }
+        }
+        const userRoomId = 'userId_' + userId.toString() + '_room';
+        this.server.to(userRoomId).emit('addedToRoom', channel.name);
+        const ChanRoomId = 'chan_'+ chanID + '_room';
+        const content = 'I just joined the channel';
+        const joinMessage = await this.chatService.createOneChanMessage(userId, user.nickname, chanID, content);
+        this.server.to(ChanRoomId).emit('SentChanMessage', joinMessage);
+      }
+    }
+    catch (error){
+      console.log(error);
+      throw new WsException(error.message || 'Could not public or private channel');
+    }
+  }
+
   @SubscribeMessage('isMember')
   async handleIsMember(
       @ConnectedSocket() client: Socket,
@@ -875,7 +919,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       const updatedChannel = await this.chatService.setChannelType(userId, chanId, ChanType[newChanType as keyof typeof ChanType]);
       const ChanRoomId = 'chan_'+ chanId + '_room';
       const chanType = updatedChannel.type;
-      this.server.to(ChanRoomId).emit('chanTypeChanged');
+      this.server.to(ChanRoomId).emit('chanTypeChanged', newChanType);
       // this.server.to(ChanRoomId).emit('chanTypeChanged', chanType);
       // client.emit('channelNameChanged', updatedChannel);
     }

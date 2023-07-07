@@ -9,6 +9,13 @@ interface Channel {
     // Add more fields as necessary
 }
 
+interface Contact {
+    id: number; 
+    email: string;
+    nickname: string;
+    avatarFilename: string;
+}
+
 
 interface MessagesProps {
     messages: {
@@ -20,8 +27,8 @@ interface MessagesProps {
         content?: string;
         type?: string;
     }[];
-    userInfo: {id: number; email: string; nickname: string; avatarFilename: string} | null;
-    selectedContact: {id: number; email: string; nickname: string; avatarFilename: string};
+    userInfo: Contact | null;
+    selectedContact: Contact;
     selectedChannel: Channel | null;
 }
 export default function Messages({messages, userInfo, selectedContact, selectedChannel} : MessagesProps) {

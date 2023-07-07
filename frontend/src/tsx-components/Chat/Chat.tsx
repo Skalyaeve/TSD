@@ -350,7 +350,7 @@ function Chat({}) {
         socket.on('youHaveBeenKicked', (channelName) => {
             toast.error(`You have been kicked from the channel '${channelName}', you can contact the channel admin to ask why and refresh your channels to see the change`, {
                 position: "top-right",
-                autoClose: 50000,
+                autoClose: 5000,
                 hideProgressBar: false,
                 closeOnClick: true,
                 pauseOnHover: true,
@@ -362,7 +362,7 @@ function Chat({}) {
         socket.on('youHaveBeenMuted', (channelName) => {
             toast.error(`You have been muted in the channel '${channelName}', you can contact the channel admin to ask why and refresh your channels to see the change`, {
                 position: "top-right",
-                autoClose: 50000,
+                autoClose: 5000,
                 hideProgressBar: false,
                 closeOnClick: true,
                 pauseOnHover: true,
@@ -374,7 +374,7 @@ function Chat({}) {
         socket.on('youWereBanned', (channelName) => {
             toast.error(`You have been banned from the channel '${channelName}', contact the channel admin to ask why and refresh your channels to see the change`, {
                 position: "top-right",
-                autoClose: 50000,
+                autoClose: 5000,
                 hideProgressBar: false,
                 closeOnClick: true,
                 pauseOnHover: true,
@@ -386,7 +386,7 @@ function Chat({}) {
         socket.on('youWereMadeAdmin', (channelName) => {
             toast.success(`You have been granted admin privileges of the channel '${channelName}', congrats! Now you can ban, mute and kick members`, {
                 position: "top-right",
-                autoClose: 50000,
+                autoClose: 5000,
                 hideProgressBar: false,
                 closeOnClick: true,
                 pauseOnHover: true,
@@ -396,9 +396,9 @@ function Chat({}) {
             });
         });
         socket.on('youWereRemovedAsAdmin', (channelName) => {
-            toast.error(`You have lost admin privileges of the channel '${channelName}', contact the channel owner to ask why`, {
+            toast.info(`You have lost admin privileges of the channel '${channelName}', contact the channel owner to ask why`, {
                 position: "top-right",
-                autoClose: 50000,
+                autoClose: 5000,
                 hideProgressBar: false,
                 closeOnClick: true,
                 pauseOnHover: true,
@@ -436,7 +436,7 @@ function Chat({}) {
                 </div>
             </div>
             <div className={`contact-info ${isOpen?"open":"close"}`}>
-                <HeaderContactInfo chatName={selectedContact?.nickname || selectedChannel?.name ||'No conversation selected' }/>
+                <HeaderContactInfo userInfo={userInfo} selectedChannel={selectedChannel} selectedContact={selectedContact}/>
                 <div className='body-contact'>
                     {(selectedContact || selectedChannel) && <ChatInfo userInfo={userInfo} selectedChannel={selectedChannel} selectedContact={selectedContact}/>}
                 </div>

@@ -6,6 +6,7 @@
 @import url("ChannelCreate.css");
 @import url("SelectedContactInfo.css");
 @import url("MemberActions.css");
+@import url("HeaderContactInfo.css");
 
 .chat-main-grid {
     padding-top: 6px;

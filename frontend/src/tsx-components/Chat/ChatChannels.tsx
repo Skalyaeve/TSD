@@ -193,7 +193,17 @@ export default function ChatChannels({
             setIsPasswordPromptOpen(true);
         }
         else if (channel.type == "PRIVATE") {
-            alert("cannot join private channel");
+            toast.error(`You cannot join a private channel :(`, {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                className: 'custom-toast',
+            });
+            // alert("cannot join private channel");
         }
     };
 

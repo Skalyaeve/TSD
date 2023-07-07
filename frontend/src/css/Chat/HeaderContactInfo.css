@@ -1,0 +1,48 @@
+.header-contact .chat-info-photo {
+    justify-self: center;
+    background: transparent;
+}
+
+.chat-photo {
+    border-radius: 50%;
+    width: 200px;
+    height: 200px;
+}
+
+.header-contact .chat-name,
+.header-contact .chat-type,
+.header-contact .password-change {
+    display: flex;
+    justify-content: center;
+    background: transparent;
+    align-items: center;
+}
+
+.chat-name h3,
+.chat-type {
+    margin-right: 10px;
+}
+.header-contact .chat-name h3{
+    font-size: 30px;
+}
+
+.header-contact .chat-type,
+.header-contact .password-change {
+    font-size: 18px;
+}
+
+.chat-type-text{
+    margin-right: 10px;
+}
+
+.password-change-text {
+    margin-right: 10px;
+}
+
+.edit-btn {
+    background: transparent;
+}
+
+.dropdown {
+    font-size: 18px;
+}

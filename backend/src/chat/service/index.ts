@@ -4,7 +4,7 @@ import { UserService } from '../../user/user.service.js';
 import { PrismaService } from 'nestjs-prisma';
 
 import {getUserFromSocket} from './getUserFromSocket.js';
-import { createChannel, createOneChanMember, createOneChanMessage, createOneChannel } from './createChannel.js';
+import { createChannel, createOneChanMember, createOneChanMessage, createOneChannel, addUserToChannel } from './createChannel.js';
 // import { createChannel, createOneChanMember, createOneChannel } from './createChannel.js';
 import { setChanName, setChanPassword, setChannelType, makeChanAdmin, makeOwnerAdmin, removeChanAdmin } from './updateChannel.js';
 import { muteMember, banMember, kickMember, leaveChannel } from './members.js';
@@ -45,6 +45,7 @@ export class ChatService {
   createOneChanMember = createOneChanMember
   createOneChanMessage = createOneChanMessage
   createOneChannel = createOneChannel
+  addUserToChannel = addUserToChannel
 
   // setters that don't create but change values
   setChanName = setChanName
