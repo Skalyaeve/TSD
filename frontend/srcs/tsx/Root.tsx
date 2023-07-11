@@ -276,7 +276,11 @@ const Root: React.FC = () => {
 					users={users}
 					updateUsers={updateUsers}
 				/>} />
-				<Route path='/game' element={<Party />} />
+				<Route path='/game' element={
+					<Party
+						setPlayerLife={setPlayerLife}
+					/>}
+				/>
 				<Route path='*' element={<ErrorPage code={404} />} />
 			</Routes>
 		</AnimatePresence>

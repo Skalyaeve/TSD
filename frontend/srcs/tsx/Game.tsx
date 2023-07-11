@@ -235,9 +235,9 @@ const Party: React.FC<PartyProps> = ({
 	function keysInitialisation(scene: Phaser.Scene) {
 		if (scene.input.keyboard) {
 			keys = {
-				up: scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.W),
+				up: scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.Z),
 				down: scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.S),
-				left: scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.A),
+				left: scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.Q),
 				right: scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.D)
 			}
 		}

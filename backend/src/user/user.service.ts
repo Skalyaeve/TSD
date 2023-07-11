@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'nestjs-prisma';
 import { Prisma, User } from '@prisma/client';
 
+export type Character = 'Boreas' | 'Helios' | 'Selene' | 'Liliana' | 'Orion' | 'Faeleen' | 'Rylan' | 'Garrick' | 'Thorian'
+
 @Injectable()
 export class UserService {
   constructor(private prisma: PrismaService) {}
@@ -92,6 +94,18 @@ export class UserService {
       },
     });
     return user;
+  }
+
+  async updateSelected(id: number, character: Character): Promise<User> {
+    const user: User = await this.prisma.user.update({
+      where: {
+        id
+      },
+      data: {
+        character: character
+      }
+    });
+    return user
   }
 
   generateFunnyNickname(): string {

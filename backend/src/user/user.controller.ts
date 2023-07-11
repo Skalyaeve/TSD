@@ -1,5 +1,5 @@
 import { BadRequestException, Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Req, StreamableFile, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
-import { UserService } from "./user.service.js";
+import { UserService, Character } from "./user.service.js";
 import { JwtGuard } from "../auth/guards/JwtGuard.js";
 import { FriendRequest, User } from "@prisma/client";
 import { FileInterceptor } from "@nestjs/platform-express";
@@ -70,6 +70,12 @@ export class UserController {
     @UseGuards(JwtGuard)
     async deleteOneUser(@Req() req: any) {
         return this.userService.deleteOneById(req.user.id);
+    }
+
+    @Get('select/:name')
+    @UseGuards(JwtGuard)
+    async selectCharacter(@Req() req: any, @Param('name') character: Character): Promise<User> {
+        return this.userService.updateSelected(req.user.id, character);
     }
 
     @Get(':id')

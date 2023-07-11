@@ -2,6 +2,7 @@ import React, { useRef, useState, useEffect, memo } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { fade, xMove, yMove } from './utils/ftMotion.tsx'
 import * as characters from '../resources/characters.json'
+import { ftFetch } from './Root.tsx'
 
 // --------VALUES---------------------------------------------------------- //
 const data = Object.entries(characters)
@@ -46,7 +47,16 @@ const CharBox: React.FC<CharBoxProps> = ({
 			}
 		}
 	}
-	const selectBtnHdl = { onMouseUp: () => { setSelectedCharacter(id) } }
+	const selectNewCharacter = async () => {
+		let data: any = await ftFetch('/users/select/' + characterNames(id))
+		console.log("New character selected:", data.character)
+	}
+	const selectBtnHdl = {
+		onMouseUp: () => {
+			setSelectedCharacter(id)
+			selectNewCharacter()
+		}
+	}
 
 	// ----ANIMATIONS------------------------- //
 	const boxMotion = yMove({

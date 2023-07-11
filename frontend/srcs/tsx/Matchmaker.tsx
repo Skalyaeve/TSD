@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Timer } from './utils/ftNumbers.tsx'
-import { bouncyYMove } from './utils/ftMotion.tsx'
+import { popUp, bouncyYMove } from './utils/ftMotion.tsx'
 import { Socket, io } from 'socket.io-client'
 import { inGame, setInGame } from './Root.tsx'
 
