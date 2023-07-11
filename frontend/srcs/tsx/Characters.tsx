@@ -46,9 +46,7 @@ const CharBox: React.FC<CharBoxProps> = ({
 			}
 		}
 	}
-	const selectBtnHdl = {
-		onMouseUp: () => { setSelectedCharacter(id) }
-	}
+	const selectBtnHdl = { onMouseUp: () => { setSelectedCharacter(id) } }
 
 	// ----ANIMATIONS------------------------- //
 	const boxMotion = yMove({
@@ -56,9 +54,7 @@ const CharBox: React.FC<CharBoxProps> = ({
 		inDuration: 0.7 + 0.02 * id,
 		outDuration: 0.5 - 0.01 * id
 	})
-	const selectBtnMotion = {
-		whileHover: { scale: 1.05 }
-	}
+	const selectBtnMotion = { whileHover: { scale: 1.05 } }
 
 	// ----CLASSNAMES------------------------- //
 	const boxName = `${NAME}-box`
@@ -214,20 +210,23 @@ const Character: React.FC<CharacterProps> = ({ selected }) => {
 	const spellzName = `${SPELLNAME}s`
 
 	// ----RENDER----------------------------- //
+	console.log(data[selected - 1][0])
 	return <div className={NAME}>
 		<motion.div className={storyName} {...xMoveMotion(3)}>
 			<AnimatePresence mode='wait'>
-				<motion.div key={`${storyName}-${selected}`} {...boxMotion}>					{data[selected - 1][1].story}
+				<motion.div key={`${storyName}-${selected}`} {...boxMotion}>
+					<h1>{data[selected - 1][0]}</h1>
+					<p>{data[selected - 1][1].story}</p>
 				</motion.div>
 			</AnimatePresence>
 		</motion.div>
 		<motion.div className={statsName} {...xMoveMotion(2)}>
 			<AnimatePresence mode='wait'>
 				<motion.div key={`${statsName}-${selected}`} {...boxMotion}>
-					HP: {data[selected - 1][1].hp}<br />
-					ATK: {data[selected - 1][1].attack}<br />
-					DEF: {data[selected - 1][1].defense}<br />
-					SPD: {data[selected - 1][1].speed}
+					<div>HP: {data[selected - 1][1].hp}</div>
+					<div>ATK: {data[selected - 1][1].attack}</div>
+					<div>DEF: {data[selected - 1][1].defense}</div>
+					<div>SPD: {data[selected - 1][1].speed}</div>
 				</motion.div>
 			</AnimatePresence>
 		</motion.div>

@@ -1,9 +1,9 @@
-import React, { useRef, useState, useLayoutEffect } from 'react'
+import React, { useRef, useState, useLayoutEffect, useEffect } from 'react'
 import { Routes, Route, useLocation, useNavigate } from 'react-router-dom'
 import { Socket, io } from 'socket.io-client'
 import Cookies from 'js-cookie'
 import { AnimatePresence, motion } from 'framer-motion'
-import { popUp, yMove } from './utils/ftMotion.tsx'
+import { popUp, xMove, yMove } from './utils/ftMotion.tsx'
 import NavBar from './NavBar.tsx'
 import Chat from './Chat.tsx'
 import Matchmaker from './Matchmaker.tsx'
@@ -20,23 +20,24 @@ import '../css/Root.css'
 const hostIp: string | undefined = process.env.HOST_IP
 export let socket: Socket | undefined = undefined
 
-// --------FETCH-USER-DATA------------------------------------------------- //
-export const ftFetch = async (uri: string) => {
+// --------FT-FETCH-------------------------------------------------------- //
+export const ftFetch = async (uri: string, method?: string) => {
 	const servID = `http://${hostIp}:3000`
 	try {
 		let response = await fetch(`${servID}${uri}`, {
-			method: 'GET',
+			method: method ? method : 'GET',
 			mode: 'cors',
 			credentials: 'include'
 		})
 		if (response.ok) {
 			const answ = await response.json()
 			return answ
-		} else
+		} else {
 			console.error(`[ERROR] fetch('${servID}${uri}') failed`)
-	} catch (error) {
-		console.error('[ERROR] ', error)
-	}
+			const answ = await response.json()
+			return answ
+		}
+	} catch (error) { console.error('[ERROR] ', error) }
 }
 
 // --------IS-CONNECTED---------------------------------------------------- //
@@ -56,11 +57,11 @@ const isConnected = async (setUserID: React.Dispatch<React.SetStateAction<number
 			setUserID(answ.id)
 			return true
 		}
-		else console.log(
+		else console.error(
 			`[ERROR] isConnected() -> fetch(): ${response.status}`
 		)
 	}
-	catch { console.log('[ERROR] isConnected() -> fetch(): failed') }
+	catch { console.error('[ERROR] isConnected() -> fetch(): failed') }
 	return false
 }
 
@@ -74,7 +75,7 @@ const LoginBtn: React.FC = () => {
 		const servID = 'http://' + hostIp + ':3000'
 		const path = '/auth/42/login'
 		try { window.location.href = `${servID}${path}` }
-		catch { console.log('[ERROR] Couldn\'t redirect to' + `${servID}${path}`) }
+		catch { console.error('[ERROR] Couldn\'t redirect to' + `${servID}${path}`) }
 	}
 	const login42btnHdl = { onMouseUp: () => !animating.current && connect() }
 
@@ -105,14 +106,74 @@ const LoginBtn: React.FC = () => {
 	</>
 }
 
+// --------FRIEND-REQUESTS------------------------------------------------- //
+interface FriendRequestProps {
+	users: React.MutableRefObject<any>
+	updateUsers: () => Promise<void>
+	userID: number
+}
+const FriendRequest: React.FC<FriendRequestProps> = ({
+	users, updateUsers, userID,
+}) => {
+	// ----STATES----------------------------- //
+	const [friendRequestRecv, setFriendRequestRecv] = useState<any>({})
+
+	// ----EFFECTS---------------------------- //
+	useEffect(() => {
+		if (userID) checkFriendRequest()
+	}, [userID, location.pathname])
+
+
+	// ----HANDLERS--------------------------- //
+	const checkFriendRequest = async () => {
+		const data = await ftFetch(`/users/me/friends/requests/received`)
+		setFriendRequestRecv(data)
+	}
+
+	// ----ANIMATIONS------------------------- //
+	const requestMotion = xMove({ from: -30, inDuration: 0.3, outDuration: 0.3 })
+	const btnMotion = { whileHover: { scale: 1.05 } }
+
+	// ----CLASSNAMES------------------------- //
+	const requestName = 'friend-request'
+
+	// ----RENDER----------------------------- //
+	const data: any = Object.entries(friendRequestRecv)
+	if (data.length) updateUsers()
+
+	const render = Array.from({ length: data.length }, (_, index) => {
+		const requesterID: any = Object.entries(data[index][1])[0][1]
+		let requesterName
+		for (let x in users.current) {
+			if (users.current[x].id === requesterID) {
+				requesterName = users.current[x].nickname
+				break
+			}
+		}
+		return <motion.div
+			key={`${requestName}-${index}`}
+			className={requestName}
+			{...requestMotion}>
+			<div>{requesterName}<br />wants to be friend with you</div>
+			<motion.button {...btnMotion}>accept</motion.button>
+			<motion.button {...btnMotion}>decline</motion.button>
+		</motion.div>
+	})
+	return <AnimatePresence>{render}</AnimatePresence>
+}
+
 // --------ROOT------------------------------------------------------------ //
 const Root: React.FC = () => {
+	// ----REFS------------------------------- //
+	const users = useRef<any>()
+
 	// ----ROUTER----------------------------- //
 	const location = useLocation()
 	const navigate = useNavigate()
 
 	// ----STATES----------------------------- //
 	const [userID, setUserID] = useState(0)
+	const [inGame, setInGame] = useState(false)
 	const [showHeader, setShowHeader] = useState(false)
 	const [selectedCharacter, setSelectedCharacter] = useState(1)
 
@@ -121,60 +182,88 @@ const Root: React.FC = () => {
 		checkConnection()
 	}, [location.pathname])
 
+	useEffect(() => {
+		updateUsers()
+	}, [])
+
 	// ----HANDLERS--------------------------- //
 	const checkConnection = async () => {
 		if (await isConnected(setUserID)) {
-			if (location.pathname == '/login') {
+			if (location.pathname === '/login') {
 				navigate('/')
 				const timer = setTimeout(() => setShowHeader(true), 500)
 				return () => clearTimeout(timer)
 			}
 			else setShowHeader(true)
 
-			if (socket == undefined) {
+			if (socket === undefined) {
 				try {
 					socket = io('http://' + hostIp + ':3000/chat', {
 						transports: ['websocket'],
 						withCredentials: true,
 						//   autoConnect: false,
 					})
-				} catch { console.log('[ERROR] Couldn\'t connect to chat gateway') }
+				} catch { console.error('[ERROR] Couldn\'t connect to chat gateway') }
 			}
 		} else {
-			if (location.pathname != '/login') {
+			if (location.pathname !== '/login') {
 				try { window.location.href = '/login' }
-				catch { console.log('[ERROR] Couldn\'t redirect to /login') }
+				catch { console.error('[ERROR] Couldn\'t redirect to /login') }
 				setShowHeader(false)
 			}
 			if (socket != undefined) socket.disconnect()
 		}
 	}
+	const updateUsers = async () => {
+		const data = await ftFetch(`/users/all`)
+		users.current = data
+	}
 
 	// ----CLASSNAMES------------------------- //
 	const headerName = 'header'
+	const requestsName = 'friend-requests'
 
 	// ----RENDER----------------------------- //
 	return <>
 		<AnimatePresence>
-			{showHeader && <header className={headerName}>
+			{showHeader && <header key={headerName} className={headerName}>
 				<NavBar />
 				<Chat location={location.pathname} />
 				<Matchmaker />
 			</header>}
 		</AnimatePresence>
+		{showHeader && !inGame && <div
+			key={requestsName}
+			className={requestsName}>
+			<FriendRequest
+				users={users}
+				updateUsers={updateUsers}
+				userID={userID}
+			/>
+		</div>}
 		<AnimatePresence mode='wait'>
 			<Routes location={location} key={location.pathname}>
 				<Route path='/login' element={<LoginBtn />} />
-				<Route path='/' element={<Home selectedCharacter={selectedCharacter} />} />
-				<Route path='/profile/*' element={<AccountInfos userID={userID} />} />
-				<Route path='/profile/friends' element={<Friends />} />
-				<Route path='/characters' element={
-					<Characters
-						selectedCharacter={selectedCharacter}
-						setSelectedCharacter={setSelectedCharacter}
-					/>
-				} />
-				<Route path='/leader' element={<Leader />} />
+				<Route path='/' element={<Home
+					selectedCharacter={selectedCharacter}
+				/>} />
+				<Route path='/profile/*' element={<AccountInfos
+					userID={userID}
+				/>} />
+				<Route path='/profile/friends' element={<Friends
+					userID={userID}
+					users={users}
+					updateUsers={updateUsers}
+				/>} />
+				<Route path='/characters' element={<Characters
+					selectedCharacter={selectedCharacter}
+					setSelectedCharacter={setSelectedCharacter}
+				/>} />
+				<Route path='/leader' element={<Leader
+					userID={userID}
+					users={users}
+					updateUsers={updateUsers}
+				/>} />
 				<Route path='/game' element={<Party />} />
 				<Route path='*' element={<ErrorPage code={404} />} />
 			</Routes>

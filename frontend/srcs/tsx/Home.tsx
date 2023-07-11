@@ -22,7 +22,7 @@ const Home: React.FC<HomeProps> = ({ selectedCharacter }) => {
 	const charSkinName = `${NAME}-character character-skin character-skin-${characterNames(selectedCharacter)}`
 	const swapBoxName = `${NAME}-swap-box`
 	const swapBtnName = `${NAME}-swap-btn`
-	const swapBtnTxtName = `${NAME}-swap-btn-txt`
+	const swapBtnTxtName = `${NAME}-swap-btn-txt custom-txt`
 
 	// ----RENDER----------------------------- //
 	return <div className={NAME}>
@@ -31,7 +31,6 @@ const Home: React.FC<HomeProps> = ({ selectedCharacter }) => {
 			<div className={swapBoxName}>
 				<motion.div className={swapBtnName} {...swapBtnMotion}>
 					<Link className={swapBtnTxtName} to='/characters'>
-						characters
 					</Link>
 				</motion.div>
 			</div>

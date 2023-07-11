@@ -19,56 +19,56 @@ import axios from 'axios'
 //     })
 // }, []);
 
-function Chat({}) {
+function Chat({ }) {
 
-    const [allMessages, setAllMessages] = useState<{user: string; message: string; type: string}[]>([]);
+    const [allMessages, setAllMessages] = useState<{ user: string; message: string; type: string }[]>([]);
     const [user, setUser] = useState(() => `User${Math.floor(Math.random() * 10)}`); // this will change 
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const [userInfo, setUserInfo] = useState(null);
-    const [allUsers, setAllUsers] = useState<{id: number; email: string; nickname: string; avatarFilename: string}[]>([]);
+    const [allUsers, setAllUsers] = useState<{ id: number; email: string; nickname: string; avatarFilename: string }[]>([]);
     const [error, setError] = useState<any>(null);
-    const [selectedContact, setSelectedContact] = useState<{id: number; email: string; nickname: string; avatarFilename: string} | null>(null);
-    
-	const hostIp = process.env.HOST_IP
+    const [selectedContact, setSelectedContact] = useState<{ id: number; email: string; nickname: string; avatarFilename: string } | null>(null);
+
+    const hostIp = process.env.HOST_IP
     const send = useCallback((value: string, user: string) => {
-            console.log("value: ", value);
-            console.log("user: ", user);
-            const message = {user, message: value, type: "sent"};
-            setAllMessages((allMessages)=>[...allMessages, message]);
-            socket.emit('message', message);
+        console.log("value: ", value);
+        console.log("user: ", user);
+        const message = { user, message: value, type: "sent" };
+        setAllMessages((allMessages) => [...allMessages, message]);
+        socket.emit('message', message);
     }, [socket]);
 
-    const messageListener = useCallback((message: { user: string; message: string}) => {
+    const messageListener = useCallback((message: { user: string; message: string }) => {
         console.log("i received");
-        const newMessage = {...message, type: "received"};
-        setAllMessages((allMessages)=>[...allMessages, newMessage]);
+        const newMessage = { ...message, type: "received" };
+        setAllMessages((allMessages) => [...allMessages, newMessage]);
     }, []);
 
-    const connectionResult = (message: { msg: string}) => {
-        const newMessage = {...message};
+    const connectionResult = (message: { msg: string }) => {
+        const newMessage = { ...message };
         console.log(newMessage);
     }
 
     useEffect(() => {
         socket.on('userInfo', (userData) => {
-          setUserInfo(userData);
-          const { nickname } = userData;
-          console.log(' nickname ', nickname);
+            setUserInfo(userData);
+            const { nickname } = userData;
+            console.log(' nickname ', nickname);
         });
 
-        socket.emit('getUserInfo', () => {});
-    
+        socket.emit('getUserInfo', () => { });
+
         return () => {
-          socket.off('userInfo');
+            socket.off('userInfo');
         };
     }, []);
 
     const axiosInstance = axios.create({
         withCredentials: true,
-      });
+    });
 
     useEffect(() => {
-        const fetchAllUsers =async () => {
+        const fetchAllUsers = async () => {
             try {
                 const response = await axiosInstance.get('http://' + hostIp + ':3000/users/all');
                 const users = response.data;
@@ -82,47 +82,47 @@ function Chat({}) {
         fetchAllUsers();
     }, []);
     useEffect(() => {
-        if (socket){
+        if (socket) {
             console.log('messagelistener');
             socket.on("message", messageListener)
             return () => {
                 socket.off("message", messageListener)
             }
         }
-    },[socket])
+    }, [socket])
 
     useEffect(() => {
         const chatMessages = document.getElementById("chat-messages");
         if (chatMessages) {
-          chatMessages.scrollTop = chatMessages.scrollHeight;
+            chatMessages.scrollTop = chatMessages.scrollHeight;
         }
-      }, [allMessages]);
+    }, [allMessages]);
 
     return (
-        <div className={`chat-main-grid ${isOpen?"open":"close"}`}>
+        <div className={`chat-main-grid ${isOpen ? "open" : "close"}`}>
             <div className="manage-rooms">
-                <DmHandler allUsers={allUsers} setSelectedContact={setSelectedContact}/>
-                <ChatChannels/>
+                <DmHandler allUsers={allUsers} setSelectedContact={setSelectedContact} />
+                <ChatChannels />
             </div>
             <div className="chatbox">
-                <ChatHeader contactName={selectedContact?.nickname || 'No conversation selected'} setIsOpen={setIsOpen}/>
+                <ChatHeader contactName={selectedContact?.nickname || 'No conversation selected'} setIsOpen={setIsOpen} />
                 <div className='chat-messages' id="chat-messages">
                     {allMessages.map((message, index) => (
-                    <Messages key={index} messages={[message]} currentUser={user} />
+                        <Messages key={index} messages={[message]} currentUser={user} />
                     ))}
                 </div>
                 <div className='chat-input-text'>
                     <MessageInput send={send} user={user} setUser={setUser} />
                 </div>
             </div>
-            <div className={`contact-info ${isOpen?"open":"close"}`}>
-                <HeaderContactInfo/>
+            <div className={`contact-info ${isOpen ? "open" : "close"}`}>
+                <HeaderContactInfo />
                 <div className='body-contact'>
                     body of contact info
                 </div>
             </div>
         </div>
-      );
+    );
 }
 
 export default Chat;

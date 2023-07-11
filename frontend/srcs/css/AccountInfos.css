@@ -30,10 +30,115 @@
 	grid-template-rows: 50px auto;
 	grid-column-gap: 15px;
 	grid-row-gap: 5px;
+	position: relative;
 
 	/* #4 Margin - Padding */
 	padding: 15px;
 }
+
+.profile-name-form {
+	/* #1 Éléments */
+	background-image: url('../resources/assets/ui/backgrounds/div-black1.png');
+	border: 2px solid rgb(255, 255, 255);
+	border-top-left-radius: 10px;
+	border-bottom-right-radius: 10px;
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	grid-template-rows: auto 60px;
+	align-items: center;
+
+	/* #2 Forme */
+	width: 375px;
+	height: 135px;
+
+	/* #3 Position */
+	position: absolute;
+	top: 5px;
+	right: 5px;
+
+	/* #4 Margin - Padding */
+	padding: 10px 15px;
+}
+
+.profile-name-form input {
+	/* #1 Éléments */
+	border: 2px solid rgb(255, 255, 255);
+	border-radius: 10px;
+	text-align: center;
+
+	/* #2 Forme */
+	height: 40px;
+
+	/* #3 Position */
+	grid-column: 1 / -1;
+}
+
+.profile-pp-form {
+	/* #1 Éléments */
+	background-image: url('../resources/assets/ui/backgrounds/div-black1.png');
+	border: 2px solid rgb(255, 255, 255);
+	border-top-left-radius: 10px;
+	border-bottom-right-radius: 10px;
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	grid-template-rows: auto 60px;
+	align-items: center;
+
+	/* #2 Forme */
+	width: 375px;
+	height: 135px;
+
+	/* #3 Position */
+	position: absolute;
+	bottom: 5px;
+	left: 5px;
+
+	/* #4 Margin - Padding */
+	padding: 10px 15px;
+}
+
+.profile-pp-form input {
+	/* #3 Position */
+	grid-column: 1 / -1;
+
+	/* #4 Margin - Padding */
+	padding: 0;
+}
+
+.profile-accountInfos form button {
+	/* #1 Éléments */
+	background-image: url('../resources/assets/ui/backgrounds/button-black1-120x40.png');
+	border: 2px solid rgb(255, 255, 255);
+
+	/* #2 Forme */
+	width: 120px;
+	height: 40px;
+}
+
+.profile-cancel-btn {
+	/* #1 Éléments */
+	border-top-right-radius: 10px;
+	border-bottom-right-radius: 10px;
+
+	/* #3 Position */
+	justify-self: flex-start;
+
+	/* #4 Margin - Padding */
+	margin-left: 5px;
+}
+
+.profile-submit-btn {
+	/* #1 Éléments */
+	border-top-left-radius: 10px;
+	border-bottom-left-radius: 10px;
+
+	/* #3 Position */
+	justify-self: flex-end;
+
+	/* #4 Margin - Padding */
+	margin-right: 5px;
+}
+
 
 .profile-picture {
 	/* #1 Éléments */
@@ -46,9 +151,9 @@
 	grid-row: 1 / -1;
 }
 
-.profile-picture div {
+.profile-picture button {
 	/* #1 Éléments */
-	background-image: url('../resources/assets/ui/backgrounds/button-black1-50x40.png');
+	background-image: url('../resources/assets/ui/buttons/settings.png');
 	border: 2px solid rgb(255, 255, 255);
 	border-top-left-radius: 5px;
 	border-bottom-right-radius: 5px;
@@ -66,11 +171,10 @@
 
 .profile-nickname {
 	/* #1 Éléments */
-	text-wrap: nowrap;
-	text-align: start;
-	text-overflow: ellipsis;
-	overflow: hidden;
+	text-wrap: balance;
 	font-size: 23px;
+	display: flex;
+	align-items: center;
 	position: relative;
 
 	/* #2 Forme */
@@ -90,9 +194,9 @@
 	width: auto;
 }
 
-.profile-nickname div {
+.profile-nickname button {
 	/* #1 Éléments */
-	background-image: url('../resources/assets/ui/backgrounds/button-black1-50x40.png');
+	background-image: url('../resources/assets/ui/buttons/settings.png');
 	border: 2px solid rgb(255, 255, 255);
 	border-top-left-radius: 5px;
 	border-bottom-right-radius: 5px;
@@ -215,8 +319,8 @@
 	background-image: url('../resources/assets/ui/icons/lock.png');
 
 	/* #2 Forme */
-	width: 20px;
-	height: 24px;
+	width: 21px;
+	height: 25px;
 
 	/* #3 Position */
 	position: absolute;
@@ -238,6 +342,7 @@
 /* ---PROFILE-HISTORY------------ */
 .profile-history-box {
 	/* #1 Éléments */
+	background-image: url('../resources/assets/ui/backgrounds/div-black2.png');
 	border: 6px double rgb(255, 255, 255);
 	border-top-right-radius: 10px;
 	border-bottom-right-radius: 10px;
@@ -310,7 +415,6 @@
 
 .profile-history {
 	/* #1 Éléments */
-	background-image: url('../resources/assets/ui/backgrounds/div-black2.png');
 	border-bottom-right-radius: 10px;
 	overflow-y: auto;
 }
@@ -321,7 +425,7 @@
 	text-align: center;
 
 	/* #4 Margin - Padding */
-	margin-top: 10px;
+	margin-top: 40px;
 }
 
 .profile-history-match {

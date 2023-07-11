@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { motion } from 'framer-motion'
+import { AnimatePresence, motion } from 'framer-motion'
 import { Timer } from './utils/ftNumbers.tsx'
-import { fade, heightChangeByPx, bouncyYMove } from './utils/ftMotion.tsx'
+import { fade, heightChangeByPx, bouncyYMove, popUp } from './utils/ftMotion.tsx'
 import { Socket, io } from 'socket.io-client'
 
 
@@ -131,17 +131,24 @@ const Matchmaker: React.FC = () => {
 		}),
 		whileHover: { scale: 1.05 }
 	}
+	const txtMotion = popUp({})
 
 	// ----CLASSNAMES------------------------- //
 	const boxName = 'matchmaker'
-	const txtName = `${boxName}-txt custom-txt`
+	const txtName = `custom-txt ${boxName}-txt-${(
+		inGame ? 'exit' : (matchmaking ? 'stop' : 'play')
+	)}`
 
 	// ----RENDER----------------------------- //
 	return <motion.button
 		className={boxName}
 		{...matchmakerBtnHdl}
 		{...boxMotion}>
-		<div className={txtName}>{matchmaking && <Timer />}</div>
+		<AnimatePresence>
+			<motion.div key={txtName} className={txtName} {...txtMotion}>
+				{matchmaking && <Timer />}
+			</motion.div>
+		</AnimatePresence>
 	</motion.button>
 }
 export default Matchmaker

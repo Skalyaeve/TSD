@@ -58,6 +58,28 @@
 	margin-left: 5px;
 }
 
+.profile-friends-add-input-submit-txt {
+	/* #1 Éléments */
+	background-color: rgb(182, 50, 95);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border: 2px solid rgb(255, 255, 255);
+	border-radius: 5px;
+
+	/* #2 Forme */
+	height: 40px;
+
+	/* #4 Margin - Padding */
+	margin-right: 5px;
+	padding: 0 10px;
+}
+
+.profile-friends-add-input-submit-txt--green {
+	/* #1 Éléments */
+	background-color: rgb(110, 210, 90);
+}
+
 /* ---FRIENDS-LIST--------------- */
 .profile-friends-list {
 	/* #1 Éléments */
@@ -68,12 +90,25 @@
 	height: 100%;
 }
 
+.profile-friends-noFriends-txt {
+	/* #1 Éléments */
+	font-size: 30px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	/* #2 Forme */
+	width: 100%;
+
+	/* #3 Position */
+	translate: 0 300px;
+}
+
 .profile-friends-list-head {
 	/* #1 Éléments */
 	background-image: url('../resources/assets/ui/backgrounds/div-black1.png');
 	border-bottom: 3px solid rgb(255, 255, 255);
 	display: flex;
-	cursor: pointer;
 
 	/* #2 Forme */
 	height: 55px;
@@ -118,11 +153,6 @@
 	font-size: 34px;
 }
 
-.profile-friends-list-head .profile-friends-list-col:first-child {
-	/* #1 Éléments */
-	cursor: auto;
-}
-
 /* ---FRIEND-SEARCH-------------- */
 .profile-friends-search {
 	/* #1 Éléments */
@@ -130,7 +160,6 @@
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	cursor: pointer;
 
 	/* #2 Forme */
 	width: 100%;
@@ -142,6 +171,7 @@
 	background-image: url('../resources/assets/ui/buttons/search.png');
 	border: 2px solid rgb(255, 255, 255);
 	border-top-right-radius: 5px;
+	border-bottom-left-radius: 5px;
 
 	/* #2 Forme */
 	width: 50px;
@@ -161,7 +191,7 @@
 	/* #1 Éléments */
 	border: 2px solid rgb(255, 255, 255);
 	border-top-left-radius: 5px;
-	border-bottom-left-radius: 5px;
+	border-bottom-right-radius: 5px;
 
 	/* #2 Forme */
 	width: calc(100% - 70px);
@@ -201,34 +231,25 @@
 }
 
 .profile-friend-link {
-	/* #4 Margin - Padding */
-	padding-left: 15px;
-
-	/* #2 Forme */
-	width: calc(100% - 85px);
-}
-
-.profile-friend-link-firstLine {
 	/* #1 Éléments */
 	font-size: 24px;
 	text-overflow: ellipsis;
 	overflow: hidden;
+
+	/* #2 Forme */
+	width: calc(100% - 85px);
+
+	/* #4 Margin - Padding */
+	padding-left: 15px;
 }
 
-.profile-friend-link-firstLine:hover {
+.profile-friend-link:hover {
 	/* #1 Éléments */
 	overflow: visible;
 
 	/* #3 Position */
 	position: relative;
 	z-index: 1;
-}
-
-.profile-friend-link-secondLine {
-	/* #1 Éléments */
-	font-size: 20px;
-	text-overflow: ellipsis;
-	overflow: hidden;
 }
 
 .profile-friend-del-btn {

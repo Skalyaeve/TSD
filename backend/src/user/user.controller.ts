@@ -119,5 +119,4 @@ export class UserController {
     async deleteFriend(@Req() req: any, @Param('id', ParseIntPipe) friendID: number): Promise<FriendRequest> {
         return this.friendRequestService.deleteOne(req.user.id, friendID);
     }
-
 }
