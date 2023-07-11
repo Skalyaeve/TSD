@@ -1,14 +1,22 @@
 /* -------------------------LIBRARIES IMPORTS------------------------- */
 
 import React, { useEffect, useRef } from 'react'
-import Phaser from 'phaser'
-import { gameSocket } from './Matchmaker.tsx'
-import { Socket } from 'socket.io-client'
+import Phaser, { Game } from 'phaser'
+import { setGameSocket, gameSocket } from './Matchmaker.tsx'
+import { setInGame } from './Root.tsx'
 
 /* -------------------------ASSETS IMPORTS------------------------- */
 
-// Test sheet
-import player_test_Sheet from '../resources/assets/game/blank.png'
+// Text sheets
+import goal_text_Sheet from '../resources/assets/game/Goal.png'
+import blocked_text_Sheet from '../resources/assets/game/Blocked.png'
+import one_text_Sheet from '../resources/assets/game/1.png'
+import two_text_Sheet from '../resources/assets/game/2.png'
+import three_text_Sheet from '../resources/assets/game/3.png'
+import fight_text_Sheet from '../resources/assets/game/Fight.png'
+
+// Debug sheet
+import player_debug_Sheet from '../resources/assets/game/blank.png'
 
 // Spritesheets
 import ball__Sheet from '../resources/assets/game/basicBall.png'
@@ -66,107 +74,90 @@ import Thorian_front_Sheet from '../resources/assets/game/character/Thorian/fron
 import Thorian_back_Sheet from '../resources/assets/game/character/Thorian/back.png'
 import Thorian_left_Sheet from '../resources/assets/game/character/Thorian/left.png'
 import Thorian_right_Sheet from '../resources/assets/game/character/Thorian/right.png'
+import { useNavigate } from 'react-router-dom'
 
 
 /* -------------------------TYPES------------------------- */
 
+type Size = { width: number, height: number }
+type Coordinates = { x: number, y: number }
+type Side = 'left' | 'right'
+type Direction = 'up' | 'down' | 'left' | 'right' | 'none'
+type GameState = 'init' | 'ready' | 'created' | 'started' | 'stopped'
+type GameEvent = 'goal' | 'blocked' | '3' | '2' | '1' | 'fight' | 'stop'
+
 // Keys
-interface keys {								// Keyboard keys
-	up: Phaser.Input.Keyboard.Key				// UP key
-	down: Phaser.Input.Keyboard.Key				// DOWN key
-	left: Phaser.Input.Keyboard.Key				// LEFT key
-	right: Phaser.Input.Keyboard.Key			// RIGHT key
+interface keys {													// Keyboard keys
+	up: Phaser.Input.Keyboard.Key									// UP key
+	down: Phaser.Input.Keyboard.Key									// DOWN key
+	left: Phaser.Input.Keyboard.Key									// LEFT key
+	right: Phaser.Input.Keyboard.Key								// RIGHT key
 }
 
 // Skins
 interface skin {
-	name: string
-	frontSheet: string
-	frontSize: {
-		width: number
-		heigth: number
-	}
-	backSheet: string
-	backSize: {
-		width: number
-		heigth: number
-	}
-	leftSheet: string
-	leftSize: {
-		width: number
-		heigth: number
-	}
-	rightSheet: string
-	rightSize: {
-		width: number
-		heigth: number
-	}
-	scaleFactor: number
+	name: string													// Skin name
+	frontSheet: string												// Skin front sheet
+	frontSize: Size
+	backSheet: string												// Skin back sheet
+	backSize: Size
+	leftSheet: string												// Skin left sheet
+	leftSize: Size
+	rightSheet: string												// Skin right sheet
+	rightSize: Size
+	scaleFactor: number												// Skin sheet scale factor
 }
 
 // Players
 interface player {
-	direction: "up" | "down" | "left" | "right"
-	skin: string								// Player skin name
-	sprite?: Phaser.Physics.Arcade.Sprite 		// Player sprite
+	direction: Direction											// Player direction
+	skin: string													// Player skin name
+	sprite?: Phaser.Physics.Arcade.Sprite 							// Player sprite
 }
 
+// Direction of a player
 interface playerDirections {
-	left: "up" | "down" | "left" | "right" | "none" | undefined
-	right: "up" | "down" | "left" | "right" | "none" | undefined
+	left: Direction | undefined										// Left player direction
+	right: Direction | undefined									// Right player direction
 }
 
-// Player constructor
-interface playerConstruct {
-	id: string									// Player ID
-	side: "left" | "right"						// Player side
-	skin: "player" | "mage" | "blank" | "black"	// Skin name
-}
-
-// Ball
-interface ball {
-	sprite?: Phaser.Physics.Arcade.Sprite		// Ball sprite
+// Simple interface for a game object
+interface simpleGameObject {
+	sprite?: Phaser.Physics.Arcade.Sprite							// Game object sprite
 }
 
 // Player key states
 interface keyStates {
-	up: boolean									// Player UP key state
-	down: boolean								// Player DOWN key state
-	left: boolean								// Player LEFT key state
-	right: boolean								// Player RIGHT key state
+	up: boolean														// Player UP key state
+	down: boolean													// Player DOWN key state
+	left: boolean													// Player LEFT key state
+	right: boolean													// Player RIGHT key state
 }
 
-interface newDirection {
-	left: "up" | "down" | "left" | "right" | "none" | undefined
-	right: "up" | "down" | "left" | "right" | "none" | undefined
-}
-
-// New properties (sent by the client to the back)
-interface newPropsFromClient {
-	keys: keyStates,
-	dir: "up" | "down" | "left" | "right" | "none" | undefined
-}
-
-// New properties (sent by the back to the client)
-interface newPropsToClient {
-	leftProps: objectProps						// Left player properties
-	rightProps: objectProps						// Right player properties
-	ballProps: objectProps						// Ball properties
-}
-
-interface gameState {
-	actualState: string
-}
-
-// Properties of a game object (sent to the client)
-interface objectProps {
-	xPos: number
-	yPos: number
-}
-
+// Characters creation queue
 interface creationQueue {
-	left: playerConstruct | undefined
-	right: playerConstruct | undefined
+	left: playerConstruct | undefined								// Left player construct
+	right: playerConstruct | undefined								// Right player construct
+}
+
+// New properties (sent to the back)
+interface newPropsFromClient {
+	keys: keyStates,												// New key states to send
+	dir: Direction | undefined										// New direction to send
+}
+
+// Player constructor (sent by the back)
+interface playerConstruct {
+	id: string														// Player ID
+	side: Side														// Player side
+	skin: string													// Skin name
+}
+
+// New properties (sent by the back)
+interface newPropsToClient {
+	leftProps: Coordinates											// Left player properties
+	rightProps: Coordinates											// Right player properties
+	ballProps: Coordinates											// Ball properties
 }
 
 /* -------------------------GAME INITIALISATION------------------------- */
@@ -177,6 +168,7 @@ function Party() {
 
 	// React variables
 	const gameRef = useRef<HTMLDivElement>(null)
+	const navigate = useNavigate()
 	let game: Phaser.Game
 
 	// Canvas constants
@@ -184,6 +176,8 @@ function Party() {
 	const screenHeight: number = 1080
 	const skinFrameNumber: number = 3
 	const animFramRate: number = 4
+	const playerScaleFactor: number = 5
+	const ballRay: number = 26
 
 	// Keyboard keys
 	let keys: keys
@@ -204,25 +198,27 @@ function Party() {
 	let leftPlayer: player | undefined = undefined
 	let rightPlayer: player | undefined = undefined
 
-	//ball
-	let ball: ball | undefined = undefined
+	// Ball
+	let ball: simpleGameObject | undefined = undefined
 
-	// Skins list
+	// Text
+	let text: simpleGameObject | undefined = undefined
+	let textAction: 'display' | 'remove' | undefined = undefined
+	let textEvent: GameEvent | undefined = undefined
+
+	// Skins
 	let skins: { [key: string]: skin } = {}
 
 	// Player event queues
+	let moveQueue: newPropsToClient | undefined = undefined
 	let creationQueue: creationQueue = {
 		left: undefined,
 		right: undefined
 	}
-	let moveQueue: newPropsToClient | undefined = undefined
-
 	let animationQueue: playerDirections = {
 		left: undefined,
 		right: undefined
 	}
-
-	let deletionQueue: string[] = []
 
 	/****** SCENE PRELOADING ******/
 
@@ -242,25 +238,25 @@ function Party() {
 	function skinsInitialisation(scene: Phaser.Scene) {
 		skins['Test'] = {
 			name: 'Test',
-			frontSheet: player_test_Sheet,
+			frontSheet: player_debug_Sheet,
 			frontSize: {
 				width: 25,
-				heigth: 25
+				height: 25
 			},
-			backSheet: player_test_Sheet,
+			backSheet: player_debug_Sheet,
 			backSize: {
 				width: 25,
-				heigth: 25
+				height: 25
 			},
-			leftSheet: player_test_Sheet,
+			leftSheet: player_debug_Sheet,
 			leftSize: {
 				width: 25,
-				heigth: 25
+				height: 25
 			},
-			rightSheet: player_test_Sheet,
+			rightSheet: player_debug_Sheet,
 			rightSize: {
 				width: 25,
-				heigth: 25
+				height: 25
 			},
 			scaleFactor: 5
 		}
@@ -269,233 +265,243 @@ function Party() {
 			frontSheet: Boreas_front_Sheet,
 			frontSize: {
 				width: 16,
-				heigth: 20
+				height: 20
 			},
 			backSheet: Boreas_back_Sheet,
 			backSize: {
 				width: 16,
-				heigth: 19
+				height: 19
 			},
 			leftSheet: Boreas_left_Sheet,
 			leftSize: {
 				width: 15, // A CORRIGER
-				heigth: 19
+				height: 19
 			},
 			rightSheet: Boreas_right_Sheet,
 			rightSize: {
 				width: 15, // A CORRIGER
-				heigth: 19
+				height: 19
 			},
-			scaleFactor: 7
+			scaleFactor: playerScaleFactor
 		}
 		skins['Fealeen'] = {
 			name: 'Fealeen',
 			frontSheet: Fealeen_front_Sheet,
 			frontSize: {
 				width: 16,
-				heigth: 18
+				height: 18
 			},
 			backSheet: Fealeen_back_Sheet,
 			backSize: {
 				width: 16,
-				heigth: 18
+				height: 18
 			},
 			leftSheet: Fealeen_left_Sheet,
 			leftSize: {
 				width: 15, // A CORRIGER
-				heigth: 18
+				height: 18
 			},
 			rightSheet: Fealeen_right_Sheet,
 			rightSize: {
 				width: 15, // A CORRIGER
-				heigth: 18
+				height: 18
 			},
-			scaleFactor: 7
+			scaleFactor: playerScaleFactor
 		}
 		skins['Garrick'] = {
 			name: 'Garrick',
 			frontSheet: Garrick_front_Sheet,
 			frontSize: {
 				width: 16,
-				heigth: 19
+				height: 19
 			},
 			backSheet: Garrick_back_Sheet,
 			backSize: {
 				width: 16,
-				heigth: 19
+				height: 19
 			},
 			leftSheet: Garrick_left_Sheet,
 			leftSize: {
 				width: 15, // A CORRIGER
-				heigth: 19
+				height: 19
 			},
 			rightSheet: Garrick_right_Sheet,
 			rightSize: {
 				width: 15, // A CORRIGER
-				heigth: 19
+				height: 19
 			},
-			scaleFactor: 7
+			scaleFactor: playerScaleFactor
 		}
 		skins['Helios'] = {
 			name: 'Helios',
 			frontSheet: Helios_front_Sheet,
 			frontSize: {
 				width: 16,
-				heigth: 20
+				height: 20
 			},
 			backSheet: Helios_back_Sheet,
 			backSize: {
 				width: 16,
-				heigth: 19
+				height: 19
 			},
 			leftSheet: Helios_left_Sheet,
 			leftSize: {
 				width: 15, // A CORRIGER
-				heigth: 19
+				height: 19
 			},
 			rightSheet: Helios_right_Sheet,
 			rightSize: {
 				width: 15, // A CORRIGER
-				heigth: 19
+				height: 19
 			},
-			scaleFactor: 7
+			scaleFactor: playerScaleFactor
 		}
 		skins['Liliana'] = {
 			name: 'Liliana',
 			frontSheet: Liliana_front_Sheet,
 			frontSize: {
 				width: 16,
-				heigth: 18
+				height: 18
 			},
 			backSheet: Liliana_back_Sheet,
 			backSize: {
 				width: 16,
-				heigth: 18
+				height: 18
 			},
 			leftSheet: Liliana_left_Sheet,
 			leftSize: {
 				width: 15, // A CORRIGER
-				heigth: 18
+				height: 18
 			},
 			rightSheet: Liliana_right_Sheet,
 			rightSize: {
 				width: 15, // A CORRIGER
-				heigth: 18
+				height: 18
 			},
-			scaleFactor: 7
+			scaleFactor: playerScaleFactor
 		}
 		skins['Orion'] = {
 			name: 'Orion',
 			frontSheet: Orion_front_Sheet,
 			frontSize: {
 				width: 15, // A CORRIGER
-				heigth: 18
+				height: 18
 			},
 			backSheet: Orion_back_Sheet,
 			backSize: {
 				width: 15, // A CORRIGER
-				heigth: 18
+				height: 18
 			},
 			leftSheet: Orion_left_Sheet,
 			leftSize: {
 				width: 15,
-				heigth: 18
+				height: 18
 			},
 			rightSheet: Orion_right_Sheet,
 			rightSize: {
 				width: 15,
-				heigth: 18
+				height: 18
 			},
-			scaleFactor: 7
+			scaleFactor: playerScaleFactor
 		}
 		skins['Rylan'] = {
 			name: 'Rylan',
 			frontSheet: Rylan_front_Sheet,
 			frontSize: {
 				width: 15, // A CORRIGER
-				heigth: 18
+				height: 18
 			},
 			backSheet: Rylan_back_Sheet,
 			backSize: {
 				width: 15, // A CORRIGER
-				heigth: 18
+				height: 18
 			},
 			leftSheet: Rylan_left_Sheet,
 			leftSize: {
 				width: 15,
-				heigth: 18
+				height: 18
 			},
 			rightSheet: Rylan_right_Sheet,
 			rightSize: {
 				width: 15,
-				heigth: 18
+				height: 18
 			},
-			scaleFactor: 7
+			scaleFactor: playerScaleFactor
 		}
 		skins['Selene'] = {
 			name: 'Selene',
 			frontSheet: Selene_front_Sheet,
 			frontSize: {
 				width: 15, // A CORRIGER
-				heigth: 18
+				height: 18
 			},
 			backSheet: Selene_back_Sheet,
 			backSize: {
 				width: 15, // A CORRIGER
-				heigth: 18
+				height: 18
 			},
 			leftSheet: Selene_left_Sheet,
 			leftSize: {
 				width: 15, // A CORRIGER
-				heigth: 18
+				height: 18
 			},
 			rightSheet: Selene_right_Sheet,
 			rightSize: {
 				width: 15, // A CORRIGER
-				heigth: 18
+				height: 18
 			},
-			scaleFactor: 7
+			scaleFactor: playerScaleFactor
 		}
 		skins['Thorian'] = {
 			name: 'Thorian',
 			frontSheet: Thorian_front_Sheet,
 			frontSize: {
 				width: 15, // A CORRIGER
-				heigth: 18
+				height: 18
 			},
 			backSheet: Thorian_back_Sheet,
 			backSize: {
 				width: 16,
-				heigth: 18
+				height: 18
 			},
 			leftSheet: Thorian_left_Sheet,
 			leftSize: {
 				width: 15, // A CORRIGER
-				heigth: 18
+				height: 18
 			},
 			rightSheet: Thorian_right_Sheet,
 			rightSize: {
 				width: 15, // A CORRIGER
-				heigth: 18
+				height: 18
 			},
-			scaleFactor: 7
+			scaleFactor: playerScaleFactor
 		}
 		for (let skinName in skins) {
 			let skin = skins[skinName]
-			scene.load.spritesheet(skinName + '_front', skin.frontSheet, { frameWidth: skin.frontSize.width, frameHeight: skin.frontSize.heigth })
-			scene.load.spritesheet(skinName + '_back', skin.backSheet, { frameWidth: skin.backSize.width, frameHeight: skin.backSize.heigth })
-			scene.load.spritesheet(skinName + '_left', skin.leftSheet, { frameWidth: skin.leftSize.width, frameHeight: skin.leftSize.heigth })
-			scene.load.spritesheet(skinName + '_right', skin.rightSheet, { frameWidth: skin.rightSize.width, frameHeight: skin.rightSize.heigth })
+			scene.load.spritesheet(skinName + '_front', skin.frontSheet, { frameWidth: skin.frontSize.width, frameHeight: skin.frontSize.height })
+			scene.load.spritesheet(skinName + '_back', skin.backSheet, { frameWidth: skin.backSize.width, frameHeight: skin.backSize.height })
+			scene.load.spritesheet(skinName + '_left', skin.leftSheet, { frameWidth: skin.leftSize.width, frameHeight: skin.leftSize.height })
+			scene.load.spritesheet(skinName + '_right', skin.rightSheet, { frameWidth: skin.rightSize.width, frameHeight: skin.rightSize.height })
 		}
 	}
 
+	// Load the ball spritesheet
 	function ballInitialisation(scene: Phaser.Scene) {
 		scene.load.spritesheet('ball', ball__Sheet, { frameWidth: 52, frameHeight: 52 })
 	}
 
+	function textInitialisation(scene: Phaser.Scene) {
+		scene.load.spritesheet('goal', goal_text_Sheet, { frameWidth: 153, frameHeight: 54 })
+		scene.load.spritesheet('blocked', blocked_text_Sheet, { frameWidth: 279, frameHeight: 62 })
+		scene.load.spritesheet('1', one_text_Sheet, { frameWidth: 45, frameHeight: 60 })
+		scene.load.spritesheet('2', two_text_Sheet, { frameWidth: 57, frameHeight: 49 })
+		scene.load.spritesheet('3', three_text_Sheet, { frameWidth: 56, frameHeight: 50 })
+		scene.load.spritesheet('fight', fight_text_Sheet, { frameWidth: 182, frameHeight: 68 })
+	}
+
 	/****** SCENE CREATION ******/
 
-	// Create players for this scene
+	// Create a player in the scene from a player construct
 	function createPlayer(construct: playerConstruct, scene: Phaser.Scene) {
 		let newPlayer: player = {
 			direction: (construct.side == 'left' ? 'right' : 'left'),
@@ -517,14 +523,27 @@ function Party() {
 			sendState('created')
 	}
 
+	// Create the ball in the scene
 	function createBall(scene: Phaser.Scene) {
-		ball = { sprite: scene.physics.add.sprite(960, 540, 'ball') }
-		ball.sprite?.body?.setCircle(26)
+		ball = { sprite: scene.physics.add.sprite(screenWidth / 2, screenHeight / 2, 'ball') }
+		ball.sprite?.body?.setCircle(ballRay)
 		ball.sprite?.setBounce(1, 1)
 		ball.sprite?.setCollideWorldBounds(true, undefined, undefined, undefined)
 	}
 
-	// Create animation for this scene
+	// Create the ball in the scene
+	function createText(scene: Phaser.Scene, event: GameEvent) {
+		if (text != undefined)
+			destroyText()
+		text = { sprite: scene.physics.add.sprite(screenWidth / 2, screenHeight / 2, event) }
+	}
+
+	function destroyText() {
+		text?.sprite?.destroy()
+		text = undefined
+	}
+
+	// Create animations in the scene
 	function createAnims(scene: Phaser.Scene) {
 		for (let skinName in skins) {
 			scene.anims.create({
@@ -559,8 +578,8 @@ function Party() {
 		return (keys.up.isUp && keys.down.isUp && keys.left.isUp && keys.right.isUp)
 	}
 
-	// Send player movements to the server
-	function sendPlayerMovement(direction: "up" | "down" | "left" | "right" | "none" | undefined): void {
+	// Send player movements to the back
+	function sendPlayerMovement(direction: Direction | undefined) {
 		let props: newPropsFromClient = {
 			keys: actualKeyStates,
 			dir: direction
@@ -568,36 +587,35 @@ function Party() {
 		gameSocket?.emit('playerKeyUpdate', props)
 	}
 
-	// Send player stop to the server
-	const sendPlayerStop = (): void => {
+	// Send player stop to the back
+	const sendPlayerStop = () => {
 		gameSocket?.emit('playerStop')
 	}
 
-	const sendState = (state: string): void => {
-		let stateUpdate: gameState = {
-			actualState: state
-		}
-		gameSocket?.emit('playerStateUpdate', stateUpdate)
+	// Send game state to the back
+	const sendState = (state: GameState) => {
+		gameSocket?.emit('playerStateUpdate', state)
 	}
 
 	/****** SCENE UPDATE ******/
 
-	function getDirection(): "up" | "down" | "left" | "right" | "none" | undefined {
+	// Get direction of the player from actual and old key states
+	function getDirection(): Direction | undefined {
 		if (allKeysUp())
-			return "none"
+			return 'none'
 		else if (!oldKeyStates.left && actualKeyStates.left)
-			return "left"
+			return 'left'
 		else if (!oldKeyStates.right && actualKeyStates.right)
-			return "right"
+			return 'right'
 		else if (!oldKeyStates.up && actualKeyStates.up)
-			return "up"
+			return 'up'
 		else if (!oldKeyStates.down && actualKeyStates.down)
-			return "down"
+			return 'down'
 		return undefined
 	}
 
 	// Adapts player moveState and devolity following the pressed keys
-	function checkKeyInputs(): void {
+	function checkKeyInputs() {
 		if (leftPlayer && rightPlayer) {
 			oldKeyStates = Object.assign({}, actualKeyStates)
 			actualKeyStates.up = keys.up.isDown
@@ -616,7 +634,7 @@ function Party() {
 	}
 
 	// Create new player upon connection
-	function checkNewPlayer(scene: Phaser.Scene): void {
+	function checkNewPlayer(scene: Phaser.Scene) {
 		if (creationQueue.left) {
 			createPlayer(creationQueue.left, scene)
 			creationQueue.left = undefined
@@ -627,32 +645,21 @@ function Party() {
 		}
 	}
 
-	// Delete player upon disconnection
-	/*function checkDisconnect() {
-		if (!deletionQueue.length)
-			return
-		for (let queueId = 0; queueId < deletionQueue.length; queueId++) {
-			players[deletionQueue[queueId]].sprite?.destroy()
-			delete players[deletionQueue[queueId]]
-		}
-		deletionQueue = []
-	}*/
-
 	// Set player animations following anim state
 	function checkAnims() {
 		if (leftPlayer && rightPlayer) {
 			if (animationQueue.left != undefined) {
-				if (animationQueue.left != "none") {
+				if (animationQueue.left != 'none') {
 					leftPlayer.direction = animationQueue.left
-					leftPlayer.sprite?.play(leftPlayer.skin + "_" + animationQueue.left + "Anim")
+					leftPlayer.sprite?.play(leftPlayer.skin + '_' + animationQueue.left + 'Anim')
 				}
 				else leftPlayer.sprite?.stop()
 				animationQueue.left = undefined
 			}
 			if (animationQueue.right != undefined) {
-				if (animationQueue.right != "none") {
+				if (animationQueue.right != 'none') {
 					rightPlayer.direction = animationQueue.right
-					rightPlayer.sprite?.play(rightPlayer.skin + "_" + animationQueue.right + "Anim")
+					rightPlayer.sprite?.play(rightPlayer.skin + '_' + animationQueue.right + 'Anim')
 				}
 				else rightPlayer.sprite?.stop()
 				animationQueue.right = undefined
@@ -660,75 +667,94 @@ function Party() {
 		}
 	}
 
-	function getSheetSize(player: player): { width: number, heigth: number } {
+	function checkText(scene: Phaser.Scene) {
+		if (textAction && textEvent) {
+			switch (textAction) {
+				case ('display'):
+					createText(scene, textEvent)
+					textAction = undefined
+					textEvent = undefined
+					break
+				case ('remove'):
+					destroyText()
+					textAction = undefined
+					textEvent = undefined
+					break
+			}
+		}
+	}
+
+	// Get sheet size for each skin (WILL BE DELETED)
+	function getSheetSize(player: player): Size {
 		let skin: skin = skins[player.skin]
-		let sheetSize: { width: number, heigth: number }
+		let sheetSize: Size
 		switch (player.direction) {
-			case "up":
+			case 'up':
 				sheetSize = skin.backSize
 				break
-			case "down":
+			case 'down':
 				sheetSize = skin.frontSize
 				break
-			case "left":
+			case 'left':
 				sheetSize = skin.leftSize
 				break
-			case "right":
+			case 'right':
 				sheetSize = skin.rightSize
 				break
+			default:
+				sheetSize = skin.frontSize
 		}
 		return sheetSize
 	}
 
+	function setPlayerPosition(player: player, coords: Coordinates) {
+		let sheetSize: Size = getSheetSize(player)
+		let xOffset: number = sheetSize.width * skins[player.skin].scaleFactor / 2
+		let yOffset: number = sheetSize.height * skins[player.skin].scaleFactor / 2
+		player.sprite?.setPosition(coords.x + xOffset, coords.y + yOffset)
+	}
+
 	// Set player position following xPos and yPos
-	function checkMove(): void {
-		if (moveQueue && leftPlayer && rightPlayer /*&& ball*/) {
-			let sheetSize: { width: number, heigth: number } = getSheetSize(leftPlayer)
-			let xOffset: number = sheetSize.width / 2 * skins[leftPlayer.skin].scaleFactor
-			let yOffset: number = sheetSize.heigth / 2 * skins[leftPlayer.skin].scaleFactor
-			leftPlayer.sprite?.setPosition(moveQueue.leftProps.xPos + xOffset, moveQueue.leftProps.yPos + yOffset)
-
-			sheetSize = getSheetSize(rightPlayer)
-			xOffset = sheetSize.width / 2 * skins[leftPlayer.skin].scaleFactor
-			yOffset = sheetSize.heigth / 2 * skins[leftPlayer.skin].scaleFactor
-			rightPlayer.sprite?.setPosition(moveQueue.rightProps.xPos + xOffset, moveQueue.rightProps.yPos + yOffset)
-
-			xOffset = 54 / 2
-			yOffset = 54 / 2
-			ball?.sprite?.setPosition(moveQueue.ballProps.xPos + xOffset, moveQueue.ballProps.yPos + yOffset)
+	function checkMove() {
+		if (moveQueue && leftPlayer && rightPlayer && ball) {
+			setPlayerPosition(leftPlayer, moveQueue.leftProps)
+			setPlayerPosition(rightPlayer, moveQueue.rightProps)
+			ball.sprite?.setPosition(moveQueue.ballProps.x + ballRay, moveQueue.ballProps.y + ballRay)
 			moveQueue = undefined
 		}
 	}
 
 	/****** OVERLOADED PHASER FUNCTIONS ******/
 
-	// Scene preloading for textures & keys
-	function preload(this: Phaser.Scene): void {
+	// Scene preloading for textures, keys & ball
+	function preload(this: Phaser.Scene) {
 		keysInitialisation(this)
 		skinsInitialisation(this)
 		ballInitialisation(this)
+		textInitialisation(this)
 	}
 
 	// Scene creation
-	function create(this: Phaser.Scene): void {
+	function create(this: Phaser.Scene) {
 		createBall(this)
 		createAnims(this)
 		sendState('ready')
 	}
 
 	// Scene update
-	function update(this: Phaser.Scene): void {
-		checkNewPlayer(this)
-		//checkDisconnect()
+	function update(this: Phaser.Scene) {
+		if (!leftPlayer || !rightPlayer)
+			checkNewPlayer(this)
 		checkKeyInputs()
 		checkMove()
 		checkAnims()
+		checkText(this)
 	}
 
 	/****** PAGE REACT Élément ******/
 
 	// Create the game
-	function createGame(): void {
+	function createGame() {
 		const config: Phaser.Types.Core.GameConfig = {
 			type: Phaser.AUTO,
 			width: screenWidth,
@@ -755,30 +781,20 @@ function Party() {
 	}
 
 	// Start socket comunication with game server
-	function socketListeners(): Socket | undefined {
-
+	function socketListeners() {
 		// Creates player
 		gameSocket?.on('playerConstruct', (construct: playerConstruct) => {
-			console.log("new construct:", construct.side)
 			if (construct.side == 'left')
 				creationQueue.left = construct
 			else
 				creationQueue.right = construct
 		})
-
-		// Remove the disconnected player from the players list
-		/*socket.on('playerDisconnected', (playerId: string) => {
-			deletionQueue[deletionQueue.length] = playerId
-			console.log("A player has disconnected")
-		});*/
-
 		// Update the moved player's position
 		gameSocket?.on('newProps', (properties: newPropsToClient) => {
 			moveQueue = properties
 		})
-
-		// Adapts directionof the player
-		gameSocket?.on('changeDirection', (dir: newDirection) => {
+		// Adapts direction of the player
+		gameSocket?.on('changeDirection', (dir: playerDirections) => {
 			if (dir.left != undefined)
 				animationQueue.left = dir.left
 			else
@@ -788,8 +804,26 @@ function Party() {
 			else
 				animationQueue.right = undefined
 		})
-
-		return gameSocket
+		gameSocket?.on('eventOn', (payload: GameEvent) => {
+			console.log('eventOn:', payload)
+			textEvent = payload
+			textAction = 'display'
+		})
+		gameSocket?.on('eventOff', () => {
+			console.log('eventOff')
+			textEvent = 'stop'
+			textAction = 'remove'
+		})
+		// Get the user back on the main page after end of a game
+		gameSocket?.on('gameStopped', (winner: boolean) => {
+			gameSocket?.disconnect()
+			setGameSocket(undefined)
+			setInGame(false)
+			navigate('/')
+			setTimeout(() => {
+				window.alert(winner ? 'You won :)' : 'You lost :(')
+			}, 100)
+		})
 	}
 
 	// Construction of the whole page
@@ -802,6 +836,7 @@ function Party() {
 				keys.down.destroy()
 				keys.left.destroy()
 				keys.down.destroy()
+				ball?.sprite?.destroy()
 				leftPlayer?.sprite?.destroy()
 				rightPlayer?.sprite?.destroy()
 				game.destroy(true, false)
@@ -811,7 +846,7 @@ function Party() {
 
 	// React game element
 	return (
-		<main className="game main" ref={gameRef} />
+		<main className='game main' ref={gameRef} />
 	)
 }
 

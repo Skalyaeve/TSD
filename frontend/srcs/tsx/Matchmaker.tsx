@@ -1,12 +1,23 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Timer } from './utils/ftNumbers.tsx'
 import { fade, heightChangeByPx, bouncyYMove, popUp } from './utils/ftMotion.tsx'
 import { Socket, io } from 'socket.io-client'
-
+import { inGame, setInGame } from './Root.tsx'
 
 // --------GAME-INFOS------------------------------------------------------ //
+interface lifeUpdate {
+	left: number | 'init',
+	right: number | 'init'
+}
+
+// --------GAME-INFOS------------------------------------------------------ //
+let playerLife: lifeUpdate = {
+	left: 'init',
+	right: 'init'
+}
+
 export const GameInfos: React.FC = () => {
 	// ----ANIMATIONS------------------------- //
 	const boxMotion = heightChangeByPx({
@@ -27,10 +38,10 @@ export const GameInfos: React.FC = () => {
 		<motion.div className={playerPPName} {...childMotion} />
 		<motion.div className={playerPPName} {...childMotion} />
 		<motion.div className={scoreName} {...childMotion}>
-			0
+			{playerLife.left}
 		</motion.div>
 		<motion.div className={scoreName} {...childMotion}>
-			0
+			{playerLife.right}
 		</motion.div>
 		<motion.div className={timerName} {...childMotion}>
 			<Timer />
@@ -40,6 +51,9 @@ export const GameInfos: React.FC = () => {
 
 // --------MATCHMAKER------------------------------------------------------ //
 export let gameSocket: Socket | undefined = undefined
+export const setGameSocket = (value: Socket | undefined) => {
+	gameSocket = value
+}
 
 const Matchmaker: React.FC = () => {
 	// ----ROUTER----------------------------- //
@@ -47,12 +61,6 @@ const Matchmaker: React.FC = () => {
 
 	// ----STATES----------------------------- //
 	const [matchmaking, setMatchmaking] = useState(false)
-	const [inGame, setInGame] = useState(() => {
-		const value = localStorage.getItem('inGame')
-		return value === '1'
-	})
-
-
 	const hostIp = process.env.HOST_IP
 
 	const startGameSockets = () => {
@@ -60,19 +68,16 @@ const Matchmaker: React.FC = () => {
 			gameSocket = io('http://' + hostIp + ':3000/game', {
 				transports: ["websocket"],
 				withCredentials: true,
-				//   autoConnect: false,
 			})
 		}
 		catch { console.log("[ERROR] Couldn't connect to chat gateway") }
 		gameSocket?.on('matching', () => {
 			setMatchmaking(true)
-			console.log("Ongoing matchmaging")
+			console.log("Matching")
 		})
 		gameSocket?.on('matched', () => {
-			console.log('Opponent found, starting game')
 			setMatchmaking(false)
 			setInGame(true)
-			localStorage.setItem('inGame', '1')
 			navigate('/game')
 		})
 		gameSocket?.on('unmatched', () => {
@@ -81,42 +86,32 @@ const Matchmaker: React.FC = () => {
 			gameSocket = undefined
 			setMatchmaking(false)
 		})
-		gameSocket?.on('gameEnded', () => {
-
+		gameSocket?.on('lifeUpdate', (update: lifeUpdate) => {
+			playerLife.left = update.left
+			playerLife.right = update.right
 		})
 	}
 
 	const stopMatchmaking = () => {
-		console.log("Stoping matchmaking")
 		gameSocket?.emit('stopMatchmaking')
 	}
 	// ----EFFECTS---------------------------- //
-	useEffect(() => {
-
-		return () => {
-
-		}
-	}, [])
-
-	useEffect(() => {
-		console.log("matchmaking:", matchmaking)
-	}, [matchmaking])
-
-	useEffect(() => {
-		console.log("inGame:", inGame)
-	}, [inGame])
 
 	// ----HANDLERS--------------------------- //
+
 	function toggleMatchmaker() {
-		console.log("test")
 		if (!matchmaking && !inGame)
 			startGameSockets()
 		else if (matchmaking && !inGame)
 			stopMatchmaking()
 		else if (inGame) {
+			gameSocket?.disconnect()
+			setGameSocket(undefined)
 			setInGame(false)
-			localStorage.setItem('inGame', '0')
 			navigate('/')
+			setTimeout(() => {
+				window.alert('You lost :(')
+			}, 100)
 		}
 	}
 	const matchmakerBtnHdl = { onMouseUp: toggleMatchmaker }
