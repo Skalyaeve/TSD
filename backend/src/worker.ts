@@ -5,7 +5,8 @@ import { parentPort } from 'worker_threads'
 import { ArcadePhysics } from 'arcade-physics'
 import { Body } from 'arcade-physics/lib/physics/arcade/Body.js'
 import { Collider } from 'arcade-physics/lib/physics/arcade/Collider.js'
-import * as Characters from './characters.json'
+import { type } from 'os'
+import Characters from './characters.json' assert { type: 'json' }
 
 /* -------------------------TYPES------------------------- */
 
@@ -16,14 +17,22 @@ type GameState = 'init' | 'ready' | 'created' | 'started' | 'stopped'
 type ParentPortMessage = playerConstruct | playerUpdate | loginData | stateUpdate
 type GameEvent = 'goal' | 'blocked' | '3' | '2' | '1' | 'fight' | 'stop'
 type Skin = 'Boreas' | 'Helios' | 'Selene' | 'Liliana' | 'Orion' | 'Faeleen' | 'Rylan' | 'Garrick' | 'Thorian' | 'Test'
+type lifeType = number | 'init'
+
+interface playerLife {
+	left: lifeType
+	right: lifeType
+}
 
 interface playerStats {
 	healthPoints: number
-	attackModifier: number
-	defenceModifier: number
-	speedModifier: number
+	attackPoints: number
+	defensePoints: number
+	speedPoints: number
+
 	critChance: number
 	blockChance: number
+
 	lifeSteal: number
 }
 
@@ -122,8 +131,11 @@ function createBall() {
 		if (body.isCircle && (left || right)) {
 			const collisionSide = (left ? 'left' : 'right')
 			console.log(identifier, collisionSide, "side collision")
-			resolveGoal(collisionSide)
-			goalTransition()
+			let blocked: boolean = resolveGoal(collisionSide)
+			//if (leftPlayer.stats.healthPoints && leftPlayer.stats.healthPoints)
+			goalTransition(blocked)
+			//else
+				// Quitter la game
 		}
 	})
 }
@@ -132,10 +144,10 @@ function createBall() {
 
 function getBaseStats(skin: Skin): playerStats {
 	return {
-		healthPoints: Characters[skin].health,
-		attackModifier: 0,
-		defenceModifier: 0,
-		speedModifier: Characters[skin].speed,
+		healthPoints: Characters[skin].hp,
+		attackPoints: Characters[skin].attack,
+		defensePoints: Characters[skin].defense,
+		speedPoints: Characters[skin].speed,
 		critChance: (skin === 'Faeleen' ? 20 : 0),
 		blockChance: (skin === 'Orion' ? 20 : 0),
 		lifeSteal: (skin === 'Thorian' ? 30 : 0)
@@ -216,8 +228,15 @@ function setGeneralGameState(value: 'on' | 'off') {
 async function updateState(newStateContainer: stateUpdate) {
 	switch (newStateContainer.newState) {
 		case ('started'):
-			if (tick == 0)
+			if (tick == 0) {
+				let playerLife: playerLife = {
+					left: leftPlayer.stats.healthPoints,
+					right: leftPlayer.stats.healthPoints
+				}
+				console.log(identifier, "posting life:", playerLife)
+				parentPort?.postMessage(playerLife)
 				await playCountdown()
+			}
 			setGeneralGameState('on')
 			break
 		case ('stopped'):
@@ -227,7 +246,99 @@ async function updateState(newStateContainer: stateUpdate) {
 }
 
 
-function resolveGoal(side: Side) {
+function resolveGoal(side: Side): boolean {
+	// Roles
+	let attacker: player = (side == 'right' ? leftPlayer : rightPlayer)
+	let attackee: player = (side == 'right' ? rightPlayer : leftPlayer)
+	console.log("attackee:", attackee.stats, "attacker:", attacker.stats)
+
+	//Crit
+	let crit: number = 1
+	if (attacker.stats.critChance)
+		crit = (Math.floor(Math.random() * (100 / attacker.stats.critChance)) == (100 / attacker.stats.critChance) - 1 ? 2 : 1)
+	let attack: number = attacker.stats.attackPoints * crit
+
+	//Defense
+	let defenseModifier: number = (attacker.skin == 'Rylan' ? 1 / 2 : 1)
+	let damage: number = attack - (attackee.stats.defensePoints * defenseModifier)
+
+	//Blocked
+	let blocked: boolean = false
+	if (attackee.skin == 'Orion' &&
+		Math.floor(Math.random() * (100 / attackee.stats.blockChance)) == (100 / attacker.stats.blockChance) - 1
+		|| damage == 0) {
+		blocked = true
+		console.log(identifier, (blocked ? "Goal was blocked" : "Goal!!!!!"))
+	}
+
+	attackee.stats.healthPoints = attackee.stats.healthPoints - damage
+	if (attackee.stats.healthPoints < 0)
+		attackee.stats.healthPoints = 0
+
+	//Buffs
+	if (!blocked) {
+		//Boreas
+		if (attackee.skin == 'Boreas') {
+			let buff = attackee.stats.defensePoints - Characters['Boreas'].defense
+			console.log("Buff at start:", buff)
+			if (buff < 4)
+				buff = buff + 1
+			console.log("Buff is now", buff)
+			attackee.stats.defensePoints = Characters['Boreas'].defense + buff
+			console.log(identifier, attackee.side, "Boreas defense is now:", attackee.stats.defensePoints)
+		}
+		if (attacker.skin == 'Boreas') {
+			attacker.stats.defensePoints = Characters['Boreas'].defense
+			console.log(identifier, attacker.side, "Boreas defense is now:", attacker.stats.defensePoints)
+		}
+
+		//Helios
+		if (attackee.skin == 'Helios') {
+			attackee.stats.attackPoints = Characters['Helios'].attack
+			console.log(identifier, attackee.side, "Helios attack is now:", attackee.stats.attackPoints)
+		}
+		if (attacker.skin == 'Helios') {
+			let buff = attacker.stats.attackPoints - Characters['Helios'].attack
+			if (buff < 4)
+				buff = buff + 1
+			attacker.stats.attackPoints = Characters['Helios'].attack + buff
+			console.log(identifier, attacker.side, "Helios attack is now:", attacker.stats.attackPoints)
+		}
+
+		//Garrick
+		if (attackee.skin == 'Garrick') {
+			attackee.stats.attackPoints = Characters['Garrick'].attack + Math.floor((Characters['Garrick'].hp - attackee.stats.healthPoints) / 10)
+			console.log(identifier, attackee.side, "Garrick attack is now:", attackee.stats.attackPoints)
+		}
+
+		//Thorian
+		if (attacker.skin == 'Thorian') {
+			attacker.stats.healthPoints = attacker.stats.healthPoints + Math.floor(damage / (100 / attacker.stats.lifeSteal))
+			console.log(identifier, attacker.side, "Thorian health is now:", attacker.stats.healthPoints)
+		}
+
+		//Selene
+		if (attackee.skin == 'Selene') {
+			attacker.stats.speedPoints = Math.floor(Characters[attacker.skin].speed / 2)
+			console.log(identifier, attackee.side, "Selene has debuffed ennemy")
+		}
+		else if (attacker.skin == 'Selene') {
+			attackee.stats.speedPoints = Characters[attackee.skin].speed
+			console.log(identifier, attacker.side, "Selene debuff was cleared")
+		}
+	}
+
+
+	console.log("attackee2:", attackee.stats, "attacker2:", attacker.stats)
+
+	//Send life
+	let newLife: playerLife = {
+		left: leftPlayer.stats.healthPoints,
+		right: rightPlayer.stats.healthPoints
+	}
+	parentPort?.postMessage(newLife)
+
+	return blocked
 }
 
 // Displays goal animation
@@ -267,9 +378,9 @@ async function playCountdown() {
 }
 
 // Triggered on goal, starts a new round 
-async function goalTransition() {
+async function goalTransition(blocked: boolean) {
 	setGeneralGameState('off')
-	if (Math.floor(Math.random() * 2))
+	if (!blocked)
 		await displayText('goal', 3000)
 	else
 		await displayText('blocked', 3000)

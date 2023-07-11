@@ -834,6 +834,7 @@ const Party: React.FC<PartyProps> = ({
 			}, 100)
 		})
 		gameSocket?.on('lifeUpdate', (update: playerLife) => {
+			console.log("recieved new life:", update)
 			setPlayerLife(update)
 		})
 	}

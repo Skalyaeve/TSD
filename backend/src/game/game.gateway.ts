@@ -14,10 +14,12 @@ type Coordinates = { x: number, y: number }
 type Side = 'left' | 'right'
 type Direction = 'up' | 'down' | 'left' | 'right' | 'none'
 type GameState = 'init' | 'ready' | 'created' | 'started' | 'stopped'
-type workerMessage = newPropsFromWorker | GameState | GameEvent
+type workerMessage = newPropsFromWorker | GameState | GameEvent | playerLife
 
 const gameEvent = ['goal', '3', '2', '1', 'fight', 'blocked', 'stop'] as const;
 type GameEvent = (typeof gameEvent)[number];
+type Skin = 'Boreas' | 'Helios' | 'Selene' | 'Liliana' | 'Orion' | 'Faeleen' | 'Rylan' | 'Garrick' | 'Thorian' | 'Test'
+type lifeType = number | 'init'
 
 // Player key states
 interface keyStates {
@@ -37,7 +39,12 @@ interface skin {
 interface player {
 	id: string										// Player ID
 	workerId: string | undefined					// Player worker ID
-	skin: string									// Player skin name
+	skin: Skin										// Player skin name
+}
+
+interface playerLife {
+	left: lifeType
+	right: lifeType
 }
 
 // Party worker
@@ -63,6 +70,7 @@ interface workerPlayerConstruct {
 	side: Side										// Player side
 	coords: Coordinates								// Player coordinates
 	size: Size										// Player size
+	skin: Skin										// Player skin
 }
 
 // New properties (sent by the worker)
@@ -211,6 +219,10 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		return gameEvent.includes(payload);
 	};
 
+	isLifeUpdate(payload: workerMessage): payload is playerLife {
+		return (<playerLife>payload).left !== undefined
+	}
+
 	// Create the loginData object to store the worker id and send it to the worker
 	createWorker(newParty: party) {
 		newParty.worker.on('message', (payload: workerMessage) => {
@@ -224,6 +236,10 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 					this.sockets[newParty.leftPlayerId].emit('newProps', outgoingProps)
 				if (this.players[newParty.rightPlayerId].workerId)
 					this.sockets[newParty.rightPlayerId].emit('newProps', outgoingProps)
+			}
+			else if (this.isLifeUpdate(payload)) {
+				this.sockets[newParty.leftPlayerId].emit('lifeUpdate', payload)
+				this.sockets[newParty.rightPlayerId].emit('lifeUpdate', payload)
 			}
 			else if (this.isGameEvent(payload)) {
 				switch (payload) {
@@ -267,14 +283,15 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	}
 
 	// Create a new sesion player construct
-	newWorkerConstruct(side: Side, size: Size): workerPlayerConstruct {
+	newWorkerConstruct(id: string, side: Side, size: Size): workerPlayerConstruct {
 		return {
 			side: side,
 			coords: {
 				x: (side === 'left' ? 250 - size.width * this.playerScaleFactor / 2 : this.screenWidth - 250 - size.width * this.playerScaleFactor / 2),
 				y: (this.screenHeight / 2 - size.height * this.playerScaleFactor / 2),
 			},
-			size: { width: size.width * this.playerScaleFactor, height: size.height * this.playerScaleFactor }
+			size: { width: size.width * this.playerScaleFactor, height: size.height * this.playerScaleFactor },
+			skin: this.players[id].skin
 		}
 	}
 
@@ -282,8 +299,8 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	createWorkerConstructs(leftPlayerId: string, rightPlayerId: string, newParty: party) {
 		let leftSkin = this.skins[this.players[leftPlayerId].skin]
 		let rightSkin = this.skins[this.players[rightPlayerId].skin]
-		let leftWorkerConstruct = this.newWorkerConstruct('left', leftSkin.size)
-		let rightWorkerConstruct = this.newWorkerConstruct('right', rightSkin.size)
+		let leftWorkerConstruct = this.newWorkerConstruct(leftPlayerId, 'left', leftSkin.size)
+		let rightWorkerConstruct = this.newWorkerConstruct(rightPlayerId, 'right', rightSkin.size)
 		newParty.worker.postMessage(leftWorkerConstruct)
 		newParty.worker.postMessage(rightWorkerConstruct)
 	}
@@ -292,7 +309,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	async createParty(leftPlayerId: string, rightPlayerId: string) {
 		let newParty: party = {
 			id: uuidv4(),
-			worker: new Worker('./toolDist/worker.js'),
+			worker: new Worker('./dist/worker.js'),
 			workerState: 'building',
 			leftPlayerId: leftPlayerId,
 			leftPlayerState: 'building',
@@ -334,7 +351,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		this.players[socket.id] = {
 			id: socket.id,
 			workerId: undefined,
-			skin: 'Test'
+			skin: 'Helios'
 			// CALL DB TO GET SKIN
 		}
 		this.matchQueue.push(socket.id)
