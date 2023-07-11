@@ -178,7 +178,6 @@ const Root: React.FC = () => {
 
 	// ----STATES----------------------------- //
 	const [userID, setUserID] = useState(0)
-	const [inGame, setInGame] = useState(false)
 	const [showHeader, setShowHeader] = useState(false)
 	const [selectedCharacter, setSelectedCharacter] = useState(1)
 

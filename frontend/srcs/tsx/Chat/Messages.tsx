@@ -1,28 +1,76 @@
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 
-interface MessageProps {
-    messages: {user: string; message: string; type: string}[];
-    currentUser: string;
+interface Channel {
+    id: number;
+    name: string;
+    chanOwner: number;
+    type: string; // Or your ChanType if defined
+    passwd: string | null;
+    // Add more fields as necessary
 }
 
-export default function Messages({messages, currentUser} : MessageProps)
-{
+interface Contact {
+    id: number;
+    email: string;
+    nickname: string;
+    avatarFilename: string;
+}
+
+
+interface MessagesProps {
+    messages: {
+        sender: number;
+        receiver?: number;
+        senderNick?: string;
+        chanId?: number;
+        message?: string;
+        content?: string;
+        type?: string;
+    }[];
+    userInfo: Contact | null;
+    selectedContact: Contact | null;
+    selectedChannel: Channel | null;
+}
+export default function Messages({ messages, userInfo, selectedContact, selectedChannel }: MessagesProps) {
+    // const endOfMessagesRef = useRef<HTMLDivElement>(null);
+    // const [firstRender, setFirstRender] = useState(true);
+
+    // const scrollToBottom = () => {
+    //     endOfMessagesRef.current?.scrollIntoView({ behavior: "smooth" });
+    // }
+
+    // useEffect(() => {
+    //     scrollToBottom();
+    // }, [messages]);
+
     return (
         <div>
-            {messages.map((messages, index) => {
-            const isCurrentUSer = messages.user == currentUser;
-            const messageClass = messages.type === "sent" ? "sent" : "received";
-            return (
-                <div key={index} className={`message ${messageClass}`}>
-                    {isCurrentUSer ? (
-                        <strong>You:</strong>
-                    ) : (
-                        <strong>{messages.user}:</strong>
-                    )}{" "}
-                    {messages.message}
-                </div>
-            );
+            {messages.map((message, index) => {
+                let isCurrentUSer = false;
+                let senderName = "You";
+                let messageContent = message.message;
+                if (message.sender === userInfo?.id) {
+                    isCurrentUSer = true;
+                    senderName = "You";
+                }
+                if (selectedContact && !isCurrentUSer) {
+                    senderName = selectedContact.nickname;
+                }
+                else if (selectedChannel) {
+                    senderName = message.senderNick || senderName;
+                    messageContent = message.content;
+                }
+                const messageClass = isCurrentUSer === true ? "sent" : "received";
+                return (
+                    <div key={index} className={`message ${messageClass}`}>
+                        <strong className="message-user">{senderName}:</strong>
+                        <div className="message-text">
+                            {messageContent}
+                        </div>
+                    </div>
+                );
             })}
+            {/* <div ref={endOfMessagesRef}/> */}
         </div>
     );
 }
