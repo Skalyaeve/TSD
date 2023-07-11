@@ -161,8 +161,17 @@ interface newPropsToClient {
 }
 
 /* -------------------------GAME INITIALISATION------------------------- */
-
-function Party() {
+type lifeType = number | 'init'
+interface playerLife {
+	left: lifeType
+	right: lifeType
+}
+interface PartyProps {
+	setPlayerLife: React.Dispatch<React.SetStateAction<playerLife>>
+}
+const Party: React.FC<PartyProps> = ({
+	setPlayerLife
+}) => {
 
 	/****** VARIABLES ******/
 
@@ -823,6 +832,9 @@ function Party() {
 			setTimeout(() => {
 				window.alert(winner ? 'You won :)' : 'You lost :(')
 			}, 100)
+		})
+		gameSocket?.on('lifeUpdate', (update: playerLife) => {
+			setPlayerLife(update)
 		})
 	}
 

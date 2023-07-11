@@ -5,6 +5,7 @@
 		"outDir": "dist",
 		"moduleResolution": "node16",
 		"esModuleInterop": true,
+		"resolveJsonModule": true,
 		"skipLibCheck": true,
 		"experimentalDecorators": true,
 		"emitDecoratorMetadata": true,

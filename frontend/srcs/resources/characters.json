@@ -7,7 +7,7 @@
 		"speed": 2,
 		"passive": {
 			"name": "Winter's will",
-			"effect": "Consecutive loss buff DEF by 1 (+4 max)"
+			"effect": "Consecutive loss will buff DEF by 1 (+4 max)"
 		}
 	},
 	"Helios": {
@@ -18,7 +18,7 @@
 		"speed": 3,
 		"passive": {
 			"name": "Sun's pact",
-			"effect": "Consecutive win buff ATT by 1 (+4 max)"
+			"effect": "Consecutive win will buff ATT by 1 (+4 max)"
 		}
 	},
 	"Selene": {
@@ -50,8 +50,8 @@
 		"defense": 0,
 		"speed": 6,
 		"passive": {
-			"name": "Guardian angel ???",
-			"effect": "Any hit has 20% chance to be blocked by Faeleen"
+			"name": "Guardian angel",
+			"effect": "Any hit has 20% chance to be blocked by Orion"
 		}
 	},
 	"Faeleen": {
@@ -100,7 +100,7 @@
 	},
 	"Test": {
 		"story": "Dis Mr.Test.\nMr.Test is for testin.\nMr.Test nice.",
-		"hp": 100,
+		"hp": 420,
 		"attack": 10,
 		"defense": 5,
 		"speed": 5,

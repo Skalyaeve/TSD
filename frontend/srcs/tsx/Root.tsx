@@ -111,10 +111,17 @@ const LoginBtn: React.FC = () => {
 }
 
 // --------ROOT------------------------------------------------------------ //
+type lifeType = number | 'init'
+interface playerLife {
+	left: lifeType
+	right: lifeType
+}
 const Root: React.FC = () => {
 	// ----ROUTER----------------------------- //
 	const location = useLocation()
 	const navigate = useNavigate()
+	const init: playerLife = { left: 'init', right: 'init' }
+	const [playerLife, setPlayerLife] = useState(init)
 
 	// ----STATES----------------------------- //
 	const [userID, setUserID] = useState(0)
@@ -161,7 +168,9 @@ const Root: React.FC = () => {
 	return <>
 		<AnimatePresence>
 			{showHeader && <header className={headerName}>
-				<NavBar />
+				<NavBar
+					playerLife={playerLife}
+				/>
 				<Chat location={location.pathname} />
 				<Matchmaker />
 			</header>}
@@ -179,7 +188,11 @@ const Root: React.FC = () => {
 					/>
 				} />
 				<Route path='/leader' element={<Leader />} />
-				<Route path='/game' element={<Party />} />
+				<Route path='/game' element={
+					<Party
+						setPlayerLife={setPlayerLife}
+					/>
+				} />
 				<Route path='*' element={<ErrorPage code={404} />} />
 			</Routes>
 		</AnimatePresence>

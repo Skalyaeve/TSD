@@ -5,6 +5,7 @@ import { parentPort } from 'worker_threads'
 import { ArcadePhysics } from 'arcade-physics'
 import { Body } from 'arcade-physics/lib/physics/arcade/Body.js'
 import { Collider } from 'arcade-physics/lib/physics/arcade/Collider.js'
+import * as Characters from './characters.json'
 
 /* -------------------------TYPES------------------------- */
 
@@ -14,11 +15,24 @@ type Side = 'left' | 'right'
 type GameState = 'init' | 'ready' | 'created' | 'started' | 'stopped'
 type ParentPortMessage = playerConstruct | playerUpdate | loginData | stateUpdate
 type GameEvent = 'goal' | 'blocked' | '3' | '2' | '1' | 'fight' | 'stop'
+type Skin = 'Boreas' | 'Helios' | 'Selene' | 'Liliana' | 'Orion' | 'Faeleen' | 'Rylan' | 'Garrick' | 'Thorian' | 'Test'
+
+interface playerStats {
+	healthPoints: number
+	attackModifier: number
+	defenceModifier: number
+	speedModifier: number
+	critChance: number
+	blockChance: number
+	lifeSteal: number
+}
 
 // Player interface
 interface player {
 	side: Side									// Player side
 	body: Body									// Player body
+	skin: Skin									// Player skin name						
+	stats: playerStats							// Player actual stats
 	construct: playerConstruct					// Player construct
 	ballCollider: Collider | undefined			// Player and ball collider
 }
@@ -46,6 +60,7 @@ interface playerConstruct {
 	side: Side									// Player side
 	coords: Coordinates							// Player coordinates
 	size: Size									// Player size
+	skin: Skin
 }
 
 // Player update event interface (sent by the main process)
@@ -60,11 +75,6 @@ interface newProps {
 	leftProps: Coordinates
 	rightProps: Coordinates
 	ballProps: Coordinates
-}
-
-// Game state of a worker
-interface gameState {
-	actualState: string
 }
 
 // Update to the gamestate of a worker
@@ -110,17 +120,36 @@ function createBall() {
 	ball.body.setCollideWorldBounds(true, undefined, undefined, true)
 	physics.world.on('worldbounds', (body: Body, up: boolean, down: boolean, left: boolean, right: boolean) => {
 		if (body.isCircle && (left || right)) {
-			console.log(identifier, 'Collition on side:', (left ? 'left' : 'right'))
+			const collisionSide = (left ? 'left' : 'right')
+			console.log(identifier, collisionSide, "side collision")
+			resolveGoal(collisionSide)
 			goalTransition()
 		}
 	})
 }
 
+
+
+function getBaseStats(skin: Skin): playerStats {
+	return {
+		healthPoints: Characters[skin].health,
+		attackModifier: 0,
+		defenceModifier: 0,
+		speedModifier: Characters[skin].speed,
+		critChance: (skin === 'Faeleen' ? 20 : 0),
+		blockChance: (skin === 'Orion' ? 20 : 0),
+		lifeSteal: (skin === 'Thorian' ? 30 : 0)
+	}
+}
+
 // Create a new player
 function createPlayer(construct: playerConstruct) {
+	let newPlayerStats: playerStats = getBaseStats(construct.skin)
 	let newPlayer: player = {
 		side: construct.side,
 		body: physics.add.body(construct.coords.x, construct.coords.y, construct.size.width, construct.size.height),
+		skin: construct.skin,
+		stats: newPlayerStats,
 		construct: construct,
 		ballCollider: undefined
 	}
@@ -195,6 +224,10 @@ async function updateState(newStateContainer: stateUpdate) {
 			setGeneralGameState('off')
 			break
 	}
+}
+
+
+function resolveGoal(side: Side) {
 }
 
 // Displays goal animation

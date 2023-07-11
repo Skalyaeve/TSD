@@ -2,8 +2,8 @@ import React from 'react'
 import { Routes, Route, useLocation, NavLink } from 'react-router-dom'
 import Cookies from 'js-cookie';
 import { AnimatePresence, motion } from 'framer-motion'
-import { heightChangeByPx, yMove, mergeMotions } from './utils/ftMotion.tsx'
-import { GameInfos } from './Matchmaker.tsx'
+import { fade, heightChangeByPx, yMove, mergeMotions } from './utils/ftMotion.tsx'
+import { Timer } from './utils/ftNumbers.tsx'
 
 // --------ANIMATIONS------------------------------------------------------ //
 const BACK_LINK_HEIGHT = 60
@@ -171,6 +171,48 @@ const FromLeader: React.FC = () => (
 	</motion.nav>
 )
 
+// --------GAME-INFOS------------------------------------------------------ //
+type lifeType = number | 'init'
+interface playerLife {
+	left: lifeType
+	right: lifeType
+}
+interface GameInfoProps {
+	playerLife: playerLife
+}
+const GameInfos: React.FC<GameInfoProps> = ({
+	playerLife
+}) => {
+	// ----ANIMATIONS------------------------- //
+	const boxMotion = heightChangeByPx({
+		finalHeight: 275,
+		inDuration: 0.7
+	})
+	const childMotion = fade({ inDelay: 0.3 })
+
+	// ----CLASSNAMES------------------------- //
+	const name = 'gameInfo'
+	const boxName = `${name}s`
+	const playerPPName = `${name}-player`
+	const scoreName = `${name}-score`
+	const timerName = `${name}-timer`
+
+	// ----RENDER----------------------------- //
+	return <motion.div className={boxName} {...boxMotion}>
+		<motion.div className={playerPPName} {...childMotion} />
+		<motion.div className={playerPPName} {...childMotion} />
+		<motion.div className={scoreName} {...childMotion}>
+			{playerLife.left}
+		</motion.div>
+		<motion.div className={scoreName} {...childMotion}>
+			{playerLife.right}
+		</motion.div>
+		<motion.div className={timerName} {...childMotion}>
+			<Timer />
+		</motion.div>
+	</motion.div>
+}
+
 // --------RENDER-FROM-404------------------------------------------------- //
 const From404: React.FC = () => (
 	<motion.nav className={NAME} {...navBarMotion(BACK_LINK_HEIGHT)}>
@@ -185,7 +227,10 @@ const From404: React.FC = () => (
 )
 
 // --------NAVBAR---------------------------------------------------------- //
-const NavBar: React.FC = () => {
+type NavBarProps = GameInfoProps
+const NavBar: React.FC<NavBarProps> = ({
+	playerLife
+}) => {
 	// ----ROUTER----------------------------- //
 	const location = useLocation()
 
@@ -198,7 +243,11 @@ const NavBar: React.FC = () => {
 			<Route path='/profile/friends' element={<FromFriends />} />
 			<Route path='/characters' element={<FromCharacters />} />
 			<Route path='/leader' element={<FromLeader />} />
-			<Route path='/game' element={<GameInfos />} />
+			<Route path='/game' element={
+				<GameInfos
+					playerLife={playerLife}
+				/>
+			} />
 			<Route path='*' element={<From404 />} />
 		</Routes>
 	</AnimatePresence>
