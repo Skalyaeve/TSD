@@ -324,7 +324,6 @@ const MainBtn: React.FC<MainBtnProps> = ({
 	const btnTxTHdl = {
 		onMouseUp: () => {
 			if (animating) return
-			console.log()
 
 			animatingRef.current = true
 			setAnimating(true)

@@ -133,10 +133,10 @@ export class UserGameService {
             where: {
                 OR: [
                     {
-                        player1: id,
+                        player1: Number(id),
                     },
                     {
-                        player2: id,
+                        player2: Number(id),
                     },
                 ],
             },

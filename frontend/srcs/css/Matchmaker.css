@@ -19,9 +19,19 @@
 	z-index: 3;
 }
 
-.matchmaker-txt {
+.matchmaker-txt-play {
 	/* #1 Éléments */
 	background-image: url('../resources/assets/ui/text/play.png');
+}
+
+.matchmaker-txt-stop {
+	/* #1 Éléments */
+	background-image: url('../resources/assets/ui/text/stop.png');
+}
+
+.matchmaker-txt-exit {
+	/* #1 Éléments */
+	background-image: url('../resources/assets/ui/text/exit.png');
 }
 
 /* ---GAME-INFOS----------------- */

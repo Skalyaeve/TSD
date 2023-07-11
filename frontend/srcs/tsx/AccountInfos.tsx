@@ -157,7 +157,7 @@ const Achievements: React.FC = () => {
 			{...achievementMotion(index + 1)}>
 			<h1>{data[index][0]}</h1>
 			<p>{data[index][1]}</p>
-			{unlocked.includes(`.${index}`) || !index ?
+			{unlocked.includes(`.${index}`) ?
 				<div className={unlockedTxTName}>since 00/00/00</div>
 				: <div className={lockIconName} />
 			}
@@ -182,6 +182,10 @@ const Infos: React.FC<InfosProps> = ({ userID, userInfos }) => {
 	// ----STATES----------------------------- //
 	const [overPic, setOverPic] = useState(false)
 	const [overName, setOverName] = useState(false)
+	const [showSettings, setChanginNickname] = useState(0)
+	const [inputValue, setInputValue] = useState('')
+	const [nameFormLogs, setNameFormLogs] = useState('')
+	const [text, setText] = useState('');
 
 	// ----HANDLERS--------------------------- //
 	const ppHdl = {
@@ -192,27 +196,66 @@ const Infos: React.FC<InfosProps> = ({ userID, userInfos }) => {
 		onMouseEnter: () => setOverName(true),
 		onMouseLeave: () => setOverName(false)
 	}
+	const inputHdl = {
+		onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+			setInputValue(e.target.value)
+		}
+	}
+	const setNameBtnHdl = { onMouseUp: () => setChanginNickname(1) }
+	const setPicBtnHdl = { onMouseUp: () => setChanginNickname(2) }
+	const cancelBtnHdl = { onMouseUp: () => setChanginNickname(0) }
+	const nameFormHdl = {
+		onSubmit: (e: any) => {
+			e.preventDefault()
+			if (e.nativeEvent.submitter?.className === cancelBtnName) {
+				return
+			}
+			console.log(inputValue)
+		}
+	}
+	const ppFormHdl = {
+		onSubmit: (e: any) => {
+			e.preventDefault()
+			if (e.nativeEvent.submitter?.className === cancelBtnName) {
+				return
+			}
+			console.log(e.target.elements.image.files[0])
+		}
+	}
+	const txtAreaHdl = {
+		onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+			setText(e.target.value)
+		},
+		onBlur: (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+			console.log(e.target.value)
+		}
+	}
 
 	// ----ANIMATIONS------------------------- //
-	const setPictureBtnName = {
+	const btnMotion = { whileHover: { scale: 1.05 } }
+	const setPictureBtnMotion = {
 		...mergeMotions(
 			xMove({ from: -20, inDuration: 0.3, outDuration: 0.3 }),
 			yMove({ from: -20, inDuration: 0.3, outDuration: 0.3 })
 		),
-		whileHover: { scale: 1.05 }
+		...btnMotion
 	}
-	const setNameBtnName = {
-		...xMove({
-			from: -30, inDuration: 0.3, outDuration: 0.3
-		}),
-		whileHover: { scale: 1.05 }
+	const setNameBtnMotion = {
+		...xMove({ from: -30, inDuration: 0.3, outDuration: 0.3 }),
+		...btnMotion
 	}
+	const formMotion = xMove({ from: -30, inDuration: 0.3, outDuration: 0.3 })
 
 	// ----CLASSNAMES------------------------- //
 	const boxName = `${NAME}-picture`
 	const nicknameField = `${NAME}-nickname`
+	const submitBtnName = `${NAME}-submit-btn`
+	const cancelBtnName = `${NAME}-cancel-btn`
+	const ppFormName = `${NAME}-pp-form`
+	const nameFormName = `${NAME}-name-form`
 
 	// ----RENDER----------------------------- //
+	console.log(userID === userInfos.id)
 	return <>
 		<div
 			className={boxName}
@@ -220,7 +263,7 @@ const Infos: React.FC<InfosProps> = ({ userID, userInfos }) => {
 			{...ppHdl}>
 			<AnimatePresence>
 				{userInfos.id === userID && overPic &&
-					<motion.div {...setPictureBtnName} />
+					<motion.button {...setPictureBtnMotion} {...setPicBtnHdl} />
 				}
 			</AnimatePresence>
 		</div>
@@ -228,11 +271,55 @@ const Infos: React.FC<InfosProps> = ({ userID, userInfos }) => {
 			{userInfos.nickname}
 			<AnimatePresence>
 				{userInfos.id === userID && overName &&
-					<motion.div {...setNameBtnName} />
+					<motion.button {...setNameBtnMotion} {...setNameBtnHdl} />
 				}
 			</AnimatePresence>
 		</div>
-		<textarea placeholder='anything to say ?' />
+		<textarea
+			placeholder='anything to say ?'
+			value={text}
+			readOnly={userID !== userInfos.id}
+			{...txtAreaHdl}
+		/>
+		<AnimatePresence>
+			{showSettings === 1 && <motion.form
+				className={nameFormName}
+				{...nameFormHdl}
+				{...formMotion}>
+				<input placeholder='new username' value={inputValue} {...inputHdl} />
+				<motion.button
+					type='submit'
+					className={submitBtnName}
+					{...btnMotion}>
+					SUBMIT
+				</motion.button>
+				<motion.button
+					className={cancelBtnName}
+					{...cancelBtnHdl}
+					{...btnMotion}>
+					CANCEL
+				</motion.button>
+			</motion.form>}
+		</AnimatePresence>
+		<AnimatePresence>
+			{showSettings === 2 && <motion.form
+				className={ppFormName}
+				{...ppFormHdl}
+				{...formMotion}>
+				<input type='file' name='image' />
+				<motion.button
+					className={submitBtnName}
+					{...btnMotion}>
+					SUBMIT
+				</motion.button>
+				<motion.button
+					className={cancelBtnName}
+					{...cancelBtnHdl}
+					{...btnMotion}>
+					CANCEL
+				</motion.button>
+			</motion.form>}
+		</AnimatePresence>
 	</>
 }
 
@@ -249,7 +336,7 @@ const AccountInfos: React.FC<AccountInfosProps> = ({ userID }) => {
 	if (!id) id = String(userID)
 
 	// ----STATES----------------------------- //
-	const [userInfos, setData] = useState<any>({})
+	const [userInfos, setUserInfos] = useState<any>({})
 	const [userHistory, setUserHistory] = useState<any>({})
 	const [winsCount, setWinsCount] = useState(0)
 
@@ -258,9 +345,8 @@ const AccountInfos: React.FC<AccountInfosProps> = ({ userID }) => {
 		if (!userID) return
 
 		const fetchData = async () => {
-			console.log(`/users/${id}`)
 			let data = await ftFetch(`/users/${id}`)
-			setData(data)
+			setUserInfos(data)
 			data = await ftFetch(`/games/${id}`)
 			setUserHistory(data)
 			data = await ftFetch(`/games/${id}/victories/count`)
