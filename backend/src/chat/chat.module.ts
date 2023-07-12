@@ -23,6 +23,12 @@ import { PrismaService } from 'nestjs-prisma';
         UserSocketsService,
         PrismaService
     ],
-    controllers: [ChatController],
+    controllers: [
+		ChatController
+	],
+	exports: [
+		ChatService,
+		UserSocketsService
+	]
 })
 export class ChatModule {}

@@ -5,7 +5,6 @@ import { parentPort } from 'worker_threads'
 import { ArcadePhysics } from 'arcade-physics'
 import { Body } from 'arcade-physics/lib/physics/arcade/Body.js'
 import { Collider } from 'arcade-physics/lib/physics/arcade/Collider.js'
-import { type } from 'os'
 import Characters from './characters.json' assert { type: 'json' }
 
 /* -------------------------TYPES------------------------- */
@@ -16,7 +15,7 @@ type Side = 'left' | 'right'
 type GameState = 'init' | 'ready' | 'created' | 'started' | 'stopped'
 type ParentPortMessage = playerConstruct | playerUpdate | loginData | stateUpdate
 type GameEvent = 'goal' | 'blocked' | '3' | '2' | '1' | 'fight' | 'stop'
-type Skin = 'Boreas' | 'Helios' | 'Selene' | 'Liliana' | 'Orion' | 'Faeleen' | 'Rylan' | 'Garrick' | 'Thorian' | 'Test'
+type Character = 'Boreas' | 'Helios' | 'Selene' | 'Liliana' | 'Orion' | 'Faeleen' | 'Rylan' | 'Garrick' | 'Thorian' | 'Test'
 type lifeType = number | 'init'
 
 interface playerLife {
@@ -40,7 +39,7 @@ interface playerStats {
 interface player {
 	side: Side									// Player side
 	body: Body									// Player body
-	skin: Skin									// Player skin name						
+	character: Character						// Player character name						
 	stats: playerStats							// Player actual stats
 	construct: playerConstruct					// Player construct
 	ballCollider: Collider | undefined			// Player and ball collider
@@ -69,7 +68,7 @@ interface playerConstruct {
 	side: Side									// Player side
 	coords: Coordinates							// Player coordinates
 	size: Size									// Player size
-	skin: Skin
+	character: Character
 }
 
 // Player update event interface (sent by the main process)
@@ -97,7 +96,7 @@ interface stateUpdate {
 const screenWidth: number = 1920
 const screenHeight: number = 1080
 const targetFPS: number = 60
-const playerSpeed: number = 1000
+const playerSpeed: number = 200
 const ballRay: number = 26
 
 // Game variables
@@ -140,27 +139,26 @@ function createBall() {
 	})
 }
 
-
-
-function getBaseStats(skin: Skin): playerStats {
+//Get the base statistics for a character
+function getBaseStats(character: Character): playerStats {
 	return {
-		healthPoints: Characters[skin].hp,
-		attackPoints: Characters[skin].attack,
-		defensePoints: Characters[skin].defense,
-		speedPoints: Characters[skin].speed,
-		critChance: (skin === 'Faeleen' ? 20 : 0),
-		blockChance: (skin === 'Orion' ? 20 : 0),
-		lifeSteal: (skin === 'Thorian' ? 30 : 0)
+		healthPoints: Characters[character].hp,
+		attackPoints: Characters[character].attack,
+		defensePoints: Characters[character].defense,
+		speedPoints: Characters[character].speed,
+		critChance: (character === 'Faeleen' ? 20 : 0),
+		blockChance: (character === 'Orion' ? 20 : 0),
+		lifeSteal: (character === 'Thorian' ? 30 : 0)
 	}
 }
 
 // Create a new player
 function createPlayer(construct: playerConstruct) {
-	let newPlayerStats: playerStats = getBaseStats(construct.skin)
+	let newPlayerStats: playerStats = getBaseStats(construct.character)
 	let newPlayer: player = {
 		side: construct.side,
 		body: physics.add.body(construct.coords.x, construct.coords.y, construct.size.width, construct.size.height),
-		skin: construct.skin,
+		character: construct.character,
 		stats: newPlayerStats,
 		construct: construct,
 		ballCollider: undefined
@@ -200,17 +198,19 @@ function resetBall() {
 
 // Update players local speed using keyStates recieved from main process
 function updatePlayer(updatedPlayer: playerUpdate) {
+	const player: player = (updatedPlayer.side == 'left' ? leftPlayer : rightPlayer)
+	const totalSpeed: number = (playerSpeed * player.stats.speedPoints)
 	let xVel: number = 0
 	let yVel: number = 0
 	// Calculation of individual x y velocity
-	if (updatedPlayer.keyStates.up) yVel = yVel - playerSpeed
-	if (updatedPlayer.keyStates.down) yVel = yVel + playerSpeed
-	if (updatedPlayer.keyStates.left) xVel = xVel - playerSpeed
-	if (updatedPlayer.keyStates.right) xVel = xVel + playerSpeed
+	if (updatedPlayer.keyStates.up) yVel = yVel - totalSpeed
+	if (updatedPlayer.keyStates.down) yVel = yVel + totalSpeed
+	if (updatedPlayer.keyStates.left) xVel = xVel - totalSpeed
+	if (updatedPlayer.keyStates.right) xVel = xVel + totalSpeed
 	// Limitation of diagonal speed
 	if (xVel && yVel) {
-		xVel = (playerSpeed / 2) * Math.SQRT2 * (xVel / playerSpeed)
-		yVel = (playerSpeed / 2) * Math.SQRT2 * (yVel / playerSpeed)
+		xVel = (totalSpeed / 2) * Math.SQRT2 * (xVel / totalSpeed)
+		yVel = (totalSpeed / 2) * Math.SQRT2 * (yVel / totalSpeed)
 	}
 	if (leftPlayer && rightPlayer) {
 		if (updatedPlayer.side == leftPlayer.side) leftPlayer.body.setVelocity(xVel, yVel)
@@ -249,22 +249,22 @@ function resolveGoal(side: Side): boolean {
 	let attacker: player = (side == 'right' ? leftPlayer : rightPlayer)
 	let attackee: player = (side == 'right' ? rightPlayer : leftPlayer)
 
-	console.log("Attacker:\n", attacker.skin, "\n", attacker.stats, "Attackee:\n", attackee.skin, "\n", attackee.stats)
+	console.log("Attacker:\n", attacker.character, "\n", attacker.stats, "Attackee:\n", attackee.character, "\n", attackee.stats)
 
 	//Crit
 	let crit: number = 1
 	if (attacker.stats.critChance)
-		crit = (Math.floor(Math.random() * (100 / attacker.stats.critChance)) == (100 / attacker.stats.critChance) - 1 ? 2 : 1)
+		crit = (Math.ceil(Math.random() * (100 / attacker.stats.critChance)) == (100 / attacker.stats.critChance) - 1 ? 2 : 1)
 	let attack: number = attacker.stats.attackPoints * crit
 
 	//Defense
-	let defenseModifier: number = (attacker.skin == 'Rylan' ? 1 / 2 : 1)
+	let defenseModifier: number = (attacker.character == 'Rylan' ? 1 / 2 : 1)
 	let damage: number = attack - (attackee.stats.defensePoints * defenseModifier)
 
 	//Blocked
 	let blocked: boolean = false
-	if (attackee.skin == 'Orion' &&
-		Math.floor(Math.random() * (100 / attackee.stats.blockChance)) == (100 / attacker.stats.blockChance) - 1
+	if (attackee.character == 'Orion' &&
+		Math.ceil(Math.random() * (100 / attackee.stats.blockChance)) == (100 / attacker.stats.blockChance) - 1
 		|| damage == 0) {
 		blocked = true
 	}
@@ -278,26 +278,26 @@ function resolveGoal(side: Side): boolean {
 	//Buffs after goal
 	if (!blocked) {
 		//Boreas
-		if (attackee.skin == 'Boreas') {
+		if (attackee.character == 'Boreas') {
 			let buff = attackee.stats.defensePoints - Characters['Boreas'].defense
 			if (buff < 4)
 				buff = buff + 1
 			attackee.stats.defensePoints = Characters['Boreas'].defense + buff
 			console.log(identifier, attackee.side, "Boreas defense is now:", attackee.stats.defensePoints)
 		}
-		if (attacker.skin == 'Boreas') {
+		if (attacker.character == 'Boreas') {
 			if (attacker.stats.defensePoints != Characters['Boreas'].defense)
 				console.log(identifier, attacker.side, "Boreas defense was reset to:", Characters['Boreas'].defense)
 			attacker.stats.defensePoints = Characters['Boreas'].defense
 		}
 
 		//Helios
-		if (attackee.skin == 'Helios') {
+		if (attackee.character == 'Helios') {
 			if (attackee.stats.attackPoints != Characters['Helios'].attack)
 				console.log(identifier, attackee.side, "Helios attack was reset to:", Characters['Helios'].attack)
 			attackee.stats.attackPoints = Characters['Helios'].attack
 		}
-		if (attacker.skin == 'Helios') {
+		if (attacker.character == 'Helios') {
 			let buff = attacker.stats.attackPoints - Characters['Helios'].attack
 			if (buff < 4)
 				buff = buff + 1
@@ -306,24 +306,24 @@ function resolveGoal(side: Side): boolean {
 		}
 
 		//Garrick
-		if (attackee.skin == 'Garrick') {
-			attackee.stats.attackPoints = Characters['Garrick'].attack + Math.floor((Characters['Garrick'].hp - attackee.stats.healthPoints) / 10)
+		if (attackee.character == 'Garrick') {
+			attackee.stats.attackPoints = Characters['Garrick'].attack + Math.ceil((Characters['Garrick'].hp - attackee.stats.healthPoints) / 10)
 			console.log(identifier, attackee.side, "Garrick attack is now:", attackee.stats.attackPoints)
 		}
 
 		//Thorian
-		if (attacker.skin == 'Thorian') {
-			attacker.stats.healthPoints = attacker.stats.healthPoints + Math.floor(damage / (100 / attacker.stats.lifeSteal))
+		if (attacker.character == 'Thorian') {
+			attacker.stats.healthPoints = attacker.stats.healthPoints + Math.ceil(damage / (100 / attacker.stats.lifeSteal))
 			console.log(identifier, attacker.side, "Thorian health is now:", attacker.stats.healthPoints)
 		}
 
 		//Selene
-		if (attackee.skin == 'Selene') {
-			attacker.stats.speedPoints = Math.floor(Characters[attacker.skin].speed / 2)
+		if (attackee.character == 'Selene') {
+			attacker.stats.speedPoints = Math.ceil(Characters[attacker.character].speed / 2)
 			console.log(identifier, attackee.side, "Selene has debuffed ennemy")
 		}
-		else if (attacker.skin == 'Selene') {
-			attackee.stats.speedPoints = Characters[attackee.skin].speed
+		else if (attacker.character == 'Selene') {
+			attackee.stats.speedPoints = Characters[attackee.character].speed
 			console.log(identifier, attacker.side, "Selene debuff was cleared")
 		}
 	}

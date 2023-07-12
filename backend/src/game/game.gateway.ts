@@ -4,9 +4,9 @@ import { v4 as uuidv4 } from 'uuid';
 import { Worker } from 'worker_threads'
 import { Server, Socket } from 'socket.io';
 import { SubscribeMessage, WebSocketGateway, WebSocketServer, OnGatewayConnection, OnGatewayDisconnect } from '@nestjs/websockets';
-/*import { UserSocketsService } from '../chat/chat.userSocketsService.js';
-import { ChatService } from '../chat/chat.service.js';*/
+import { ChatService } from '../chat/chat.service.js';
 import { UserService } from '../user/user.service.js';
+import { UserGameService } from '../user_game/user_game.service.js';
 
 /* -------------------------TYPES------------------------- */
 
@@ -19,7 +19,6 @@ type workerMessage = newPropsFromWorker | GameState | GameEvent | playerLife
 
 const gameEvent = ['goal', '3', '2', '1', 'fight', 'blocked', 'stop'] as const;
 type GameEvent = (typeof gameEvent)[number];
-type Skin = 'Boreas' | 'Helios' | 'Selene' | 'Liliana' | 'Orion' | 'Faeleen' | 'Rylan' | 'Garrick' | 'Thorian' | 'Test'
 type lifeType = number | 'init'
 
 // Player key states
@@ -30,17 +29,17 @@ interface keyStates {
 	right: boolean									// Player RIGHT key state
 }
 
-// Skins
-interface skin {
-	name: string									// Skin name
-	size: Size										// Skin size
+// Characters
+interface character {
+	name: string									// Character name
+	size: Size										// Character size
 }
 
 // Players
 interface player {
 	id: string										// Player ID
 	workerId: string | undefined					// Player worker ID
-	skin: string									// Player skin name
+	character: string								// Player character name
 }
 
 interface playerLife {
@@ -57,6 +56,7 @@ interface party {
 	leftPlayerState: string							// GameState of the left player client
 	rightPlayerId: string							// Right player client ID
 	rightPlayerState: string						// GameState of the right player client
+	startTime: string								// Game start time
 }
 
 // ----WORKER COMMUNICATION------------------------- //
@@ -71,7 +71,7 @@ interface workerPlayerConstruct {
 	side: Side										// Player side
 	coords: Coordinates								// Player coordinates
 	size: Size										// Player size
-	skin: string									// Player skin
+	character: string								// Player character
 }
 
 // New properties (sent by the worker)
@@ -93,7 +93,7 @@ interface playerUpdateToWorker {
 // Player construction interface (sent to the client)
 interface clientPlayerConstruct {
 	side: Side										// Player side
-	skin: string									// Player skin name
+	character: string								// Player character name
 }
 
 // New properties (sent to the client)
@@ -119,13 +119,15 @@ interface newDirection {
 
 @WebSocketGateway({ cors: { origin: '*', methods: ['GET', 'POST'] }, namespace: 'game' })
 export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
-	constructor(private userService: UserService) {}
+	constructor(
+		private userService: UserService,
+		private userGameService: UserGameService,
+		private chatService: ChatService
+	) { }
 
 	@WebSocketServer()
 	server: Server;
 
-	/*private readonly userService: UserSocketsService = new UserSocketsService
-	private readonly chatService: ChatService*/
 	private readonly screenHeight: number = 1080
 	private readonly screenWidth: number = 1920
 	private readonly playerScaleFactor = 7
@@ -137,8 +139,8 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	private players: { [id: string]: player } = {}
 	// List of all ongoing parties (indexed by worker id)
 	private parties: { [partyId: string]: party } = {}
-	// List of all skins and their respective sizes (indexed by name) (WILL BE DELETED)
-	private skins: { [key: string]: skin } = {
+	// List of all characters and their respective sizes (indexed by name) (WILL BE DELETED)
+	private characters: { [key: string]: character } = {
 		['Test']: {
 			name: 'Test',
 			size: {
@@ -153,8 +155,8 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 				height: 19
 			}
 		},
-		['Fealeen']: {
-			name: 'Fealeen',
+		['Faeleen']: {
+			name: 'Faeleen',
 			size: {
 				width: 15, // A CORRIGER
 				height: 18
@@ -236,23 +238,23 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 					ballProps: payload.ballProps
 				}
 				if (this.players[newParty.leftPlayerId].workerId)
-					this.sockets[newParty.leftPlayerId].emit('newProps', outgoingProps)
+					this.sockets[newParty.leftPlayerId]?.emit('newProps', outgoingProps)
 				if (this.players[newParty.rightPlayerId].workerId)
-					this.sockets[newParty.rightPlayerId].emit('newProps', outgoingProps)
+					this.sockets[newParty.rightPlayerId]?.emit('newProps', outgoingProps)
 			}
 			else if (this.isLifeUpdate(payload)) {
-				this.sockets[newParty.leftPlayerId].emit('lifeUpdate', payload)
-				this.sockets[newParty.rightPlayerId].emit('lifeUpdate', payload)
+				this.sockets[newParty.leftPlayerId]?.emit('lifeUpdate', payload)
+				this.sockets[newParty.rightPlayerId]?.emit('lifeUpdate', payload)
 			}
 			else if (this.isGameEvent(payload)) {
 				switch (payload) {
 					case ('stop'):
-						this.sockets[newParty.leftPlayerId].emit('eventOff')
-						this.sockets[newParty.rightPlayerId].emit('eventOff')
+						this.sockets[newParty.leftPlayerId]?.emit('eventOff')
+						this.sockets[newParty.rightPlayerId]?.emit('eventOff')
 						break
 					default:
-						this.sockets[newParty.leftPlayerId].emit('eventOn', payload)
-						this.sockets[newParty.rightPlayerId].emit('eventOn', payload)
+						this.sockets[newParty.leftPlayerId]?.emit('eventOn', payload)
+						this.sockets[newParty.rightPlayerId]?.emit('eventOn', payload)
 				}
 			}
 			else {
@@ -273,15 +275,15 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
 	// Create the player construct objects for clients and emit them to each client
 	createWebConstructs(leftPlayerId: string, rightPlayerId: string) {
-		let leftClientConstruct: clientPlayerConstruct = { side: 'left', skin: this.players[leftPlayerId].skin }
-		let rightClientConstruct: clientPlayerConstruct = { side: 'right', skin: this.players[rightPlayerId].skin }
+		let leftClientConstruct: clientPlayerConstruct = { side: 'left', character: this.players[leftPlayerId].character }
+		let rightClientConstruct: clientPlayerConstruct = { side: 'right', character: this.players[rightPlayerId].character }
 		if (this.players[leftPlayerId].workerId) {
-			this.sockets[leftPlayerId].emit('playerConstruct', leftClientConstruct)
-			this.sockets[leftPlayerId].emit('playerConstruct', rightClientConstruct)
+			this.sockets[leftPlayerId]?.emit('playerConstruct', leftClientConstruct)
+			this.sockets[leftPlayerId]?.emit('playerConstruct', rightClientConstruct)
 		}
 		if (this.players[rightPlayerId].workerId) {
-			this.sockets[rightPlayerId].emit('playerConstruct', leftClientConstruct)
-			this.sockets[rightPlayerId].emit('playerConstruct', rightClientConstruct)
+			this.sockets[rightPlayerId]?.emit('playerConstruct', leftClientConstruct)
+			this.sockets[rightPlayerId]?.emit('playerConstruct', rightClientConstruct)
 		}
 	}
 
@@ -294,16 +296,16 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 				y: (this.screenHeight / 2 - size.height * this.playerScaleFactor / 2),
 			},
 			size: { width: size.width * this.playerScaleFactor, height: size.height * this.playerScaleFactor },
-			skin: this.players[id].skin
+			character: this.players[id].character
 		}
 	}
 
-	// Get skins for both side, create the worker construct objects and emit them to the worker
+	// Get characters for both side, create the worker construct objects and emit them to the worker
 	createWorkerConstructs(leftPlayerId: string, rightPlayerId: string, newParty: party) {
-		let leftSkin = this.skins[this.players[leftPlayerId].skin]
-		let rightSkin = this.skins[this.players[rightPlayerId].skin]
-		let leftWorkerConstruct = this.newWorkerConstruct(leftPlayerId, 'left', leftSkin.size)
-		let rightWorkerConstruct = this.newWorkerConstruct(rightPlayerId, 'right', rightSkin.size)
+		let leftCharacter = this.characters[this.players[leftPlayerId].character]
+		let rightCharacter = this.characters[this.players[rightPlayerId].character]
+		let leftWorkerConstruct = this.newWorkerConstruct(leftPlayerId, 'left', leftCharacter.size)
+		let rightWorkerConstruct = this.newWorkerConstruct(rightPlayerId, 'right', rightCharacter.size)
 		newParty.worker.postMessage(leftWorkerConstruct)
 		newParty.worker.postMessage(rightWorkerConstruct)
 	}
@@ -317,15 +319,16 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			leftPlayerId: leftPlayerId,
 			leftPlayerState: 'building',
 			rightPlayerId: rightPlayerId,
-			rightPlayerState: 'building'
+			rightPlayerState: 'building',
+			startTime: Date()
 		}
 		this.parties[newParty.id] = newParty
 		this.players[leftPlayerId].workerId = newParty.id
 		this.players[rightPlayerId].workerId = newParty.id
 		if (this.players[leftPlayerId].workerId)
-			this.sockets[leftPlayerId].emit('matched')
+			this.sockets[leftPlayerId]?.emit('matched')
 		if (this.players[rightPlayerId].workerId)
-			this.sockets[rightPlayerId].emit('matched')
+			this.sockets[rightPlayerId]?.emit('matched')
 		this.createWorker(newParty)
 	}
 
@@ -342,20 +345,16 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
 	// Event handler for connection
 	async handleConnection(socket: Socket, ...args: any[]) {
-		/*let userData = await this.chatService.getUserFromSocket(socket)
-		let userSockets = this.userService.getUserSocketIds(userData.id)
-		if (!userData)
-		console.log('Not connected')
-		else {
-			this.userService.setUser(userData.id, socket)
-		}*/
-		const user = await this.userService.findOneById(1)
 		console.log('New player connecting:', socket.id)
+		let userData = await this.chatService.getUserFromSocket(socket)
+		if (!userData)
+			socket.disconnect()
+		const user = await this.userService.findOneById(userData.id)
 		this.sockets[socket.id] = socket
 		this.players[socket.id] = {
 			id: socket.id,
 			workerId: undefined,
-			skin: user.character
+			character: user.character
 		}
 		this.matchQueue.push(socket.id)
 		socket.emit('matching');
@@ -391,9 +390,9 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 				right: (rightPlayerId == socket.id ? payload.dir : undefined)
 			}
 			if (this.players[leftPlayerId].workerId)
-				this.sockets[this.parties[workerId].leftPlayerId].emit('changeDirection', dir)
+				this.sockets[this.parties[workerId].leftPlayerId]?.emit('changeDirection', dir)
 			if (this.players[rightPlayerId].workerId)
-				this.sockets[this.parties[workerId].rightPlayerId].emit('changeDirection', dir)
+				this.sockets[this.parties[workerId].rightPlayerId]?.emit('changeDirection', dir)
 		}
 	}
 
@@ -417,19 +416,31 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		}
 	}
 
+	async sendPartyEnd(disconnectedSocket: Socket, ongoingParty: party){
+		let leftUserData = await this.chatService.getUserFromSocket(this.sockets[ongoingParty.leftPlayerId])
+		let rightUserData = await this.chatService.getUserFromSocket(this.sockets[ongoingParty.rightPlayerId])
+		let remainingPlayerId = (disconnectedSocket.id == ongoingParty.leftPlayerId ? ongoingParty.rightPlayerId : ongoingParty.leftPlayerId)
+		let remainingUserData = await this.chatService.getUserFromSocket(this.sockets[remainingPlayerId])
+		this.userGameService.createOne({ player1: leftUserData.id, player2: rightUserData.id, timeStart: ongoingParty.startTime, timeEnd: Date(), winner: remainingUserData.id })
+	}
+
 	// Event handler for player disconnection
 	async handleDisconnect(socket: Socket) {
 		let disconnectedPlayer: player = this.players[socket.id]
 		if (disconnectedPlayer.workerId) {
 			let ongoingParty: party = this.parties[disconnectedPlayer.workerId]
+			let remainingPlayerId = (disconnectedPlayer.id == ongoingParty.leftPlayerId ? ongoingParty.rightPlayerId : ongoingParty.leftPlayerId)
 			ongoingParty.worker.terminate().then(() => {
 				console.log('worker [' + ongoingParty.id.slice(0, 4) + '] terminated')
 				this.players[ongoingParty.leftPlayerId].workerId = undefined
 				this.players[ongoingParty.rightPlayerId].workerId = undefined
-				let remainingPlayerId = (disconnectedPlayer.id == ongoingParty.leftPlayerId ? ongoingParty.rightPlayerId : ongoingParty.leftPlayerId)
-				this.sockets[remainingPlayerId].emit('gameStopped', true)
+				this.sendPartyEnd(socket, ongoingParty)
 				delete this.parties[ongoingParty.id]
 				delete this.players[disconnectedPlayer.id]
+				this.sockets[remainingPlayerId]?.emit('eventOn', 'victory')
+				setTimeout(() => {
+					this.sockets[remainingPlayerId]?.emit('gameStopped', true)
+				}, 2000)
 			})
 		}
 		delete this.sockets[disconnectedPlayer.id]

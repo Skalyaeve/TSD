@@ -12,12 +12,10 @@ export class CreateGameDto {
     player2: number;
 
     @IsDate()
-    @Type(() => Date)
-    timeStart: Date;
+    timeStart: string;
 
     @IsDate()
-    @Type(() => Date)
-    timeEnd: Date;
+    timeEnd: string;
 
     @IsInt()
     @Type(() => Number)

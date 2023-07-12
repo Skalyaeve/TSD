@@ -15,16 +15,11 @@ interface HomeProps {
 }
 
 const updateSelected = async (setSelectedCharacter: React.Dispatch<SetStateAction<number>>) => {
-	let user = await ftFetch('/users/self')
-	if (user) {
-		let character = user.character
-		if (character){
-			console.log("Updating character from db:", character)
-			let id = characterIds(character)
-			console.log("ID:", id)
-			if (typeof id === 'number')
-				setSelectedCharacter(id)
-		}
+	let user: any = await ftFetch('/users/self')
+	if (user && user.character) {
+		let id: number | 'error' = characterIds(user.character)
+		if (id != 'error')
+			setSelectedCharacter(id)
 	}
 }
 

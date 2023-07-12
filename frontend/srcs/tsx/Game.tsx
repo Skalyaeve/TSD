@@ -14,6 +14,8 @@ import one_text_Sheet from '../resources/assets/ui/text/1.png'
 import two_text_Sheet from '../resources/assets/ui/text/2.png'
 import three_text_Sheet from '../resources/assets/ui/text/3.png'
 import fight_text_Sheet from '../resources/assets/ui/text/fight.png'
+import victory_text_Sheet from '../resources/assets/game/victory.png'
+import defeat_text_Sheet from '../resources/assets/game/defeat.png'
 
 // Debug sheet
 import player_debug_Sheet from '../resources/assets/game/blank.png'
@@ -27,11 +29,11 @@ import Boreas_back_Sheet from '../resources/assets/game/character/Boreas/back.pn
 import Boreas_left_Sheet from '../resources/assets/game/character/Boreas/left.png'
 import Boreas_right_Sheet from '../resources/assets/game/character/Boreas/right.png'
 
-// ----- Fealeen
-import Fealeen_front_Sheet from '../resources/assets/game/character/Fealeen/front.png'
-import Fealeen_back_Sheet from '../resources/assets/game/character/Fealeen/back.png'
-import Fealeen_left_Sheet from '../resources/assets/game/character/Fealeen/left.png'
-import Fealeen_right_Sheet from '../resources/assets/game/character/Fealeen/right.png'
+// ----- Faeleen
+import Faeleen_front_Sheet from '../resources/assets/game/character/Faeleen/front.png'
+import Faeleen_back_Sheet from '../resources/assets/game/character/Faeleen/back.png'
+import Faeleen_left_Sheet from '../resources/assets/game/character/Faeleen/left.png'
+import Faeleen_right_Sheet from '../resources/assets/game/character/Faeleen/right.png'
 
 // ----- Garrick
 import Garrick_front_Sheet from '../resources/assets/game/character/Garrick/front.png'
@@ -84,7 +86,7 @@ type Coordinates = { x: number, y: number }
 type Side = 'left' | 'right'
 type Direction = 'up' | 'down' | 'left' | 'right' | 'none'
 type GameState = 'init' | 'ready' | 'created' | 'started' | 'stopped'
-type GameEvent = 'goal' | 'blocked' | '3' | '2' | '1' | 'fight' | 'stop'
+type GameEvent = 'goal' | 'blocked' | '3' | '2' | '1' | 'fight' | 'stop' | 'victory' | 'defeat'
 
 // Keys
 interface keys {													// Keyboard keys
@@ -94,24 +96,24 @@ interface keys {													// Keyboard keys
 	right: Phaser.Input.Keyboard.Key								// RIGHT key
 }
 
-// Skins
-interface skin {
-	name: string													// Skin name
-	frontSheet: string												// Skin front sheet
+// Characters
+interface character {
+	name: string													// Character name
+	frontSheet: string												// Character front sheet
 	frontSize: Size
-	backSheet: string												// Skin back sheet
+	backSheet: string												// Character back sheet
 	backSize: Size
-	leftSheet: string												// Skin left sheet
+	leftSheet: string												// Character left sheet
 	leftSize: Size
-	rightSheet: string												// Skin right sheet
+	rightSheet: string												// Character right sheet
 	rightSize: Size
-	scaleFactor: number												// Skin sheet scale factor
+	scaleFactor: number												// Character sheet scale factor
 }
 
 // Players
 interface player {
 	direction: Direction											// Player direction
-	skin: string													// Player skin name
+	character: string													// Player character name
 	sprite?: Phaser.Physics.Arcade.Sprite 							// Player sprite
 }
 
@@ -150,7 +152,7 @@ interface newPropsFromClient {
 interface playerConstruct {
 	id: string														// Player ID
 	side: Side														// Player side
-	skin: string													// Skin name
+	character: string													// Character name
 }
 
 // New properties (sent by the back)
@@ -183,7 +185,7 @@ const Party: React.FC<PartyProps> = ({
 	// Canvas constants
 	const screenWidth: number = 1920
 	const screenHeight: number = 1080
-	const skinFrameNumber: number = 3
+	const characterFrameNumber: number = 3
 	const animFramRate: number = 4
 	const playerScaleFactor: number = 7
 	const ballRay: number = 26
@@ -215,8 +217,8 @@ const Party: React.FC<PartyProps> = ({
 	let textAction: 'display' | 'remove' | undefined = undefined
 	let textEvent: GameEvent | undefined = undefined
 
-	// Skins
-	let skins: { [key: string]: skin } = {}
+	// Characters
+	let characters: { [key: string]: character } = {}
 
 	// Player event queues
 	let moveQueue: newPropsToClient | undefined = undefined
@@ -243,9 +245,9 @@ const Party: React.FC<PartyProps> = ({
 		}
 	}
 
-	// Initialise all skins of the scene
-	function skinsInitialisation(scene: Phaser.Scene) {
-		skins['Test'] = {
+	// Initialise all characters of the scene
+	function charactersInitialisation(scene: Phaser.Scene) {
+		characters['Test'] = {
 			name: 'Test',
 			frontSheet: player_debug_Sheet,
 			frontSize: {
@@ -269,7 +271,7 @@ const Party: React.FC<PartyProps> = ({
 			},
 			scaleFactor: 5
 		}
-		skins['Boreas'] = {
+		characters['Boreas'] = {
 			name: 'Boreas',
 			frontSheet: Boreas_front_Sheet,
 			frontSize: {
@@ -293,31 +295,31 @@ const Party: React.FC<PartyProps> = ({
 			},
 			scaleFactor: playerScaleFactor
 		}
-		skins['Fealeen'] = {
-			name: 'Fealeen',
-			frontSheet: Fealeen_front_Sheet,
+		characters['Faeleen'] = {
+			name: 'Faeleen',
+			frontSheet: Faeleen_front_Sheet,
 			frontSize: {
 				width: 16,
 				height: 18
 			},
-			backSheet: Fealeen_back_Sheet,
+			backSheet: Faeleen_back_Sheet,
 			backSize: {
 				width: 16,
 				height: 18
 			},
-			leftSheet: Fealeen_left_Sheet,
+			leftSheet: Faeleen_left_Sheet,
 			leftSize: {
 				width: 15, // A CORRIGER
 				height: 18
 			},
-			rightSheet: Fealeen_right_Sheet,
+			rightSheet: Faeleen_right_Sheet,
 			rightSize: {
 				width: 15, // A CORRIGER
 				height: 18
 			},
 			scaleFactor: playerScaleFactor
 		}
-		skins['Garrick'] = {
+		characters['Garrick'] = {
 			name: 'Garrick',
 			frontSheet: Garrick_front_Sheet,
 			frontSize: {
@@ -341,7 +343,7 @@ const Party: React.FC<PartyProps> = ({
 			},
 			scaleFactor: playerScaleFactor
 		}
-		skins['Helios'] = {
+		characters['Helios'] = {
 			name: 'Helios',
 			frontSheet: Helios_front_Sheet,
 			frontSize: {
@@ -365,7 +367,7 @@ const Party: React.FC<PartyProps> = ({
 			},
 			scaleFactor: playerScaleFactor
 		}
-		skins['Liliana'] = {
+		characters['Liliana'] = {
 			name: 'Liliana',
 			frontSheet: Liliana_front_Sheet,
 			frontSize: {
@@ -389,7 +391,7 @@ const Party: React.FC<PartyProps> = ({
 			},
 			scaleFactor: playerScaleFactor
 		}
-		skins['Orion'] = {
+		characters['Orion'] = {
 			name: 'Orion',
 			frontSheet: Orion_front_Sheet,
 			frontSize: {
@@ -413,7 +415,7 @@ const Party: React.FC<PartyProps> = ({
 			},
 			scaleFactor: playerScaleFactor
 		}
-		skins['Rylan'] = {
+		characters['Rylan'] = {
 			name: 'Rylan',
 			frontSheet: Rylan_front_Sheet,
 			frontSize: {
@@ -437,7 +439,7 @@ const Party: React.FC<PartyProps> = ({
 			},
 			scaleFactor: playerScaleFactor
 		}
-		skins['Selene'] = {
+		characters['Selene'] = {
 			name: 'Selene',
 			frontSheet: Selene_front_Sheet,
 			frontSize: {
@@ -461,7 +463,7 @@ const Party: React.FC<PartyProps> = ({
 			},
 			scaleFactor: playerScaleFactor
 		}
-		skins['Thorian'] = {
+		characters['Thorian'] = {
 			name: 'Thorian',
 			frontSheet: Thorian_front_Sheet,
 			frontSize: {
@@ -485,12 +487,12 @@ const Party: React.FC<PartyProps> = ({
 			},
 			scaleFactor: playerScaleFactor
 		}
-		for (let skinName in skins) {
-			let skin = skins[skinName]
-			scene.load.spritesheet(skinName + '_front', skin.frontSheet, { frameWidth: skin.frontSize.width, frameHeight: skin.frontSize.height })
-			scene.load.spritesheet(skinName + '_back', skin.backSheet, { frameWidth: skin.backSize.width, frameHeight: skin.backSize.height })
-			scene.load.spritesheet(skinName + '_left', skin.leftSheet, { frameWidth: skin.leftSize.width, frameHeight: skin.leftSize.height })
-			scene.load.spritesheet(skinName + '_right', skin.rightSheet, { frameWidth: skin.rightSize.width, frameHeight: skin.rightSize.height })
+		for (let characterName in characters) {
+			let character = characters[characterName]
+			scene.load.spritesheet(characterName + '_front', character.frontSheet, { frameWidth: character.frontSize.width, frameHeight: character.frontSize.height })
+			scene.load.spritesheet(characterName + '_back', character.backSheet, { frameWidth: character.backSize.width, frameHeight: character.backSize.height })
+			scene.load.spritesheet(characterName + '_left', character.leftSheet, { frameWidth: character.leftSize.width, frameHeight: character.leftSize.height })
+			scene.load.spritesheet(characterName + '_right', character.rightSheet, { frameWidth: character.rightSize.width, frameHeight: character.rightSize.height })
 		}
 	}
 
@@ -506,6 +508,8 @@ const Party: React.FC<PartyProps> = ({
 		scene.load.spritesheet('2', two_text_Sheet, { frameWidth: 50, frameHeight: 76 })
 		scene.load.spritesheet('3', three_text_Sheet, { frameWidth: 50, frameHeight: 76 })
 		scene.load.spritesheet('fight', fight_text_Sheet, { frameWidth: 222, frameHeight: 69 })
+		scene.load.spritesheet('victory', victory_text_Sheet, { frameWidth: 182, frameHeight: 55 })
+		scene.load.spritesheet('defeat', defeat_text_Sheet, { frameWidth: 164, frameHeight: 46 })
 	}
 
 	/****** SCENE CREATION ******/
@@ -514,13 +518,13 @@ const Party: React.FC<PartyProps> = ({
 	function createPlayer(construct: playerConstruct, scene: Phaser.Scene) {
 		let newPlayer: player = {
 			direction: (construct.side == 'left' ? 'right' : 'left'),
-			skin: construct.skin,
+			character: construct.character,
 		}
-		let skin = skins[newPlayer.skin]
+		let character = characters[newPlayer.character]
 		let xPos = (construct.side == 'left' ? 250 : 1670)
 		let yPos = 540
-		newPlayer.sprite = scene.physics.add.sprite(xPos, yPos, newPlayer.skin + '_' + (construct.side == 'left' ? 'right' : 'left'))
-		newPlayer.sprite.setScale(skin.scaleFactor, skin.scaleFactor)
+		newPlayer.sprite = scene.physics.add.sprite(xPos, yPos, newPlayer.character + '_' + (construct.side == 'left' ? 'right' : 'left'))
+		newPlayer.sprite.setScale(character.scaleFactor, character.scaleFactor)
 		newPlayer.sprite.setBounce(1)
 		newPlayer.sprite.setCollideWorldBounds(true)
 		newPlayer.sprite.setImmovable(true)
@@ -555,29 +559,29 @@ const Party: React.FC<PartyProps> = ({
 
 	// Create animations in the scene
 	function createAnims(scene: Phaser.Scene) {
-		for (let skinName in skins) {
+		for (let characterName in characters) {
 			scene.anims.create({
-				key: skinName + '_downAnim',
-				frames: scene.anims.generateFrameNumbers(skinName + '_front', { start: 0, end: skinFrameNumber - 1 }),
-				frameRate: skinFrameNumber * animFramRate,
+				key: characterName + '_downAnim',
+				frames: scene.anims.generateFrameNumbers(characterName + '_front', { start: 0, end: characterFrameNumber - 1 }),
+				frameRate: characterFrameNumber * animFramRate,
 				repeat: -1
 			})
 			scene.anims.create({
-				key: skinName + '_upAnim',
-				frames: scene.anims.generateFrameNumbers(skinName + '_back', { start: 0, end: skinFrameNumber - 1 }),
-				frameRate: skinFrameNumber * animFramRate,
+				key: characterName + '_upAnim',
+				frames: scene.anims.generateFrameNumbers(characterName + '_back', { start: 0, end: characterFrameNumber - 1 }),
+				frameRate: characterFrameNumber * animFramRate,
 				repeat: -1
 			})
 			scene.anims.create({
-				key: skinName + '_leftAnim',
-				frames: scene.anims.generateFrameNumbers(skinName + '_left', { start: 0, end: skinFrameNumber - 1 }),
-				frameRate: skinFrameNumber * animFramRate,
+				key: characterName + '_leftAnim',
+				frames: scene.anims.generateFrameNumbers(characterName + '_left', { start: 0, end: characterFrameNumber - 1 }),
+				frameRate: characterFrameNumber * animFramRate,
 				repeat: -1
 			})
 			scene.anims.create({
-				key: skinName + '_rightAnim',
-				frames: scene.anims.generateFrameNumbers(skinName + '_right', { start: 0, end: skinFrameNumber - 1 }),
-				frameRate: skinFrameNumber * animFramRate,
+				key: characterName + '_rightAnim',
+				frames: scene.anims.generateFrameNumbers(characterName + '_right', { start: 0, end: characterFrameNumber - 1 }),
+				frameRate: characterFrameNumber * animFramRate,
 				repeat: -1
 			})
 		}
@@ -661,7 +665,7 @@ const Party: React.FC<PartyProps> = ({
 			if (animationQueue.left != undefined) {
 				if (animationQueue.left != 'none') {
 					leftPlayer.direction = animationQueue.left
-					leftPlayer.sprite?.play(leftPlayer.skin + '_' + animationQueue.left + 'Anim')
+					leftPlayer.sprite?.play(leftPlayer.character + '_' + animationQueue.left + 'Anim')
 				}
 				else leftPlayer.sprite?.stop()
 				animationQueue.left = undefined
@@ -669,7 +673,7 @@ const Party: React.FC<PartyProps> = ({
 			if (animationQueue.right != undefined) {
 				if (animationQueue.right != 'none') {
 					rightPlayer.direction = animationQueue.right
-					rightPlayer.sprite?.play(rightPlayer.skin + '_' + animationQueue.right + 'Anim')
+					rightPlayer.sprite?.play(rightPlayer.character + '_' + animationQueue.right + 'Anim')
 				}
 				else rightPlayer.sprite?.stop()
 				animationQueue.right = undefined
@@ -694,33 +698,33 @@ const Party: React.FC<PartyProps> = ({
 		}
 	}
 
-	// Get sheet size for each skin (WILL BE DELETED)
+	// Get sheet size for each character (WILL BE DELETED)
 	function getSheetSize(player: player): Size {
-		let skin: skin = skins[player.skin]
+		let character: character = characters[player.character]
 		let sheetSize: Size
 		switch (player.direction) {
 			case 'up':
-				sheetSize = skin.backSize
+				sheetSize = character.backSize
 				break
 			case 'down':
-				sheetSize = skin.frontSize
+				sheetSize = character.frontSize
 				break
 			case 'left':
-				sheetSize = skin.leftSize
+				sheetSize = character.leftSize
 				break
 			case 'right':
-				sheetSize = skin.rightSize
+				sheetSize = character.rightSize
 				break
 			default:
-				sheetSize = skin.frontSize
+				sheetSize = character.frontSize
 		}
 		return sheetSize
 	}
 
 	function setPlayerPosition(player: player, coords: Coordinates) {
 		let sheetSize: Size = getSheetSize(player)
-		let xOffset: number = sheetSize.width * skins[player.skin].scaleFactor / 2
-		let yOffset: number = sheetSize.height * skins[player.skin].scaleFactor / 2
+		let xOffset: number = sheetSize.width * characters[player.character].scaleFactor / 2
+		let yOffset: number = sheetSize.height * characters[player.character].scaleFactor / 2
 		player.sprite?.setPosition(coords.x + xOffset, coords.y + yOffset)
 	}
 
@@ -739,7 +743,7 @@ const Party: React.FC<PartyProps> = ({
 	// Scene preloading for textures, keys & ball
 	function preload(this: Phaser.Scene) {
 		keysInitialisation(this)
-		skinsInitialisation(this)
+		charactersInitialisation(this)
 		ballInitialisation(this)
 		textInitialisation(this)
 	}
@@ -814,23 +818,22 @@ const Party: React.FC<PartyProps> = ({
 			else
 				animationQueue.right = undefined
 		})
+		// Displays a game event on the scene
 		gameSocket?.on('eventOn', (payload: GameEvent) => {
 			textEvent = payload
 			textAction = 'display'
 		})
+		// Removes a game event on the scene
 		gameSocket?.on('eventOff', () => {
 			textEvent = 'stop'
 			textAction = 'remove'
 		})
 		// Get the user back on the main page after end of a game
-		gameSocket?.on('gameStopped', (winner: boolean) => {
+		gameSocket?.on('gameStopped', () => {
 			gameSocket?.disconnect()
 			setGameSocket(undefined)
 			setInGame(false)
 			navigate('/')
-			setTimeout(() => {
-				window.alert(winner ? 'You won :)' : 'You lost :(')
-			}, 100)
 		})
 		gameSocket?.on('lifeUpdate', (update: playerLife) => {
 			setPlayerLife(update)
