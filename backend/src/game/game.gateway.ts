@@ -6,6 +6,7 @@ import { Server, Socket } from 'socket.io';
 import { SubscribeMessage, WebSocketGateway, WebSocketServer, OnGatewayConnection, OnGatewayDisconnect } from '@nestjs/websockets';
 /*import { UserSocketsService } from '../chat/chat.userSocketsService.js';
 import { ChatService } from '../chat/chat.service.js';*/
+import { UserService } from '../user/user.service.js';
 
 /* -------------------------TYPES------------------------- */
 
@@ -39,7 +40,7 @@ interface skin {
 interface player {
 	id: string										// Player ID
 	workerId: string | undefined					// Player worker ID
-	skin: Skin										// Player skin name
+	skin: string									// Player skin name
 }
 
 interface playerLife {
@@ -70,7 +71,7 @@ interface workerPlayerConstruct {
 	side: Side										// Player side
 	coords: Coordinates								// Player coordinates
 	size: Size										// Player size
-	skin: Skin										// Player skin
+	skin: string									// Player skin
 }
 
 // New properties (sent by the worker)
@@ -118,6 +119,8 @@ interface newDirection {
 
 @WebSocketGateway({ cors: { origin: '*', methods: ['GET', 'POST'] }, namespace: 'game' })
 export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
+	constructor(private userService: UserService) {}
+
 	@WebSocketServer()
 	server: Server;
 
@@ -125,7 +128,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	private readonly chatService: ChatService*/
 	private readonly screenHeight: number = 1080
 	private readonly screenWidth: number = 1920
-	private readonly playerScaleFactor = 5
+	private readonly playerScaleFactor = 7
 	// Matchmaking queue
 	private matchQueue: string[] = []
 	// List of connected sockets (matchmaking + in game) (indexed by socket id)
@@ -346,13 +349,13 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		else {
 			this.userService.setUser(userData.id, socket)
 		}*/
+		const user = await this.userService.findOneById(1)
 		console.log('New player connecting:', socket.id)
 		this.sockets[socket.id] = socket
 		this.players[socket.id] = {
 			id: socket.id,
 			workerId: undefined,
-			skin: 'Helios'
-			// CALL DB TO GET SKIN
+			skin: user.character
 		}
 		this.matchQueue.push(socket.id)
 		socket.emit('matching');

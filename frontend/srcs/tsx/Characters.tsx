@@ -20,6 +20,20 @@ export const characterNames = (id: number) => {
 		default: return 'error'
 	}
 }
+export const characterIds = (name: string) => {
+	switch (name) {
+		case `${data[0][0]}`: return 1
+		case `${data[1][0]}`: return 2
+		case `${data[2][0]}`: return 3
+		case `${data[3][0]}`: return 4
+		case `${data[4][0]}`: return 5
+		case `${data[5][0]}`: return 6
+		case `${data[6][0]}`: return 7
+		case `${data[7][0]}`: return 8
+		case `${data[8][0]}`: return 9
+		default: return 'error'
+	}
+}
 
 // --------CLASSNAMES------------------------------------------------------ //
 const NAME = 'character'
@@ -220,7 +234,6 @@ const Character: React.FC<CharacterProps> = ({ selected }) => {
 	const spellzName = `${SPELLNAME}s`
 
 	// ----RENDER----------------------------- //
-	console.log(data[selected - 1][0])
 	return <div className={NAME}>
 		<motion.div className={storyName} {...xMoveMotion(3)}>
 			<AnimatePresence mode='wait'>

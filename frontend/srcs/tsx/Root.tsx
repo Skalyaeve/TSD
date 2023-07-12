@@ -4,6 +4,7 @@ import { Socket, io } from 'socket.io-client'
 import Cookies from 'js-cookie'
 import { AnimatePresence, motion } from 'framer-motion'
 import { popUp, xMove, yMove } from './utils/ftMotion.tsx'
+import { characterIds } from './Characters.tsx'
 import NavBar from './NavBar.tsx'
 import Chat from './Chat.tsx'
 import Matchmaker from './Matchmaker.tsx'
@@ -22,7 +23,6 @@ export let socket: Socket | undefined = undefined
 export let inGame: boolean = false
 export const setInGame = (value: boolean) => {
 	inGame = value
-	console.log("[SETTER] inGame now:", inGame)
 }
 
 // --------FT-FETCH-------------------------------------------------------- //
@@ -173,6 +173,7 @@ interface playerLife {
 	left: lifeType
 	right: lifeType
 }
+
 const Root: React.FC = () => {
 	// ----REFS------------------------------- //
 	const users = useRef<any>()
@@ -181,9 +182,9 @@ const Root: React.FC = () => {
 	const location = useLocation()
 	const navigate = useNavigate()
 	const init: playerLife = { left: 'init', right: 'init' }
-	const [playerLife, setPlayerLife] = useState(init)
 
 	// ----STATES----------------------------- //
+	const [playerLife, setPlayerLife] = useState(init)
 	const [userID, setUserID] = useState(0)
 	const [showHeader, setShowHeader] = useState(false)
 	const [selectedCharacter, setSelectedCharacter] = useState(1)

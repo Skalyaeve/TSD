@@ -6,31 +6,31 @@ export type Character = 'Boreas' | 'Helios' | 'Selene' | 'Liliana' | 'Orion' | '
 
 @Injectable()
 export class UserService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) { }
 
-  async findOneById(id: number): Promise<User|null> {
-    const user: User|null = await this.prisma.user.findUnique({
+  async findOneById(id: number): Promise<User | null> {
+    const user: User | null = await this.prisma.user.findUnique({
       where: { id },
     });
     return user;
   }
 
-  async findOneByIdOrThrow(id: number): Promise<User|null> {
+  async findOneByIdOrThrow(id: number): Promise<User | null> {
     const user: User = await this.prisma.user.findUniqueOrThrow({
       where: { id },
     });
     return user;
   }
 
-  async findOneByEmail(email: string): Promise<User|null> {
-    const user: User|null = await this.prisma.user.findUnique({
+  async findOneByEmail(email: string): Promise<User | null> {
+    const user: User | null = await this.prisma.user.findUnique({
       where: { email },
     });
     return user;
   }
 
   async findOrCreateOne(email: string): Promise<User> {
-  
+
     let user: User = await this.findOneByEmail(email);
     if (user) {
       return user;
@@ -41,11 +41,11 @@ export class UserService {
       email,
       nickname,
     });
-  
+
     return user;
   }
 
-  async findAll(): Promise<User[]|null> {
+  async findAll(): Promise<User[] | null> {
     const users: User[] = await this.prisma.user.findMany({});
     return users;
   }

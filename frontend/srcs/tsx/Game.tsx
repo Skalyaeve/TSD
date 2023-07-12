@@ -185,7 +185,7 @@ const Party: React.FC<PartyProps> = ({
 	const screenHeight: number = 1080
 	const skinFrameNumber: number = 3
 	const animFramRate: number = 4
-	const playerScaleFactor: number = 5
+	const playerScaleFactor: number = 7
 	const ballRay: number = 26
 
 	// Keyboard keys
@@ -814,12 +814,10 @@ const Party: React.FC<PartyProps> = ({
 				animationQueue.right = undefined
 		})
 		gameSocket?.on('eventOn', (payload: GameEvent) => {
-			console.log('eventOn:', payload)
 			textEvent = payload
 			textAction = 'display'
 		})
 		gameSocket?.on('eventOff', () => {
-			console.log('eventOff')
 			textEvent = 'stop'
 			textAction = 'remove'
 		})
@@ -834,7 +832,6 @@ const Party: React.FC<PartyProps> = ({
 			}, 100)
 		})
 		gameSocket?.on('lifeUpdate', (update: playerLife) => {
-			console.log("recieved new life:", update)
 			setPlayerLife(update)
 		})
 	}

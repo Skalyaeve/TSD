@@ -220,7 +220,6 @@ function updatePlayer(updatedPlayer: playerUpdate) {
 
 // Setter for the general state of the game
 function setGeneralGameState(value: 'on' | 'off') {
-	console.log(identifier, "Game state is now:", value)
 	generalGameState = value
 }
 
@@ -233,7 +232,6 @@ async function updateState(newStateContainer: stateUpdate) {
 					left: leftPlayer.stats.healthPoints,
 					right: leftPlayer.stats.healthPoints
 				}
-				console.log(identifier, "posting life:", playerLife)
 				parentPort?.postMessage(playerLife)
 				await playCountdown()
 			}
@@ -250,7 +248,6 @@ function resolveGoal(side: Side): boolean {
 	// Roles
 	let attacker: player = (side == 'right' ? leftPlayer : rightPlayer)
 	let attackee: player = (side == 'right' ? rightPlayer : leftPlayer)
-	console.log("attackee:", attackee.stats, "attacker:", attacker.stats)
 
 	//Crit
 	let crit: number = 1
@@ -280,22 +277,22 @@ function resolveGoal(side: Side): boolean {
 		//Boreas
 		if (attackee.skin == 'Boreas') {
 			let buff = attackee.stats.defensePoints - Characters['Boreas'].defense
-			console.log("Buff at start:", buff)
 			if (buff < 4)
 				buff = buff + 1
-			console.log("Buff is now", buff)
 			attackee.stats.defensePoints = Characters['Boreas'].defense + buff
 			console.log(identifier, attackee.side, "Boreas defense is now:", attackee.stats.defensePoints)
 		}
 		if (attacker.skin == 'Boreas') {
+			if (attacker.stats.defensePoints != Characters['Boreas'].defense)
+				console.log(identifier, attacker.side, "Boreas defense was reset to:", Characters['Boreas'].defense)
 			attacker.stats.defensePoints = Characters['Boreas'].defense
-			console.log(identifier, attacker.side, "Boreas defense is now:", attacker.stats.defensePoints)
 		}
 
 		//Helios
 		if (attackee.skin == 'Helios') {
+			if (attackee.stats.attackPoints != Characters['Helios'].attack)
+				console.log(identifier, attackee.side, "Helios attack was reset to:", Characters['Helios'].attack)
 			attackee.stats.attackPoints = Characters['Helios'].attack
-			console.log(identifier, attackee.side, "Helios attack is now:", attackee.stats.attackPoints)
 		}
 		if (attacker.skin == 'Helios') {
 			let buff = attacker.stats.attackPoints - Characters['Helios'].attack
@@ -327,9 +324,6 @@ function resolveGoal(side: Side): boolean {
 			console.log(identifier, attacker.side, "Selene debuff was cleared")
 		}
 	}
-
-
-	console.log("attackee2:", attackee.stats, "attacker2:", attacker.stats)
 
 	//Send life
 	let newLife: playerLife = {
