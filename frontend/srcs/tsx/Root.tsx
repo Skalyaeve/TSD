@@ -4,7 +4,6 @@ import { Socket, io } from 'socket.io-client'
 import Cookies from 'js-cookie'
 import { AnimatePresence, motion } from 'framer-motion'
 import { popUp, xMove, yMove } from './utils/ftMotion.tsx'
-import { characterIds } from './Characters.tsx'
 import NavBar from './NavBar.tsx'
 import Chat from './Chat.tsx'
 import Matchmaker from './Matchmaker.tsx'
@@ -259,6 +258,7 @@ const Root: React.FC = () => {
 				<Route path='/login' element={<LoginBtn />} />
 				<Route path='/' element={<Home
 					selectedCharacter={selectedCharacter}
+					setSelectedCharacter={setSelectedCharacter}
 				/>} />
 				<Route path='/profile/*' element={<AccountInfos
 					userID={userID}

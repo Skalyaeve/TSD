@@ -1,8 +1,9 @@
-import React from 'react'
+import React, { useEffect, SetStateAction } from 'react'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { popUp } from './utils/ftMotion.tsx'
-import { characterNames } from './Characters.tsx'
+import { characterNames, characterIds } from './Characters.tsx'
+import { ftFetch } from './Root.tsx'
 
 // --------CLASSNAMES------------------------------------------------------ //
 const NAME = 'home'
@@ -10,8 +11,29 @@ const NAME = 'home'
 // --------HOME------------------------------------------------------------ //
 interface HomeProps {
 	selectedCharacter: number
+	setSelectedCharacter: React.Dispatch<SetStateAction<number>>
 }
-const Home: React.FC<HomeProps> = ({ selectedCharacter }) => {
+
+const updateSelected = async (setSelectedCharacter: React.Dispatch<SetStateAction<number>>) => {
+	let user = await ftFetch('/users/self')
+	if (user) {
+		let character = user.character
+		if (character){
+			console.log("Updating character from db:", character)
+			let id = characterIds(character)
+			console.log("ID:", id)
+			if (typeof id === 'number')
+				setSelectedCharacter(id)
+		}
+	}
+}
+
+const Home: React.FC<HomeProps> = ({ selectedCharacter, setSelectedCharacter }) => {
+	// ----EFFECTS---------------------------- //
+	useEffect(() => {
+		updateSelected(setSelectedCharacter)
+	}, [])
+	
 	// ----ANIMATIONS------------------------- //
 	const charBoxMotion = popUp({})
 	const swapBtnMotion = { whileHover: { scale: 1.05 } }

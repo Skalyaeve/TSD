@@ -9,11 +9,11 @@ import { setInGame } from './Root.tsx'
 
 // Text sheets
 import goal_text_Sheet from '../resources/assets/game/Goal.png'
-import blocked_text_Sheet from '../resources/assets/game/Blocked.png'
-import one_text_Sheet from '../resources/assets/game/1.png'
-import two_text_Sheet from '../resources/assets/game/2.png'
-import three_text_Sheet from '../resources/assets/game/3.png'
-import fight_text_Sheet from '../resources/assets/game/Fight.png'
+import blocked_text_Sheet from '../resources/assets/ui/text/blocked.png'
+import one_text_Sheet from '../resources/assets/ui/text/1.png'
+import two_text_Sheet from '../resources/assets/ui/text/2.png'
+import three_text_Sheet from '../resources/assets/ui/text/3.png'
+import fight_text_Sheet from '../resources/assets/ui/text/fight.png'
 
 // Debug sheet
 import player_debug_Sheet from '../resources/assets/game/blank.png'
@@ -235,9 +235,9 @@ const Party: React.FC<PartyProps> = ({
 	function keysInitialisation(scene: Phaser.Scene) {
 		if (scene.input.keyboard) {
 			keys = {
-				up: scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.Z),
+				up: scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.W),
 				down: scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.S),
-				left: scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.Q),
+				left: scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.A),
 				right: scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.D)
 			}
 		}
@@ -501,11 +501,11 @@ const Party: React.FC<PartyProps> = ({
 
 	function textInitialisation(scene: Phaser.Scene) {
 		scene.load.spritesheet('goal', goal_text_Sheet, { frameWidth: 153, frameHeight: 54 })
-		scene.load.spritesheet('blocked', blocked_text_Sheet, { frameWidth: 279, frameHeight: 62 })
-		scene.load.spritesheet('1', one_text_Sheet, { frameWidth: 45, frameHeight: 60 })
-		scene.load.spritesheet('2', two_text_Sheet, { frameWidth: 57, frameHeight: 49 })
-		scene.load.spritesheet('3', three_text_Sheet, { frameWidth: 56, frameHeight: 50 })
-		scene.load.spritesheet('fight', fight_text_Sheet, { frameWidth: 182, frameHeight: 68 })
+		scene.load.spritesheet('blocked', blocked_text_Sheet, { frameWidth: 345, frameHeight: 69 })
+		scene.load.spritesheet('1', one_text_Sheet, { frameWidth: 30, frameHeight: 76 })
+		scene.load.spritesheet('2', two_text_Sheet, { frameWidth: 50, frameHeight: 76 })
+		scene.load.spritesheet('3', three_text_Sheet, { frameWidth: 50, frameHeight: 76 })
+		scene.load.spritesheet('fight', fight_text_Sheet, { frameWidth: 222, frameHeight: 69 })
 	}
 
 	/****** SCENE CREATION ******/
@@ -545,6 +545,7 @@ const Party: React.FC<PartyProps> = ({
 		if (text != undefined)
 			destroyText()
 		text = { sprite: scene.physics.add.sprite(screenWidth / 2, screenHeight / 2, event) }
+		text.sprite?.setScale(2, 2)
 	}
 
 	function destroyText() {

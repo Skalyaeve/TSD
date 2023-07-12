@@ -198,7 +198,7 @@ function resetBall() {
 
 /* -------------------------UPDATE FUNCTIONS------------------------- */
 
-// Update players local speed usinf keyStates recieved from main process
+// Update players local speed using keyStates recieved from main process
 function updatePlayer(updatedPlayer: playerUpdate) {
 	let xVel: number = 0
 	let yVel: number = 0
@@ -243,11 +243,13 @@ async function updateState(newStateContainer: stateUpdate) {
 	}
 }
 
-
+// Make all calculations of damage/buff/debuff after a goal
 function resolveGoal(side: Side): boolean {
 	// Roles
 	let attacker: player = (side == 'right' ? leftPlayer : rightPlayer)
 	let attackee: player = (side == 'right' ? rightPlayer : leftPlayer)
+
+	console.log("Attacker:\n", attacker.skin, "\n", attacker.stats, "Attackee:\n", attackee.skin, "\n", attackee.stats)
 
 	//Crit
 	let crit: number = 1
@@ -265,14 +267,15 @@ function resolveGoal(side: Side): boolean {
 		Math.floor(Math.random() * (100 / attackee.stats.blockChance)) == (100 / attacker.stats.blockChance) - 1
 		|| damage == 0) {
 		blocked = true
-		console.log(identifier, (blocked ? "Goal was blocked" : "Goal!!!!!"))
 	}
+	console.log(identifier, (blocked ? "Goal was blocked" : "Goal!!!!!"))
 
+	//Damage application
 	attackee.stats.healthPoints = attackee.stats.healthPoints - damage
 	if (attackee.stats.healthPoints < 0)
 		attackee.stats.healthPoints = 0
 
-	//Buffs
+	//Buffs after goal
 	if (!blocked) {
 		//Boreas
 		if (attackee.skin == 'Boreas') {

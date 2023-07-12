@@ -72,6 +72,12 @@ export class UserController {
         return this.userService.deleteOneById(req.user.id);
     }
 
+	@Get('self')
+    @UseGuards(JwtGuard)
+    async getSelf(@Req() req: any): Promise<User> {
+        return this.userService.findOneById(req.user.id);
+    }
+
     @Get('select/:name')
     @UseGuards(JwtGuard)
     async selectCharacter(@Req() req: any, @Param('name') character: Character): Promise<User> {

@@ -394,7 +394,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 				this.sockets[this.parties[workerId].leftPlayerId].emit('changeDirection', dir)
 			if (this.players[rightPlayerId].workerId)
 				this.sockets[this.parties[workerId].rightPlayerId].emit('changeDirection', dir)
-
 		}
 	}
 
